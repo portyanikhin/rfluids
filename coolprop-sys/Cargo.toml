@@ -12,3 +12,6 @@ keywords = ["CoolProp", "ffi", "bindings"]
 categories = ["api-bindings", "science"]
 
 [dependencies]
+
+[build-dependencies]
+bindgen = "0.71.1"
