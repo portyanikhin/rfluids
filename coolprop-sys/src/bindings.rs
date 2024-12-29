@@ -1,6 +1,4 @@
-﻿//! # bindings
-//!
-//! FFI bindings to [CoolProp](https://coolprop.github.io/CoolProp/)
+﻿//! FFI bindings to [CoolProp](https://coolprop.github.io/CoolProp/).
 
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
