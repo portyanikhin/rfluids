@@ -1,19 +1,13 @@
 //! Implementation of the [CoolProp](https://coolprop.github.io/CoolProp/) native API.
 
-use coolprop_sys::bindings;
 use core::ffi::{c_char, c_int};
 use std::ffi::CString;
 use std::fmt::{Debug, Display, Formatter};
 use std::sync::{LazyLock, Mutex};
 
-#[cfg(target_os = "windows")]
-const LIB_NAME: &str = "CoolProp";
-#[cfg(not(target_os = "windows"))]
-const LIB_NAME: &str = "libCoolProp";
-
-static COOLPROP: LazyLock<Mutex<bindings::CoolProp>> = LazyLock::new(|| {
+static COOLPROP: LazyLock<Mutex<coolprop_sys::bindings::CoolProp>> = LazyLock::new(|| {
     Mutex::new(
-        unsafe { bindings::CoolProp::new(LIB_NAME) }
+        unsafe { coolprop_sys::bindings::CoolProp::new(coolprop_sys::COOLPROP_PATH) }
             .expect("Unable to load CoolProp dynamic library!"),
     )
 });
