@@ -3,7 +3,7 @@
 use core::ffi::{c_char, c_int};
 use std::ffi::CString;
 use std::fmt::{Debug, Display, Formatter};
-use std::sync::{LazyLock, Mutex};
+use std::sync::{LazyLock, Mutex, MutexGuard};
 
 static COOLPROP: LazyLock<Mutex<coolprop_sys::bindings::CoolProp>> = LazyLock::new(|| {
     Mutex::new(
@@ -36,6 +36,8 @@ pub struct CoolProp;
 impl CoolProp {
     /// Returns a value that depends on the thermodynamic state
     /// of pure/pseudo-pure fluids or mixtures.
+    ///
+    /// For undefined fluid states or invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// - `output_name` — name of the output.
     /// - `prop1_name` — name of the first input property.
@@ -100,28 +102,31 @@ impl CoolProp {
     /// - [Incompressible binary mixtures](https://coolprop.github.io/CoolProp/fluid_properties/Incompressibles.html)
     /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
     pub fn props_si(
-        output_name: &str,
-        prop1_name: &str,
+        output_name: impl AsRef<str>,
+        prop1_name: impl AsRef<str>,
         prop1_value: f64,
-        prop2_name: &str,
+        prop2_name: impl AsRef<str>,
         prop2_value: f64,
-        fluid_name: &str,
+        fluid_name: impl AsRef<str>,
     ) -> Result<f64, CoolPropError> {
+        let lock = COOLPROP.lock().unwrap();
         let result = unsafe {
-            COOLPROP.lock().unwrap().PropsSI(
-                const_ptr_c_char!(output_name),
-                const_ptr_c_char!(prop1_name),
+            lock.PropsSI(
+                const_ptr_c_char!(output_name.as_ref()),
+                const_ptr_c_char!(prop1_name.as_ref()),
                 prop1_value,
-                const_ptr_c_char!(prop2_name),
+                const_ptr_c_char!(prop2_name.as_ref()),
                 prop2_value,
-                const_ptr_c_char!(fluid_name),
+                const_ptr_c_char!(fluid_name.as_ref()),
             )
         };
-        validate_result(result)?;
+        validate_result(result, lock)?;
         Ok(result)
     }
 
     /// Returns a value that depends on the thermodynamic state of humid air.
+    ///
+    /// For undefined humid air states or invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// - `output_name` — name of the output.
     /// - `prop1_name` — name of the first input property.
@@ -149,33 +154,59 @@ impl CoolProp {
     /// - [HAPropsSI function](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html)
     /// - [HAPropsSI inputs/outputs](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
     pub fn ha_props_si(
-        output_name: &str,
-        prop1_name: &str,
+        output_name: impl AsRef<str>,
+        prop1_name: impl AsRef<str>,
         prop1_value: f64,
-        prop2_name: &str,
+        prop2_name: impl AsRef<str>,
         prop2_value: f64,
-        prop3_name: &str,
+        prop3_name: impl AsRef<str>,
         prop3_value: f64,
     ) -> Result<f64, CoolPropError> {
+        let lock = COOLPROP.lock().unwrap();
         let result = unsafe {
-            COOLPROP.lock().unwrap().HAPropsSI(
-                const_ptr_c_char!(output_name),
-                const_ptr_c_char!(prop1_name),
+            lock.HAPropsSI(
+                const_ptr_c_char!(output_name.as_ref()),
+                const_ptr_c_char!(prop1_name.as_ref()),
                 prop1_value,
-                const_ptr_c_char!(prop2_name),
+                const_ptr_c_char!(prop2_name.as_ref()),
                 prop2_value,
-                const_ptr_c_char!(prop3_name),
+                const_ptr_c_char!(prop3_name.as_ref()),
                 prop3_value,
             )
         };
-        validate_result(result)?;
+        validate_result(result, lock)?;
         Ok(result)
     }
 }
 
-fn validate_result(result: f64) -> Result<(), CoolPropError> {
+struct MessageBuffer {
+    capacity: c_int,
+    buffer: *mut c_char,
+}
+
+impl Default for MessageBuffer {
+    fn default() -> Self {
+        let capacity = 500;
+        Self {
+            capacity: capacity as c_int,
+            buffer: CString::new(" ".repeat(capacity)).unwrap().into_raw(),
+        }
+    }
+}
+
+#[allow(clippy::from_over_into)]
+impl Into<String> for MessageBuffer {
+    fn into(self) -> String {
+        unsafe { CString::from_raw(self.buffer).into_string().unwrap() }
+    }
+}
+
+fn validate_result(
+    result: f64,
+    lock: MutexGuard<coolprop_sys::bindings::CoolProp>,
+) -> Result<(), CoolPropError> {
     if !result.is_finite() {
-        let message = get_error_message();
+        let message = get_error_message(lock);
         return Err(CoolPropError(
             message.unwrap_or("Unknown error".to_string()),
         ));
@@ -183,28 +214,39 @@ fn validate_result(result: f64) -> Result<(), CoolPropError> {
     Ok(())
 }
 
-fn get_error_message() -> Option<String> {
-    let buffer_capacity = 500;
-    let buffer = CString::new(" ".repeat(buffer_capacity))
-        .unwrap()
-        .into_raw();
-    let result: i32 = unsafe {
-        COOLPROP.lock().unwrap().get_global_param_string(
+fn get_error_message(lock: MutexGuard<coolprop_sys::bindings::CoolProp>) -> Option<String> {
+    let message = MessageBuffer::default();
+    let _unused = unsafe {
+        lock.get_global_param_string(
             const_ptr_c_char!("errstring"),
-            buffer,
-            buffer_capacity as c_int,
+            message.buffer,
+            message.capacity,
         )
     };
-    if result == 0 {
-        return None;
+    let result: String = message.into();
+    if result.is_empty() {
+        None
+    } else {
+        Some(result)
     }
-    let message = unsafe { CString::from_raw(buffer).into_string().ok()? };
-    Some(message)
 }
 
 #[cfg(test)]
 mod tests {
     pub use super::*;
+
+    #[test]
+    fn validate_result_for_valid_number_returns_ok() {
+        let result = validate_result(42.0, COOLPROP.lock().unwrap());
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn validate_result_for_invalid_number_returns_err() {
+        let result = validate_result(f64::NAN, COOLPROP.lock().unwrap());
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err().to_string(), "Unknown error");
+    }
 
     mod coolprop_error_tests {
         use super::*;
