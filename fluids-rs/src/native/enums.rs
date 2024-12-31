@@ -27,7 +27,7 @@ pub trait CoolPropName {
 /// assert!(result.is_err());
 /// assert_eq!(
 ///     result.err().unwrap().to_string(),
-///     "Specified parameters (TCritical, CpMass) has no matching input pairs!"
+///     "Specified parameters ('TCritical', 'CpMass') has no matching input pairs!"
 /// );
 /// ```
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
@@ -247,7 +247,7 @@ impl TryFrom<(Parameter, Parameter)> for InputPair {
                 Ok(InputPair::DMolarUMolar)
             }
             (input1, input2) => Err(CoolPropError(format!(
-                "Specified parameters ({:?}, {:?}) has no matching input pairs!",
+                "Specified parameters ('{:?}', '{:?}') has no matching input pairs!",
                 input1, input2
             ))),
         }
@@ -276,7 +276,7 @@ impl TryFrom<(Parameter, Parameter)> for InputPair {
 /// assert!(result.is_err());
 /// assert_eq!(
 ///     result.err().unwrap().to_string(),
-///     "Specified parameters (TCritical, CpMass) has no matching input pairs!"
+///     "Specified parameters ('TCritical', 'CpMass') has no matching input pairs!"
 /// );
 /// ```
 ///
@@ -747,7 +747,7 @@ mod tests {
         assert_eq!(
             result.err().unwrap().to_string(),
             format!(
-                "Specified parameters ({:?}, {:?}) has no matching input pairs!",
+                "Specified parameters ('{:?}', '{:?}') has no matching input pairs!",
                 parameters.0, parameters.1
             )
         );
