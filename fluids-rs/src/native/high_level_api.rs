@@ -1,34 +1,6 @@
-//! Implementation of the [CoolProp](https://coolprop.github.io/CoolProp/) native API.
-
-use core::ffi::{c_char, c_int};
-use std::ffi::CString;
-use std::fmt::{Debug, Display, Formatter};
-use std::sync::{LazyLock, Mutex, MutexGuard};
-
-static COOLPROP: LazyLock<Mutex<coolprop_sys::bindings::CoolProp>> = LazyLock::new(|| {
-    Mutex::new(
-        unsafe { coolprop_sys::bindings::CoolProp::new(coolprop_sys::COOLPROP_PATH) }
-            .expect("Unable to load CoolProp dynamic library!"),
-    )
-});
-
-macro_rules! const_ptr_c_char {
-    ($value:expr) => {
-        format!("{}{}", $value, "\0").as_ptr() as *const c_char
-    };
-}
-
-/// CoolProp internal error.
-#[derive(Debug, Clone)]
-pub struct CoolPropError(String);
-
-impl std::error::Error for CoolPropError {}
-
-impl Display for CoolPropError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
-    }
-}
+use crate::native::common::{const_ptr_c_char, CoolPropError, MessageBuffer, COOLPROP};
+use core::ffi::c_char;
+use std::sync::MutexGuard;
 
 /// CoolProp thread safe high-level API.
 pub struct CoolProp;
@@ -209,120 +181,76 @@ impl CoolProp {
     }
 }
 
-struct MessageBuffer {
-    capacity: c_int,
-    buffer: *mut c_char,
-}
-
-impl Default for MessageBuffer {
-    fn default() -> Self {
-        let capacity = 500;
-        Self {
-            capacity: capacity as c_int,
-            buffer: CString::new(" ".repeat(capacity)).unwrap().into_raw(),
-        }
-    }
-}
-
-#[allow(clippy::from_over_into)]
-impl Into<String> for MessageBuffer {
-    fn into(self) -> String {
-        unsafe { CString::from_raw(self.buffer).into_string().unwrap() }
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    pub use super::*;
+    use super::*;
+    use approx::assert_relative_eq;
+    use rayon::prelude::*;
 
-    mod coolprop_error_tests {
-        use super::*;
-
-        const MESSAGE: &str = "Something went wrong...";
-
-        #[test]
-        fn fmt_always_returns_error_message() {
-            let sut = CoolPropError(MESSAGE.to_string());
-            assert_eq!(format!("{}", sut), MESSAGE);
-        }
-
-        #[test]
-        fn to_string_always_returns_error_message() {
-            let sut = CoolPropError(MESSAGE.to_string());
-            assert_eq!(sut.to_string(), MESSAGE);
-        }
+    #[test]
+    fn props_si_invalid_input_returns_err() {
+        let result = CoolProp::props_si("D", "P", 101325.0, "Q", -1.0, "Water");
+        assert!(result.is_err());
+        assert_eq!(
+            result.err().unwrap().to_string(),
+            "Input vapor quality [Q] must be between 0 and 1 : \
+            PropsSI(\"D\",\"P\",101325,\"Q\",-1,\"Water\")"
+        );
     }
 
-    mod coolprop_tests {
-        use super::*;
-        use approx::assert_relative_eq;
-        use rayon::prelude::*;
+    #[test]
+    fn props_si_water_density_in_standard_conditions_returns_ok() {
+        let result = CoolProp::props_si("D", "P", 101325.0, "T", 293.15, "Water");
+        assert!(result.is_ok());
+        assert_relative_eq!(result.unwrap(), 998.2071504679284);
+    }
 
-        #[test]
-        fn props_si_invalid_input_returns_err() {
-            let result = CoolProp::props_si("D", "P", 101325.0, "Q", -1.0, "Water");
-            assert!(result.is_err());
-            assert_eq!(
-                result.err().unwrap().to_string(),
-                "Input vapor quality [Q] must be between 0 and 1 : \
-                PropsSI(\"D\",\"P\",101325,\"Q\",-1,\"Water\")"
-            );
-        }
+    #[test]
+    fn props_si_is_thread_safe() {
+        let result: Vec<Result<f64, CoolPropError>> = (101_000..101_500)
+            .into_par_iter()
+            .map(move |p| CoolProp::props_si("T", "P", p as f64, "Q", 0.0, "Water"))
+            .collect();
+        assert!(result.iter().all(|r| r.is_ok()));
+    }
 
-        #[test]
-        fn props_si_water_density_in_standard_conditions_returns_ok() {
-            let result = CoolProp::props_si("D", "P", 101325.0, "T", 293.15, "Water");
-            assert!(result.is_ok());
-            assert_relative_eq!(result.unwrap(), 998.2071504679284);
-        }
+    #[test]
+    fn ha_props_si_invalid_input_returns_err() {
+        let result = CoolProp::ha_props_si("W", "P", 101325.0, "T", 293.15, "R", -0.5);
+        assert!(result.is_err());
+        assert_eq!(
+            result.err().unwrap().to_string(),
+            "The input for key (7) with value (-0.5) \
+            is outside the range of validity: (0) to (1)"
+        );
+    }
 
-        #[test]
-        fn props_si_is_thread_safe() {
-            let result: Vec<Result<f64, CoolPropError>> = (101_000..101_500)
-                .into_par_iter()
-                .map(move |p| CoolProp::props_si("T", "P", p as f64, "Q", 0.0, "Water"))
-                .collect();
-            assert!(result.iter().all(|r| r.is_ok()));
-        }
+    #[test]
+    fn ha_props_si_humid_air_humidity_in_standard_conditions_returns_ok() {
+        let result = CoolProp::ha_props_si("W", "P", 101325.0, "T", 293.15, "R", 0.5);
+        assert!(result.is_ok());
+        assert_relative_eq!(result.unwrap(), 0.007293697701992549);
+    }
 
-        #[test]
-        fn ha_props_si_invalid_input_returns_err() {
-            let result = CoolProp::ha_props_si("W", "P", 101325.0, "T", 293.15, "R", -0.5);
-            assert!(result.is_err());
-            assert_eq!(
-                result.err().unwrap().to_string(),
-                "The input for key (7) with value (-0.5) \
-                is outside the range of validity: (0) to (1)"
-            );
-        }
+    #[test]
+    fn ha_props_si_is_thread_safe() {
+        let result: Vec<Result<f64, CoolPropError>> = (101_000..101_500)
+            .into_par_iter()
+            .map(move |p| CoolProp::ha_props_si("W", "P", p as f64, "T", 293.15, "R", 0.5))
+            .collect();
+        assert!(result.iter().all(|r| r.is_ok()));
+    }
 
-        #[test]
-        fn ha_props_si_humid_air_humidity_in_standard_conditions_returns_ok() {
-            let result = CoolProp::ha_props_si("W", "P", 101325.0, "T", 293.15, "R", 0.5);
-            assert!(result.is_ok());
-            assert_relative_eq!(result.unwrap(), 0.007293697701992549);
-        }
+    #[test]
+    fn validate_result_valid_number_returns_ok() {
+        let result = CoolProp::validate_result(42.0, COOLPROP.lock().unwrap());
+        assert!(result.is_ok());
+    }
 
-        #[test]
-        fn ha_props_si_is_thread_safe() {
-            let result: Vec<Result<f64, CoolPropError>> = (101_000..101_500)
-                .into_par_iter()
-                .map(move |p| CoolProp::ha_props_si("W", "P", p as f64, "T", 293.15, "R", 0.5))
-                .collect();
-            assert!(result.iter().all(|r| r.is_ok()));
-        }
-
-        #[test]
-        fn validate_result_valid_number_returns_ok() {
-            let result = CoolProp::validate_result(42.0, COOLPROP.lock().unwrap());
-            assert!(result.is_ok());
-        }
-
-        #[test]
-        fn validate_result_invalid_number_returns_err() {
-            let result = CoolProp::validate_result(f64::NAN, COOLPROP.lock().unwrap());
-            assert!(result.is_err());
-            assert_eq!(result.unwrap_err().to_string(), "Unknown error");
-        }
+    #[test]
+    fn validate_result_invalid_number_returns_err() {
+        let result = CoolProp::validate_result(f64::NAN, COOLPROP.lock().unwrap());
+        assert!(result.is_err());
+        assert_eq!(result.unwrap_err().to_string(), "Unknown error");
     }
 }
