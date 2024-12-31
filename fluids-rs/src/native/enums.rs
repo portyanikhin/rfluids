@@ -353,10 +353,12 @@ pub enum Parameter {
     /// Vapor quality _(dimensionless, from 0 to 1)_.
     Q = 21,
 
-    /// Reciprocal reduced temperature _(dimensionless, `TCritical/T`)_.
+    /// Reciprocal reduced temperature _(dimensionless,
+    /// [`TCritical`](Parameter::TCritical)`/`[`T`](Parameter::T))_.
     Tau = 22,
 
-    /// Reduced density _(dimensionless, `DMass/DMassCritical`)_.
+    /// Reduced density _(dimensionless,
+    /// [`DMass`](Parameter::DMass)`/`[`DMassCritical`](Parameter::DMassCritical))_.
     Delta = 23,
 
     /// Molar density _(mol/m3)_.
@@ -452,25 +454,31 @@ pub enum Parameter {
     /// Residual Helmholtz energy _(dimensionless)_.
     AlphaR = 54,
 
-    /// Derivative of residual Helmholtz energy with `Tau` _(dimensionless)_.
+    /// Derivative of residual Helmholtz energy
+    /// with _[`Tau`](Parameter::Tau) (dimensionless)_.
     DAlphaRDTauConstDelta = 55,
 
-    /// Derivative of residual Helmholtz energy with `Delta` _(dimensionless)_.
+    /// Derivative of residual Helmholtz energy
+    /// with _[`Delta`](Parameter::Delta) (dimensionless)_.
     DAlphaRDDeltaConstTau = 56,
 
     /// Ideal Helmholtz energy _(dimensionless)_.
     Alpha0 = 57,
 
-    /// Derivative of ideal Helmholtz energy with `Tau` _(dimensionless)_.
+    /// Derivative of ideal Helmholtz energy
+    /// with _[`Tau`](Parameter::Tau) (dimensionless)_.
     DAlpha0DTauConstDelta = 58,
 
-    /// Derivative of ideal Helmholtz energy with `Delta` _(dimensionless)_.
+    /// Derivative of ideal Helmholtz energy
+    /// with _[`Delta`](Parameter::Delta) (dimensionless)_.
     DAlpha0DDeltaConstTau = 59,
 
-    /// Second derivative of ideal Helmholtz energy with `Delta` _(dimensionless)_.
+    /// Second derivative of ideal Helmholtz energy
+    /// with _[`Delta`](Parameter::Delta) (dimensionless)_.
     D2Alpha0DDelta2ConstTau = 60,
 
-    /// Third derivative of ideal Helmholtz energy with `Delta` _(dimensionless)_.
+    /// Third derivative of ideal Helmholtz energy
+    /// with _[`Delta`](Parameter::Delta) (dimensionless)_.
     D3Alpha0DDelta3ConstTau = 61,
 
     /// Second virial coefficient _(dimensionless)_.
@@ -479,10 +487,12 @@ pub enum Parameter {
     /// Third virial coefficient _(dimensionless)_.
     CVirial = 63,
 
-    /// Derivative of second virial coefficient with `T` _(dimensionless)_.
+    /// Derivative of second virial coefficient
+    /// with _[`T`](Parameter::T) (dimensionless)_.
     DBVirialDT = 64,
 
-    /// Derivative of third virial coefficient with `T` _(dimensionless)_.
+    /// Derivative of third virial coefficient
+    /// with _[`T`](Parameter::T) (dimensionless)_.
     DCVirialDT = 65,
 
     /// Compressibility factor _(dimensionless)_.
@@ -623,14 +633,38 @@ impl CoolPropName for Parameter {
 /// Phase states of fluids and mixtures.
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Phase {
+    /// Liquid _([`P`](Parameter::P) `<` [`PCritical`](Parameter::PCritical) `&`
+    /// [`T`](Parameter::T) `<` [`TCritical`](Parameter::TCritical); above saturation)_.
     Liquid = 0,
+
+    /// Supercritical fluid _([`P`](Parameter::P) `>` [`PCritical`](Parameter::PCritical) `&`
+    /// [`T`](Parameter::T) `>` [`TCritical`](Parameter::TCritical))_.
     Supercritical = 1,
+
+    /// Supercritical gas _([`P`](Parameter::P) `<` [`PCritical`](Parameter::PCritical) `&`
+    /// [`T`](Parameter::T) `>` [`TCritical`](Parameter::TCritical))_.
     SupercriticalGas = 2,
+
+    /// Supercritical liquid _([`P`](Parameter::P) `>` [`PCritical`](Parameter::PCritical) `&`
+    /// [`T`](Parameter::T) `<` [`TCritical`](Parameter::TCritical))_.
     SupercriticalLiquid = 3,
+
+    /// Critical point _([`P`](Parameter::P) `=` [`PCritical`](Parameter::PCritical) `&`
+    /// [`T`](Parameter::T) `=` [`TCritical`](Parameter::TCritical))_.
     CriticalPoint = 4,
+
+    /// Gas _([`P`](Parameter::P) `<` [`PCritical`](Parameter::PCritical) `&`
+    /// [`T`](Parameter::T) `<` [`TCritical`](Parameter::TCritical); below saturation)_.
     Gas = 5,
+
+    /// Two-phase fluid _([`P`](Parameter::P) `<` [`PCritical`](Parameter::PCritical) `&`
+    /// [`T`](Parameter::T) `<` [`TCritical`](Parameter::TCritical); mixed liquid/gas)_.
     TwoPhase = 6,
+
+    /// Unknown phase.
     Unknown = 7,
+
+    /// CoolProp to determine phase.
     NotImposed = 8,
 }
 
