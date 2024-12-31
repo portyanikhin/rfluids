@@ -6,7 +6,8 @@ pub trait CoolPropName {
     fn coolprop_name(&self) -> &'static str;
 }
 
-/// CoolProp input pairs.
+/// CoolProp input pairs
+/// (for use in [`AbstractState::update`](crate::native::AbstractState::update)).
 ///
 /// # Examples
 ///
@@ -254,7 +255,8 @@ impl TryFrom<(Parameter, Parameter)> for InputPair {
     }
 }
 
-/// CoolProp input/output parameters.
+/// CoolProp input/output parameters
+/// (for use in [`AbstractState::keyed_output`](crate::native::AbstractState::keyed_output)).
 ///
 /// # Examples
 ///
