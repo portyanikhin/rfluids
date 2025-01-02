@@ -235,10 +235,11 @@ impl AbstractState {
     /// ```
     pub fn specify_phase(&self, phase: Phase) {
         let error = ErrorBuffer::default();
+        let phase_name: &'static str = phase.into();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_specify_phase(
                 self.ptr,
-                const_ptr_c_char!(phase.coolprop_name()),
+                const_ptr_c_char!(phase_name),
                 error.code,
                 error.message.buffer,
                 error.message.capacity,

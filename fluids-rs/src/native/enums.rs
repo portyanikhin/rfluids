@@ -1,11 +1,5 @@
 use crate::native::common::CoolPropError;
 
-/// Has CoolProp internal name.
-pub trait CoolPropName {
-    /// CoolProp internal name.
-    fn coolprop_name(&self) -> &'static str;
-}
-
 /// CoolProp input pairs
 /// (for use in [`AbstractState::update`](crate::native::AbstractState::update)).
 ///
@@ -540,10 +534,10 @@ pub enum Parameter {
     Undefined = 79,
 }
 
-impl CoolPropName for Parameter {
+impl From<Parameter> for &'static str {
     //noinspection SpellCheckingInspection
-    fn coolprop_name(&self) -> &'static str {
-        match self {
+    fn from(value: Parameter) -> Self {
+        match value {
             Parameter::Invalid => "invalid",
             Parameter::GasConstant => "gas_constant",
             Parameter::MolarMass => "molar_mass",
@@ -668,10 +662,10 @@ pub enum Phase {
     NotImposed = 8,
 }
 
-impl CoolPropName for Phase {
+impl From<Phase> for &'static str {
     //noinspection SpellCheckingInspection
-    fn coolprop_name(&self) -> &'static str {
-        match self {
+    fn from(value: Phase) -> Self {
+        match value {
             Phase::Liquid => "phase_liquid",
             Phase::Supercritical => "phase_supercritical",
             Phase::SupercriticalGas => "phase_supercritical_gas",
@@ -763,10 +757,10 @@ mod tests {
     #[case((Parameter::DMolar, Parameter::UMolar), InputPair::DMolarUMolar)]
     #[case((Parameter::UMolar, Parameter::DMolar), InputPair::DMolarUMolar)]
     fn input_pair_try_from_two_valid_parameters_returns_ok(
-        #[case] parameters: (Parameter, Parameter),
+        #[case] valid_parameters: (Parameter, Parameter),
         #[case] expected: InputPair,
     ) {
-        let result = InputPair::try_from(parameters);
+        let result = InputPair::try_from(valid_parameters);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
     }
@@ -776,15 +770,15 @@ mod tests {
     #[case((Parameter::Phase, Parameter::DMolar))]
     #[case((Parameter::GWP100, Parameter::ODP))]
     fn input_pair_try_from_two_invalid_parameters_returns_err(
-        #[case] parameters: (Parameter, Parameter),
+        #[case] invalid_parameters: (Parameter, Parameter),
     ) {
-        let result = InputPair::try_from(parameters);
+        let result = InputPair::try_from(invalid_parameters);
         assert!(result.is_err());
         assert_eq!(
             result.err().unwrap().to_string(),
             format!(
                 "Specified parameters ('{:?}', '{:?}') has no matching input pairs!",
-                parameters.0, parameters.1
+                invalid_parameters.0, invalid_parameters.1
             )
         );
     }
@@ -880,11 +874,11 @@ mod tests {
     #[case(Parameter::ODP, "ODP")]
     #[case(Parameter::Phase, "Phase")]
     #[case(Parameter::Undefined, "undefined_parameter")]
-    fn parameter_coolprop_name_always_returns_expected_value(
+    fn parameter_into_static_str_always_returns_expected_value(
         #[case] parameter: Parameter,
         #[case] expected: &'static str,
     ) {
-        let result = parameter.coolprop_name();
+        let result: &'static str = parameter.into();
         assert_eq!(result, expected);
     }
 
@@ -899,11 +893,11 @@ mod tests {
     #[case(Phase::TwoPhase, "phase_twophase")]
     #[case(Phase::Unknown, "phase_unknown")]
     #[case(Phase::NotImposed, "phase_not_imposed")]
-    fn phase_coolprop_name_always_returns_expected_value(
-        #[case] parameter: Phase,
+    fn phase_into_static_str_always_returns_expected_value(
+        #[case] phase: Phase,
         #[case] expected: &'static str,
     ) {
-        let result = parameter.coolprop_name();
+        let result: &'static str = phase.into();
         assert_eq!(result, expected);
     }
 }
