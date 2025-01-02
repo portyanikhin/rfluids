@@ -150,6 +150,56 @@ impl CoolProp {
         Ok(result)
     }
 
+    //noinspection SpellCheckingInspection
+    /// Returns a value that do not depend on the thermodynamic state
+    /// of pure/pseudo-pure fluids or mixtures.
+    ///
+    /// For invalid inputs, a [`CoolPropError`] is returned.
+    ///
+    /// - `output_name` — name of the _trivial_ output.
+    /// - `fluid_name` — name of the fluid.
+    ///
+    /// # Examples
+    ///
+    /// Water critical point temperature _(K)_:
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use fluids_rs::native::CoolProp;
+    ///
+    /// let result = CoolProp::props1_si("Tcrit", "Water").unwrap();
+    /// assert_relative_eq!(result, 647.096);
+    /// ```
+    ///
+    /// R32 100-year global warming potential _(dimensionless)_:
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use fluids_rs::native::CoolProp;
+    ///
+    /// let result = CoolProp::props1_si("GWP100", "R32").unwrap();
+    /// assert_relative_eq!(result, 675.0);
+    /// ```
+    ///
+    /// # See also
+    ///
+    /// - [Props1SI function](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#trivial-inputs)
+    /// - [Props1SI outputs _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
+    pub fn props1_si(
+        output_name: impl AsRef<str>,
+        fluid_name: impl AsRef<str>,
+    ) -> Result<f64, CoolPropError> {
+        let lock = COOLPROP.lock().unwrap();
+        let result = unsafe {
+            lock.Props1SI(
+                const_ptr_c_char!(output_name.as_ref().trim()),
+                const_ptr_c_char!(fluid_name.as_ref().trim()),
+            )
+        };
+        Self::validate_result(result, lock)?;
+        Ok(result)
+    }
+
     fn validate_result(
         result: f64,
         lock: MutexGuard<coolprop_sys::bindings::CoolProp>,
@@ -239,6 +289,26 @@ mod tests {
             .map(move |p| CoolProp::ha_props_si("W", "P", p as f64, "T", 293.15, "R", 0.5))
             .collect();
         assert!(result.iter().all(|r| r.is_ok()));
+    }
+
+    //noinspection SpellCheckingInspection
+    #[test]
+    fn props1_si_valid_input_returns_ok() {
+        let result = CoolProp::props1_si("Tcrit", "Water");
+        assert!(result.is_ok());
+        assert_relative_eq!(result.unwrap(), 647.096);
+    }
+
+    #[test]
+    fn props1_si_invalid_input_returns_err() {
+        let result = CoolProp::props1_si("T", "Water");
+        assert!(result.is_err());
+        assert_eq!(
+            result.err().unwrap().to_string(),
+            "Unable to use input parameter [T] in Props1SI for fluid Water; \
+            error was Input pair variable is invalid and output(s) are non-trivial; \
+            cannot do state update : PropsSI(\"T\",\"\",0,\"\",0,\"Water\")"
+        );
     }
 
     #[test]
