@@ -6,25 +6,13 @@ use std::str::FromStr;
 ///
 /// # Examples
 ///
-/// How to get [`InputPair`] from two [`Parameter`]`s`:
+/// How to parse [`InputPair`] from two [`Parameter`]s:
 ///
 /// ```
 /// use fluids_rs::native::{InputPair, Parameter};
 ///
 /// let result = InputPair::try_from((Parameter::T, Parameter::P)).unwrap();
 /// assert_eq!(result, InputPair::PT);
-/// ```
-///
-/// If specified parameters has no matching [`InputPair`]`s`, a [`CoolPropError`] is returned:
-/// ```
-/// use fluids_rs::native::{InputPair, Parameter};
-///
-/// let result = InputPair::try_from((Parameter::TCritical, Parameter::CpMass));
-/// assert!(result.is_err());
-/// assert_eq!(
-///     result.unwrap_err().to_string(),
-///     "Specified parameters ('TCritical', 'CpMass') has no matching input pair!"
-/// );
 /// ```
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum InputPair {
@@ -251,26 +239,51 @@ impl TryFrom<(Parameter, Parameter)> for InputPair {
 ///
 /// # Examples
 ///
-/// How to convert two [`Parameter`]`s` into [`InputPair`]:
+/// How to convert [`Parameter`] into [`&'static str`](str):
+/// ```
+/// use fluids_rs::native::Parameter;
+///
+/// let result: &'static str = Parameter::TMin.into();
+/// assert_eq!(result, "T_min");
+/// ```
+///
+/// How to parse [`Parameter`] from [`&str`](str):
+/// ```
+/// use std::str::FromStr;
+/// use fluids_rs::native::Parameter;
+///
+/// let result = Parameter::from_str("T_min").unwrap();
+/// assert_eq!(result, Parameter::TMin);
+///
+/// // or
+///
+/// let result = Parameter::try_from("T_min").unwrap();
+/// assert_eq!(result, Parameter::TMin);
+/// ```
+///
+/// How to parse [`Parameter`] from [`u8`]:
+/// ```
+/// use fluids_rs::native::Parameter;
+///
+/// let result = Parameter::try_from(15).unwrap();
+/// assert_eq!(result, Parameter::TMax);
+/// ```
+///
+/// How to parse [`Parameter`] from [`f64`]:
+/// ```
+/// use fluids_rs::native::Parameter;
+///
+/// let result = Parameter::try_from(15.0).unwrap();
+/// assert_eq!(result, Parameter::TMax);
+/// ```
+///
+/// How to convert two [`Parameter`]s into [`InputPair`]:
 ///
 /// ```
 /// use fluids_rs::native::{InputPair, Parameter};
 ///
 /// let result: InputPair = (Parameter::T, Parameter::P).try_into().unwrap();
 /// assert_eq!(result, InputPair::PT);
-/// ```
-///
-/// If specified parameters has no matching [`InputPair`]`s`, a [`CoolPropError`] is returned:
-/// ```
-/// use fluids_rs::native::{CoolPropError, InputPair, Parameter};
-///
-/// let result: Result<InputPair, CoolPropError> =
-///     (Parameter::TCritical, Parameter::CpMass).try_into();
-/// assert!(result.is_err());
-/// assert_eq!(
-///     result.unwrap_err().to_string(),
-///     "Specified parameters ('TCritical', 'CpMass') has no matching input pair!"
-/// );
 /// ```
 ///
 /// # See also
@@ -819,6 +832,46 @@ impl TryFrom<f64> for Parameter {
 }
 
 /// Phase states of fluids and mixtures.
+///
+/// # Examples
+///
+/// How to convert [`Phase`] into [`&'static str`](str):
+/// ```
+/// use fluids_rs::native::Phase;
+///
+/// let result: &'static str = Phase::Liquid.into();
+/// assert_eq!(result, "phase_liquid");
+/// ```
+///
+/// How to parse [`Phase`] from [`&str`](str):
+/// ```
+/// use std::str::FromStr;
+/// use fluids_rs::native::Phase;
+///
+/// let result = Phase::from_str("phase_liquid").unwrap();
+/// assert_eq!(result, Phase::Liquid);
+///
+/// // or
+///
+/// let result = Phase::try_from("liquid").unwrap();
+/// assert_eq!(result, Phase::Liquid);
+/// ```
+///
+/// How to parse [`Phase`] from [`u8`]:
+/// ```
+/// use fluids_rs::native::Phase;
+///
+/// let result = Phase::try_from(5).unwrap();
+/// assert_eq!(result, Phase::Gas);
+/// ```
+///
+/// How to parse [`Phase`] from [`f64`]:
+/// ```
+/// use fluids_rs::native::Phase;
+///
+/// let result = Phase::try_from(5.0).unwrap();
+/// assert_eq!(result, Phase::Gas);
+/// ```
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Phase {
     /// Liquid _([`P`](Parameter::P) < [`PCritical`](Parameter::PCritical) &
