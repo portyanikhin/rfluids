@@ -243,9 +243,8 @@ impl CoolProp {
         input2_value: f64,
         fluid_name: impl AsRef<str>,
     ) -> Result<Phase, CoolPropError> {
-        let output_name: &'static str = Parameter::Phase.into();
         Phase::try_from(Self::props_si(
-            output_name,
+            Parameter::Phase,
             input1_name,
             input1_value,
             input2_name,

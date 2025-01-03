@@ -5,11 +5,11 @@ use std::str::FromStr;
 ///
 /// # Examples
 ///
-/// How to convert [`Phase`] into [`&'static str`](str):
+/// How to convert [`Phase`] into [`&str`](str):
 /// ```
 /// use fluids_rs::native::Phase;
 ///
-/// let result: &'static str = Phase::Liquid.into();
+/// let result = Phase::Liquid.as_ref();
 /// assert_eq!(result, "phase_liquid");
 /// ```
 ///
@@ -97,10 +97,10 @@ pub enum Phase {
     NotImposed = 8,
 }
 
-impl From<Phase> for &'static str {
+impl AsRef<str> for Phase {
     //noinspection SpellCheckingInspection
-    fn from(value: Phase) -> Self {
-        match value {
+    fn as_ref(&self) -> &str {
+        match self {
             Phase::Liquid => "phase_liquid",
             Phase::Supercritical => "phase_supercritical",
             Phase::SupercriticalGas => "phase_supercritical_gas",
@@ -202,11 +202,8 @@ mod tests {
     #[case(Phase::TwoPhase, "phase_twophase")]
     #[case(Phase::Unknown, "phase_unknown")]
     #[case(Phase::NotImposed, "phase_not_imposed")]
-    fn phase_into_static_str_always_returns_expected_value(
-        #[case] phase: Phase,
-        #[case] expected: &'static str,
-    ) {
-        let result: &'static str = phase.into();
+    fn as_ref_always_returns_expected_str(#[case] phase: Phase, #[case] expected: &str) {
+        let result = phase.as_ref();
         assert_eq!(result, expected);
     }
 
@@ -236,7 +233,7 @@ mod tests {
     #[case("phase_not_imposed", Phase::NotImposed)]
     #[case("not_imposed", Phase::NotImposed)]
     #[case("notimposed", Phase::NotImposed)]
-    fn phase_from_valid_str_returns_ok(#[case] valid_value: &str, #[case] expected: Phase) {
+    fn from_valid_str_returns_ok(#[case] valid_value: &str, #[case] expected: Phase) {
         let mut result = Phase::from_str(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
@@ -248,7 +245,7 @@ mod tests {
     #[rstest]
     #[case("")]
     #[case("Hello, World!")]
-    fn phase_from_invalid_str_returns_err(#[case] invalid_value: &str) {
+    fn from_invalid_str_returns_err(#[case] invalid_value: &str) {
         let result = Phase::from_str(invalid_value);
         assert!(result.is_err());
         assert_eq!(
@@ -267,7 +264,7 @@ mod tests {
     #[case(6, Phase::TwoPhase)]
     #[case(7, Phase::Unknown)]
     #[case(8, Phase::NotImposed)]
-    fn phase_try_from_valid_u8_returns_ok(#[case] valid_value: u8, #[case] expected: Phase) {
+    fn try_from_valid_u8_returns_ok(#[case] valid_value: u8, #[case] expected: Phase) {
         let result = Phase::try_from(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
@@ -276,7 +273,7 @@ mod tests {
     #[rstest]
     #[case(254)]
     #[case(255)]
-    fn phase_try_from_invalid_u8_returns_err(#[case] invalid_value: u8) {
+    fn try_from_invalid_u8_returns_err(#[case] invalid_value: u8) {
         let result = Phase::try_from(invalid_value);
         assert!(result.is_err());
         assert_eq!(
@@ -295,7 +292,7 @@ mod tests {
     #[case(6.0, Phase::TwoPhase)]
     #[case(7.0, Phase::Unknown)]
     #[case(8.0, Phase::NotImposed)]
-    fn phase_try_from_valid_f64_returns_ok(#[case] valid_value: f64, #[case] expected: Phase) {
+    fn try_from_valid_f64_returns_ok(#[case] valid_value: f64, #[case] expected: Phase) {
         let result = Phase::try_from(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
@@ -305,7 +302,7 @@ mod tests {
     #[case(-1.0)]
     #[case(255.0)]
     #[case(100e3)]
-    fn phase_try_from_invalid_f64_returns_err(#[case] invalid_value: f64) {
+    fn try_from_invalid_f64_returns_err(#[case] invalid_value: f64) {
         let result = Phase::try_from(invalid_value);
         assert!(result.is_err());
         assert_eq!(

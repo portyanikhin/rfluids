@@ -309,7 +309,7 @@ mod tests {
     #[case((Parameter::UMass, Parameter::DMass), InputPair::DMassUMass)]
     #[case((Parameter::DMolar, Parameter::UMolar), InputPair::DMolarUMolar)]
     #[case((Parameter::UMolar, Parameter::DMolar), InputPair::DMolarUMolar)]
-    fn input_pair_try_from_two_valid_parameters_returns_ok(
+    fn try_from_two_valid_parameters_returns_ok(
         #[case] valid_parameters: (Parameter, Parameter),
         #[case] expected: InputPair,
     ) {
@@ -322,7 +322,7 @@ mod tests {
     #[case((Parameter::TCritical, Parameter::CpMass))]
     #[case((Parameter::Phase, Parameter::DMolar))]
     #[case((Parameter::GWP100, Parameter::ODP))]
-    fn input_pair_try_from_two_invalid_parameters_returns_err(
+    fn try_from_two_invalid_parameters_returns_err(
         #[case] invalid_parameters: (Parameter, Parameter),
     ) {
         let result = InputPair::try_from(invalid_parameters);

@@ -6,15 +6,17 @@ use std::str::FromStr;
 ///
 /// # Examples
 ///
-/// How to convert [`Parameter`] into [`&'static str`](str):
+/// How to convert [`Parameter`] into [`&str`](str):
+///
 /// ```
 /// use fluids_rs::native::Parameter;
 ///
-/// let result: &'static str = Parameter::TMin.into();
+/// let result = Parameter::TMin.as_ref();
 /// assert_eq!(result, "T_min");
 /// ```
 ///
 /// How to parse [`Parameter`] from [`&str`](str):
+///
 /// ```
 /// use std::str::FromStr;
 /// use fluids_rs::native::Parameter;
@@ -29,6 +31,7 @@ use std::str::FromStr;
 /// ```
 ///
 /// How to parse [`Parameter`] from [`u8`]:
+///
 /// ```
 /// use fluids_rs::native::Parameter;
 ///
@@ -37,6 +40,7 @@ use std::str::FromStr;
 /// ```
 ///
 /// How to parse [`Parameter`] from [`f64`]:
+///
 /// ```
 /// use fluids_rs::native::Parameter;
 ///
@@ -305,10 +309,10 @@ pub enum Parameter {
     Phase = 78,
 }
 
-impl From<Parameter> for &'static str {
+impl AsRef<str> for Parameter {
     //noinspection SpellCheckingInspection
-    fn from(value: Parameter) -> Self {
-        match value {
+    fn as_ref(&self) -> &str {
+        match self {
             Parameter::GasConstant => "gas_constant",
             Parameter::MolarMass => "molar_mass",
             Parameter::AcentricFactor => "acentric_factor",
@@ -692,11 +696,8 @@ mod tests {
     #[case(Parameter::PH, "PH")]
     #[case(Parameter::ODP, "ODP")]
     #[case(Parameter::Phase, "Phase")]
-    fn parameter_into_static_str_always_returns_expected_value(
-        #[case] parameter: Parameter,
-        #[case] expected: &'static str,
-    ) {
-        let result: &'static str = parameter.into();
+    fn as_ref_always_returns_expected_str(#[case] parameter: Parameter, #[case] expected: &str) {
+        let result = parameter.as_ref();
         assert_eq!(result, expected);
     }
 
@@ -814,7 +815,7 @@ mod tests {
     #[case("PH", Parameter::PH)]
     #[case("ODP", Parameter::ODP)]
     #[case("Phase", Parameter::Phase)]
-    fn parameter_from_valid_str_returns_ok(#[case] valid_value: &str, #[case] expected: Parameter) {
+    fn from_valid_str_returns_ok(#[case] valid_value: &str, #[case] expected: Parameter) {
         let mut result = Parameter::from_str(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
@@ -826,7 +827,7 @@ mod tests {
     #[rstest]
     #[case("")]
     #[case("Hello, World!")]
-    fn parameter_from_invalid_str_returns_err(#[case] invalid_value: &str) {
+    fn from_invalid_str_returns_err(#[case] invalid_value: &str) {
         let result = Parameter::from_str(invalid_value);
         assert!(result.is_err());
         assert_eq!(
@@ -914,10 +915,7 @@ mod tests {
     #[case(76, Parameter::PH)]
     #[case(77, Parameter::ODP)]
     #[case(78, Parameter::Phase)]
-    fn parameter_try_from_valid_u8_returns_ok(
-        #[case] valid_value: u8,
-        #[case] expected: Parameter,
-    ) {
+    fn try_from_valid_u8_returns_ok(#[case] valid_value: u8, #[case] expected: Parameter) {
         let result = Parameter::try_from(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
@@ -926,7 +924,7 @@ mod tests {
     #[rstest]
     #[case(254)]
     #[case(255)]
-    fn parameter_try_from_invalid_u8_returns_err(#[case] invalid_value: u8) {
+    fn try_from_invalid_u8_returns_err(#[case] invalid_value: u8) {
         let result = Parameter::try_from(invalid_value);
         assert!(result.is_err());
         assert_eq!(
@@ -1014,10 +1012,7 @@ mod tests {
     #[case(76.0, Parameter::PH)]
     #[case(77.0, Parameter::ODP)]
     #[case(78.0, Parameter::Phase)]
-    fn parameter_try_from_valid_f64_returns_ok(
-        #[case] valid_value: f64,
-        #[case] expected: Parameter,
-    ) {
+    fn try_from_valid_f64_returns_ok(#[case] valid_value: f64, #[case] expected: Parameter) {
         let result = Parameter::try_from(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
@@ -1027,7 +1022,7 @@ mod tests {
     #[case(-1.0)]
     #[case(255.0)]
     #[case(100e3)]
-    fn parameter_try_from_invalid_f64_returns_err(#[case] invalid_value: f64) {
+    fn try_from_invalid_f64_returns_err(#[case] invalid_value: f64) {
         let result = Parameter::try_from(invalid_value);
         assert!(result.is_err());
         assert_eq!(

@@ -240,11 +240,10 @@ impl AbstractState {
     /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     pub fn specify_phase(&self, phase: Phase) {
         let error = ErrorBuffer::default();
-        let phase_name: &'static str = phase.into();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_specify_phase(
                 self.ptr,
-                const_ptr_c_char!(phase_name),
+                const_ptr_c_char!(phase.as_ref()),
                 error.code,
                 error.message.buffer,
                 error.message.capacity,
