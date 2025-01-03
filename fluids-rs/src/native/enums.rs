@@ -1,4 +1,5 @@
 use crate::native::common::CoolPropError;
+use std::str::FromStr;
 
 /// CoolProp input pairs
 /// (for use in [`AbstractState::update`](crate::native::AbstractState::update)).
@@ -624,6 +625,110 @@ impl From<Parameter> for &'static str {
     }
 }
 
+impl FromStr for Parameter {
+    type Err = CoolPropError;
+
+    //noinspection SpellCheckingInspection
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "invalid" => Ok(Parameter::Invalid),
+            "gas_constant" => Ok(Parameter::GasConstant),
+            "molar_mass" | "m" | "molarmass" | "molemass" => Ok(Parameter::MolarMass),
+            "acentric_factor" | "acentric" => Ok(Parameter::AcentricFactor),
+            "rhomolar_reducing" => Ok(Parameter::DMolarReducing),
+            "rhomolar_critical" => Ok(Parameter::DMolarCritical),
+            "t_reducing" => Ok(Parameter::TReducing),
+            "t_critical" | "tcrit" => Ok(Parameter::TCritical),
+            "rhomass_reducing" => Ok(Parameter::DMassReducing),
+            "rhomass_critical" | "rhocrit" => Ok(Parameter::DMassCritical),
+            "p_critical" | "pcrit" => Ok(Parameter::PCritical),
+            "p_reducing" => Ok(Parameter::PReducing),
+            "t_triple" | "ttriple" => Ok(Parameter::TTriple),
+            "p_triple" | "ptriple" => Ok(Parameter::PTriple),
+            "t_min" | "tmin" => Ok(Parameter::TMin),
+            "t_max" | "tmax" => Ok(Parameter::TMax),
+            "p_max" | "pmax" => Ok(Parameter::PMax),
+            "p_min" | "pmin" => Ok(Parameter::PMin),
+            "dipole_moment" => Ok(Parameter::DipoleMoment),
+            "t" => Ok(Parameter::T),
+            "p" => Ok(Parameter::P),
+            "q" => Ok(Parameter::Q),
+            "tau" => Ok(Parameter::Tau),
+            "delta" => Ok(Parameter::Delta),
+            "dmolar" => Ok(Parameter::DMolar),
+            "hmolar" => Ok(Parameter::HMolar),
+            "smolar" => Ok(Parameter::SMolar),
+            "cpmolar" => Ok(Parameter::CpMolar),
+            "cp0molar" => Ok(Parameter::Cp0Molar),
+            "cvmolar" => Ok(Parameter::CvMolar),
+            "umolar" => Ok(Parameter::UMolar),
+            "gmolar" => Ok(Parameter::GMolar),
+            "helmholtzmolar" => Ok(Parameter::HelmholtzMolar),
+            "hmolar_residual" => Ok(Parameter::HMolarResidual),
+            "smolar_residual" => Ok(Parameter::SMolarResidual),
+            "gmolar_residual" => Ok(Parameter::GMolarResidual),
+            "dmass" | "d" => Ok(Parameter::DMass),
+            "hmass" | "h" => Ok(Parameter::HMass),
+            "smass" | "s" => Ok(Parameter::SMass),
+            "cpmass" | "c" => Ok(Parameter::CpMass),
+            "cp0mass" => Ok(Parameter::Cp0Mass),
+            "cvmass" | "o" => Ok(Parameter::CvMass),
+            "umass" | "u" => Ok(Parameter::UMass),
+            "gmass" | "g" => Ok(Parameter::GMass),
+            "helmholtzmass" => Ok(Parameter::HelmholtzMass),
+            "viscosity" | "v" => Ok(Parameter::DynamicViscosity),
+            "conductivity" | "l" => Ok(Parameter::Conductivity),
+            "surface_tension" | "i" => Ok(Parameter::SurfaceTension),
+            "prandtl" => Ok(Parameter::Prandtl),
+            "speed_sound" | "speed_of_sound" | "a" => Ok(Parameter::SoundSpeed),
+            "isothermal_compressibility" => Ok(Parameter::IsothermalCompressibility),
+            "isobaric_expansion_coefficient" => Ok(Parameter::IsobaricExpansionCoefficient),
+            "isentropic_expansion_coefficient" => Ok(Parameter::IsentropicExpansionCoefficient),
+            "fundamental_derivative_of_gas_dynamics" => {
+                Ok(Parameter::FundamentalDerivativeOfGasDynamics)
+            }
+            "alphar" => Ok(Parameter::AlphaR),
+            "dalphar_dtau_constdelta" => Ok(Parameter::DAlphaRDTauConstDelta),
+            "dalphar_ddelta_consttau" => Ok(Parameter::DAlphaRDDeltaConstTau),
+            "alpha0" => Ok(Parameter::Alpha0),
+            "dalpha0_dtau_constdelta" => Ok(Parameter::DAlpha0DTauConstDelta),
+            "dalpha0_ddelta_consttau" => Ok(Parameter::DAlpha0DDeltaConstTau),
+            "d2alpha0_ddelta2_consttau" => Ok(Parameter::D2Alpha0DDelta2ConstTau),
+            "d3alpha0_ddelta3_consttau" => Ok(Parameter::D3Alpha0DDelta3ConstTau),
+            "bvirial" => Ok(Parameter::BVirial),
+            "cvirial" => Ok(Parameter::CVirial),
+            "dbvirial_dt" => Ok(Parameter::DBVirialDT),
+            "dcvirial_dt" => Ok(Parameter::DCVirialDT),
+            "z" => Ok(Parameter::Z),
+            "pip" => Ok(Parameter::PIP),
+            "fraction_min" => Ok(Parameter::MinFraction),
+            "fraction_max" => Ok(Parameter::MaxFraction),
+            "t_freeze" => Ok(Parameter::TFreeze),
+            "gwp20" => Ok(Parameter::GWP20),
+            "gwp100" => Ok(Parameter::GWP100),
+            "gwp500" => Ok(Parameter::GWP500),
+            "fh" => Ok(Parameter::FH),
+            "hh" => Ok(Parameter::HH),
+            "ph" => Ok(Parameter::PH),
+            "odp" => Ok(Parameter::ODP),
+            "phase" => Ok(Parameter::Phase),
+            "undefined_parameter" | "undefined" => Ok(Parameter::Undefined),
+            _ => Err(CoolPropError(format!(
+                "'{}' has no matching parameters!",
+                s
+            ))),
+        }
+    }
+}
+
+impl TryFrom<&str> for Parameter {
+    type Error = CoolPropError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Parameter::from_str(value)
+    }
+}
+
 /// Phase states of fluids and mixtures.
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Phase {
@@ -676,6 +781,41 @@ impl From<Phase> for &'static str {
             Phase::Unknown => "phase_unknown",
             Phase::NotImposed => "phase_not_imposed",
         }
+    }
+}
+
+impl FromStr for Phase {
+    type Err = CoolPropError;
+
+    //noinspection SpellCheckingInspection
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "phase_liquid" | "liquid" => Ok(Phase::Liquid),
+            "phase_supercritical" | "supercritical" => Ok(Phase::Supercritical),
+            "phase_supercritical_gas" | "supercritical_gas" | "supercriticalgas" => {
+                Ok(Phase::SupercriticalGas)
+            }
+            "phase_supercritical_liquid" | "supercritical_liquid" | "supercriticalliquid" => {
+                Ok(Phase::SupercriticalLiquid)
+            }
+            "phase_critical_point" | "critical_point" | "criticalpoint" => Ok(Phase::CriticalPoint),
+            "phase_gas" | "gas" => Ok(Phase::Gas),
+            "phase_twophase" | "phase_two_phase" | "two_phase" | "twophase" => Ok(Phase::TwoPhase),
+            "phase_unknown" | "unknown" => Ok(Phase::Unknown),
+            "phase_not_imposed" | "not_imposed" | "notimposed" => Ok(Phase::NotImposed),
+            _ => Err(CoolPropError(format!(
+                "'{}' has no matching phase state!",
+                s
+            ))),
+        }
+    }
+}
+
+impl TryFrom<&str> for Phase {
+    type Error = CoolPropError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Phase::from_str(value)
     }
 }
 
@@ -884,6 +1024,144 @@ mod tests {
 
     //noinspection SpellCheckingInspection
     #[rstest]
+    #[case("invalid", Parameter::Invalid)]
+    #[case("gas_constant", Parameter::GasConstant)]
+    #[case("molar_mass", Parameter::MolarMass)]
+    #[case("M", Parameter::MolarMass)]
+    #[case("molarmass", Parameter::MolarMass)]
+    #[case("molemass", Parameter::MolarMass)]
+    #[case("acentric_factor", Parameter::AcentricFactor)]
+    #[case("acentric", Parameter::AcentricFactor)]
+    #[case("rhomolar_reducing", Parameter::DMolarReducing)]
+    #[case("rhomolar_critical", Parameter::DMolarCritical)]
+    #[case("T_reducing", Parameter::TReducing)]
+    #[case("T_critical", Parameter::TCritical)]
+    #[case("Tcrit", Parameter::TCritical)]
+    #[case("rhomass_reducing", Parameter::DMassReducing)]
+    #[case("rhomass_critical", Parameter::DMassCritical)]
+    #[case("rhocrit", Parameter::DMassCritical)]
+    #[case("P_critical", Parameter::PCritical)]
+    #[case("Pcrit", Parameter::PCritical)]
+    #[case("P_reducing", Parameter::PReducing)]
+    #[case("T_triple", Parameter::TTriple)]
+    #[case("Ttriple", Parameter::TTriple)]
+    #[case("P_triple", Parameter::PTriple)]
+    #[case("Ptriple", Parameter::PTriple)]
+    #[case("T_min", Parameter::TMin)]
+    #[case("Tmin", Parameter::TMin)]
+    #[case("T_max", Parameter::TMax)]
+    #[case("Tmax", Parameter::TMax)]
+    #[case("P_max", Parameter::PMax)]
+    #[case("Pmax", Parameter::PMax)]
+    #[case("P_min", Parameter::PMin)]
+    #[case("Pmin", Parameter::PMin)]
+    #[case("dipole_moment", Parameter::DipoleMoment)]
+    #[case("T", Parameter::T)]
+    #[case("P", Parameter::P)]
+    #[case("Q", Parameter::Q)]
+    #[case("Tau", Parameter::Tau)]
+    #[case("Delta", Parameter::Delta)]
+    #[case("Dmolar", Parameter::DMolar)]
+    #[case("Hmolar", Parameter::HMolar)]
+    #[case("Smolar", Parameter::SMolar)]
+    #[case("Cpmolar", Parameter::CpMolar)]
+    #[case("Cp0molar", Parameter::Cp0Molar)]
+    #[case("Cvmolar", Parameter::CvMolar)]
+    #[case("Umolar", Parameter::UMolar)]
+    #[case("Gmolar", Parameter::GMolar)]
+    #[case("Helmholtzmolar", Parameter::HelmholtzMolar)]
+    #[case("Hmolar_residual", Parameter::HMolarResidual)]
+    #[case("Smolar_residual", Parameter::SMolarResidual)]
+    #[case("Gmolar_residual", Parameter::GMolarResidual)]
+    #[case("Dmass", Parameter::DMass)]
+    #[case("D", Parameter::DMass)]
+    #[case("Hmass", Parameter::HMass)]
+    #[case("H", Parameter::HMass)]
+    #[case("Smass", Parameter::SMass)]
+    #[case("S", Parameter::SMass)]
+    #[case("Cpmass", Parameter::CpMass)]
+    #[case("C", Parameter::CpMass)]
+    #[case("Cp0mass", Parameter::Cp0Mass)]
+    #[case("Cvmass", Parameter::CvMass)]
+    #[case("O", Parameter::CvMass)]
+    #[case("Umass", Parameter::UMass)]
+    #[case("U", Parameter::UMass)]
+    #[case("Gmass", Parameter::GMass)]
+    #[case("G", Parameter::GMass)]
+    #[case("Helmholtzmass", Parameter::HelmholtzMass)]
+    #[case("viscosity", Parameter::DynamicViscosity)]
+    #[case("V", Parameter::DynamicViscosity)]
+    #[case("conductivity", Parameter::Conductivity)]
+    #[case("L", Parameter::Conductivity)]
+    #[case("surface_tension", Parameter::SurfaceTension)]
+    #[case("I", Parameter::SurfaceTension)]
+    #[case("Prandtl", Parameter::Prandtl)]
+    #[case("speed_sound", Parameter::SoundSpeed)]
+    #[case("speed_of_sound", Parameter::SoundSpeed)]
+    #[case("A", Parameter::SoundSpeed)]
+    #[case("isothermal_compressibility", Parameter::IsothermalCompressibility)]
+    #[case(
+        "isobaric_expansion_coefficient",
+        Parameter::IsobaricExpansionCoefficient
+    )]
+    #[case(
+        "isentropic_expansion_coefficient",
+        Parameter::IsentropicExpansionCoefficient
+    )]
+    #[case(
+        "fundamental_derivative_of_gas_dynamics",
+        Parameter::FundamentalDerivativeOfGasDynamics
+    )]
+    #[case("alphar", Parameter::AlphaR)]
+    #[case("dalphar_dtau_constdelta", Parameter::DAlphaRDTauConstDelta)]
+    #[case("dalphar_ddelta_consttau", Parameter::DAlphaRDDeltaConstTau)]
+    #[case("alpha0", Parameter::Alpha0)]
+    #[case("dalpha0_dtau_constdelta", Parameter::DAlpha0DTauConstDelta)]
+    #[case("dalpha0_ddelta_consttau", Parameter::DAlpha0DDeltaConstTau)]
+    #[case("d2alpha0_ddelta2_consttau", Parameter::D2Alpha0DDelta2ConstTau)]
+    #[case("d3alpha0_ddelta3_consttau", Parameter::D3Alpha0DDelta3ConstTau)]
+    #[case("Bvirial", Parameter::BVirial)]
+    #[case("Cvirial", Parameter::CVirial)]
+    #[case("dBvirial_dT", Parameter::DBVirialDT)]
+    #[case("dCvirial_dT", Parameter::DCVirialDT)]
+    #[case("Z", Parameter::Z)]
+    #[case("PIP", Parameter::PIP)]
+    #[case("fraction_min", Parameter::MinFraction)]
+    #[case("fraction_max", Parameter::MaxFraction)]
+    #[case("T_freeze", Parameter::TFreeze)]
+    #[case("GWP20", Parameter::GWP20)]
+    #[case("GWP100", Parameter::GWP100)]
+    #[case("GWP500", Parameter::GWP500)]
+    #[case("FH", Parameter::FH)]
+    #[case("HH", Parameter::HH)]
+    #[case("PH", Parameter::PH)]
+    #[case("ODP", Parameter::ODP)]
+    #[case("Phase", Parameter::Phase)]
+    #[case("undefined_parameter", Parameter::Undefined)]
+    #[case("undefined", Parameter::Undefined)]
+    fn parameter_from_valid_str_returns_ok(#[case] s: &str, #[case] expected: Parameter) {
+        let mut result = Parameter::from_str(s);
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), expected);
+        result = Parameter::try_from(s);
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), expected);
+    }
+
+    #[rstest]
+    #[case("")]
+    #[case("Hello, World!")]
+    fn parameter_from_invalid_str_returns_err(#[case] s: &str) {
+        let result = Parameter::from_str(s);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            format!("'{}' has no matching parameters!", s)
+        );
+    }
+
+    //noinspection SpellCheckingInspection
+    #[rstest]
     #[case(Phase::Liquid, "phase_liquid")]
     #[case(Phase::Supercritical, "phase_supercritical")]
     #[case(Phase::SupercriticalGas, "phase_supercritical_gas")]
@@ -899,5 +1177,52 @@ mod tests {
     ) {
         let result: &'static str = phase.into();
         assert_eq!(result, expected);
+    }
+
+    //noinspection SpellCheckingInspection
+    #[rstest]
+    #[case("phase_liquid", Phase::Liquid)]
+    #[case("liquid", Phase::Liquid)]
+    #[case("phase_supercritical", Phase::Supercritical)]
+    #[case("supercritical", Phase::Supercritical)]
+    #[case("phase_supercritical_gas", Phase::SupercriticalGas)]
+    #[case("supercritical_gas", Phase::SupercriticalGas)]
+    #[case("supercriticalgas", Phase::SupercriticalGas)]
+    #[case("phase_supercritical_liquid", Phase::SupercriticalLiquid)]
+    #[case("supercritical_liquid", Phase::SupercriticalLiquid)]
+    #[case("supercriticalliquid", Phase::SupercriticalLiquid)]
+    #[case("phase_critical_point", Phase::CriticalPoint)]
+    #[case("critical_point", Phase::CriticalPoint)]
+    #[case("criticalpoint", Phase::CriticalPoint)]
+    #[case("phase_gas", Phase::Gas)]
+    #[case("gas", Phase::Gas)]
+    #[case("phase_twophase", Phase::TwoPhase)]
+    #[case("phase_two_phase", Phase::TwoPhase)]
+    #[case("two_phase", Phase::TwoPhase)]
+    #[case("twophase", Phase::TwoPhase)]
+    #[case("phase_unknown", Phase::Unknown)]
+    #[case("unknown", Phase::Unknown)]
+    #[case("phase_not_imposed", Phase::NotImposed)]
+    #[case("not_imposed", Phase::NotImposed)]
+    #[case("notimposed", Phase::NotImposed)]
+    fn phase_from_valid_str_returns_ok(#[case] s: &str, #[case] expected: Phase) {
+        let mut result = Phase::from_str(s);
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), expected);
+        result = Phase::try_from(s);
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), expected);
+    }
+
+    #[rstest]
+    #[case("")]
+    #[case("Hello, World!")]
+    fn phase_from_invalid_str_returns_err(#[case] s: &str) {
+        let result = Phase::from_str(s);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            format!("'{}' has no matching phase state!", s)
+        );
     }
 }
