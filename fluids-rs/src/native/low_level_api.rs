@@ -111,7 +111,7 @@ impl AbstractState {
         Self::result((), error)
     }
 
-    /// Updates the state of fluid.
+    /// Update the state of fluid.
     ///
     /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
@@ -151,7 +151,7 @@ impl AbstractState {
 
     /// Get an output parameter value.
     ///
-    /// For invalid state or for non-trivial outputs with not defined state,
+    /// For invalid state or for non-trivial outputs with undefined state,
     /// a [`CoolPropError`] is returned.
     ///
     /// - `key` — specified CoolProp output parameter.
@@ -234,6 +234,10 @@ impl AbstractState {
     /// result = water.update(InputPair::PT, 101325.0, 293.15);
     /// assert!(result.is_err());
     /// ```
+    ///
+    /// # See also
+    ///
+    /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     pub fn specify_phase(&self, phase: Phase) {
         let error = ErrorBuffer::default();
         let phase_name: &'static str = phase.into();
@@ -263,6 +267,10 @@ impl AbstractState {
     /// result = water.update(InputPair::PT, 101325.0, 293.15);
     /// assert!(result.is_ok());
     /// ```
+    ///
+    /// # See also
+    ///
+    /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     pub fn unspecify_phase(&self) {
         let error = ErrorBuffer::default();
         unsafe {
@@ -287,7 +295,7 @@ impl AbstractState {
     fn validated_keyed_output(key: Parameter, value: f64) -> Result<f64, CoolPropError> {
         if !value.is_finite() {
             return Err(CoolPropError(format!(
-                "Unable to get the value of '{:?}' due to invalid or not defined state!",
+                "Unable to get the value of '{:?}' due to invalid or undefined state!",
                 key
             )));
         }
@@ -405,7 +413,7 @@ mod tests {
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            "Unable to get the value of 'DMass' due to invalid or not defined state!"
+            "Unable to get the value of 'DMass' due to invalid or undefined state!"
         );
     }
 

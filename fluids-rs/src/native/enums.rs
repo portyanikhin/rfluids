@@ -288,7 +288,7 @@ impl TryFrom<(Parameter, Parameter)> for InputPair {
 ///
 /// # See also
 ///
-/// [CoolProp inputs/outputs](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
+/// [CoolProp input/output parameters](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Parameter {
     /// Molar gas constant _(J/mol/K)_.
@@ -872,6 +872,10 @@ impl TryFrom<f64> for Parameter {
 /// let result = Phase::try_from(5.0).unwrap();
 /// assert_eq!(result, Phase::Gas);
 /// ```
+///
+/// # See also
+///
+/// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Phase {
     /// Liquid _([`P`](Parameter::P) < [`PCritical`](Parameter::PCritical) &

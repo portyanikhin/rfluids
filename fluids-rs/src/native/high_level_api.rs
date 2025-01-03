@@ -7,8 +7,8 @@ use std::sync::MutexGuard;
 pub struct CoolProp;
 
 impl CoolProp {
-    /// Returns a value that depends on the thermodynamic state
-    /// of pure/pseudo-pure fluids or mixtures.
+    /// Returns a value that depends on
+    /// the thermodynamic state of pure/pseudo-pure fluid or mixture.
     ///
     /// For undefined fluid states or invalid inputs, a [`CoolPropError`] is returned.
     ///
@@ -152,8 +152,8 @@ impl CoolProp {
     }
 
     //noinspection SpellCheckingInspection
-    /// Returns a value that do not depend on the thermodynamic state
-    /// of pure/pseudo-pure fluids or mixtures.
+    /// Returns a value that doesn't depend on
+    /// the thermodynamic state of pure/pseudo-pure fluid or mixture (trivial output).
     ///
     /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
@@ -201,8 +201,8 @@ impl CoolProp {
         Ok(result)
     }
 
-    /// Returns a phase state dependent on the thermodynamic state
-    /// of pure/pseudo-pure fluids or mixtures.
+    /// Returns a phase state that depends on
+    /// the thermodynamic state of pure/pseudo-pure fluid or mixture.
     ///
     /// For undefined fluid states or invalid inputs, a [`CoolPropError`] is returned.
     ///
@@ -231,6 +231,11 @@ impl CoolProp {
     /// let result = CoolProp::phase_si("P", 101325.0, "Q", 1.0, "Water").unwrap();
     /// assert_eq!(result, Phase::TwoPhase);
     /// ```
+    ///
+    /// # See also
+    ///
+    /// - [PhaseSI function](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#phasesi-function)
+    /// - [PhaseSI inputs/outputs](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
     pub fn phase_si(
         input1_name: impl AsRef<str>,
         input1_value: f64,
