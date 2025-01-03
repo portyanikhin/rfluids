@@ -1,4 +1,5 @@
 use crate::native::common::{const_ptr_c_char, CoolPropError, MessageBuffer, COOLPROP};
+use crate::native::{Parameter, Phase};
 use core::ffi::c_char;
 use std::sync::MutexGuard;
 
@@ -200,6 +201,54 @@ impl CoolProp {
         Ok(result)
     }
 
+    /// Returns a phase state dependent on the thermodynamic state
+    /// of pure/pseudo-pure fluids or mixtures.
+    ///
+    /// For undefined fluid states or invalid inputs, a [`CoolPropError`] is returned.
+    ///
+    /// - `input1_name` — name of the first input property.
+    /// - `input1_value` — value of the first input property _(in SI units)_.
+    /// - `input2_name` — name of the second input property.
+    /// - `input2_value` — value of the second input property _(in SI units)_.
+    /// - `fluid_name` — name of the fluid.
+    ///
+    /// # Examples
+    ///
+    /// Phase state of water in standard conditions:
+    ///
+    /// ```
+    /// use fluids_rs::native::{CoolProp, Phase};
+    ///
+    /// let result = CoolProp::phase_si("P", 101325.0, "T", 293.15, "Water").unwrap();
+    /// assert_eq!(result, Phase::Liquid);
+    /// ```
+    ///
+    /// Phase state of saturated water vapor at _1 atm_:
+    ///
+    /// ```
+    /// use fluids_rs::native::{CoolProp, Phase};
+    ///
+    /// let result = CoolProp::phase_si("P", 101325.0, "Q", 1.0, "Water").unwrap();
+    /// assert_eq!(result, Phase::TwoPhase);
+    /// ```
+    pub fn phase_si(
+        input1_name: impl AsRef<str>,
+        input1_value: f64,
+        input2_name: impl AsRef<str>,
+        input2_value: f64,
+        fluid_name: impl AsRef<str>,
+    ) -> Result<Phase, CoolPropError> {
+        let output_name: &'static str = Parameter::Phase.into();
+        Phase::try_from(Self::props_si(
+            output_name,
+            input1_name,
+            input1_value,
+            input2_name,
+            input2_value,
+            fluid_name,
+        )?)
+    }
+
     fn validate_result(
         result: f64,
         lock: MutexGuard<coolprop_sys::bindings::CoolProp>,
@@ -308,6 +357,24 @@ mod tests {
             "Unable to use input parameter [T] in Props1SI for fluid Water; \
             error was Input pair variable is invalid and output(s) are non-trivial; \
             cannot do state update : PropsSI(\"T\",\"\",0,\"\",0,\"Water\")"
+        );
+    }
+
+    #[test]
+    fn phase_si_valid_input_returns_ok() {
+        let result = CoolProp::phase_si("P", 101325.0, "T", 293.15, "Water");
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), Phase::Liquid);
+    }
+
+    #[test]
+    fn phase_si_invalid_input_returns_err() {
+        let result = CoolProp::phase_si("P", 101325.0, "Q", -1.0, "Water");
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Input vapor quality [Q] must be between 0 and 1 : \
+            PropsSI(\"Phase\",\"P\",101325,\"Q\",-1,\"Water\")"
         );
     }
 
