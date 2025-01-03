@@ -31,6 +31,7 @@ impl Display for CoolPropError {
     }
 }
 
+#[derive(Debug)]
 pub(crate) struct ErrorBuffer {
     pub code: *mut c_long,
     pub message: MessageBuffer,
@@ -45,13 +46,13 @@ impl Default for ErrorBuffer {
     }
 }
 
-#[allow(clippy::from_over_into)]
-impl Into<String> for ErrorBuffer {
-    fn into(self) -> String {
-        self.message.into()
+impl From<ErrorBuffer> for String {
+    fn from(value: ErrorBuffer) -> Self {
+        value.message.into()
     }
 }
 
+#[derive(Debug)]
 pub(crate) struct MessageBuffer {
     pub capacity: c_int,
     pub buffer: *mut c_char,
@@ -67,10 +68,9 @@ impl Default for MessageBuffer {
     }
 }
 
-#[allow(clippy::from_over_into)]
-impl Into<String> for MessageBuffer {
-    fn into(self) -> String {
-        unsafe { CString::from_raw(self.buffer).into_string().unwrap() }
+impl From<MessageBuffer> for String {
+    fn from(value: MessageBuffer) -> Self {
+        unsafe { CString::from_raw(value.buffer).into_string().unwrap() }
     }
 }
 
