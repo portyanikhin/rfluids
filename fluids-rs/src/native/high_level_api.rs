@@ -242,7 +242,7 @@ mod tests {
         let result = CoolProp::props_si("D", "P", 101325.0, "Q", -1.0, "Water");
         assert!(result.is_err());
         assert_eq!(
-            result.err().unwrap().to_string(),
+            result.unwrap_err().to_string(),
             "Input vapor quality [Q] must be between 0 and 1 : \
             PropsSI(\"D\",\"P\",101325,\"Q\",-1,\"Water\")"
         );
@@ -269,7 +269,7 @@ mod tests {
         let result = CoolProp::ha_props_si("W", "P", 101325.0, "T", 293.15, "R", -0.5);
         assert!(result.is_err());
         assert_eq!(
-            result.err().unwrap().to_string(),
+            result.unwrap_err().to_string(),
             "The input for key (7) with value (-0.5) \
             is outside the range of validity: (0) to (1)"
         );
@@ -304,7 +304,7 @@ mod tests {
         let result = CoolProp::props1_si("T", "Water");
         assert!(result.is_err());
         assert_eq!(
-            result.err().unwrap().to_string(),
+            result.unwrap_err().to_string(),
             "Unable to use input parameter [T] in Props1SI for fluid Water; \
             error was Input pair variable is invalid and output(s) are non-trivial; \
             cannot do state update : PropsSI(\"T\",\"\",0,\"\",0,\"Water\")"

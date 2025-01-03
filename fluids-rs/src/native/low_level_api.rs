@@ -3,6 +3,7 @@ use crate::native::enums::*;
 use core::ffi::{c_char, c_long};
 
 /// CoolProp thread safe low-level API.
+#[derive(Debug)]
 pub struct AbstractState {
     ptr: c_long,
 }
@@ -348,7 +349,7 @@ mod tests {
     ) {
         let result = AbstractState::new(backend_name, fluid_names);
         assert!(result.is_err());
-        assert_eq!(result.err().unwrap().to_string(), expected_message);
+        assert_eq!(result.unwrap_err().to_string(), expected_message);
     }
 
     #[test]
@@ -383,7 +384,7 @@ mod tests {
         let result = sut.update(InputPair::PQ, 101325.0, -1.0);
         assert!(result.is_err());
         assert_eq!(
-            result.err().unwrap().to_string(),
+            result.unwrap_err().to_string(),
             "Error: Input vapor quality [Q] must be between 0 and 1"
         );
     }
@@ -403,7 +404,7 @@ mod tests {
         let result = water.keyed_output(Parameter::DMass);
         assert!(result.is_err());
         assert_eq!(
-            result.err().unwrap().to_string(),
+            result.unwrap_err().to_string(),
             "Unable to get the value of 'DMass' due to invalid or not defined state!"
         );
     }

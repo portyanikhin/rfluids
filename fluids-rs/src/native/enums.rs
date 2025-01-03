@@ -22,7 +22,7 @@ use std::str::FromStr;
 /// let result = InputPair::try_from((Parameter::TCritical, Parameter::CpMass));
 /// assert!(result.is_err());
 /// assert_eq!(
-///     result.err().unwrap().to_string(),
+///     result.unwrap_err().to_string(),
 ///     "Specified parameters ('TCritical', 'CpMass') has no matching input pairs!"
 /// );
 /// ```
@@ -272,7 +272,7 @@ impl TryFrom<(Parameter, Parameter)> for InputPair {
 ///     (Parameter::TCritical, Parameter::CpMass).try_into();
 /// assert!(result.is_err());
 /// assert_eq!(
-///     result.err().unwrap().to_string(),
+///     result.unwrap_err().to_string(),
 ///     "Specified parameters ('TCritical', 'CpMass') has no matching input pairs!"
 /// );
 /// ```
@@ -915,7 +915,7 @@ mod tests {
         let result = InputPair::try_from(invalid_parameters);
         assert!(result.is_err());
         assert_eq!(
-            result.err().unwrap().to_string(),
+            result.unwrap_err().to_string(),
             format!(
                 "Specified parameters ('{:?}', '{:?}') has no matching input pairs!",
                 invalid_parameters.0, invalid_parameters.1
