@@ -28,9 +28,6 @@ use std::str::FromStr;
 /// ```
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum InputPair {
-    /// Default _(invalid)_ value.
-    Invalid = 0,
-
     /// Vapor quality _(dimensionless, from 0 to 1)_, temperature _(K)_.
     QT = 1,
 
@@ -142,7 +139,6 @@ impl TryFrom<(Parameter, Parameter)> for InputPair {
 
     fn try_from(value: (Parameter, Parameter)) -> Result<Self, Self::Error> {
         match value {
-            (Parameter::Invalid, Parameter::Invalid) => Ok(InputPair::Invalid),
             (Parameter::Q, Parameter::T) | (Parameter::T, Parameter::Q) => Ok(InputPair::QT),
             (Parameter::P, Parameter::Q) | (Parameter::Q, Parameter::P) => Ok(InputPair::PQ),
             (Parameter::Q, Parameter::SMolar) | (Parameter::SMolar, Parameter::Q) => {
@@ -282,9 +278,6 @@ impl TryFrom<(Parameter, Parameter)> for InputPair {
 /// [CoolProp inputs/outputs](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Parameter {
-    /// Default _(invalid)_ value.
-    Invalid = 0,
-
     /// Molar gas constant _(J/mol/K)_.
     GasConstant = 1,
 
@@ -530,16 +523,12 @@ pub enum Parameter {
 
     /// Phase index _(dimensionless)_.
     Phase = 78,
-
-    /// Undefined _(reserve)_ value.
-    Undefined = 79,
 }
 
 impl From<Parameter> for &'static str {
     //noinspection SpellCheckingInspection
     fn from(value: Parameter) -> Self {
         match value {
-            Parameter::Invalid => "invalid",
             Parameter::GasConstant => "gas_constant",
             Parameter::MolarMass => "molar_mass",
             Parameter::AcentricFactor => "acentric_factor",
@@ -620,7 +609,6 @@ impl From<Parameter> for &'static str {
             Parameter::PH => "PH",
             Parameter::ODP => "ODP",
             Parameter::Phase => "Phase",
-            Parameter::Undefined => "undefined_parameter",
         }
     }
 }
@@ -631,7 +619,6 @@ impl FromStr for Parameter {
     //noinspection SpellCheckingInspection
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
-            "invalid" => Ok(Parameter::Invalid),
             "gas_constant" => Ok(Parameter::GasConstant),
             "molar_mass" | "m" | "molarmass" | "molemass" => Ok(Parameter::MolarMass),
             "acentric_factor" | "acentric" => Ok(Parameter::AcentricFactor),
@@ -712,7 +699,6 @@ impl FromStr for Parameter {
             "ph" => Ok(Parameter::PH),
             "odp" => Ok(Parameter::ODP),
             "phase" => Ok(Parameter::Phase),
-            "undefined_parameter" | "undefined" => Ok(Parameter::Undefined),
             _ => Err(CoolPropError(format!("'{}' has no matching parameter!", s))),
         }
     }
@@ -731,7 +717,6 @@ impl TryFrom<u8> for Parameter {
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
-            0 => Ok(Parameter::Invalid),
             1 => Ok(Parameter::GasConstant),
             2 => Ok(Parameter::MolarMass),
             3 => Ok(Parameter::AcentricFactor),
@@ -810,7 +795,6 @@ impl TryFrom<u8> for Parameter {
             76 => Ok(Parameter::PH),
             77 => Ok(Parameter::ODP),
             78 => Ok(Parameter::Phase),
-            79 => Ok(Parameter::Undefined),
             _ => Err(CoolPropError(format!(
                 "'{}' has no matching parameter!",
                 value
@@ -967,7 +951,6 @@ mod tests {
     use rstest::*;
 
     #[rstest]
-    #[case((Parameter::Invalid, Parameter::Invalid), InputPair::Invalid)]
     #[case((Parameter::Q, Parameter::T), InputPair::QT)]
     #[case((Parameter::T, Parameter::Q), InputPair::QT)]
     #[case((Parameter::P, Parameter::Q), InputPair::PQ)]
@@ -1067,7 +1050,6 @@ mod tests {
 
     //noinspection SpellCheckingInspection
     #[rstest]
-    #[case(Parameter::Invalid, "invalid")]
     #[case(Parameter::GasConstant, "gas_constant")]
     #[case(Parameter::MolarMass, "molar_mass")]
     #[case(Parameter::AcentricFactor, "acentric_factor")]
@@ -1155,7 +1137,6 @@ mod tests {
     #[case(Parameter::PH, "PH")]
     #[case(Parameter::ODP, "ODP")]
     #[case(Parameter::Phase, "Phase")]
-    #[case(Parameter::Undefined, "undefined_parameter")]
     fn parameter_into_static_str_always_returns_expected_value(
         #[case] parameter: Parameter,
         #[case] expected: &'static str,
@@ -1166,7 +1147,6 @@ mod tests {
 
     //noinspection SpellCheckingInspection
     #[rstest]
-    #[case("invalid", Parameter::Invalid)]
     #[case("gas_constant", Parameter::GasConstant)]
     #[case("molar_mass", Parameter::MolarMass)]
     #[case("M", Parameter::MolarMass)]
@@ -1279,13 +1259,11 @@ mod tests {
     #[case("PH", Parameter::PH)]
     #[case("ODP", Parameter::ODP)]
     #[case("Phase", Parameter::Phase)]
-    #[case("undefined_parameter", Parameter::Undefined)]
-    #[case("undefined", Parameter::Undefined)]
-    fn parameter_from_valid_str_returns_ok(#[case] s: &str, #[case] expected: Parameter) {
-        let mut result = Parameter::from_str(s);
+    fn parameter_from_valid_str_returns_ok(#[case] valid_value: &str, #[case] expected: Parameter) {
+        let mut result = Parameter::from_str(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
-        result = Parameter::try_from(s);
+        result = Parameter::try_from(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
     }
@@ -1293,17 +1271,16 @@ mod tests {
     #[rstest]
     #[case("")]
     #[case("Hello, World!")]
-    fn parameter_from_invalid_str_returns_err(#[case] s: &str) {
-        let result = Parameter::from_str(s);
+    fn parameter_from_invalid_str_returns_err(#[case] invalid_value: &str) {
+        let result = Parameter::from_str(invalid_value);
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            format!("'{}' has no matching parameter!", s)
+            format!("'{}' has no matching parameter!", invalid_value)
         );
     }
 
     #[rstest]
-    #[case(0, Parameter::Invalid)]
     #[case(1, Parameter::GasConstant)]
     #[case(2, Parameter::MolarMass)]
     #[case(3, Parameter::AcentricFactor)]
@@ -1382,9 +1359,11 @@ mod tests {
     #[case(76, Parameter::PH)]
     #[case(77, Parameter::ODP)]
     #[case(78, Parameter::Phase)]
-    #[case(79, Parameter::Undefined)]
-    fn parameter_from_valid_u8_returns_ok(#[case] value: u8, #[case] expected: Parameter) {
-        let result = Parameter::try_from(value);
+    fn parameter_try_from_valid_u8_returns_ok(
+        #[case] valid_value: u8,
+        #[case] expected: Parameter,
+    ) {
+        let result = Parameter::try_from(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
     }
@@ -1392,17 +1371,16 @@ mod tests {
     #[rstest]
     #[case(254)]
     #[case(255)]
-    fn parameter_from_invalid_u8_returns_err(#[case] value: u8) {
-        let result = Parameter::try_from(value);
+    fn parameter_try_from_invalid_u8_returns_err(#[case] invalid_value: u8) {
+        let result = Parameter::try_from(invalid_value);
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            format!("'{}' has no matching parameter!", value)
+            format!("'{}' has no matching parameter!", invalid_value)
         );
     }
 
     #[rstest]
-    #[case(0.0, Parameter::Invalid)]
     #[case(1.0, Parameter::GasConstant)]
     #[case(2.0, Parameter::MolarMass)]
     #[case(3.0, Parameter::AcentricFactor)]
@@ -1481,9 +1459,11 @@ mod tests {
     #[case(76.0, Parameter::PH)]
     #[case(77.0, Parameter::ODP)]
     #[case(78.0, Parameter::Phase)]
-    #[case(79.0, Parameter::Undefined)]
-    fn parameter_from_valid_f64_returns_ok(#[case] value: f64, #[case] expected: Parameter) {
-        let result = Parameter::try_from(value);
+    fn parameter_try_from_valid_f64_returns_ok(
+        #[case] valid_value: f64,
+        #[case] expected: Parameter,
+    ) {
+        let result = Parameter::try_from(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
     }
@@ -1492,12 +1472,12 @@ mod tests {
     #[case(-1.0)]
     #[case(255.0)]
     #[case(100e3)]
-    fn parameter_from_invalid_f64_returns_err(#[case] value: f64) {
-        let result = Parameter::try_from(value);
+    fn parameter_try_from_invalid_f64_returns_err(#[case] invalid_value: f64) {
+        let result = Parameter::try_from(invalid_value);
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            format!("'{}' has no matching parameter!", value)
+            format!("'{}' has no matching parameter!", invalid_value)
         );
     }
 
@@ -1546,11 +1526,11 @@ mod tests {
     #[case("phase_not_imposed", Phase::NotImposed)]
     #[case("not_imposed", Phase::NotImposed)]
     #[case("notimposed", Phase::NotImposed)]
-    fn phase_from_valid_str_returns_ok(#[case] s: &str, #[case] expected: Phase) {
-        let mut result = Phase::from_str(s);
+    fn phase_from_valid_str_returns_ok(#[case] valid_value: &str, #[case] expected: Phase) {
+        let mut result = Phase::from_str(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
-        result = Phase::try_from(s);
+        result = Phase::try_from(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
     }
@@ -1558,12 +1538,12 @@ mod tests {
     #[rstest]
     #[case("")]
     #[case("Hello, World!")]
-    fn phase_from_invalid_str_returns_err(#[case] s: &str) {
-        let result = Phase::from_str(s);
+    fn phase_from_invalid_str_returns_err(#[case] invalid_value: &str) {
+        let result = Phase::from_str(invalid_value);
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            format!("'{}' has no matching phase state!", s)
+            format!("'{}' has no matching phase state!", invalid_value)
         );
     }
 
@@ -1577,8 +1557,8 @@ mod tests {
     #[case(6, Phase::TwoPhase)]
     #[case(7, Phase::Unknown)]
     #[case(8, Phase::NotImposed)]
-    fn phase_from_valid_u8_returns_ok(#[case] value: u8, #[case] expected: Phase) {
-        let result = Phase::try_from(value);
+    fn phase_try_from_valid_u8_returns_ok(#[case] valid_value: u8, #[case] expected: Phase) {
+        let result = Phase::try_from(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
     }
@@ -1586,12 +1566,12 @@ mod tests {
     #[rstest]
     #[case(254)]
     #[case(255)]
-    fn phase_from_invalid_u8_returns_err(#[case] value: u8) {
-        let result = Phase::try_from(value);
+    fn phase_try_from_invalid_u8_returns_err(#[case] invalid_value: u8) {
+        let result = Phase::try_from(invalid_value);
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            format!("'{}' has no matching phase state!", value)
+            format!("'{}' has no matching phase state!", invalid_value)
         );
     }
 
@@ -1605,8 +1585,8 @@ mod tests {
     #[case(6.0, Phase::TwoPhase)]
     #[case(7.0, Phase::Unknown)]
     #[case(8.0, Phase::NotImposed)]
-    fn phase_from_valid_f64_returns_ok(#[case] value: f64, #[case] expected: Phase) {
-        let result = Phase::try_from(value);
+    fn phase_try_from_valid_f64_returns_ok(#[case] valid_value: f64, #[case] expected: Phase) {
+        let result = Phase::try_from(valid_value);
         assert!(result.is_ok());
         assert_eq!(result.unwrap(), expected);
     }
@@ -1615,12 +1595,12 @@ mod tests {
     #[case(-1.0)]
     #[case(255.0)]
     #[case(100e3)]
-    fn phase_from_invalid_f64_returns_err(#[case] value: f64) {
-        let result = Phase::try_from(value);
+    fn phase_try_from_invalid_f64_returns_err(#[case] invalid_value: f64) {
+        let result = Phase::try_from(invalid_value);
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            format!("'{}' has no matching phase state!", value)
+            format!("'{}' has no matching phase state!", invalid_value)
         );
     }
 }
