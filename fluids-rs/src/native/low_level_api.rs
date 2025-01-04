@@ -1,5 +1,4 @@
 use crate::native::common::{const_ptr_c_char, CoolPropError, ErrorBuffer, COOLPROP};
-use crate::native::enums::*;
 use core::ffi::{c_char, c_long};
 
 /// CoolProp thread safe low-level API.
@@ -111,11 +110,12 @@ impl AbstractState {
         Self::result((), error)
     }
 
-    /// Update the state of fluid.
+    /// Update the state of the fluid.
     ///
     /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
-    /// - `input_pair` — CoolProp input pair.
+    /// - `input_pair_key` — specified input pair key
+    ///   _(raw [`u8`] or [`InputPair`](crate::native::InputPair))_.
     /// - `input1` — value of the first input property _(in SI units)_.
     /// - `input2` — value of the second input property _(in SI units)_.
     ///
@@ -125,12 +125,12 @@ impl AbstractState {
     /// use fluids_rs::native::{AbstractState, InputPair};
     ///
     /// let water = AbstractState::new("HEOS", "Water").unwrap();
-    /// let result = water.update(InputPair::PT, 101325.0, 293.15);
+    /// let mut result = water.update(InputPair::PT, 101325.0, 293.15);
     /// assert!(result.is_ok());
     /// ```
     pub fn update(
         &self,
-        input_pair: InputPair,
+        input_pair_key: impl Into<u8>,
         input1: f64,
         input2: f64,
     ) -> Result<(), CoolPropError> {
@@ -138,7 +138,7 @@ impl AbstractState {
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_update(
                 self.ptr,
-                input_pair as c_long,
+                input_pair_key.into() as c_long,
                 input1,
                 input2,
                 error.code,
@@ -151,10 +151,11 @@ impl AbstractState {
 
     /// Get an output parameter value.
     ///
-    /// For invalid state or for non-trivial outputs with undefined state,
+    /// For non-trivial outputs with undefined state or invalid input,
     /// a [`CoolPropError`] is returned.
     ///
-    /// - `key` — specified CoolProp output parameter.
+    /// - `key` — specified output parameter key
+    ///   _(raw [`u8`] or [`Parameter`](crate::native::Parameter))_.
     ///
     /// # Examples
     ///
@@ -203,8 +204,9 @@ impl AbstractState {
     /// let result = mixture.keyed_output(Parameter::DMass).unwrap();
     /// assert_relative_eq!(result, 859.5296602799147);
     /// ```
-    pub fn keyed_output(&self, key: Parameter) -> Result<f64, CoolPropError> {
+    pub fn keyed_output(&self, key: impl Into<u8>) -> Result<f64, CoolPropError> {
         let error = ErrorBuffer::default();
+        let key = key.into();
         let value = unsafe {
             COOLPROP.lock().unwrap().AbstractState_keyed_output(
                 self.ptr,
@@ -214,12 +216,15 @@ impl AbstractState {
                 error.message.capacity,
             )
         };
-        Self::validated_keyed_output(key, value)
+        Self::keyed_output_result(key, value, error)
     }
 
     /// Specify the phase state for all further calculations.
     ///
-    /// - `phase` — specified phase state.
+    /// For invalid input, a [`CoolPropError`] is returned.
+    ///
+    /// - `phase` — specified phase state
+    ///   _(raw [`&str`](str) or [`Phase`](crate::native::Phase))_.
     ///
     /// # Examples
     ///
@@ -227,10 +232,10 @@ impl AbstractState {
     /// use fluids_rs::native::{AbstractState, InputPair, Phase};
     ///
     /// let water = AbstractState::new("HEOS", "Water").unwrap();
-    /// water.specify_phase(Phase::Liquid);
+    /// water.specify_phase(Phase::Liquid).unwrap();
     /// let mut result = water.update(InputPair::PT, 101325.0, 293.15);
     /// assert!(result.is_ok());
-    /// water.specify_phase(Phase::Gas);
+    /// water.specify_phase(Phase::Gas).unwrap();
     /// result = water.update(InputPair::PT, 101325.0, 293.15);
     /// assert!(result.is_err());
     /// ```
@@ -238,7 +243,7 @@ impl AbstractState {
     /// # See also
     ///
     /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
-    pub fn specify_phase(&self, phase: Phase) {
+    pub fn specify_phase(&self, phase: impl AsRef<str>) -> Result<(), CoolPropError> {
         let error = ErrorBuffer::default();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_specify_phase(
@@ -249,6 +254,7 @@ impl AbstractState {
                 error.message.capacity,
             );
         }
+        Self::result((), error)
     }
 
     /// Unspecify the phase state and go back to calculating it based on the inputs.
@@ -259,7 +265,7 @@ impl AbstractState {
     /// use fluids_rs::native::{AbstractState, InputPair, Phase};
     ///
     /// let water = AbstractState::new("HEOS", "Water").unwrap();
-    /// water.specify_phase(Phase::Gas);
+    /// water.specify_phase(Phase::Gas).unwrap();
     /// let mut result = water.update(InputPair::PT, 101325.0, 293.15);
     /// assert!(result.is_err());
     /// water.unspecify_phase();
@@ -282,19 +288,20 @@ impl AbstractState {
         }
     }
 
-    fn result<T>(result: T, error_buffer: ErrorBuffer) -> Result<T, CoolPropError> {
-        let error_message: String = error_buffer.into();
+    fn result<T>(value: T, error: ErrorBuffer) -> Result<T, CoolPropError> {
+        let error_message: String = error.into();
         if error_message.trim().is_empty() {
-            Ok(result)
+            Ok(value)
         } else {
             Err(CoolPropError(error_message))
         }
     }
 
-    fn validated_keyed_output(key: Parameter, value: f64) -> Result<f64, CoolPropError> {
+    fn keyed_output_result(key: u8, value: f64, error: ErrorBuffer) -> Result<f64, CoolPropError> {
+        Self::result((), error)?;
         if !value.is_finite() {
             return Err(CoolPropError(format!(
-                "Unable to get the value of '{:?}' due to invalid or undefined state!",
+                "Unable to get the output with key '{}' due to invalid or undefined state!",
                 key
             )));
         }
@@ -319,6 +326,7 @@ impl Drop for AbstractState {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::native::{InputPair, Parameter, Phase};
     use approx::assert_relative_eq;
     use rstest::*;
 
@@ -398,39 +406,62 @@ mod tests {
 
     #[test]
     fn keyed_output_valid_state_returns_ok() {
-        let water = AbstractState::new("HEOS", "Water").unwrap();
-        water.update(InputPair::PQ, 101325.0, 1.0).unwrap();
-        let result = water.keyed_output(Parameter::CpMass);
+        let sut = AbstractState::new("HEOS", "Water").unwrap();
+        sut.update(InputPair::PQ, 101325.0, 1.0).unwrap();
+        let result = sut.keyed_output(Parameter::CpMass);
         assert!(result.is_ok());
         assert_relative_eq!(result.unwrap(), 2079.937085633241);
     }
 
     #[test]
-    fn keyed_output_non_trivial_with_not_defined_state_returns_err() {
-        let water = AbstractState::new("HEOS", "Water").unwrap();
-        let result = water.keyed_output(Parameter::DMass);
+    fn keyed_output_invalid_input_returns_err() {
+        let sut = AbstractState::new("HEOS", "Water").unwrap();
+        let result = sut.keyed_output(255);
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            "Unable to get the value of 'DMass' due to invalid or undefined state!"
+            "Error: Unable to match the key [255] in get_parameter_information for info [short]"
         );
     }
 
     #[test]
-    fn specify_phase_always_specifies_phase_for_all_further_calculations() {
+    fn keyed_output_non_trivial_with_not_defined_state_returns_err() {
         let sut = AbstractState::new("HEOS", "Water").unwrap();
-        sut.specify_phase(Phase::Liquid);
+        let result = sut.keyed_output(Parameter::DMass);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Unable to get the output with key '36' due to invalid or undefined state!"
+        );
+    }
+
+    #[test]
+    fn specify_phase_valid_input_specifies_phase_for_all_further_calculations() {
+        let sut = AbstractState::new("HEOS", "Water").unwrap();
+        sut.specify_phase(Phase::Liquid).unwrap();
         let mut result = sut.update(InputPair::PT, 101325.0, 293.15);
         assert!(result.is_ok());
-        sut.specify_phase(Phase::Gas);
+        sut.specify_phase(Phase::Gas).unwrap();
         result = sut.update(InputPair::PT, 101325.0, 293.15);
         assert!(result.is_err());
     }
 
     #[test]
+    fn specify_phase_invalid_input_returns_err() {
+        let sut = AbstractState::new("HEOS", "Water").unwrap();
+        let result = sut.specify_phase("Hello, World!");
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "Error: Your input name [Hello, World!] is not valid \
+            in get_phase_index (names are case sensitive)"
+        );
+    }
+
+    #[test]
     fn unspecify_phase_always_unspecifies_phase_for_all_further_calculations() {
         let sut = AbstractState::new("HEOS", "Water").unwrap();
-        sut.specify_phase(Phase::Gas);
+        sut.specify_phase(Phase::Gas).unwrap();
         let mut result = sut.update(InputPair::PT, 101325.0, 293.15);
         assert!(result.is_err());
         sut.unspecify_phase();

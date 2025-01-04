@@ -121,6 +121,12 @@ pub enum InputPair {
     DMolarUMolar = 35,
 }
 
+impl From<InputPair> for u8 {
+    fn from(value: InputPair) -> Self {
+        value as u8
+    }
+}
+
 impl TryFrom<(Parameter, Parameter)> for InputPair {
     type Error = CoolPropError;
 
@@ -237,6 +243,47 @@ impl TryFrom<(Parameter, Parameter)> for InputPair {
 mod tests {
     use super::*;
     use rstest::*;
+
+    #[rstest]
+    #[case(InputPair::QT, 1)]
+    #[case(InputPair::PQ, 2)]
+    #[case(InputPair::QSMolar, 3)]
+    #[case(InputPair::QSMass, 4)]
+    #[case(InputPair::HMolarQ, 5)]
+    #[case(InputPair::HMassQ, 6)]
+    #[case(InputPair::DMolarQ, 7)]
+    #[case(InputPair::DMassQ, 8)]
+    #[case(InputPair::PT, 9)]
+    #[case(InputPair::DMassT, 10)]
+    #[case(InputPair::DMolarT, 11)]
+    #[case(InputPair::HMolarT, 12)]
+    #[case(InputPair::HMassT, 13)]
+    #[case(InputPair::SMolarT, 14)]
+    #[case(InputPair::SMassT, 15)]
+    #[case(InputPair::TUMolar, 16)]
+    #[case(InputPair::TUMass, 17)]
+    #[case(InputPair::DMassP, 18)]
+    #[case(InputPair::DMolarP, 19)]
+    #[case(InputPair::HMassP, 20)]
+    #[case(InputPair::HMolarP, 21)]
+    #[case(InputPair::PSMass, 22)]
+    #[case(InputPair::PSMolar, 23)]
+    #[case(InputPair::PUMass, 24)]
+    #[case(InputPair::PUMolar, 25)]
+    #[case(InputPair::HMassSMass, 26)]
+    #[case(InputPair::HMolarSMolar, 27)]
+    #[case(InputPair::SMassUMass, 28)]
+    #[case(InputPair::SMolarUMolar, 29)]
+    #[case(InputPair::DMassHMass, 30)]
+    #[case(InputPair::DMolarHMolar, 31)]
+    #[case(InputPair::DMassSMass, 32)]
+    #[case(InputPair::DMolarSMolar, 33)]
+    #[case(InputPair::DMassUMass, 34)]
+    #[case(InputPair::DMolarUMolar, 35)]
+    fn into_u8_always_returns_expected_value(#[case] input_pair: InputPair, #[case] expected: u8) {
+        let result: u8 = input_pair.into();
+        assert_eq!(result, expected);
+    }
 
     #[rstest]
     #[case((Parameter::Q, Parameter::T), InputPair::QT)]
