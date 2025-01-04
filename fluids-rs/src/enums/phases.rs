@@ -7,7 +7,7 @@ use std::str::FromStr;
 ///
 /// How to convert [`Phase`] into [`&str`](str):
 /// ```
-/// use fluids_rs::native::Phase;
+/// use fluids_rs::enums::Phase;
 ///
 /// let result = Phase::Liquid.as_ref();
 /// assert_eq!(result, "phase_liquid");
@@ -16,7 +16,7 @@ use std::str::FromStr;
 /// How to parse [`Phase`] from [`&str`](str):
 /// ```
 /// use std::str::FromStr;
-/// use fluids_rs::native::Phase;
+/// use fluids_rs::enums::Phase;
 ///
 /// let result = Phase::from_str("phase_liquid").unwrap();
 /// assert_eq!(result, Phase::Liquid);
@@ -29,7 +29,7 @@ use std::str::FromStr;
 ///
 /// How to parse [`Phase`] from [`u8`]:
 /// ```
-/// use fluids_rs::native::Phase;
+/// use fluids_rs::enums::Phase;
 ///
 /// let result = Phase::try_from(5).unwrap();
 /// assert_eq!(result, Phase::Gas);
@@ -37,7 +37,7 @@ use std::str::FromStr;
 ///
 /// How to parse [`Phase`] from [`f64`]:
 /// ```
-/// use fluids_rs::native::Phase;
+/// use fluids_rs::enums::Phase;
 ///
 /// let result = Phase::try_from(5.0).unwrap();
 /// assert_eq!(result, Phase::Gas);

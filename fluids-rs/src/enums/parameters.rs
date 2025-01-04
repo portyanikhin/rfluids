@@ -9,7 +9,7 @@ use std::str::FromStr;
 /// How to convert [`Parameter`] into [`&str`](str):
 ///
 /// ```
-/// use fluids_rs::native::Parameter;
+/// use fluids_rs::enums::Parameter;
 ///
 /// let result = Parameter::TMin.as_ref();
 /// assert_eq!(result, "T_min");
@@ -19,7 +19,7 @@ use std::str::FromStr;
 ///
 /// ```
 /// use std::str::FromStr;
-/// use fluids_rs::native::Parameter;
+/// use fluids_rs::enums::Parameter;
 ///
 /// let result = Parameter::from_str("T_min").unwrap();
 /// assert_eq!(result, Parameter::TMin);
@@ -30,10 +30,19 @@ use std::str::FromStr;
 /// assert_eq!(result, Parameter::TMin);
 /// ```
 ///
+/// How to convert [`Parameter`] into [`u8`]:
+///
+/// ```
+/// use fluids_rs::enums::Parameter;
+///
+/// let result: u8 = Parameter::TMax.into();
+/// assert_eq!(result, 15);
+/// ```
+///
 /// How to parse [`Parameter`] from [`u8`]:
 ///
 /// ```
-/// use fluids_rs::native::Parameter;
+/// use fluids_rs::enums::Parameter;
 ///
 /// let result = Parameter::try_from(15).unwrap();
 /// assert_eq!(result, Parameter::TMax);
@@ -42,7 +51,7 @@ use std::str::FromStr;
 /// How to parse [`Parameter`] from [`f64`]:
 ///
 /// ```
-/// use fluids_rs::native::Parameter;
+/// use fluids_rs::enums::Parameter;
 ///
 /// let result = Parameter::try_from(15.0).unwrap();
 /// assert_eq!(result, Parameter::TMax);
@@ -51,7 +60,7 @@ use std::str::FromStr;
 /// How to convert two [`Parameter`]s into [`InputPair`](crate::native::InputPair):
 ///
 /// ```
-/// use fluids_rs::native::{InputPair, Parameter};
+/// use fluids_rs::enums::{InputPair, Parameter};
 ///
 /// let result: InputPair = (Parameter::T, Parameter::P).try_into().unwrap();
 /// assert_eq!(result, InputPair::PT);

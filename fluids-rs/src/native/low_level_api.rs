@@ -122,7 +122,8 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use fluids_rs::native::{AbstractState, InputPair};
+    /// use fluids_rs::enums::InputPair;
+    /// use fluids_rs::native::AbstractState;
     ///
     /// let water = AbstractState::new("HEOS", "Water").unwrap();
     /// let mut result = water.update(InputPair::PT, 101325.0, 293.15);
@@ -165,7 +166,8 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use fluids_rs::native::{AbstractState, InputPair, Parameter};
+    /// use fluids_rs::enums::{InputPair, Parameter};
+    /// use fluids_rs::native::AbstractState;
     ///
     /// let water = AbstractState::new("HEOS", "Water").unwrap();
     /// water.update(InputPair::PQ, 101325.0, 1.0).unwrap();
@@ -180,7 +182,8 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use fluids_rs::native::{AbstractState, InputPair, Parameter};
+    /// use fluids_rs::enums::{InputPair, Parameter};
+    /// use fluids_rs::native::AbstractState;
     ///
     /// let propylene_glycol = AbstractState::new("INCOMP", "MPG").unwrap();
     /// propylene_glycol.set_fractions(&[0.6]).unwrap();
@@ -196,7 +199,8 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use fluids_rs::native::{AbstractState, InputPair, Parameter};
+    /// use fluids_rs::enums::{InputPair, Parameter};
+    /// use fluids_rs::native::AbstractState;
     ///
     /// let mixture = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
     /// mixture.set_fractions(&[0.6, 0.4]).unwrap();
@@ -229,7 +233,8 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use fluids_rs::native::{AbstractState, InputPair, Phase};
+    /// use fluids_rs::enums::{InputPair, Phase};
+    /// use fluids_rs::native::AbstractState;
     ///
     /// let water = AbstractState::new("HEOS", "Water").unwrap();
     /// water.specify_phase(Phase::Liquid).unwrap();
@@ -262,7 +267,8 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use fluids_rs::native::{AbstractState, InputPair, Phase};
+    /// use fluids_rs::enums::{InputPair, Phase};
+    /// use fluids_rs::native::AbstractState;
     ///
     /// let water = AbstractState::new("HEOS", "Water").unwrap();
     /// water.specify_phase(Phase::Gas).unwrap();
@@ -326,7 +332,7 @@ impl Drop for AbstractState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::native::{InputPair, Parameter, Phase};
+    use crate::enums::{InputPair, Parameter, Phase};
     use approx::assert_relative_eq;
     use rstest::*;
 

@@ -1,14 +1,24 @@
-use crate::native::{CoolPropError, Parameter};
+use crate::enums::Parameter;
+use crate::native::CoolPropError;
 
 /// CoolProp input pairs
 /// (for use in [`AbstractState::update`](crate::native::AbstractState::update)).
 ///
 /// # Examples
 ///
+/// How to convert [`InputPair`] into [`u8`]:
+///
+/// ```
+/// use fluids_rs::enums::InputPair;
+///
+/// let result: u8 = InputPair::PT.into();
+/// assert_eq!(result, 9);
+/// ```
+///
 /// How to parse [`InputPair`] from two [`Parameter`](Parameter)s:
 ///
 /// ```
-/// use fluids_rs::native::{InputPair, Parameter};
+/// use fluids_rs::enums::{InputPair, Parameter};
 ///
 /// let result = InputPair::try_from((Parameter::T, Parameter::P)).unwrap();
 /// assert_eq!(result, InputPair::PT);

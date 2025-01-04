@@ -1,3 +1,5 @@
+//! Enums defining the list of fluids, parameters, etc.
+
 pub use humid_air_parameters::*;
 pub use input_pairs::*;
 pub use parameters::*;
