@@ -317,12 +317,6 @@ pub enum Parameter {
     Phase = 78,
 }
 
-impl From<Parameter> for u8 {
-    fn from(value: Parameter) -> Self {
-        value as u8
-    }
-}
-
 impl AsRef<str> for Parameter {
     //noinspection SpellCheckingInspection
     fn as_ref(&self) -> &str {
@@ -510,6 +504,12 @@ impl TryFrom<&str> for Parameter {
     }
 }
 
+impl From<Parameter> for u8 {
+    fn from(value: Parameter) -> Self {
+        value as u8
+    }
+}
+
 impl TryFrom<u8> for Parameter {
     type Error = CoolPropError;
 
@@ -620,90 +620,6 @@ impl TryFrom<f64> for Parameter {
 mod tests {
     use super::*;
     use rstest::*;
-
-    #[rstest]
-    #[case(Parameter::GasConstant, 1)]
-    #[case(Parameter::MolarMass, 2)]
-    #[case(Parameter::AcentricFactor, 3)]
-    #[case(Parameter::DMolarReducing, 4)]
-    #[case(Parameter::DMolarCritical, 5)]
-    #[case(Parameter::TReducing, 6)]
-    #[case(Parameter::TCritical, 7)]
-    #[case(Parameter::DMassReducing, 8)]
-    #[case(Parameter::DMassCritical, 9)]
-    #[case(Parameter::PCritical, 10)]
-    #[case(Parameter::PReducing, 11)]
-    #[case(Parameter::TTriple, 12)]
-    #[case(Parameter::PTriple, 13)]
-    #[case(Parameter::TMin, 14)]
-    #[case(Parameter::TMax, 15)]
-    #[case(Parameter::PMax, 16)]
-    #[case(Parameter::PMin, 17)]
-    #[case(Parameter::DipoleMoment, 18)]
-    #[case(Parameter::T, 19)]
-    #[case(Parameter::P, 20)]
-    #[case(Parameter::Q, 21)]
-    #[case(Parameter::Tau, 22)]
-    #[case(Parameter::Delta, 23)]
-    #[case(Parameter::DMolar, 24)]
-    #[case(Parameter::HMolar, 25)]
-    #[case(Parameter::SMolar, 26)]
-    #[case(Parameter::CpMolar, 27)]
-    #[case(Parameter::Cp0Molar, 28)]
-    #[case(Parameter::CvMolar, 29)]
-    #[case(Parameter::UMolar, 30)]
-    #[case(Parameter::GMolar, 31)]
-    #[case(Parameter::HelmholtzMolar, 32)]
-    #[case(Parameter::HMolarResidual, 33)]
-    #[case(Parameter::SMolarResidual, 34)]
-    #[case(Parameter::GMolarResidual, 35)]
-    #[case(Parameter::DMass, 36)]
-    #[case(Parameter::HMass, 37)]
-    #[case(Parameter::SMass, 38)]
-    #[case(Parameter::CpMass, 39)]
-    #[case(Parameter::Cp0Mass, 40)]
-    #[case(Parameter::CvMass, 41)]
-    #[case(Parameter::UMass, 42)]
-    #[case(Parameter::GMass, 43)]
-    #[case(Parameter::HelmholtzMass, 44)]
-    #[case(Parameter::DynamicViscosity, 45)]
-    #[case(Parameter::Conductivity, 46)]
-    #[case(Parameter::SurfaceTension, 47)]
-    #[case(Parameter::Prandtl, 48)]
-    #[case(Parameter::SoundSpeed, 49)]
-    #[case(Parameter::IsothermalCompressibility, 50)]
-    #[case(Parameter::IsobaricExpansionCoefficient, 51)]
-    #[case(Parameter::IsentropicExpansionCoefficient, 52)]
-    #[case(Parameter::FundamentalDerivativeOfGasDynamics, 53)]
-    #[case(Parameter::AlphaR, 54)]
-    #[case(Parameter::DAlphaRDTauConstDelta, 55)]
-    #[case(Parameter::DAlphaRDDeltaConstTau, 56)]
-    #[case(Parameter::Alpha0, 57)]
-    #[case(Parameter::DAlpha0DTauConstDelta, 58)]
-    #[case(Parameter::DAlpha0DDeltaConstTau, 59)]
-    #[case(Parameter::D2Alpha0DDelta2ConstTau, 60)]
-    #[case(Parameter::D3Alpha0DDelta3ConstTau, 61)]
-    #[case(Parameter::BVirial, 62)]
-    #[case(Parameter::CVirial, 63)]
-    #[case(Parameter::DBVirialDT, 64)]
-    #[case(Parameter::DCVirialDT, 65)]
-    #[case(Parameter::Z, 66)]
-    #[case(Parameter::PIP, 67)]
-    #[case(Parameter::MinFraction, 68)]
-    #[case(Parameter::MaxFraction, 69)]
-    #[case(Parameter::TFreeze, 70)]
-    #[case(Parameter::GWP20, 71)]
-    #[case(Parameter::GWP100, 72)]
-    #[case(Parameter::GWP500, 73)]
-    #[case(Parameter::FH, 74)]
-    #[case(Parameter::HH, 75)]
-    #[case(Parameter::PH, 76)]
-    #[case(Parameter::ODP, 77)]
-    #[case(Parameter::Phase, 78)]
-    fn into_u8_always_returns_expected_value(#[case] parameter: Parameter, #[case] expected: u8) {
-        let result: u8 = parameter.into();
-        assert_eq!(result, expected);
-    }
 
     //noinspection SpellCheckingInspection
     #[rstest]
@@ -932,6 +848,90 @@ mod tests {
             result.unwrap_err().to_string(),
             format!("'{}' has no matching parameter!", invalid_value)
         );
+    }
+
+    #[rstest]
+    #[case(Parameter::GasConstant, 1)]
+    #[case(Parameter::MolarMass, 2)]
+    #[case(Parameter::AcentricFactor, 3)]
+    #[case(Parameter::DMolarReducing, 4)]
+    #[case(Parameter::DMolarCritical, 5)]
+    #[case(Parameter::TReducing, 6)]
+    #[case(Parameter::TCritical, 7)]
+    #[case(Parameter::DMassReducing, 8)]
+    #[case(Parameter::DMassCritical, 9)]
+    #[case(Parameter::PCritical, 10)]
+    #[case(Parameter::PReducing, 11)]
+    #[case(Parameter::TTriple, 12)]
+    #[case(Parameter::PTriple, 13)]
+    #[case(Parameter::TMin, 14)]
+    #[case(Parameter::TMax, 15)]
+    #[case(Parameter::PMax, 16)]
+    #[case(Parameter::PMin, 17)]
+    #[case(Parameter::DipoleMoment, 18)]
+    #[case(Parameter::T, 19)]
+    #[case(Parameter::P, 20)]
+    #[case(Parameter::Q, 21)]
+    #[case(Parameter::Tau, 22)]
+    #[case(Parameter::Delta, 23)]
+    #[case(Parameter::DMolar, 24)]
+    #[case(Parameter::HMolar, 25)]
+    #[case(Parameter::SMolar, 26)]
+    #[case(Parameter::CpMolar, 27)]
+    #[case(Parameter::Cp0Molar, 28)]
+    #[case(Parameter::CvMolar, 29)]
+    #[case(Parameter::UMolar, 30)]
+    #[case(Parameter::GMolar, 31)]
+    #[case(Parameter::HelmholtzMolar, 32)]
+    #[case(Parameter::HMolarResidual, 33)]
+    #[case(Parameter::SMolarResidual, 34)]
+    #[case(Parameter::GMolarResidual, 35)]
+    #[case(Parameter::DMass, 36)]
+    #[case(Parameter::HMass, 37)]
+    #[case(Parameter::SMass, 38)]
+    #[case(Parameter::CpMass, 39)]
+    #[case(Parameter::Cp0Mass, 40)]
+    #[case(Parameter::CvMass, 41)]
+    #[case(Parameter::UMass, 42)]
+    #[case(Parameter::GMass, 43)]
+    #[case(Parameter::HelmholtzMass, 44)]
+    #[case(Parameter::DynamicViscosity, 45)]
+    #[case(Parameter::Conductivity, 46)]
+    #[case(Parameter::SurfaceTension, 47)]
+    #[case(Parameter::Prandtl, 48)]
+    #[case(Parameter::SoundSpeed, 49)]
+    #[case(Parameter::IsothermalCompressibility, 50)]
+    #[case(Parameter::IsobaricExpansionCoefficient, 51)]
+    #[case(Parameter::IsentropicExpansionCoefficient, 52)]
+    #[case(Parameter::FundamentalDerivativeOfGasDynamics, 53)]
+    #[case(Parameter::AlphaR, 54)]
+    #[case(Parameter::DAlphaRDTauConstDelta, 55)]
+    #[case(Parameter::DAlphaRDDeltaConstTau, 56)]
+    #[case(Parameter::Alpha0, 57)]
+    #[case(Parameter::DAlpha0DTauConstDelta, 58)]
+    #[case(Parameter::DAlpha0DDeltaConstTau, 59)]
+    #[case(Parameter::D2Alpha0DDelta2ConstTau, 60)]
+    #[case(Parameter::D3Alpha0DDelta3ConstTau, 61)]
+    #[case(Parameter::BVirial, 62)]
+    #[case(Parameter::CVirial, 63)]
+    #[case(Parameter::DBVirialDT, 64)]
+    #[case(Parameter::DCVirialDT, 65)]
+    #[case(Parameter::Z, 66)]
+    #[case(Parameter::PIP, 67)]
+    #[case(Parameter::MinFraction, 68)]
+    #[case(Parameter::MaxFraction, 69)]
+    #[case(Parameter::TFreeze, 70)]
+    #[case(Parameter::GWP20, 71)]
+    #[case(Parameter::GWP100, 72)]
+    #[case(Parameter::GWP500, 73)]
+    #[case(Parameter::FH, 74)]
+    #[case(Parameter::HH, 75)]
+    #[case(Parameter::PH, 76)]
+    #[case(Parameter::ODP, 77)]
+    #[case(Parameter::Phase, 78)]
+    fn into_u8_always_returns_expected_value(#[case] parameter: Parameter, #[case] expected: u8) {
+        let result: u8 = parameter.into();
+        assert_eq!(result, expected);
     }
 
     #[rstest]

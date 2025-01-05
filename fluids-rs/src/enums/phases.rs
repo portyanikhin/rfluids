@@ -27,6 +27,14 @@ use std::str::FromStr;
 /// assert_eq!(result, Phase::Liquid);
 /// ```
 ///
+/// How to convert [`Phase`] into [`u8`]:
+/// ```
+/// use fluids_rs::enums::Phase;
+///
+/// let result: u8 = Phase::Gas.into();
+/// assert_eq!(result, 5);
+/// ```
+///
 /// How to parse [`Phase`] from [`u8`]:
 /// ```
 /// use fluids_rs::enums::Phase;
@@ -149,6 +157,12 @@ impl TryFrom<&str> for Phase {
     }
 }
 
+impl From<Phase> for u8 {
+    fn from(value: Phase) -> Self {
+        value as u8
+    }
+}
+
 impl TryFrom<u8> for Phase {
     type Error = CoolPropError;
 
@@ -252,6 +266,21 @@ mod tests {
             result.unwrap_err().to_string(),
             format!("'{}' has no matching phase state!", invalid_value)
         );
+    }
+
+    #[rstest]
+    #[case(Phase::Liquid, 0)]
+    #[case(Phase::Supercritical, 1)]
+    #[case(Phase::SupercriticalGas, 2)]
+    #[case(Phase::SupercriticalLiquid, 3)]
+    #[case(Phase::CriticalPoint, 4)]
+    #[case(Phase::Gas, 5)]
+    #[case(Phase::TwoPhase, 6)]
+    #[case(Phase::Unknown, 7)]
+    #[case(Phase::NotImposed, 8)]
+    fn into_u8_always_returns_expected_value(#[case] parameter: Phase, #[case] expected: u8) {
+        let result: u8 = parameter.into();
+        assert_eq!(result, expected);
     }
 
     #[rstest]
