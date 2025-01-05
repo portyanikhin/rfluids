@@ -1,4 +1,4 @@
-use crate::native::common::{const_ptr_c_char, CoolPropError, MessageBuffer, COOLPROP};
+use crate::native::{const_ptr_c_char, CoolPropError, MessageBuffer, COOLPROP};
 use core::ffi::c_char;
 use std::sync::MutexGuard;
 
