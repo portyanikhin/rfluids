@@ -48,46 +48,46 @@ use std::str::FromStr;
 /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Phase {
-    /// Liquid _([`P`](crate::native::Parameter::P) <
-    /// [`PCritical`](crate::native::Parameter::PCritical) &
-    /// [`T`](crate::native::Parameter::T) <
-    /// [`TCritical`](crate::native::Parameter::TCritical); above saturation)_.
+    /// Liquid _([`P`](crate::enums::Parameter::P) <
+    /// [`PCritical`](crate::enums::Parameter::PCritical) &
+    /// [`T`](crate::enums::Parameter::T) <
+    /// [`TCritical`](crate::enums::Parameter::TCritical); above saturation)_.
     Liquid = 0,
 
-    /// Supercritical fluid _([`P`](crate::native::Parameter::P) >
-    /// [`PCritical`](crate::native::Parameter::PCritical) &
-    /// [`T`](crate::native::Parameter::T) >
-    /// [`TCritical`](crate::native::Parameter::TCritical))_.
+    /// Supercritical fluid _([`P`](crate::enums::Parameter::P) >
+    /// [`PCritical`](crate::enums::Parameter::PCritical) &
+    /// [`T`](crate::enums::Parameter::T) >
+    /// [`TCritical`](crate::enums::Parameter::TCritical))_.
     Supercritical = 1,
 
-    /// Supercritical gas _([`P`](crate::native::Parameter::P) <
-    /// [`PCritical`](crate::native::Parameter::PCritical) &
-    /// [`T`](crate::native::Parameter::T) >
-    /// [`TCritical`](crate::native::Parameter::TCritical))_.
+    /// Supercritical gas _([`P`](crate::enums::Parameter::P) <
+    /// [`PCritical`](crate::enums::Parameter::PCritical) &
+    /// [`T`](crate::enums::Parameter::T) >
+    /// [`TCritical`](crate::enums::Parameter::TCritical))_.
     SupercriticalGas = 2,
 
-    /// Supercritical liquid _([`P`](crate::native::Parameter::P) >
-    /// [`PCritical`](crate::native::Parameter::PCritical) &
-    /// [`T`](crate::native::Parameter::T) <
-    /// [`TCritical`](crate::native::Parameter::TCritical))_.
+    /// Supercritical liquid _([`P`](crate::enums::Parameter::P) >
+    /// [`PCritical`](crate::enums::Parameter::PCritical) &
+    /// [`T`](crate::enums::Parameter::T) <
+    /// [`TCritical`](crate::enums::Parameter::TCritical))_.
     SupercriticalLiquid = 3,
 
-    /// Critical point _([`P`](crate::native::Parameter::P) =
-    /// [`PCritical`](crate::native::Parameter::PCritical) &
-    /// [`T`](crate::native::Parameter::T) =
-    /// [`TCritical`](crate::native::Parameter::TCritical))_.
+    /// Critical point _([`P`](crate::enums::Parameter::P) =
+    /// [`PCritical`](crate::enums::Parameter::PCritical) &
+    /// [`T`](crate::enums::Parameter::T) =
+    /// [`TCritical`](crate::enums::Parameter::TCritical))_.
     CriticalPoint = 4,
 
-    /// Gas _([`P`](crate::native::Parameter::P) <
-    /// [`PCritical`](crate::native::Parameter::PCritical) &
-    /// [`T`](crate::native::Parameter::T) <
-    /// [`TCritical`](crate::native::Parameter::TCritical); below saturation)_.
+    /// Gas _([`P`](crate::enums::Parameter::P) <
+    /// [`PCritical`](crate::enums::Parameter::PCritical) &
+    /// [`T`](crate::enums::Parameter::T) <
+    /// [`TCritical`](crate::enums::Parameter::TCritical); below saturation)_.
     Gas = 5,
 
-    /// Two-phase fluid _([`P`](crate::native::Parameter::P) <
-    /// [`PCritical`](crate::native::Parameter::PCritical) &
-    /// [`T`](crate::native::Parameter::T) <
-    /// [`TCritical`](crate::native::Parameter::TCritical); mixed liquid/gas)_.
+    /// Two-phase fluid _([`P`](crate::enums::Parameter::P) <
+    /// [`PCritical`](crate::enums::Parameter::PCritical) &
+    /// [`T`](crate::enums::Parameter::T) <
+    /// [`TCritical`](crate::enums::Parameter::TCritical); mixed liquid/gas)_.
     TwoPhase = 6,
 
     /// Unknown phase.

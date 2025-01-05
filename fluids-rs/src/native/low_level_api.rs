@@ -14,7 +14,7 @@ impl AbstractState {
     ///
     /// - `backend_name` — name of the backend.
     /// - `fluid_names` — names of the fluids separated by the `&` symbol
-    ///   (or just a single fluid name).
+    ///   _(or just a single fluid name)_.
     ///
     /// # Examples
     ///
@@ -68,7 +68,7 @@ impl AbstractState {
         Self::result(Self { ptr }, error)
     }
 
-    /// Set the fractions (mole, mass or volume — it will be defined automatically).
+    /// Set the fractions _(mole, mass or volume — it will be defined automatically)_.
     ///
     /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
@@ -115,7 +115,7 @@ impl AbstractState {
     /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// - `input_pair_key` — specified input pair key
-    ///   _(raw [`u8`] or [`InputPair`](crate::native::InputPair))_.
+    ///   _(raw [`u8`] or [`InputPair`](crate::enums::InputPair))_.
     /// - `input1` — value of the first input property _(in SI units)_.
     /// - `input2` — value of the second input property _(in SI units)_.
     ///
@@ -152,11 +152,11 @@ impl AbstractState {
 
     /// Get an output parameter value.
     ///
-    /// For non-trivial outputs with undefined state or invalid input,
+    /// For non-trivial outputs with undefined state or invalid inputs,
     /// a [`CoolPropError`] is returned.
     ///
     /// - `key` — specified output parameter key
-    ///   _(raw [`u8`] or [`Parameter`](crate::native::Parameter))_.
+    ///   _(raw [`u8`] or [`Parameter`](crate::enums::Parameter))_.
     ///
     /// # Examples
     ///
@@ -225,10 +225,10 @@ impl AbstractState {
 
     /// Specify the phase state for all further calculations.
     ///
-    /// For invalid input, a [`CoolPropError`] is returned.
+    /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// - `phase` — specified phase state
-    ///   _(raw [`&str`](str) or [`Phase`](crate::native::Phase))_.
+    ///   _(raw [`&str`](str) or [`Phase`](crate::enums::Phase))_.
     ///
     /// # Examples
     ///

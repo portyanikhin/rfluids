@@ -1,8 +1,7 @@
 use crate::native::CoolPropError;
 use std::str::FromStr;
 
-/// CoolProp input/output parameters
-/// (for use in [`AbstractState::keyed_output`](crate::native::AbstractState::keyed_output)).
+/// CoolProp input/output parameters.
 ///
 /// # Examples
 ///

@@ -1,8 +1,7 @@
 use crate::enums::Parameter;
 use crate::native::CoolPropError;
 
-/// CoolProp input pairs
-/// (for use in [`AbstractState::update`](crate::native::AbstractState::update)).
+/// CoolProp input pairs.
 ///
 /// # Examples
 ///

@@ -6,18 +6,18 @@ use std::sync::MutexGuard;
 pub struct CoolProp;
 
 impl CoolProp {
-    /// Returns a value that depends on
-    /// the thermodynamic state of pure/pseudo-pure fluid or mixture.
+    /// Returns a value that depends on the thermodynamic state
+    /// of pure/pseudo-pure fluid or mixture.
     ///
-    /// For undefined fluid states or invalid inputs, a [`CoolPropError`] is returned.
+    /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// - `output_name` — name of the output
-    ///   _(raw [`&str`](str) or [`Parameter`](crate::native::Parameter))_.
+    ///   _(raw [`&str`](str) or [`Parameter`](crate::enums::Parameter))_.
     /// - `input1_name` — name of the first input property
-    ///   _(raw [`&str`](str) or [`Parameter`](crate::native::Parameter))_.
+    ///   _(raw [`&str`](str) or [`Parameter`](crate::enums::Parameter))_.
     /// - `input1_value` — value of the first input property _(in SI units)_.
     /// - `input2_name` — name of the second input property
-    ///   _(raw [`&str`](str) or [`Parameter`](crate::native::Parameter))_.
+    ///   _(raw [`&str`](str) or [`Parameter`](crate::enums::Parameter))_.
     /// - `input2_value` — value of the second input property _(in SI units)_.
     /// - `fluid_name` — name of the fluid.
     ///
@@ -100,18 +100,18 @@ impl CoolProp {
 
     /// Returns a value that depends on the thermodynamic state of humid air.
     ///
-    /// For undefined humid air states or invalid inputs, a [`CoolPropError`] is returned.
+    /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// - `output_name` — name of the output
-    ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::native::HumidAirParameter))_.
+    ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::enums::HumidAirParameter))_.
     /// - `input1_name` — name of the first input property
-    ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::native::HumidAirParameter))_.
+    ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::enums::HumidAirParameter))_.
     /// - `input1_value` — value of the first input property _(in SI units)_.
     /// - `input2_name` — name of the second input property
-    ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::native::HumidAirParameter))_.
+    ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::enums::HumidAirParameter))_.
     /// - `input2_value` — value of the second input property _(in SI units)_.
     /// - `input3_name` — name of the third input property
-    ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::native::HumidAirParameter))_.
+    ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::enums::HumidAirParameter))_.
     /// - `input3_value` — value of the third input property _(in SI units)_.
     ///
     /// # Examples
@@ -156,13 +156,13 @@ impl CoolProp {
     }
 
     //noinspection SpellCheckingInspection
-    /// Returns a value that doesn't depend on
-    /// the thermodynamic state of pure/pseudo-pure fluid or mixture (trivial output).
+    /// Returns a value that doesn't depend on the thermodynamic state
+    /// of pure/pseudo-pure fluid or mixture _(trivial output)_.
     ///
     /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// - `output_name` — name of the _trivial_ output
-    ///   _(raw [`&str`](str) or [`Parameter`](crate::native::Parameter))_.
+    ///   _(raw [`&str`](str) or [`Parameter`](crate::enums::Parameter))_.
     /// - `fluid_name` — name of the fluid.
     ///
     /// # Examples
