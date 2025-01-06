@@ -12,12 +12,12 @@ impl CoolProp {
     ///
     /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
-    /// - `output_name` — name of the output
+    /// - `output_key` — key of the output
     ///   _(raw [`&str`](str) or [`Parameter`](crate::enums::Parameter))_.
-    /// - `input1_name` — name of the first input property
+    /// - `input1_key` — key of the first input property
     ///   _(raw [`&str`](str) or [`Parameter`](crate::enums::Parameter))_.
     /// - `input1_value` — value of the first input property _(in SI units)_.
-    /// - `input2_name` — name of the second input property
+    /// - `input2_key` — key of the second input property
     ///   _(raw [`&str`](str) or [`Parameter`](crate::enums::Parameter))_.
     /// - `input2_value` — value of the second input property _(in SI units)_.
     /// - `fluid_name` — name of the fluid.
@@ -78,20 +78,20 @@ impl CoolProp {
     /// - [Incompressible binary mixtures](https://coolprop.github.io/CoolProp/fluid_properties/Incompressibles.html)
     /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
     pub fn props_si(
-        output_name: impl AsRef<str>,
-        input1_name: impl AsRef<str>,
+        output_key: impl AsRef<str>,
+        input1_key: impl AsRef<str>,
         input1_value: f64,
-        input2_name: impl AsRef<str>,
+        input2_key: impl AsRef<str>,
         input2_value: f64,
         fluid_name: impl AsRef<str>,
     ) -> Result<f64, CoolPropError> {
         let lock = COOLPROP.lock().unwrap();
         let value = unsafe {
             lock.PropsSI(
-                const_ptr_c_char!(output_name.as_ref().trim()),
-                const_ptr_c_char!(input1_name.as_ref().trim()),
+                const_ptr_c_char!(output_key.as_ref().trim()),
+                const_ptr_c_char!(input1_key.as_ref().trim()),
                 input1_value,
-                const_ptr_c_char!(input2_name.as_ref().trim()),
+                const_ptr_c_char!(input2_key.as_ref().trim()),
                 input2_value,
                 const_ptr_c_char!(fluid_name.as_ref().trim()),
             )
@@ -103,15 +103,15 @@ impl CoolProp {
     ///
     /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
-    /// - `output_name` — name of the output
+    /// - `output_key` — key of the output
     ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::enums::HumidAirParameter))_.
-    /// - `input1_name` — name of the first input property
+    /// - `input1_key` — key of the first input property
     ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::enums::HumidAirParameter))_.
     /// - `input1_value` — value of the first input property _(in SI units)_.
-    /// - `input2_name` — name of the second input property
+    /// - `input2_key` — key of the second input property
     ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::enums::HumidAirParameter))_.
     /// - `input2_value` — value of the second input property _(in SI units)_.
-    /// - `input3_name` — name of the third input property
+    /// - `input3_key` — key of the third input property
     ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::enums::HumidAirParameter))_.
     /// - `input3_value` — value of the third input property _(in SI units)_.
     ///
@@ -133,23 +133,23 @@ impl CoolProp {
     /// - [HAPropsSI function](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html)
     /// - [HAPropsSI inputs/outputs](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
     pub fn ha_props_si(
-        output_name: impl AsRef<str>,
-        input1_name: impl AsRef<str>,
+        output_key: impl AsRef<str>,
+        input1_key: impl AsRef<str>,
         input1_value: f64,
-        input2_name: impl AsRef<str>,
+        input2_key: impl AsRef<str>,
         input2_value: f64,
-        input3_name: impl AsRef<str>,
+        input3_key: impl AsRef<str>,
         input3_value: f64,
     ) -> Result<f64, CoolPropError> {
         let lock = COOLPROP.lock().unwrap();
         let value = unsafe {
             lock.HAPropsSI(
-                const_ptr_c_char!(output_name.as_ref().trim()),
-                const_ptr_c_char!(input1_name.as_ref().trim()),
+                const_ptr_c_char!(output_key.as_ref().trim()),
+                const_ptr_c_char!(input1_key.as_ref().trim()),
                 input1_value,
-                const_ptr_c_char!(input2_name.as_ref().trim()),
+                const_ptr_c_char!(input2_key.as_ref().trim()),
                 input2_value,
-                const_ptr_c_char!(input3_name.as_ref().trim()),
+                const_ptr_c_char!(input3_key.as_ref().trim()),
                 input3_value,
             )
         };
@@ -162,7 +162,7 @@ impl CoolProp {
     ///
     /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
-    /// - `output_name` — name of the _trivial_ output
+    /// - `output_key` — key of the _trivial_ output
     ///   _(raw [`&str`](str) or [`Parameter`](crate::enums::Parameter))_.
     /// - `fluid_name` — name of the fluid.
     ///
@@ -193,13 +193,13 @@ impl CoolProp {
     /// - [Props1SI function](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#trivial-inputs)
     /// - [Props1SI outputs _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
     pub fn props1_si(
-        output_name: impl AsRef<str>,
+        output_key: impl AsRef<str>,
         fluid_name: impl AsRef<str>,
     ) -> Result<f64, CoolPropError> {
         let lock = COOLPROP.lock().unwrap();
         let value = unsafe {
             lock.Props1SI(
-                const_ptr_c_char!(output_name.as_ref().trim()),
+                const_ptr_c_char!(output_key.as_ref().trim()),
                 const_ptr_c_char!(fluid_name.as_ref().trim()),
             )
         };
@@ -242,17 +242,6 @@ mod tests {
     use rayon::prelude::*;
 
     #[test]
-    fn props_si_invalid_input_returns_err() {
-        let result = CoolProp::props_si("D", "P", 101325.0, "Q", -1.0, "Water");
-        assert!(result.is_err());
-        assert_eq!(
-            result.unwrap_err().to_string(),
-            "Input vapor quality [Q] must be between 0 and 1 : \
-            PropsSI(\"D\",\"P\",101325,\"Q\",-1,\"Water\")"
-        );
-    }
-
-    #[test]
     fn props_si_water_density_in_standard_conditions_returns_ok() {
         let result = CoolProp::props_si("D", "P", 101325.0, "T", 293.15, "Water");
         assert!(result.is_ok());
@@ -269,13 +258,13 @@ mod tests {
     }
 
     #[test]
-    fn ha_props_si_invalid_input_returns_err() {
-        let result = CoolProp::ha_props_si("W", "P", 101325.0, "T", 293.15, "R", -0.5);
+    fn props_si_invalid_input_returns_err() {
+        let result = CoolProp::props_si("D", "P", 101325.0, "Q", -1.0, "Water");
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            "The input for key (7) with value (-0.5) \
-            is outside the range of validity: (0) to (1)"
+            "Input vapor quality [Q] must be between 0 and 1 : \
+            PropsSI(\"D\",\"P\",101325,\"Q\",-1,\"Water\")"
         );
     }
 
@@ -293,6 +282,17 @@ mod tests {
             .map(move |p| CoolProp::ha_props_si("W", "P", p as f64, "T", 293.15, "R", 0.5))
             .collect();
         assert!(result.iter().all(|r| r.is_ok()));
+    }
+
+    #[test]
+    fn ha_props_si_invalid_input_returns_err() {
+        let result = CoolProp::ha_props_si("W", "P", 101325.0, "T", 293.15, "R", -0.5);
+        assert!(result.is_err());
+        assert_eq!(
+            result.unwrap_err().to_string(),
+            "The input for key (7) with value (-0.5) \
+            is outside the range of validity: (0) to (1)"
+        );
     }
 
     //noinspection SpellCheckingInspection
