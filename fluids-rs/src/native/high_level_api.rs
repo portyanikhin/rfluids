@@ -1,4 +1,5 @@
-use crate::native::{const_ptr_c_char, CoolPropError, MessageBuffer, COOLPROP};
+use crate::errors::CoolPropError;
+use crate::native::common::{const_ptr_c_char, MessageBuffer, COOLPROP};
 use core::ffi::c_char;
 use std::sync::MutexGuard;
 
@@ -211,9 +212,7 @@ impl CoolProp {
     ) -> Result<f64, CoolPropError> {
         if !value.is_finite() {
             let message = Self::get_error_message(lock);
-            return Err(CoolPropError(
-                message.unwrap_or("Unknown error".to_string()),
-            ));
+            return Err(CoolPropError(message.unwrap_or("Unknown error".into())));
         }
         Ok(value)
     }

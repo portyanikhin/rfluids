@@ -1,4 +1,4 @@
-use crate::native::CoolPropError;
+use crate::errors::EnumParseError;
 use std::str::FromStr;
 
 /// CoolProp humid air input/output parameters.
@@ -126,7 +126,7 @@ impl AsRef<str> for HumidAirParameter {
 }
 
 impl FromStr for HumidAirParameter {
-    type Err = CoolPropError;
+    type Err = EnumParseError;
 
     //noinspection SpellCheckingInspection
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -152,16 +152,13 @@ impl FromStr for HumidAirParameter {
             "vha" => Ok(HumidAirParameter::VHA),
             "w" | "omega" | "humrat" => Ok(HumidAirParameter::W),
             "z" => Ok(HumidAirParameter::Z),
-            _ => Err(CoolPropError(format!(
-                "'{}' has no matching humid air parameter!",
-                s
-            ))),
+            _ => Err(EnumParseError::new::<HumidAirParameter>(s)),
         }
     }
 }
 
 impl TryFrom<&str> for HumidAirParameter {
-    type Error = CoolPropError;
+    type Error = EnumParseError;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         HumidAirParameter::from_str(value)
@@ -268,7 +265,7 @@ mod tests {
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            format!("'{}' has no matching humid air parameter!", invalid_value)
+            format!("'{}' has no matching 'HumidAirParameter'!", invalid_value)
         );
     }
 }

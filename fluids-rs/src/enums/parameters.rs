@@ -1,4 +1,4 @@
-use crate::native::CoolPropError;
+use crate::errors::EnumParseError;
 use std::str::FromStr;
 
 /// CoolProp input/output parameters.
@@ -56,7 +56,7 @@ use std::str::FromStr;
 /// assert_eq!(result, Parameter::TMax);
 /// ```
 ///
-/// How to convert two [`Parameter`]s into [`InputPair`](crate::native::InputPair):
+/// How to convert two [`Parameter`]s into [`InputPair`](crate::enums::InputPair):
 ///
 /// ```
 /// use fluids_rs::enums::{InputPair, Parameter};
@@ -406,7 +406,7 @@ impl AsRef<str> for Parameter {
 }
 
 impl FromStr for Parameter {
-    type Err = CoolPropError;
+    type Err = EnumParseError;
 
     //noinspection SpellCheckingInspection
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -491,13 +491,13 @@ impl FromStr for Parameter {
             "ph" => Ok(Parameter::PH),
             "odp" => Ok(Parameter::ODP),
             "phase" => Ok(Parameter::Phase),
-            _ => Err(CoolPropError(format!("'{}' has no matching parameter!", s))),
+            _ => Err(EnumParseError::new::<Parameter>(s)),
         }
     }
 }
 
 impl TryFrom<&str> for Parameter {
-    type Error = CoolPropError;
+    type Error = EnumParseError;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         Parameter::from_str(value)
@@ -511,7 +511,7 @@ impl From<Parameter> for u8 {
 }
 
 impl TryFrom<u8> for Parameter {
-    type Error = CoolPropError;
+    type Error = EnumParseError;
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
@@ -593,24 +593,18 @@ impl TryFrom<u8> for Parameter {
             76 => Ok(Parameter::PH),
             77 => Ok(Parameter::ODP),
             78 => Ok(Parameter::Phase),
-            _ => Err(CoolPropError(format!(
-                "'{}' has no matching parameter!",
-                value
-            ))),
+            _ => Err(EnumParseError::new::<Parameter>(value.to_string())),
         }
     }
 }
 
 impl TryFrom<f64> for Parameter {
-    type Error = CoolPropError;
+    type Error = EnumParseError;
 
     fn try_from(value: f64) -> Result<Self, Self::Error> {
         let val = value.trunc();
         if val < u8::MIN as f64 || val > u8::MAX as f64 {
-            return Err(CoolPropError(format!(
-                "'{}' has no matching parameter!",
-                val
-            )));
+            return Err(EnumParseError::new::<Parameter>(value.to_string()));
         }
         Parameter::try_from(val as u8)
     }
@@ -846,7 +840,7 @@ mod tests {
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            format!("'{}' has no matching parameter!", invalid_value)
+            format!("'{}' has no matching 'Parameter'!", invalid_value)
         );
     }
 
@@ -1027,7 +1021,7 @@ mod tests {
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            format!("'{}' has no matching parameter!", invalid_value)
+            format!("'{}' has no matching 'Parameter'!", invalid_value)
         );
     }
 
@@ -1125,7 +1119,7 @@ mod tests {
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            format!("'{}' has no matching parameter!", invalid_value)
+            format!("'{}' has no matching 'Parameter'!", invalid_value)
         );
     }
 }

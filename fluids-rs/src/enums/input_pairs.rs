@@ -1,5 +1,5 @@
 use crate::enums::Parameter;
-use crate::native::CoolPropError;
+use crate::errors::EnumParseError;
 
 /// CoolProp input pairs.
 ///
@@ -137,7 +137,7 @@ impl From<InputPair> for u8 {
 }
 
 impl TryFrom<(Parameter, Parameter)> for InputPair {
-    type Error = CoolPropError;
+    type Error = EnumParseError;
 
     fn try_from(value: (Parameter, Parameter)) -> Result<Self, Self::Error> {
         match value {
@@ -240,8 +240,8 @@ impl TryFrom<(Parameter, Parameter)> for InputPair {
             (Parameter::DMolar, Parameter::UMolar) | (Parameter::UMolar, Parameter::DMolar) => {
                 Ok(InputPair::DMolarUMolar)
             }
-            (input1, input2) => Err(CoolPropError(format!(
-                "Specified parameters ('{:?}', '{:?}') has no matching input pair!",
+            (input1, input2) => Err(EnumParseError::new::<InputPair>(format!(
+                "({:?}, {:?})",
                 input1, input2
             ))),
         }
@@ -386,7 +386,7 @@ mod tests {
         assert_eq!(
             result.unwrap_err().to_string(),
             format!(
-                "Specified parameters ('{:?}', '{:?}') has no matching input pair!",
+                "'({:?}, {:?})' has no matching 'InputPair'!",
                 invalid_parameters.0, invalid_parameters.1
             )
         );

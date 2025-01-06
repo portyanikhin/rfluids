@@ -1,4 +1,4 @@
-use crate::native::CoolPropError;
+use crate::errors::EnumParseError;
 use std::str::FromStr;
 
 /// Phase states of fluids and mixtures.
@@ -123,7 +123,7 @@ impl AsRef<str> for Phase {
 }
 
 impl FromStr for Phase {
-    type Err = CoolPropError;
+    type Err = EnumParseError;
 
     //noinspection SpellCheckingInspection
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -141,16 +141,13 @@ impl FromStr for Phase {
             "phase_twophase" | "phase_two_phase" | "two_phase" | "twophase" => Ok(Phase::TwoPhase),
             "phase_unknown" | "unknown" => Ok(Phase::Unknown),
             "phase_not_imposed" | "not_imposed" | "notimposed" => Ok(Phase::NotImposed),
-            _ => Err(CoolPropError(format!(
-                "'{}' has no matching phase state!",
-                s
-            ))),
+            _ => Err(EnumParseError::new::<Phase>(s)),
         }
     }
 }
 
 impl TryFrom<&str> for Phase {
-    type Error = CoolPropError;
+    type Error = EnumParseError;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         Phase::from_str(value)
@@ -164,7 +161,7 @@ impl From<Phase> for u8 {
 }
 
 impl TryFrom<u8> for Phase {
-    type Error = CoolPropError;
+    type Error = EnumParseError;
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
@@ -177,24 +174,18 @@ impl TryFrom<u8> for Phase {
             6 => Ok(Phase::TwoPhase),
             7 => Ok(Phase::Unknown),
             8 => Ok(Phase::NotImposed),
-            _ => Err(CoolPropError(format!(
-                "'{}' has no matching phase state!",
-                value
-            ))),
+            _ => Err(EnumParseError::new::<Phase>(value.to_string())),
         }
     }
 }
 
 impl TryFrom<f64> for Phase {
-    type Error = CoolPropError;
+    type Error = EnumParseError;
 
     fn try_from(value: f64) -> Result<Self, Self::Error> {
         let val = value.trunc();
         if val < u8::MIN as f64 || val > u8::MAX as f64 {
-            return Err(CoolPropError(format!(
-                "'{}' has no matching phase state!",
-                val
-            )));
+            return Err(EnumParseError::new::<Phase>(value.to_string()));
         }
         Phase::try_from(val as u8)
     }
@@ -264,7 +255,7 @@ mod tests {
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            format!("'{}' has no matching phase state!", invalid_value)
+            format!("'{}' has no matching 'Phase'!", invalid_value)
         );
     }
 
@@ -307,7 +298,7 @@ mod tests {
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            format!("'{}' has no matching phase state!", invalid_value)
+            format!("'{}' has no matching 'Phase'!", invalid_value)
         );
     }
 
@@ -336,7 +327,7 @@ mod tests {
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
-            format!("'{}' has no matching phase state!", invalid_value)
+            format!("'{}' has no matching 'Phase'!", invalid_value)
         );
     }
 }
