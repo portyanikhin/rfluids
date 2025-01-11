@@ -1,5 +1,4 @@
-use crate::enums::Parameter;
-use crate::errors::EnumParseError;
+use crate::enums::Param;
 
 /// CoolProp input pairs.
 ///
@@ -10,17 +9,15 @@ use crate::errors::EnumParseError;
 /// ```
 /// use rfluids::enums::InputPair;
 ///
-/// let result: u8 = InputPair::PT.into();
-/// assert_eq!(result, 9);
+/// assert_eq!(u8::from(InputPair::PT), 9);
 /// ```
 ///
-/// How to parse [`InputPair`] from two [`Parameter`](Parameter)s:
+/// How to parse [`InputPair`] from two [`Param`]s:
 ///
 /// ```
-/// use rfluids::enums::{InputPair, Parameter};
+/// use rfluids::enums::{InputPair, Param};
 ///
-/// let result = InputPair::try_from((Parameter::T, Parameter::P)).unwrap();
-/// assert_eq!(result, InputPair::PT);
+/// assert_eq!(InputPair::try_from((Param::T, Param::P)), Ok(InputPair::PT));
 /// ```
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum InputPair {
@@ -136,259 +133,204 @@ impl From<InputPair> for u8 {
     }
 }
 
-impl TryFrom<(Parameter, Parameter)> for InputPair {
-    type Error = EnumParseError;
+impl TryFrom<(Param, Param)> for InputPair {
+    type Error = strum::ParseError;
 
-    fn try_from(value: (Parameter, Parameter)) -> Result<Self, Self::Error> {
+    fn try_from(value: (Param, Param)) -> Result<Self, Self::Error> {
         match value {
-            (Parameter::Q, Parameter::T) | (Parameter::T, Parameter::Q) => Ok(InputPair::QT),
-            (Parameter::P, Parameter::Q) | (Parameter::Q, Parameter::P) => Ok(InputPair::PQ),
-            (Parameter::Q, Parameter::SMolar) | (Parameter::SMolar, Parameter::Q) => {
-                Ok(InputPair::QSMolar)
-            }
-            (Parameter::Q, Parameter::SMass) | (Parameter::SMass, Parameter::Q) => {
-                Ok(InputPair::QSMass)
-            }
-            (Parameter::HMolar, Parameter::Q) | (Parameter::Q, Parameter::HMolar) => {
-                Ok(InputPair::HMolarQ)
-            }
-            (Parameter::HMass, Parameter::Q) | (Parameter::Q, Parameter::HMass) => {
-                Ok(InputPair::HMassQ)
-            }
-            (Parameter::DMolar, Parameter::Q) | (Parameter::Q, Parameter::DMolar) => {
-                Ok(InputPair::DMolarQ)
-            }
-            (Parameter::DMass, Parameter::Q) | (Parameter::Q, Parameter::DMass) => {
-                Ok(InputPair::DMassQ)
-            }
-            (Parameter::P, Parameter::T) | (Parameter::T, Parameter::P) => Ok(InputPair::PT),
-            (Parameter::DMass, Parameter::T) | (Parameter::T, Parameter::DMass) => {
-                Ok(InputPair::DMassT)
-            }
-            (Parameter::DMolar, Parameter::T) | (Parameter::T, Parameter::DMolar) => {
-                Ok(InputPair::DMolarT)
-            }
-            (Parameter::HMolar, Parameter::T) | (Parameter::T, Parameter::HMolar) => {
-                Ok(InputPair::HMolarT)
-            }
-            (Parameter::HMass, Parameter::T) | (Parameter::T, Parameter::HMass) => {
-                Ok(InputPair::HMassT)
-            }
-            (Parameter::SMolar, Parameter::T) | (Parameter::T, Parameter::SMolar) => {
-                Ok(InputPair::SMolarT)
-            }
-            (Parameter::SMass, Parameter::T) | (Parameter::T, Parameter::SMass) => {
-                Ok(InputPair::SMassT)
-            }
-            (Parameter::T, Parameter::UMolar) | (Parameter::UMolar, Parameter::T) => {
-                Ok(InputPair::TUMolar)
-            }
-            (Parameter::T, Parameter::UMass) | (Parameter::UMass, Parameter::T) => {
-                Ok(InputPair::TUMass)
-            }
-            (Parameter::DMass, Parameter::P) | (Parameter::P, Parameter::DMass) => {
-                Ok(InputPair::DMassP)
-            }
-            (Parameter::DMolar, Parameter::P) | (Parameter::P, Parameter::DMolar) => {
-                Ok(InputPair::DMolarP)
-            }
-            (Parameter::HMass, Parameter::P) | (Parameter::P, Parameter::HMass) => {
-                Ok(InputPair::HMassP)
-            }
-            (Parameter::HMolar, Parameter::P) | (Parameter::P, Parameter::HMolar) => {
-                Ok(InputPair::HMolarP)
-            }
-            (Parameter::P, Parameter::SMass) | (Parameter::SMass, Parameter::P) => {
-                Ok(InputPair::PSMass)
-            }
-            (Parameter::P, Parameter::SMolar) | (Parameter::SMolar, Parameter::P) => {
-                Ok(InputPair::PSMolar)
-            }
-            (Parameter::P, Parameter::UMass) | (Parameter::UMass, Parameter::P) => {
-                Ok(InputPair::PUMass)
-            }
-            (Parameter::P, Parameter::UMolar) | (Parameter::UMolar, Parameter::P) => {
-                Ok(InputPair::PUMolar)
-            }
-            (Parameter::HMass, Parameter::SMass) | (Parameter::SMass, Parameter::HMass) => {
+            (Param::Q, Param::T) | (Param::T, Param::Q) => Ok(InputPair::QT),
+            (Param::P, Param::Q) | (Param::Q, Param::P) => Ok(InputPair::PQ),
+            (Param::Q, Param::SMolar) | (Param::SMolar, Param::Q) => Ok(InputPair::QSMolar),
+            (Param::Q, Param::SMass) | (Param::SMass, Param::Q) => Ok(InputPair::QSMass),
+            (Param::HMolar, Param::Q) | (Param::Q, Param::HMolar) => Ok(InputPair::HMolarQ),
+            (Param::HMass, Param::Q) | (Param::Q, Param::HMass) => Ok(InputPair::HMassQ),
+            (Param::DMolar, Param::Q) | (Param::Q, Param::DMolar) => Ok(InputPair::DMolarQ),
+            (Param::DMass, Param::Q) | (Param::Q, Param::DMass) => Ok(InputPair::DMassQ),
+            (Param::P, Param::T) | (Param::T, Param::P) => Ok(InputPair::PT),
+            (Param::DMass, Param::T) | (Param::T, Param::DMass) => Ok(InputPair::DMassT),
+            (Param::DMolar, Param::T) | (Param::T, Param::DMolar) => Ok(InputPair::DMolarT),
+            (Param::HMolar, Param::T) | (Param::T, Param::HMolar) => Ok(InputPair::HMolarT),
+            (Param::HMass, Param::T) | (Param::T, Param::HMass) => Ok(InputPair::HMassT),
+            (Param::SMolar, Param::T) | (Param::T, Param::SMolar) => Ok(InputPair::SMolarT),
+            (Param::SMass, Param::T) | (Param::T, Param::SMass) => Ok(InputPair::SMassT),
+            (Param::T, Param::UMolar) | (Param::UMolar, Param::T) => Ok(InputPair::TUMolar),
+            (Param::T, Param::UMass) | (Param::UMass, Param::T) => Ok(InputPair::TUMass),
+            (Param::DMass, Param::P) | (Param::P, Param::DMass) => Ok(InputPair::DMassP),
+            (Param::DMolar, Param::P) | (Param::P, Param::DMolar) => Ok(InputPair::DMolarP),
+            (Param::HMass, Param::P) | (Param::P, Param::HMass) => Ok(InputPair::HMassP),
+            (Param::HMolar, Param::P) | (Param::P, Param::HMolar) => Ok(InputPair::HMolarP),
+            (Param::P, Param::SMass) | (Param::SMass, Param::P) => Ok(InputPair::PSMass),
+            (Param::P, Param::SMolar) | (Param::SMolar, Param::P) => Ok(InputPair::PSMolar),
+            (Param::P, Param::UMass) | (Param::UMass, Param::P) => Ok(InputPair::PUMass),
+            (Param::P, Param::UMolar) | (Param::UMolar, Param::P) => Ok(InputPair::PUMolar),
+            (Param::HMass, Param::SMass) | (Param::SMass, Param::HMass) => {
                 Ok(InputPair::HMassSMass)
             }
-            (Parameter::HMolar, Parameter::SMolar) | (Parameter::SMolar, Parameter::HMolar) => {
+            (Param::HMolar, Param::SMolar) | (Param::SMolar, Param::HMolar) => {
                 Ok(InputPair::HMolarSMolar)
             }
-            (Parameter::SMass, Parameter::UMass) | (Parameter::UMass, Parameter::SMass) => {
+            (Param::SMass, Param::UMass) | (Param::UMass, Param::SMass) => {
                 Ok(InputPair::SMassUMass)
             }
-            (Parameter::SMolar, Parameter::UMolar) | (Parameter::UMolar, Parameter::SMolar) => {
+            (Param::SMolar, Param::UMolar) | (Param::UMolar, Param::SMolar) => {
                 Ok(InputPair::SMolarUMolar)
             }
-            (Parameter::DMass, Parameter::HMass) | (Parameter::HMass, Parameter::DMass) => {
+            (Param::DMass, Param::HMass) | (Param::HMass, Param::DMass) => {
                 Ok(InputPair::DMassHMass)
             }
-            (Parameter::DMolar, Parameter::HMolar) | (Parameter::HMolar, Parameter::DMolar) => {
+            (Param::DMolar, Param::HMolar) | (Param::HMolar, Param::DMolar) => {
                 Ok(InputPair::DMolarHMolar)
             }
-            (Parameter::DMass, Parameter::SMass) | (Parameter::SMass, Parameter::DMass) => {
+            (Param::DMass, Param::SMass) | (Param::SMass, Param::DMass) => {
                 Ok(InputPair::DMassSMass)
             }
-            (Parameter::DMolar, Parameter::SMolar) | (Parameter::SMolar, Parameter::DMolar) => {
+            (Param::DMolar, Param::SMolar) | (Param::SMolar, Param::DMolar) => {
                 Ok(InputPair::DMolarSMolar)
             }
-            (Parameter::DMass, Parameter::UMass) | (Parameter::UMass, Parameter::DMass) => {
+            (Param::DMass, Param::UMass) | (Param::UMass, Param::DMass) => {
                 Ok(InputPair::DMassUMass)
             }
-            (Parameter::DMolar, Parameter::UMolar) | (Parameter::UMolar, Parameter::DMolar) => {
+            (Param::DMolar, Param::UMolar) | (Param::UMolar, Param::DMolar) => {
                 Ok(InputPair::DMolarUMolar)
             }
-            (input1, input2) => Err(EnumParseError::new::<InputPair>(format!(
-                "({:?}, {:?})",
-                input1, input2
-            ))),
+            _ => Err(strum::ParseError::VariantNotFound),
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use super::InputPair::*;
+    use super::Param::*;
     use super::*;
     use rstest::*;
 
     #[rstest]
-    #[case(InputPair::QT, 1)]
-    #[case(InputPair::PQ, 2)]
-    #[case(InputPair::QSMolar, 3)]
-    #[case(InputPair::QSMass, 4)]
-    #[case(InputPair::HMolarQ, 5)]
-    #[case(InputPair::HMassQ, 6)]
-    #[case(InputPair::DMolarQ, 7)]
-    #[case(InputPair::DMassQ, 8)]
-    #[case(InputPair::PT, 9)]
-    #[case(InputPair::DMassT, 10)]
-    #[case(InputPair::DMolarT, 11)]
-    #[case(InputPair::HMolarT, 12)]
-    #[case(InputPair::HMassT, 13)]
-    #[case(InputPair::SMolarT, 14)]
-    #[case(InputPair::SMassT, 15)]
-    #[case(InputPair::TUMolar, 16)]
-    #[case(InputPair::TUMass, 17)]
-    #[case(InputPair::DMassP, 18)]
-    #[case(InputPair::DMolarP, 19)]
-    #[case(InputPair::HMassP, 20)]
-    #[case(InputPair::HMolarP, 21)]
-    #[case(InputPair::PSMass, 22)]
-    #[case(InputPair::PSMolar, 23)]
-    #[case(InputPair::PUMass, 24)]
-    #[case(InputPair::PUMolar, 25)]
-    #[case(InputPair::HMassSMass, 26)]
-    #[case(InputPair::HMolarSMolar, 27)]
-    #[case(InputPair::SMassUMass, 28)]
-    #[case(InputPair::SMolarUMolar, 29)]
-    #[case(InputPair::DMassHMass, 30)]
-    #[case(InputPair::DMolarHMolar, 31)]
-    #[case(InputPair::DMassSMass, 32)]
-    #[case(InputPair::DMolarSMolar, 33)]
-    #[case(InputPair::DMassUMass, 34)]
-    #[case(InputPair::DMolarUMolar, 35)]
-    fn into_u8_always_returns_expected_value(#[case] input_pair: InputPair, #[case] expected: u8) {
-        let result: u8 = input_pair.into();
-        assert_eq!(result, expected);
+    #[case(QT, 1)]
+    #[case(PQ, 2)]
+    #[case(QSMolar, 3)]
+    #[case(QSMass, 4)]
+    #[case(HMolarQ, 5)]
+    #[case(HMassQ, 6)]
+    #[case(DMolarQ, 7)]
+    #[case(DMassQ, 8)]
+    #[case(PT, 9)]
+    #[case(DMassT, 10)]
+    #[case(DMolarT, 11)]
+    #[case(HMolarT, 12)]
+    #[case(HMassT, 13)]
+    #[case(SMolarT, 14)]
+    #[case(SMassT, 15)]
+    #[case(TUMolar, 16)]
+    #[case(TUMass, 17)]
+    #[case(DMassP, 18)]
+    #[case(DMolarP, 19)]
+    #[case(HMassP, 20)]
+    #[case(HMolarP, 21)]
+    #[case(PSMass, 22)]
+    #[case(PSMolar, 23)]
+    #[case(PUMass, 24)]
+    #[case(PUMolar, 25)]
+    #[case(HMassSMass, 26)]
+    #[case(HMolarSMolar, 27)]
+    #[case(SMassUMass, 28)]
+    #[case(SMolarUMolar, 29)]
+    #[case(DMassHMass, 30)]
+    #[case(DMolarHMolar, 31)]
+    #[case(DMassSMass, 32)]
+    #[case(DMolarSMolar, 33)]
+    #[case(DMassUMass, 34)]
+    #[case(DMolarUMolar, 35)]
+    fn u8_from_input_pair_always_returns_expected_value(
+        #[case] input_pair: InputPair,
+        #[case] expected: u8,
+    ) {
+        assert_eq!(u8::from(input_pair), expected);
     }
 
     #[rstest]
-    #[case((Parameter::Q, Parameter::T), InputPair::QT)]
-    #[case((Parameter::T, Parameter::Q), InputPair::QT)]
-    #[case((Parameter::P, Parameter::Q), InputPair::PQ)]
-    #[case((Parameter::Q, Parameter::P), InputPair::PQ)]
-    #[case((Parameter::Q, Parameter::SMolar), InputPair::QSMolar)]
-    #[case((Parameter::SMolar, Parameter::Q), InputPair::QSMolar)]
-    #[case((Parameter::Q, Parameter::SMass), InputPair::QSMass)]
-    #[case((Parameter::SMass, Parameter::Q), InputPair::QSMass)]
-    #[case((Parameter::HMolar, Parameter::Q), InputPair::HMolarQ)]
-    #[case((Parameter::Q, Parameter::HMolar), InputPair::HMolarQ)]
-    #[case((Parameter::HMass, Parameter::Q), InputPair::HMassQ)]
-    #[case((Parameter::Q, Parameter::HMass), InputPair::HMassQ)]
-    #[case((Parameter::DMolar, Parameter::Q), InputPair::DMolarQ)]
-    #[case((Parameter::Q, Parameter::DMolar), InputPair::DMolarQ)]
-    #[case((Parameter::DMass, Parameter::Q), InputPair::DMassQ)]
-    #[case((Parameter::Q, Parameter::DMass), InputPair::DMassQ)]
-    #[case((Parameter::P, Parameter::T), InputPair::PT)]
-    #[case((Parameter::T, Parameter::P), InputPair::PT)]
-    #[case((Parameter::DMass, Parameter::T), InputPair::DMassT)]
-    #[case((Parameter::T, Parameter::DMass), InputPair::DMassT)]
-    #[case((Parameter::DMolar, Parameter::T), InputPair::DMolarT)]
-    #[case((Parameter::T, Parameter::DMolar), InputPair::DMolarT)]
-    #[case((Parameter::HMolar, Parameter::T), InputPair::HMolarT)]
-    #[case((Parameter::T, Parameter::HMolar), InputPair::HMolarT)]
-    #[case((Parameter::HMass, Parameter::T), InputPair::HMassT)]
-    #[case((Parameter::T, Parameter::HMass), InputPair::HMassT)]
-    #[case((Parameter::SMolar, Parameter::T), InputPair::SMolarT)]
-    #[case((Parameter::T, Parameter::SMolar), InputPair::SMolarT)]
-    #[case((Parameter::SMass, Parameter::T), InputPair::SMassT)]
-    #[case((Parameter::T, Parameter::SMass), InputPair::SMassT)]
-    #[case((Parameter::T, Parameter::UMolar), InputPair::TUMolar)]
-    #[case((Parameter::UMolar, Parameter::T), InputPair::TUMolar)]
-    #[case((Parameter::T, Parameter::UMass), InputPair::TUMass)]
-    #[case((Parameter::UMass, Parameter::T), InputPair::TUMass)]
-    #[case((Parameter::DMass, Parameter::P), InputPair::DMassP)]
-    #[case((Parameter::P, Parameter::DMass), InputPair::DMassP)]
-    #[case((Parameter::DMolar, Parameter::P), InputPair::DMolarP)]
-    #[case((Parameter::P, Parameter::DMolar), InputPair::DMolarP)]
-    #[case((Parameter::HMass, Parameter::P), InputPair::HMassP)]
-    #[case((Parameter::P, Parameter::HMass), InputPair::HMassP)]
-    #[case((Parameter::HMolar, Parameter::P), InputPair::HMolarP)]
-    #[case((Parameter::P, Parameter::HMolar), InputPair::HMolarP)]
-    #[case((Parameter::P, Parameter::SMass), InputPair::PSMass)]
-    #[case((Parameter::SMass, Parameter::P), InputPair::PSMass)]
-    #[case((Parameter::P, Parameter::SMolar), InputPair::PSMolar)]
-    #[case((Parameter::SMolar, Parameter::P), InputPair::PSMolar)]
-    #[case((Parameter::P, Parameter::UMass), InputPair::PUMass)]
-    #[case((Parameter::UMass, Parameter::P), InputPair::PUMass)]
-    #[case((Parameter::P, Parameter::UMolar), InputPair::PUMolar)]
-    #[case((Parameter::UMolar, Parameter::P), InputPair::PUMolar)]
-    #[case((Parameter::HMass, Parameter::SMass), InputPair::HMassSMass)]
-    #[case((Parameter::SMass, Parameter::HMass), InputPair::HMassSMass)]
-    #[case((Parameter::HMolar, Parameter::SMolar), InputPair::HMolarSMolar)]
-    #[case((Parameter::SMolar, Parameter::HMolar), InputPair::HMolarSMolar)]
-    #[case((Parameter::SMass, Parameter::UMass), InputPair::SMassUMass)]
-    #[case((Parameter::UMass, Parameter::SMass), InputPair::SMassUMass)]
-    #[case((Parameter::SMolar, Parameter::UMolar), InputPair::SMolarUMolar)]
-    #[case((Parameter::UMolar, Parameter::SMolar), InputPair::SMolarUMolar)]
-    #[case((Parameter::DMass, Parameter::HMass), InputPair::DMassHMass)]
-    #[case((Parameter::HMass, Parameter::DMass), InputPair::DMassHMass)]
-    #[case((Parameter::DMolar, Parameter::HMolar), InputPair::DMolarHMolar)]
-    #[case((Parameter::HMolar, Parameter::DMolar), InputPair::DMolarHMolar)]
-    #[case((Parameter::DMass, Parameter::SMass), InputPair::DMassSMass)]
-    #[case((Parameter::SMass, Parameter::DMass), InputPair::DMassSMass)]
-    #[case((Parameter::DMolar, Parameter::SMolar), InputPair::DMolarSMolar)]
-    #[case((Parameter::SMolar, Parameter::DMolar), InputPair::DMolarSMolar)]
-    #[case((Parameter::DMass, Parameter::UMass), InputPair::DMassUMass)]
-    #[case((Parameter::UMass, Parameter::DMass), InputPair::DMassUMass)]
-    #[case((Parameter::DMolar, Parameter::UMolar), InputPair::DMolarUMolar)]
-    #[case((Parameter::UMolar, Parameter::DMolar), InputPair::DMolarUMolar)]
-    fn try_from_two_valid_parameters_returns_ok(
-        #[case] valid_parameters: (Parameter, Parameter),
+    #[case((Q, T), QT)]
+    #[case((T, Q), QT)]
+    #[case((P, Q), PQ)]
+    #[case((Q, P), PQ)]
+    #[case((Q, SMolar), QSMolar)]
+    #[case((SMolar, Q), QSMolar)]
+    #[case((Q, SMass), QSMass)]
+    #[case((SMass, Q), QSMass)]
+    #[case((HMolar, Q), HMolarQ)]
+    #[case((Q, HMolar), HMolarQ)]
+    #[case((HMass, Q), HMassQ)]
+    #[case((Q, HMass), HMassQ)]
+    #[case((DMolar, Q), DMolarQ)]
+    #[case((Q, DMolar), DMolarQ)]
+    #[case((DMass, Q), DMassQ)]
+    #[case((Q, DMass), DMassQ)]
+    #[case((P, T), PT)]
+    #[case((T, P), PT)]
+    #[case((DMass, T),DMassT)]
+    #[case((T, DMass), DMassT)]
+    #[case((DMolar, T), DMolarT)]
+    #[case((T, DMolar), DMolarT)]
+    #[case((HMolar, T), HMolarT)]
+    #[case((T, HMolar), HMolarT)]
+    #[case((HMass, T), HMassT)]
+    #[case((T, HMass), HMassT)]
+    #[case((SMolar, T), SMolarT)]
+    #[case((T, SMolar), SMolarT)]
+    #[case((SMass, T), SMassT)]
+    #[case((T, SMass), SMassT)]
+    #[case((T, UMolar), TUMolar)]
+    #[case((UMolar, T), TUMolar)]
+    #[case((T, UMass), TUMass)]
+    #[case((UMass, T), TUMass)]
+    #[case((DMass, P), DMassP)]
+    #[case((P, DMass), DMassP)]
+    #[case((DMolar, P), DMolarP)]
+    #[case((P, DMolar), DMolarP)]
+    #[case((HMass, P), HMassP)]
+    #[case((P, HMass), HMassP)]
+    #[case((HMolar, P), HMolarP)]
+    #[case((P, HMolar), HMolarP)]
+    #[case((P, SMass), PSMass)]
+    #[case((SMass, P), PSMass)]
+    #[case((P, SMolar), PSMolar)]
+    #[case((SMolar, P), PSMolar)]
+    #[case((P, UMass), PUMass)]
+    #[case((UMass, P), PUMass)]
+    #[case((P, UMolar), PUMolar)]
+    #[case((UMolar, P), PUMolar)]
+    #[case((HMass, SMass), HMassSMass)]
+    #[case((SMass, HMass), HMassSMass)]
+    #[case((HMolar, SMolar), HMolarSMolar)]
+    #[case((SMolar, HMolar), HMolarSMolar)]
+    #[case((SMass, UMass), SMassUMass)]
+    #[case((UMass, SMass), SMassUMass)]
+    #[case((SMolar, UMolar), SMolarUMolar)]
+    #[case((UMolar, SMolar), SMolarUMolar)]
+    #[case((DMass, HMass), DMassHMass)]
+    #[case((HMass, DMass), DMassHMass)]
+    #[case((DMolar, HMolar), DMolarHMolar)]
+    #[case((HMolar, DMolar), DMolarHMolar)]
+    #[case((DMass, SMass), DMassSMass)]
+    #[case((SMass, DMass), DMassSMass)]
+    #[case((DMolar, SMolar), DMolarSMolar)]
+    #[case((SMolar, DMolar), DMolarSMolar)]
+    #[case((DMass, UMass), DMassUMass)]
+    #[case((UMass, DMass), DMassUMass)]
+    #[case((DMolar, UMolar), DMolarUMolar)]
+    #[case((UMolar, DMolar), DMolarUMolar)]
+    fn try_from_two_valid_params_returns_ok(
+        #[case] valid_params: (Param, Param),
         #[case] expected: InputPair,
     ) {
-        let result = InputPair::try_from(valid_parameters);
-        assert!(result.is_ok());
-        assert_eq!(result.unwrap(), expected);
+        assert_eq!(InputPair::try_from(valid_params), Ok(expected));
     }
 
     #[rstest]
-    #[case((Parameter::TCritical, Parameter::CpMass))]
-    #[case((Parameter::Phase, Parameter::DMolar))]
-    #[case((Parameter::GWP100, Parameter::ODP))]
-    fn try_from_two_invalid_parameters_returns_err(
-        #[case] invalid_parameters: (Parameter, Parameter),
-    ) {
-        let result = InputPair::try_from(invalid_parameters);
-        assert!(result.is_err());
-        assert_eq!(
-            result.unwrap_err().to_string(),
-            format!(
-                "'({:?}, {:?})' has no matching 'InputPair'!",
-                invalid_parameters.0, invalid_parameters.1
-            )
-        );
+    #[case((TCritical, CpMass))]
+    #[case((Phase, DMolar))]
+    #[case((GWP100, ODP))]
+    fn try_from_two_invalid_params_returns_err(#[case] invalid_params: (Param, Param)) {
+        assert!(InputPair::try_from(invalid_params).is_err());
     }
 }

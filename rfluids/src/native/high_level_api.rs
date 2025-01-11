@@ -13,12 +13,12 @@ impl CoolProp {
     /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// - `output_key` — key of the output
-    ///   _(raw [`&str`](str) or [`Parameter`](crate::enums::Parameter))_.
+    ///   _(raw [`&str`](str) or [`Param`](crate::enums::Param))_.
     /// - `input1_key` — key of the first input property
-    ///   _(raw [`&str`](str) or [`Parameter`](crate::enums::Parameter))_.
+    ///   _(raw [`&str`](str) or [`Param`](crate::enums::Param))_.
     /// - `input1_value` — value of the first input property _(in SI units)_.
     /// - `input2_key` — key of the second input property
-    ///   _(raw [`&str`](str) or [`Parameter`](crate::enums::Parameter))_.
+    ///   _(raw [`&str`](str) or [`Param`](crate::enums::Param))_.
     /// - `input2_value` — value of the second input property _(in SI units)_.
     /// - `fluid_name` — name of the fluid.
     ///
@@ -104,15 +104,15 @@ impl CoolProp {
     /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// - `output_key` — key of the output
-    ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::enums::HumidAirParameter))_.
+    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::enums::HumidAirParam))_.
     /// - `input1_key` — key of the first input property
-    ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::enums::HumidAirParameter))_.
+    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::enums::HumidAirParam))_.
     /// - `input1_value` — value of the first input property _(in SI units)_.
     /// - `input2_key` — key of the second input property
-    ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::enums::HumidAirParameter))_.
+    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::enums::HumidAirParam))_.
     /// - `input2_value` — value of the second input property _(in SI units)_.
     /// - `input3_key` — key of the third input property
-    ///   _(raw [`&str`](str) or [`HumidAirParameter`](crate::enums::HumidAirParameter))_.
+    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::enums::HumidAirParam))_.
     /// - `input3_value` — value of the third input property _(in SI units)_.
     ///
     /// # Examples
@@ -163,7 +163,7 @@ impl CoolProp {
     /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// - `output_key` — key of the _trivial_ output
-    ///   _(raw [`&str`](str) or [`Parameter`](crate::enums::Parameter))_.
+    ///   _(raw [`&str`](str) or [`Param`](crate::enums::Param))_.
     /// - `fluid_name` — name of the fluid.
     ///
     /// # Examples

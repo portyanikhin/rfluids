@@ -1,13 +1,13 @@
-//! Enums defining the list of fluids, parameters, etc.
+//! Enums defining the list of substances, parameters, etc.
 
-pub use humid_air_parameters::*;
+pub use humid_air_params::*;
 pub use input_pairs::*;
-pub use parameters::*;
+pub use params::*;
 pub use phases::*;
 pub use substances::*;
 
-mod humid_air_parameters;
+mod humid_air_params;
 mod input_pairs;
-mod parameters;
+mod params;
 mod phases;
 mod substances;
