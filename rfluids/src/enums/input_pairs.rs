@@ -8,7 +8,7 @@ use crate::errors::EnumParseError;
 /// How to convert [`InputPair`] into [`u8`]:
 ///
 /// ```
-/// use fluids_rs::enums::InputPair;
+/// use rfluids::enums::InputPair;
 ///
 /// let result: u8 = InputPair::PT.into();
 /// assert_eq!(result, 9);
@@ -17,7 +17,7 @@ use crate::errors::EnumParseError;
 /// How to parse [`InputPair`] from two [`Parameter`](Parameter)s:
 ///
 /// ```
-/// use fluids_rs::enums::{InputPair, Parameter};
+/// use rfluids::enums::{InputPair, Parameter};
 ///
 /// let result = InputPair::try_from((Parameter::T, Parameter::P)).unwrap();
 /// assert_eq!(result, InputPair::PT);

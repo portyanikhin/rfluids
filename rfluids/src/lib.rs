@@ -14,7 +14,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! fluids-rs = "0.1.0-alpha"
+//! rfluids = "0.1.0-alpha"
 //! ```
 //!
 //! **NB.** It comes with native CoolProp dynamic libraries for supported platforms.
@@ -23,7 +23,7 @@
 //!
 //! ## License
 //!
-//! This project is licensed under [MIT License](https://github.com/portyanikhin/fluids-rs/blob/main/LICENSE).
+//! This project is licensed under [MIT License](https://github.com/portyanikhin/rfluids/blob/main/LICENSE).
 
 pub mod enums;
 pub mod errors;

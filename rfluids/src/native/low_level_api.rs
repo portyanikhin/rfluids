@@ -22,7 +22,7 @@ impl AbstractState {
     /// For pure fluids:
     ///
     /// ```
-    /// use fluids_rs::native::AbstractState;
+    /// use rfluids::native::AbstractState;
     ///
     /// let water = AbstractState::new("HEOS", "Water");
     /// assert!(water.is_ok());
@@ -31,7 +31,7 @@ impl AbstractState {
     /// For incompressible binary mixtures:
     ///
     /// ```
-    /// use fluids_rs::native::AbstractState;
+    /// use rfluids::native::AbstractState;
     ///
     /// let propylene_glycol = AbstractState::new("INCOMP", "MPG");
     /// assert!(propylene_glycol.is_ok());
@@ -40,7 +40,7 @@ impl AbstractState {
     /// For mixtures:
     ///
     /// ```
-    /// use fluids_rs::native::AbstractState;
+    /// use rfluids::native::AbstractState;
     ///
     /// let mixture = AbstractState::new("HEOS", "Water&Ethanol");
     /// assert!(mixture.is_ok());
@@ -80,7 +80,7 @@ impl AbstractState {
     /// For incompressible binary mixtures:
     ///
     /// ```
-    /// use fluids_rs::native::AbstractState;
+    /// use rfluids::native::AbstractState;
     ///
     /// let mut propylene_glycol = AbstractState::new("INCOMP", "MPG").unwrap();
     /// let result = propylene_glycol.set_fractions(&[0.6]);
@@ -90,7 +90,7 @@ impl AbstractState {
     /// For mixtures:
     ///
     /// ```
-    /// use fluids_rs::native::AbstractState;
+    /// use rfluids::native::AbstractState;
     ///
     /// let mut mixture = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
     /// let result = mixture.set_fractions(&[0.6, 0.4]);
@@ -123,8 +123,8 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use fluids_rs::enums::InputPair;
-    /// use fluids_rs::native::AbstractState;
+    /// use rfluids::enums::InputPair;
+    /// use rfluids::native::AbstractState;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
     /// let result = water.update(InputPair::PT, 101325.0, 293.15);
@@ -167,8 +167,8 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use fluids_rs::enums::{InputPair, Parameter};
-    /// use fluids_rs::native::AbstractState;
+    /// use rfluids::enums::{InputPair, Parameter};
+    /// use rfluids::native::AbstractState;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
     /// water.update(InputPair::PQ, 101325.0, 1.0).unwrap();
@@ -183,8 +183,8 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use fluids_rs::enums::{InputPair, Parameter};
-    /// use fluids_rs::native::AbstractState;
+    /// use rfluids::enums::{InputPair, Parameter};
+    /// use rfluids::native::AbstractState;
     ///
     /// let mut propylene_glycol = AbstractState::new("INCOMP", "MPG").unwrap();
     /// propylene_glycol.set_fractions(&[0.6]).unwrap();
@@ -200,8 +200,8 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use fluids_rs::enums::{InputPair, Parameter};
-    /// use fluids_rs::native::AbstractState;
+    /// use rfluids::enums::{InputPair, Parameter};
+    /// use rfluids::native::AbstractState;
     ///
     /// let mut mixture = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
     /// mixture.set_fractions(&[0.6, 0.4]).unwrap();
@@ -234,8 +234,8 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use fluids_rs::enums::{InputPair, Phase};
-    /// use fluids_rs::native::AbstractState;
+    /// use rfluids::enums::{InputPair, Phase};
+    /// use rfluids::native::AbstractState;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
     /// water.specify_phase(Phase::Liquid).unwrap();
@@ -268,8 +268,8 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use fluids_rs::enums::{InputPair, Phase};
-    /// use fluids_rs::native::AbstractState;
+    /// use rfluids::enums::{InputPair, Phase};
+    /// use rfluids::native::AbstractState;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
     /// water.specify_phase(Phase::Gas).unwrap();

@@ -8,7 +8,7 @@ use std::str::FromStr;
 /// How to convert [`HumidAirParameter`] into [`&str`](str):
 ///
 /// ```
-/// use fluids_rs::enums::HumidAirParameter;
+/// use rfluids::enums::HumidAirParameter;
 ///
 /// let result = HumidAirParameter::TDew.as_ref();
 /// assert_eq!(result, "D");
@@ -18,7 +18,7 @@ use std::str::FromStr;
 ///
 /// ```
 /// use std::str::FromStr;
-/// use fluids_rs::enums::HumidAirParameter;
+/// use rfluids::enums::HumidAirParameter;
 ///
 /// let result = HumidAirParameter::from_str("D").unwrap();
 /// assert_eq!(result, HumidAirParameter::TDew);

@@ -30,7 +30,7 @@ impl CoolProp {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use fluids_rs::native::CoolProp;
+    /// use rfluids::native::CoolProp;
     ///
     /// let result = CoolProp::props_si("C", "P", 101325.0, "Q", 1.0, "Water").unwrap();
     /// assert_relative_eq!(result, 2079.937085633241);
@@ -43,7 +43,7 @@ impl CoolProp {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use fluids_rs::native::CoolProp;
+    /// use rfluids::native::CoolProp;
     ///
     /// let result = CoolProp::props_si("V", "P", 100e3, "T", 253.15, "INCOMP::MPG-60%").unwrap();
     /// assert_relative_eq!(result, 0.13907391053938847);
@@ -56,7 +56,7 @@ impl CoolProp {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use fluids_rs::native::CoolProp;
+    /// use rfluids::native::CoolProp;
     ///
     /// let result = CoolProp::props_si(
     ///     "D",
@@ -122,7 +122,7 @@ impl CoolProp {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use fluids_rs::native::CoolProp;
+    /// use rfluids::native::CoolProp;
     ///
     /// let result = CoolProp::ha_props_si("B", "P", 100e3, "T", 303.15, "R", 0.5).unwrap();
     /// assert_relative_eq!(result, 295.1200365362656);
@@ -172,7 +172,7 @@ impl CoolProp {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use fluids_rs::native::CoolProp;
+    /// use rfluids::native::CoolProp;
     ///
     /// let result = CoolProp::props1_si("Tcrit", "Water").unwrap();
     /// assert_relative_eq!(result, 647.096);
@@ -182,7 +182,7 @@ impl CoolProp {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use fluids_rs::native::CoolProp;
+    /// use rfluids::native::CoolProp;
     ///
     /// let result = CoolProp::props1_si("GWP100", "R32").unwrap();
     /// assert_relative_eq!(result, 675.0);

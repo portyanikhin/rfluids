@@ -1,12 +1,12 @@
 [package]
-name = "fluids-rs"
+name = "rfluids"
 version = "0.1.0-alpha"
 authors = ["Vladimir Portyanikhin <v.portyanikhin@ya.ru>"]
 edition = "2021"
 description = "Simple, full-featured, lightweight, cross-platform CoolProp wrapper for Rust"
 readme = "../README.md"
-homepage = "https://github.com/portyanikhin/fluids-rs"
-repository = "https://github.com/portyanikhin/fluids-rs"
+homepage = "https://github.com/portyanikhin/rfluids"
+repository = "https://github.com/portyanikhin/rfluids"
 license = "MIT"
 keywords = ["CoolProp", "fluids", "mixtures", "humid-air", "thermodynamics"]
 categories = ["api-bindings", "science"]

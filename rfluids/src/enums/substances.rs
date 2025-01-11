@@ -8,7 +8,7 @@ use strum_macros::{AsRefStr, EnumProperty, EnumString};
 ///
 /// How to convert [`Substance`] into [`&str`](str):
 /// ```
-/// use fluids_rs::enums::Substance;
+/// use rfluids::enums::Substance;
 ///
 /// assert_eq!(Substance::Water.as_ref(), "Water");
 /// ```
@@ -16,7 +16,7 @@ use strum_macros::{AsRefStr, EnumProperty, EnumString};
 /// How to parse [`Substance`] from [`&str`](str):
 /// ```
 /// use std::str::FromStr;
-/// use fluids_rs::enums::Substance;
+/// use rfluids::enums::Substance;
 ///
 /// assert_eq!(Substance::from_str("Water").unwrap(), Substance::Water);
 ///
@@ -2162,7 +2162,7 @@ impl Substance {
     /// # Examples
     ///
     /// ```
-    /// use fluids_rs::enums::{Substance, SubstanceCategory};
+    /// use rfluids::enums::{Substance, SubstanceCategory};
     ///
     /// assert_eq!(Substance::Water.category(), SubstanceCategory::Pure);
     /// assert_eq!(Substance::Air.category(), SubstanceCategory::PseudoPure);
@@ -2181,7 +2181,7 @@ impl Substance {
     /// # Examples
     ///
     /// ```
-    /// use fluids_rs::enums::Substance;
+    /// use rfluids::enums::Substance;
     ///
     /// assert_eq!(Substance::Water.backend(), "HEOS");
     /// assert_eq!(Substance::MPG.backend(), "INCOMP");
@@ -2204,7 +2204,7 @@ impl Substance {
     /// # Examples
     ///
     /// ```
-    /// use fluids_rs::enums::Substance;
+    /// use rfluids::enums::Substance;
     ///
     /// assert_eq!(Substance::MPG.min_fraction(), Some(0.0));
     /// assert_eq!(Substance::Water.min_fraction(), None);
@@ -2218,7 +2218,7 @@ impl Substance {
     /// # Examples
     ///
     /// ```
-    /// use fluids_rs::enums::Substance;
+    /// use rfluids::enums::Substance;
     ///
     /// assert_eq!(Substance::MPG.max_fraction(), Some(0.6));
     /// assert_eq!(Substance::Water.max_fraction(), None);

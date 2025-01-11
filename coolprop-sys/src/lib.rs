@@ -22,7 +22,7 @@
 //!
 //! ## License
 //!
-//! This project is licensed under [MIT License](https://github.com/portyanikhin/fluids-rs/blob/main/LICENSE).
+//! This project is licensed under [MIT License](https://github.com/portyanikhin/rfluids/blob/main/LICENSE).
 
 pub mod bindings;
 
