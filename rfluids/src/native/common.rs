@@ -17,7 +17,7 @@ pub(crate) struct ErrorBuffer {
 }
 
 impl ErrorBuffer {
-    pub(crate) fn blank() -> Self {
+    pub fn blank() -> Self {
         Self {
             code: &mut 0,
             message: MessageBuffer::blank(),
@@ -56,7 +56,7 @@ impl MessageBuffer {
         }
     }
 
-    pub(crate) fn blank() -> Self {
+    pub fn blank() -> Self {
         Self::with_capacity(0)
     }
 }
