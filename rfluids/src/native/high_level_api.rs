@@ -10,7 +10,7 @@ impl CoolProp {
     /// Returns a value that depends on the thermodynamic state
     /// of pure/pseudo-pure fluid or mixture.
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// # Args
     ///
     /// - `output_key` — key of the output
     ///   _(raw [`&str`](str) or [`Param`](crate::enums::Param))_.
@@ -20,7 +20,12 @@ impl CoolProp {
     /// - `input2_key` — key of the second input property
     ///   _(raw [`&str`](str) or [`Param`](crate::enums::Param))_.
     /// - `input2_value` — value of the second input property _(in SI units)_.
-    /// - `fluid_name` — name of the fluid.
+    /// - `fluid_name` — name of the fluid
+    ///   _(raw [`&str`](str) or [`Substance`](crate::enums::Substance))_.
+    ///
+    /// # Errors
+    ///
+    /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// # Examples
     ///
@@ -74,9 +79,11 @@ impl CoolProp {
     ///
     /// - [PropsSI function](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#propssi-function)
     /// - [PropsSI inputs/outputs](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
-    /// - [Pure and pseudo-pure fluids](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
-    /// - [Incompressible binary mixtures](https://coolprop.github.io/CoolProp/fluid_properties/Incompressibles.html)
+    /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
+    /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incomps.html)
     /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
+    /// - [`Param`](crate::enums::Param)
+    /// - [`Substance`](crate::enums::Substance)
     pub fn props_si(
         output_key: impl AsRef<str>,
         input1_key: impl AsRef<str>,
@@ -101,7 +108,7 @@ impl CoolProp {
 
     /// Returns a value that depends on the thermodynamic state of humid air.
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// # Args
     ///
     /// - `output_key` — key of the output
     ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::enums::HumidAirParam))_.
@@ -114,6 +121,10 @@ impl CoolProp {
     /// - `input3_key` — key of the third input property
     ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::enums::HumidAirParam))_.
     /// - `input3_value` — value of the third input property _(in SI units)_.
+    ///
+    /// # Errors
+    ///
+    /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// # Examples
     ///
@@ -132,6 +143,7 @@ impl CoolProp {
     ///
     /// - [HAPropsSI function](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html)
     /// - [HAPropsSI inputs/outputs](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
+    /// - [`HumidAirParam`](crate::enums::HumidAirParam)
     pub fn ha_props_si(
         output_key: impl AsRef<str>,
         input1_key: impl AsRef<str>,
@@ -160,11 +172,15 @@ impl CoolProp {
     /// Returns a value that doesn't depend on the thermodynamic state
     /// of pure/pseudo-pure fluid or mixture _(trivial output)_.
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// # Args
     ///
     /// - `output_key` — key of the _trivial_ output
     ///   _(raw [`&str`](str) or [`Param`](crate::enums::Param))_.
     /// - `fluid_name` — name of the fluid.
+    ///
+    /// # Errors
+    ///
+    /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// # Examples
     ///
@@ -192,6 +208,7 @@ impl CoolProp {
     ///
     /// - [Props1SI function](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#trivial-inputs)
     /// - [Props1SI outputs _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
+    /// - [`Param`](crate::enums::Param)
     pub fn props1_si(
         output_key: impl AsRef<str>,
         fluid_name: impl AsRef<str>,

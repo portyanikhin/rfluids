@@ -11,11 +11,17 @@ pub struct AbstractState {
 impl AbstractState {
     /// Creates and returns a new [`AbstractState`] instance with specified backend and fluid names.
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// # Args
     ///
-    /// - `backend_name` — name of the backend.
+    /// - `backend_name` — name of the backend
+    ///   _(raw [`&str`](str) or [`Substance::backend`](crate::enums::Substance::backend))_.
     /// - `fluid_names` — names of the fluids separated by the `&` symbol
-    ///   _(or just a single fluid name)_.
+    ///   or just a single fluid name
+    ///   _(raw [`&str`](str) or [`Substance`](crate::enums::Substance))_.
+    ///
+    /// # Errors
+    ///
+    /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// # Examples
     ///
@@ -49,9 +55,10 @@ impl AbstractState {
     /// # See also
     ///
     /// - [CoolProp low-level API](https://coolprop.github.io/CoolProp/coolprop/LowLevelAPI.html)
-    /// - [Pure and pseudo-pure fluids](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
-    /// - [Incompressible binary mixtures](https://coolprop.github.io/CoolProp/fluid_properties/Incompressibles.html)
+    /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
+    /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incomps.html)
     /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
+    /// - [`Substance`](crate::enums::Substance)
     pub fn new(
         backend_name: impl AsRef<str>,
         fluid_names: impl AsRef<str>,
@@ -71,9 +78,13 @@ impl AbstractState {
 
     /// Set the fractions _(mole, mass or volume — it will be defined automatically)_.
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// # Args
     ///
-    /// - `fractions` — specified fractions _(from 0 to 1 each)_.
+    /// - `fractions` — specified fractions _(dimensionless, from 0 to 1 each)_.
+    ///
+    /// # Errors
+    ///
+    /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// # Examples
     ///
@@ -113,12 +124,16 @@ impl AbstractState {
 
     /// Update the state of the fluid.
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// # Args
     ///
     /// - `input_pair_key` — specified input pair key
     ///   _(raw [`u8`] or [`InputPair`](crate::enums::InputPair))_.
     /// - `input1` — value of the first input property _(in SI units)_.
     /// - `input2` — value of the second input property _(in SI units)_.
+    ///
+    /// # Errors
+    ///
+    /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// # Examples
     ///
@@ -130,6 +145,10 @@ impl AbstractState {
     /// let result = water.update(InputPair::PT, 101325.0, 293.15);
     /// assert!(result.is_ok());
     /// ```
+    ///
+    /// # See also
+    ///
+    /// - [`InputPair`](crate::enums::InputPair)
     pub fn update(
         &mut self,
         input_pair_key: impl Into<u8>,
@@ -153,11 +172,15 @@ impl AbstractState {
 
     /// Get an output parameter value.
     ///
-    /// For non-trivial outputs with undefined state or invalid inputs,
-    /// a [`CoolPropError`] is returned.
+    /// # Args
     ///
     /// - `key` — specified output parameter key
     ///   _(raw [`u8`] or [`Param`](crate::enums::Param))_.
+    ///
+    /// # Errors
+    ///
+    /// For non-trivial outputs with undefined state or invalid inputs,
+    /// a [`CoolPropError`] is returned.
     ///
     /// # Examples
     ///
@@ -209,6 +232,10 @@ impl AbstractState {
     /// let result = mixture.keyed_output(Param::DMass).unwrap();
     /// assert_relative_eq!(result, 859.5296602799147);
     /// ```
+    ///
+    /// # See also
+    ///
+    /// - [`Param`](crate::enums::Param)
     pub fn keyed_output(&self, key: impl Into<u8>) -> Result<f64, CoolPropError> {
         let error = ErrorBuffer::default();
         let key = key.into();
@@ -226,10 +253,14 @@ impl AbstractState {
 
     /// Specify the phase state for all further calculations.
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// # Args
     ///
     /// - `phase` — specified phase state
     ///   _(raw [`&str`](str) or [`Phase`](crate::enums::Phase))_.
+    ///
+    /// # Errors
+    ///
+    /// For invalid inputs, a [`CoolPropError`] is returned.
     ///
     /// # Examples
     ///
@@ -249,6 +280,7 @@ impl AbstractState {
     /// # See also
     ///
     /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
+    /// - [`Phase`](crate::enums::Phase)
     pub fn specify_phase(&mut self, phase: impl AsRef<str>) -> Result<(), CoolPropError> {
         let error = ErrorBuffer::default();
         unsafe {
