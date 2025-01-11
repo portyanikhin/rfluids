@@ -316,7 +316,7 @@ impl AbstractState {
     ///
     /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     pub fn unspecify_phase(&mut self) {
-        let error = ErrorBuffer::default();
+        let error = ErrorBuffer::blank();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_unspecify_phase(
                 self.ptr,
@@ -350,7 +350,7 @@ impl AbstractState {
 
 impl Drop for AbstractState {
     fn drop(&mut self) {
-        let error = ErrorBuffer::default();
+        let error = ErrorBuffer::blank();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_free(
                 self.ptr,
