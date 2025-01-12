@@ -1,3 +1,5 @@
+use crate::uom::si::f64::Ratio;
+use crate::uom::si::ratio::ratio;
 use std::str::FromStr;
 use strum::EnumProperty;
 use strum_macros::{AsRefStr, EnumProperty, EnumString};
@@ -2202,32 +2204,40 @@ impl Substance {
         }
     }
 
-    /// Minimum possible fraction of binary mixture _(dimensionless, from 0 to 1)_.
+    /// Minimum possible fraction of binary mixture.
     ///
     /// # Examples
     ///
     /// ```
     /// use rfluids::enums::Substance;
+    /// use rfluids::uom::si::f64::Ratio;
+    /// use rfluids::uom::si::ratio::percent;
     ///
-    /// assert_eq!(Substance::MPG.min_fraction(), Some(0.0));
+    /// assert_eq!(Substance::MPG.min_fraction(), Some(Ratio::new::<percent>(0.0)));
     /// assert_eq!(Substance::Water.min_fraction(), None);
     /// ```
-    pub fn min_fraction(&self) -> Option<f64> {
-        f64::from_str(self.get_str("min_fraction")?).ok()
+    pub fn min_fraction(&self) -> Option<Ratio> {
+        f64::from_str(self.get_str("min_fraction")?)
+            .map(Ratio::new::<ratio>)
+            .ok()
     }
 
-    /// Maximum possible fraction of binary mixture _(dimensionless, from 0 to 1)_.
+    /// Maximum possible fraction of binary mixture.
     ///
     /// # Examples
     ///
     /// ```
     /// use rfluids::enums::Substance;
+    /// use rfluids::uom::si::f64::Ratio;
+    /// use rfluids::uom::si::ratio::percent;
     ///
-    /// assert_eq!(Substance::MPG.max_fraction(), Some(0.6));
+    /// assert_eq!(Substance::MPG.max_fraction(), Some(Ratio::new::<percent>(60.0)));
     /// assert_eq!(Substance::Water.max_fraction(), None);
     /// ```
-    pub fn max_fraction(&self) -> Option<f64> {
-        f64::from_str(self.get_str("max_fraction")?).ok()
+    pub fn max_fraction(&self) -> Option<Ratio> {
+        f64::from_str(self.get_str("max_fraction")?)
+            .map(Ratio::new::<ratio>)
+            .ok()
     }
 }
 
@@ -2618,8 +2628,14 @@ mod tests {
     ) {
         assert_eq!(substance.category(), expected_category);
         assert_eq!(substance.backend(), expected_backend);
-        assert_eq!(substance.min_fraction(), expected_min_fraction);
-        assert_eq!(substance.max_fraction(), expected_max_fraction);
+        assert_eq!(
+            substance.min_fraction(),
+            expected_min_fraction.map(Ratio::new::<ratio>)
+        );
+        assert_eq!(
+            substance.max_fraction(),
+            expected_max_fraction.map(Ratio::new::<ratio>)
+        );
     }
 
     //noinspection SpellCheckingInspection

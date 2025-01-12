@@ -16,6 +16,7 @@ coolprop-sys = { path = "../coolprop-sys", version = "0.1.0-alpha" }
 thiserror = "2.0.11"
 strum = "0.26.3"
 strum_macros = "0.26.4"
+uom = "0.36.0"
 
 [dev-dependencies]
 approx = "0.5.1"
