@@ -5,6 +5,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// # Examples
 ///
 /// How to convert [`Phase`] into [`&str`](str):
+///
 /// ```
 /// use rfluids::enums::Phase;
 ///
@@ -12,6 +13,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// ```
 ///
 /// How to parse [`Phase`] from [`&str`](str):
+///
 /// ```
 /// use std::str::FromStr;
 /// use rfluids::enums::Phase;
@@ -24,6 +26,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// ```
 ///
 /// How to convert [`Phase`] into [`u8`]:
+///
 /// ```
 /// use rfluids::enums::Phase;
 ///
@@ -31,6 +34,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// ```
 ///
 /// How to parse [`Phase`] from [`u8`]:
+///
 /// ```
 /// use rfluids::enums::Phase;
 ///
@@ -38,6 +42,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// ```
 ///
 /// How to parse [`Phase`] from [`f64`]:
+///
 /// ```
 /// use rfluids::enums::Phase;
 ///

@@ -59,7 +59,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 ///
 /// # See also
 ///
-/// [CoolProp input/output parameters](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
+/// - [CoolProp input/output parameters](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
 //noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, FromRepr, Debug, Copy, Clone, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]

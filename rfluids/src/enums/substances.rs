@@ -7,6 +7,7 @@ use strum_macros::{AsRefStr, EnumProperty, EnumString};
 /// # Examples
 ///
 /// How to convert [`Substance`] into [`&str`](str):
+///
 /// ```
 /// use rfluids::enums::Substance;
 ///
@@ -14,6 +15,7 @@ use strum_macros::{AsRefStr, EnumProperty, EnumString};
 /// ```
 ///
 /// How to parse [`Substance`] from [`&str`](str):
+///
 /// ```
 /// use std::str::FromStr;
 /// use rfluids::enums::Substance;
@@ -24,6 +26,7 @@ use strum_macros::{AsRefStr, EnumProperty, EnumString};
 ///
 /// assert_eq!(Substance::try_from("H2O"), Ok(Substance::Water));
 /// ```
+///
 /// # See also
 ///
 /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
