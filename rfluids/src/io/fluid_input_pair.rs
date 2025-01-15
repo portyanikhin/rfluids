@@ -4,26 +4,26 @@ use crate::io::FluidParam;
 ///
 /// # Examples
 ///
-/// How to convert [`InputPair`] into [`u8`]:
+/// How to convert [`FluidInputPair`] into [`u8`]:
 ///
 /// ```
-/// use rfluids::io::InputPair;
+/// use rfluids::io::FluidInputPair;
 ///
-/// assert_eq!(u8::from(InputPair::PT), 9);
+/// assert_eq!(u8::from(FluidInputPair::PT), 9);
 /// ```
 ///
-/// How to parse [`InputPair`] from two [`FluidParam`]s:
+/// How to parse [`FluidInputPair`] from two [`FluidParam`]s:
 ///
 /// ```
-/// use rfluids::io::{InputPair, FluidParam};
+/// use rfluids::io::{FluidInputPair, FluidParam};
 ///
 /// assert_eq!(
-///     InputPair::try_from((FluidParam::T, FluidParam::P)),
-///     Ok(InputPair::PT)
+///     FluidInputPair::try_from((FluidParam::T, FluidParam::P)),
+///     Ok(FluidInputPair::PT)
 /// );
 /// ```
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
-pub enum InputPair {
+pub enum FluidInputPair {
     /// Vapor quality _(dimensionless, from 0 to 1)_, temperature _(K)_.
     QT = 1,
 
@@ -130,115 +130,121 @@ pub enum InputPair {
     DMolarUMolar = 35,
 }
 
-impl From<InputPair> for u8 {
-    fn from(value: InputPair) -> Self {
+impl From<FluidInputPair> for u8 {
+    fn from(value: FluidInputPair) -> Self {
         value as u8
     }
 }
 
-impl TryFrom<(FluidParam, FluidParam)> for InputPair {
+impl TryFrom<(FluidParam, FluidParam)> for FluidInputPair {
     type Error = strum::ParseError;
 
     fn try_from(value: (FluidParam, FluidParam)) -> Result<Self, Self::Error> {
         match value {
-            (FluidParam::Q, FluidParam::T) | (FluidParam::T, FluidParam::Q) => Ok(InputPair::QT),
-            (FluidParam::P, FluidParam::Q) | (FluidParam::Q, FluidParam::P) => Ok(InputPair::PQ),
+            (FluidParam::Q, FluidParam::T) | (FluidParam::T, FluidParam::Q) => {
+                Ok(FluidInputPair::QT)
+            }
+            (FluidParam::P, FluidParam::Q) | (FluidParam::Q, FluidParam::P) => {
+                Ok(FluidInputPair::PQ)
+            }
             (FluidParam::Q, FluidParam::SMolar) | (FluidParam::SMolar, FluidParam::Q) => {
-                Ok(InputPair::QSMolar)
+                Ok(FluidInputPair::QSMolar)
             }
             (FluidParam::Q, FluidParam::SMass) | (FluidParam::SMass, FluidParam::Q) => {
-                Ok(InputPair::QSMass)
+                Ok(FluidInputPair::QSMass)
             }
             (FluidParam::HMolar, FluidParam::Q) | (FluidParam::Q, FluidParam::HMolar) => {
-                Ok(InputPair::HMolarQ)
+                Ok(FluidInputPair::HMolarQ)
             }
             (FluidParam::HMass, FluidParam::Q) | (FluidParam::Q, FluidParam::HMass) => {
-                Ok(InputPair::HMassQ)
+                Ok(FluidInputPair::HMassQ)
             }
             (FluidParam::DMolar, FluidParam::Q) | (FluidParam::Q, FluidParam::DMolar) => {
-                Ok(InputPair::DMolarQ)
+                Ok(FluidInputPair::DMolarQ)
             }
             (FluidParam::DMass, FluidParam::Q) | (FluidParam::Q, FluidParam::DMass) => {
-                Ok(InputPair::DMassQ)
+                Ok(FluidInputPair::DMassQ)
             }
-            (FluidParam::P, FluidParam::T) | (FluidParam::T, FluidParam::P) => Ok(InputPair::PT),
+            (FluidParam::P, FluidParam::T) | (FluidParam::T, FluidParam::P) => {
+                Ok(FluidInputPair::PT)
+            }
             (FluidParam::DMass, FluidParam::T) | (FluidParam::T, FluidParam::DMass) => {
-                Ok(InputPair::DMassT)
+                Ok(FluidInputPair::DMassT)
             }
             (FluidParam::DMolar, FluidParam::T) | (FluidParam::T, FluidParam::DMolar) => {
-                Ok(InputPair::DMolarT)
+                Ok(FluidInputPair::DMolarT)
             }
             (FluidParam::HMolar, FluidParam::T) | (FluidParam::T, FluidParam::HMolar) => {
-                Ok(InputPair::HMolarT)
+                Ok(FluidInputPair::HMolarT)
             }
             (FluidParam::HMass, FluidParam::T) | (FluidParam::T, FluidParam::HMass) => {
-                Ok(InputPair::HMassT)
+                Ok(FluidInputPair::HMassT)
             }
             (FluidParam::SMolar, FluidParam::T) | (FluidParam::T, FluidParam::SMolar) => {
-                Ok(InputPair::SMolarT)
+                Ok(FluidInputPair::SMolarT)
             }
             (FluidParam::SMass, FluidParam::T) | (FluidParam::T, FluidParam::SMass) => {
-                Ok(InputPair::SMassT)
+                Ok(FluidInputPair::SMassT)
             }
             (FluidParam::T, FluidParam::UMolar) | (FluidParam::UMolar, FluidParam::T) => {
-                Ok(InputPair::TUMolar)
+                Ok(FluidInputPair::TUMolar)
             }
             (FluidParam::T, FluidParam::UMass) | (FluidParam::UMass, FluidParam::T) => {
-                Ok(InputPair::TUMass)
+                Ok(FluidInputPair::TUMass)
             }
             (FluidParam::DMass, FluidParam::P) | (FluidParam::P, FluidParam::DMass) => {
-                Ok(InputPair::DMassP)
+                Ok(FluidInputPair::DMassP)
             }
             (FluidParam::DMolar, FluidParam::P) | (FluidParam::P, FluidParam::DMolar) => {
-                Ok(InputPair::DMolarP)
+                Ok(FluidInputPair::DMolarP)
             }
             (FluidParam::HMass, FluidParam::P) | (FluidParam::P, FluidParam::HMass) => {
-                Ok(InputPair::HMassP)
+                Ok(FluidInputPair::HMassP)
             }
             (FluidParam::HMolar, FluidParam::P) | (FluidParam::P, FluidParam::HMolar) => {
-                Ok(InputPair::HMolarP)
+                Ok(FluidInputPair::HMolarP)
             }
             (FluidParam::P, FluidParam::SMass) | (FluidParam::SMass, FluidParam::P) => {
-                Ok(InputPair::PSMass)
+                Ok(FluidInputPair::PSMass)
             }
             (FluidParam::P, FluidParam::SMolar) | (FluidParam::SMolar, FluidParam::P) => {
-                Ok(InputPair::PSMolar)
+                Ok(FluidInputPair::PSMolar)
             }
             (FluidParam::P, FluidParam::UMass) | (FluidParam::UMass, FluidParam::P) => {
-                Ok(InputPair::PUMass)
+                Ok(FluidInputPair::PUMass)
             }
             (FluidParam::P, FluidParam::UMolar) | (FluidParam::UMolar, FluidParam::P) => {
-                Ok(InputPair::PUMolar)
+                Ok(FluidInputPair::PUMolar)
             }
             (FluidParam::HMass, FluidParam::SMass) | (FluidParam::SMass, FluidParam::HMass) => {
-                Ok(InputPair::HMassSMass)
+                Ok(FluidInputPair::HMassSMass)
             }
             (FluidParam::HMolar, FluidParam::SMolar) | (FluidParam::SMolar, FluidParam::HMolar) => {
-                Ok(InputPair::HMolarSMolar)
+                Ok(FluidInputPair::HMolarSMolar)
             }
             (FluidParam::SMass, FluidParam::UMass) | (FluidParam::UMass, FluidParam::SMass) => {
-                Ok(InputPair::SMassUMass)
+                Ok(FluidInputPair::SMassUMass)
             }
             (FluidParam::SMolar, FluidParam::UMolar) | (FluidParam::UMolar, FluidParam::SMolar) => {
-                Ok(InputPair::SMolarUMolar)
+                Ok(FluidInputPair::SMolarUMolar)
             }
             (FluidParam::DMass, FluidParam::HMass) | (FluidParam::HMass, FluidParam::DMass) => {
-                Ok(InputPair::DMassHMass)
+                Ok(FluidInputPair::DMassHMass)
             }
             (FluidParam::DMolar, FluidParam::HMolar) | (FluidParam::HMolar, FluidParam::DMolar) => {
-                Ok(InputPair::DMolarHMolar)
+                Ok(FluidInputPair::DMolarHMolar)
             }
             (FluidParam::DMass, FluidParam::SMass) | (FluidParam::SMass, FluidParam::DMass) => {
-                Ok(InputPair::DMassSMass)
+                Ok(FluidInputPair::DMassSMass)
             }
             (FluidParam::DMolar, FluidParam::SMolar) | (FluidParam::SMolar, FluidParam::DMolar) => {
-                Ok(InputPair::DMolarSMolar)
+                Ok(FluidInputPair::DMolarSMolar)
             }
             (FluidParam::DMass, FluidParam::UMass) | (FluidParam::UMass, FluidParam::DMass) => {
-                Ok(InputPair::DMassUMass)
+                Ok(FluidInputPair::DMassUMass)
             }
             (FluidParam::DMolar, FluidParam::UMolar) | (FluidParam::UMolar, FluidParam::DMolar) => {
-                Ok(InputPair::DMolarUMolar)
+                Ok(FluidInputPair::DMolarUMolar)
             }
             _ => Err(strum::ParseError::VariantNotFound),
         }
@@ -247,8 +253,8 @@ impl TryFrom<(FluidParam, FluidParam)> for InputPair {
 
 #[cfg(test)]
 mod tests {
+    use super::FluidInputPair::*;
     use super::FluidParam::*;
-    use super::InputPair::*;
     use super::*;
     use rstest::*;
 
@@ -289,7 +295,7 @@ mod tests {
     #[case(DMassUMass, 34)]
     #[case(DMolarUMolar, 35)]
     fn u8_from_input_pair_always_returns_expected_value(
-        #[case] input_pair: InputPair,
+        #[case] input_pair: FluidInputPair,
         #[case] expected: u8,
     ) {
         assert_eq!(u8::from(input_pair), expected);
@@ -368,9 +374,9 @@ mod tests {
     #[case((UMolar, DMolar), DMolarUMolar)]
     fn try_from_two_valid_params_returns_ok(
         #[case] valid_params: (FluidParam, FluidParam),
-        #[case] expected: InputPair,
+        #[case] expected: FluidInputPair,
     ) {
-        assert_eq!(InputPair::try_from(valid_params), Ok(expected));
+        assert_eq!(FluidInputPair::try_from(valid_params), Ok(expected));
     }
 
     #[rstest]
@@ -378,6 +384,6 @@ mod tests {
     #[case((Phase, DMolar))]
     #[case((GWP100, ODP))]
     fn try_from_two_invalid_params_returns_err(#[case] invalid_params: (FluidParam, FluidParam)) {
-        assert!(InputPair::try_from(invalid_params).is_err());
+        assert!(FluidInputPair::try_from(invalid_params).is_err());
     }
 }

@@ -49,12 +49,15 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// assert_eq!(FluidParam::try_from(15.0), Ok(FluidParam::TMax));
 /// ```
 ///
-/// How to parse [`InputPair`](crate::io::InputPair) from two [`FluidParam`]s:
+/// How to parse [`FluidInputPair`](crate::io::FluidInputPair) from two [`FluidParam`]s:
 ///
 /// ```
-/// use rfluids::io::{InputPair, FluidParam};
+/// use rfluids::io::{FluidInputPair, FluidParam};
 ///
-/// assert_eq!(InputPair::try_from((FluidParam::T, FluidParam::P)), Ok(InputPair::PT));
+/// assert_eq!(
+///     FluidInputPair::try_from((FluidParam::T, FluidParam::P)),
+///     Ok(FluidInputPair::PT)
+/// );
 /// ```
 ///
 /// # See also
