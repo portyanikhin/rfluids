@@ -4,57 +4,57 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 ///
 /// # Examples
 ///
-/// How to convert [`Param`] to [`&str`](str):
+/// How to convert [`FluidParam`] to [`&str`](str):
 ///
 /// ```
-/// use rfluids::io::Param;
+/// use rfluids::io::FluidParam;
 ///
-/// assert_eq!(Param::TMin.as_ref(), "T_min");
+/// assert_eq!(FluidParam::TMin.as_ref(), "T_min");
 /// ```
 ///
-/// How to parse [`Param`] from [`&str`](str):
+/// How to parse [`FluidParam`] from [`&str`](str):
 ///
 /// ```
 /// use std::str::FromStr;
-/// use rfluids::io::Param;
+/// use rfluids::io::FluidParam;
 ///
-/// assert_eq!(Param::from_str("T_min"), Ok(Param::TMin));
+/// assert_eq!(FluidParam::from_str("T_min"), Ok(FluidParam::TMin));
 ///
 /// // or
 ///
-/// assert_eq!(Param::try_from("T_min"), Ok(Param::TMin));
+/// assert_eq!(FluidParam::try_from("T_min"), Ok(FluidParam::TMin));
 /// ```
 ///
-/// How to convert [`Param`] into [`u8`]:
+/// How to convert [`FluidParam`] into [`u8`]:
 ///
 /// ```
-/// use rfluids::io::Param;
+/// use rfluids::io::FluidParam;
 ///
-/// assert_eq!(u8::from(Param::TMax), 15);
+/// assert_eq!(u8::from(FluidParam::TMax), 15);
 /// ```
 ///
-/// How to parse [`Param`] from [`u8`]:
+/// How to parse [`FluidParam`] from [`u8`]:
 ///
 /// ```
-/// use rfluids::io::Param;
+/// use rfluids::io::FluidParam;
 ///
-/// assert_eq!(Param::try_from(15), Ok(Param::TMax));
+/// assert_eq!(FluidParam::try_from(15), Ok(FluidParam::TMax));
 /// ```
 ///
-/// How to parse [`Param`] from [`f64`]:
+/// How to parse [`FluidParam`] from [`f64`]:
 ///
 /// ```
-/// use rfluids::io::Param;
+/// use rfluids::io::FluidParam;
 ///
-/// assert_eq!(Param::try_from(15.0), Ok(Param::TMax));
+/// assert_eq!(FluidParam::try_from(15.0), Ok(FluidParam::TMax));
 /// ```
 ///
-/// How to parse [`InputPair`](crate::io::InputPair) from two [`Param`]s:
+/// How to parse [`InputPair`](crate::io::InputPair) from two [`FluidParam`]s:
 ///
 /// ```
-/// use rfluids::io::{InputPair, Param};
+/// use rfluids::io::{InputPair, FluidParam};
 ///
-/// assert_eq!(InputPair::try_from((Param::T, Param::P)), Ok(InputPair::PT));
+/// assert_eq!(InputPair::try_from((FluidParam::T, FluidParam::P)), Ok(InputPair::PT));
 /// ```
 ///
 /// # See also
@@ -64,7 +64,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 #[derive(AsRefStr, EnumString, FromRepr, Debug, Copy, Clone, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
-pub enum Param {
+pub enum FluidParam {
     /// Molar gas constant _(J/mol/K)_.
     #[strum(to_string = "gas_constant")]
     GasConstant = 1,
@@ -155,12 +155,12 @@ pub enum Param {
     Q = 21,
 
     /// Reciprocal reduced temperature _(dimensionless,
-    /// [`TCritical`](Param::TCritical)/[`T`](Param::T))_.
+    /// [`TCritical`](FluidParam::TCritical)/[`T`](FluidParam::T))_.
     #[strum(to_string = "Tau")]
     Tau = 22,
 
     /// Reduced density _(dimensionless,
-    /// [`DMass`](Param::DMass)/[`DMassCritical`](Param::DMassCritical))_.
+    /// [`DMass`](FluidParam::DMass)/[`DMassCritical`](FluidParam::DMassCritical))_.
     #[strum(to_string = "Delta")]
     Delta = 23,
 
@@ -293,12 +293,12 @@ pub enum Param {
     AlphaR = 54,
 
     /// Derivative of residual Helmholtz energy
-    /// with _[`Tau`](Param::Tau) (dimensionless)_.
+    /// with _[`Tau`](FluidParam::Tau) (dimensionless)_.
     #[strum(to_string = "dalphar_dtau_constdelta")]
     DAlphaRDTauConstDelta = 55,
 
     /// Derivative of residual Helmholtz energy
-    /// with _[`Delta`](Param::Delta) (dimensionless)_.
+    /// with _[`Delta`](FluidParam::Delta) (dimensionless)_.
     #[strum(to_string = "dalphar_ddelta_consttau")]
     DAlphaRDDeltaConstTau = 56,
 
@@ -307,22 +307,22 @@ pub enum Param {
     Alpha0 = 57,
 
     /// Derivative of ideal Helmholtz energy
-    /// with _[`Tau`](Param::Tau) (dimensionless)_.
+    /// with _[`Tau`](FluidParam::Tau) (dimensionless)_.
     #[strum(to_string = "dalpha0_dtau_constdelta")]
     DAlpha0DTauConstDelta = 58,
 
     /// Derivative of ideal Helmholtz energy
-    /// with _[`Delta`](Param::Delta) (dimensionless)_.
+    /// with _[`Delta`](FluidParam::Delta) (dimensionless)_.
     #[strum(to_string = "dalpha0_ddelta_consttau")]
     DAlpha0DDeltaConstTau = 59,
 
     /// Second derivative of ideal Helmholtz energy
-    /// with _[`Delta`](Param::Delta) (dimensionless)_.
+    /// with _[`Delta`](FluidParam::Delta) (dimensionless)_.
     #[strum(to_string = "d2alpha0_ddelta2_consttau")]
     D2Alpha0DDelta2ConstTau = 60,
 
     /// Third derivative of ideal Helmholtz energy
-    /// with _[`Delta`](Param::Delta) (dimensionless)_.
+    /// with _[`Delta`](FluidParam::Delta) (dimensionless)_.
     #[strum(to_string = "d3alpha0_ddelta3_consttau")]
     D3Alpha0DDelta3ConstTau = 61,
 
@@ -335,12 +335,12 @@ pub enum Param {
     CVirial = 63,
 
     /// Derivative of second virial coefficient
-    /// with _[`T`](Param::T) (dimensionless)_.
+    /// with _[`T`](FluidParam::T) (dimensionless)_.
     #[strum(to_string = "dBvirial_dT")]
     DBVirialDT = 64,
 
     /// Derivative of third virial coefficient
-    /// with _[`T`](Param::T) (dimensionless)_.
+    /// with _[`T`](FluidParam::T) (dimensionless)_.
     #[strum(to_string = "dCvirial_dT")]
     DCVirialDT = 65,
 
@@ -399,21 +399,21 @@ pub enum Param {
     Phase = 78,
 }
 
-impl From<Param> for u8 {
-    fn from(value: Param) -> Self {
+impl From<FluidParam> for u8 {
+    fn from(value: FluidParam) -> Self {
         value as u8
     }
 }
 
-impl TryFrom<u8> for Param {
+impl TryFrom<u8> for FluidParam {
     type Error = strum::ParseError;
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
-        Param::from_repr(value).ok_or(strum::ParseError::VariantNotFound)
+        FluidParam::from_repr(value).ok_or(strum::ParseError::VariantNotFound)
     }
 }
 
-impl TryFrom<f64> for Param {
+impl TryFrom<f64> for FluidParam {
     type Error = strum::ParseError;
 
     fn try_from(value: f64) -> Result<Self, Self::Error> {
@@ -421,13 +421,13 @@ impl TryFrom<f64> for Param {
         if val < u8::MIN as f64 || val > u8::MAX as f64 {
             return Err(strum::ParseError::VariantNotFound);
         }
-        Param::try_from(val as u8)
+        FluidParam::try_from(val as u8)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::Param::*;
+    use super::FluidParam::*;
     use super::*;
     use rstest::*;
     use std::str::FromStr;
@@ -515,7 +515,7 @@ mod tests {
     #[case(PH, "PH")]
     #[case(ODP, "ODP")]
     #[case(Phase, "Phase")]
-    fn as_ref_always_returns_expected_str(#[case] param: Param, #[case] expected: &str) {
+    fn as_ref_always_returns_expected_str(#[case] param: FluidParam, #[case] expected: &str) {
         assert_eq!(param.as_ref(), expected);
     }
 
@@ -606,10 +606,10 @@ mod tests {
     #[case(vec!["PH"], PH)]
     #[case(vec!["ODP"], ODP)]
     #[case(vec!["Phase"], Phase)]
-    fn from_valid_str_returns_ok(#[case] valid_values: Vec<&str>, #[case] expected: Param) {
+    fn from_valid_str_returns_ok(#[case] valid_values: Vec<&str>, #[case] expected: FluidParam) {
         for s in valid_values {
-            assert_eq!(Param::from_str(s), Ok(expected));
-            assert_eq!(Param::try_from(s), Ok(expected));
+            assert_eq!(FluidParam::from_str(s), Ok(expected));
+            assert_eq!(FluidParam::try_from(s), Ok(expected));
         }
     }
 
@@ -617,8 +617,8 @@ mod tests {
     #[case("")]
     #[case("Hello, World!")]
     fn from_invalid_str_returns_err(#[case] invalid_value: &str) {
-        assert!(Param::from_str(invalid_value).is_err());
-        assert!(Param::try_from(invalid_value).is_err());
+        assert!(FluidParam::from_str(invalid_value).is_err());
+        assert!(FluidParam::try_from(invalid_value).is_err());
     }
 
     #[rstest]
@@ -700,7 +700,10 @@ mod tests {
     #[case(PH, 76)]
     #[case(ODP, 77)]
     #[case(Phase, 78)]
-    fn u8_from_param_always_returns_expected_value(#[case] param: Param, #[case] expected: u8) {
+    fn u8_from_param_always_returns_expected_value(
+        #[case] param: FluidParam,
+        #[case] expected: u8,
+    ) {
         assert_eq!(u8::from(param), expected);
     }
 
@@ -783,15 +786,15 @@ mod tests {
     #[case(76, PH)]
     #[case(77, ODP)]
     #[case(78, Phase)]
-    fn try_from_valid_u8_returns_ok(#[case] valid_value: u8, #[case] expected: Param) {
-        assert_eq!(Param::try_from(valid_value), Ok(expected));
+    fn try_from_valid_u8_returns_ok(#[case] valid_value: u8, #[case] expected: FluidParam) {
+        assert_eq!(FluidParam::try_from(valid_value), Ok(expected));
     }
 
     #[rstest]
     #[case(254)]
     #[case(255)]
     fn try_from_invalid_u8_returns_err(#[case] invalid_value: u8) {
-        assert!(Param::try_from(invalid_value).is_err());
+        assert!(FluidParam::try_from(invalid_value).is_err());
     }
 
     #[rstest]
@@ -873,8 +876,8 @@ mod tests {
     #[case(76.0, PH)]
     #[case(77.0, ODP)]
     #[case(78.0, Phase)]
-    fn try_from_valid_f64_returns_ok(#[case] valid_value: f64, #[case] expected: Param) {
-        assert_eq!(Param::try_from(valid_value), Ok(expected));
+    fn try_from_valid_f64_returns_ok(#[case] valid_value: f64, #[case] expected: FluidParam) {
+        assert_eq!(FluidParam::try_from(valid_value), Ok(expected));
     }
 
     #[rstest]
@@ -882,6 +885,6 @@ mod tests {
     #[case(255.0)]
     #[case(100e3)]
     fn try_from_invalid_f64_returns_err(#[case] invalid_value: f64) {
-        assert!(Param::try_from(invalid_value).is_err());
+        assert!(FluidParam::try_from(invalid_value).is_err());
     }
 }

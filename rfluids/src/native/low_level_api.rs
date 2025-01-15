@@ -180,7 +180,7 @@ impl AbstractState {
     /// # Args
     ///
     /// - `key` — specified output parameter key
-    ///   _(raw [`u8`] or [`Param`](crate::io::Param))_.
+    ///   _(raw [`u8`] or [`FluidParam`](crate::io::FluidParam))_.
     ///
     /// # Errors
     ///
@@ -195,12 +195,12 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::io::{InputPair, Param};
+    /// use rfluids::io::{InputPair, FluidParam};
     /// use rfluids::native::AbstractState;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
     /// water.update(InputPair::PQ, 101325.0, 1.0).unwrap();
-    /// let result = water.keyed_output(Param::CpMass).unwrap();
+    /// let result = water.keyed_output(FluidParam::CpMass).unwrap();
     /// assert_relative_eq!(result, 2079.937085633241);
     /// ```
     ///
@@ -211,13 +211,13 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::io::{InputPair, Param};
+    /// use rfluids::io::{InputPair, FluidParam};
     /// use rfluids::native::AbstractState;
     ///
     /// let mut propylene_glycol = AbstractState::new("INCOMP", "MPG").unwrap();
     /// propylene_glycol.set_fractions(&[0.6]).unwrap();
     /// propylene_glycol.update(InputPair::PT, 100e3, 253.15).unwrap();
-    /// let result = propylene_glycol.keyed_output(Param::DynamicViscosity).unwrap();
+    /// let result = propylene_glycol.keyed_output(FluidParam::DynamicViscosity).unwrap();
     /// assert_relative_eq!(result, 0.13907391053938847);
     /// ```
     ///
@@ -228,19 +228,19 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::io::{InputPair, Param};
+    /// use rfluids::io::{InputPair, FluidParam};
     /// use rfluids::native::AbstractState;
     ///
     /// let mut mixture = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
     /// mixture.set_fractions(&[0.6, 0.4]).unwrap();
     /// mixture.update(InputPair::PT, 200e3, 277.15).unwrap();
-    /// let result = mixture.keyed_output(Param::DMass).unwrap();
+    /// let result = mixture.keyed_output(FluidParam::DMass).unwrap();
     /// assert_relative_eq!(result, 859.5296602799147);
     /// ```
     ///
     /// # See also
     ///
-    /// - [`Param`](crate::io::Param)
+    /// - [`FluidParam`](crate::io::FluidParam)
     pub fn keyed_output(&self, key: impl Into<u8>) -> Result<f64, CoolPropError> {
         let error = ErrorBuffer::default();
         let key = key.into();
@@ -370,7 +370,7 @@ impl Drop for AbstractState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::io::{InputPair, Param, Phase};
+    use crate::io::{FluidParam, InputPair, Phase};
     use approx::assert_relative_eq;
     use rayon::prelude::*;
     use rstest::*;
@@ -383,7 +383,7 @@ mod tests {
                 let mut sut = AbstractState::new("HEOS", "Water").unwrap();
                 sut.specify_phase(Phase::TwoPhase).unwrap();
                 sut.update(InputPair::PQ, p as f64, 0.0).unwrap();
-                sut.keyed_output(Param::T)
+                sut.keyed_output(FluidParam::T)
             })
             .collect();
         assert!(result.iter().all(|r| r.is_ok()));
@@ -467,7 +467,7 @@ mod tests {
     fn keyed_output_valid_state_returns_ok() {
         let mut sut = AbstractState::new("HEOS", "Water").unwrap();
         sut.update(InputPair::PQ, 101325.0, 1.0).unwrap();
-        let result = sut.keyed_output(Param::CpMass);
+        let result = sut.keyed_output(FluidParam::CpMass);
         assert!(result.is_ok());
         assert_relative_eq!(result.unwrap(), 2079.937085633241);
     }
@@ -486,7 +486,7 @@ mod tests {
     #[test]
     fn keyed_output_non_trivial_with_not_defined_state_returns_err() {
         let sut = AbstractState::new("HEOS", "Water").unwrap();
-        let result = sut.keyed_output(Param::DMass);
+        let result = sut.keyed_output(FluidParam::DMass);
         assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),

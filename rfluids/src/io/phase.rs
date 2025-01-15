@@ -57,24 +57,24 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
 pub enum Phase {
-    /// Liquid _([`P`](crate::io::Param::P) <
-    /// [`PCritical`](crate::io::Param::PCritical) &
-    /// [`T`](crate::io::Param::T) <
-    /// [`TCritical`](crate::io::Param::TCritical); above saturation)_.
+    /// Liquid _([`P`](crate::io::FluidParam::P) <
+    /// [`PCritical`](crate::io::FluidParam::PCritical) &
+    /// [`T`](crate::io::FluidParam::T) <
+    /// [`TCritical`](crate::io::FluidParam::TCritical); above saturation)_.
     #[strum(to_string = "phase_liquid", serialize = "liquid")]
     Liquid = 0,
 
-    /// Supercritical fluid _([`P`](crate::io::Param::P) >
-    /// [`PCritical`](crate::io::Param::PCritical) &
-    /// [`T`](crate::io::Param::T) >
-    /// [`TCritical`](crate::io::Param::TCritical))_.
+    /// Supercritical fluid _([`P`](crate::io::FluidParam::P) >
+    /// [`PCritical`](crate::io::FluidParam::PCritical) &
+    /// [`T`](crate::io::FluidParam::T) >
+    /// [`TCritical`](crate::io::FluidParam::TCritical))_.
     #[strum(to_string = "phase_supercritical", serialize = "supercritical")]
     Supercritical = 1,
 
-    /// Supercritical gas _([`P`](crate::io::Param::P) <
-    /// [`PCritical`](crate::io::Param::PCritical) &
-    /// [`T`](crate::io::Param::T) >
-    /// [`TCritical`](crate::io::Param::TCritical))_.
+    /// Supercritical gas _([`P`](crate::io::FluidParam::P) <
+    /// [`PCritical`](crate::io::FluidParam::PCritical) &
+    /// [`T`](crate::io::FluidParam::T) >
+    /// [`TCritical`](crate::io::FluidParam::TCritical))_.
     #[strum(
         to_string = "phase_supercritical_gas",
         serialize = "supercritical_gas",
@@ -82,10 +82,10 @@ pub enum Phase {
     )]
     SupercriticalGas = 2,
 
-    /// Supercritical liquid _([`P`](crate::io::Param::P) >
-    /// [`PCritical`](crate::io::Param::PCritical) &
-    /// [`T`](crate::io::Param::T) <
-    /// [`TCritical`](crate::io::Param::TCritical))_.
+    /// Supercritical liquid _([`P`](crate::io::FluidParam::P) >
+    /// [`PCritical`](crate::io::FluidParam::PCritical) &
+    /// [`T`](crate::io::FluidParam::T) <
+    /// [`TCritical`](crate::io::FluidParam::TCritical))_.
     #[strum(
         to_string = "phase_supercritical_liquid",
         serialize = "supercritical_liquid",
@@ -93,10 +93,10 @@ pub enum Phase {
     )]
     SupercriticalLiquid = 3,
 
-    /// Critical point _([`P`](crate::io::Param::P) =
-    /// [`PCritical`](crate::io::Param::PCritical) &
-    /// [`T`](crate::io::Param::T) =
-    /// [`TCritical`](crate::io::Param::TCritical))_.
+    /// Critical point _([`P`](crate::io::FluidParam::P) =
+    /// [`PCritical`](crate::io::FluidParam::PCritical) &
+    /// [`T`](crate::io::FluidParam::T) =
+    /// [`TCritical`](crate::io::FluidParam::TCritical))_.
     #[strum(
         to_string = "phase_critical_point",
         serialize = "critical_point",
@@ -104,17 +104,17 @@ pub enum Phase {
     )]
     CriticalPoint = 4,
 
-    /// Gas _([`P`](crate::io::Param::P) <
-    /// [`PCritical`](crate::io::Param::PCritical) &
-    /// [`T`](crate::io::Param::T) <
-    /// [`TCritical`](crate::io::Param::TCritical); below saturation)_.
+    /// Gas _([`P`](crate::io::FluidParam::P) <
+    /// [`PCritical`](crate::io::FluidParam::PCritical) &
+    /// [`T`](crate::io::FluidParam::T) <
+    /// [`TCritical`](crate::io::FluidParam::TCritical); below saturation)_.
     #[strum(to_string = "phase_gas", serialize = "gas")]
     Gas = 5,
 
-    /// Two-phase fluid _([`P`](crate::io::Param::P) <
-    /// [`PCritical`](crate::io::Param::PCritical) &
-    /// [`T`](crate::io::Param::T) <
-    /// [`TCritical`](crate::io::Param::TCritical); mixed liquid/gas)_.
+    /// Two-phase fluid _([`P`](crate::io::FluidParam::P) <
+    /// [`PCritical`](crate::io::FluidParam::PCritical) &
+    /// [`T`](crate::io::FluidParam::T) <
+    /// [`TCritical`](crate::io::FluidParam::TCritical); mixed liquid/gas)_.
     #[strum(
         to_string = "phase_twophase",
         serialize = "phase_two_phase",
