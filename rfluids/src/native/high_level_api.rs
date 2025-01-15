@@ -13,12 +13,12 @@ impl CoolProp {
     /// # Args
     ///
     /// - `output_key` — key of the output
-    ///   _(raw [`&str`](str) or [`Param`](crate::Param))_.
+    ///   _(raw [`&str`](str) or [`Param`](crate::io::Param))_.
     /// - `input1_key` — key of the first input property
-    ///   _(raw [`&str`](str) or [`Param`](crate::Param))_.
+    ///   _(raw [`&str`](str) or [`Param`](crate::io::Param))_.
     /// - `input1_value` — value of the first input property _(in SI units)_.
     /// - `input2_key` — key of the second input property
-    ///   _(raw [`&str`](str) or [`Param`](crate::Param))_.
+    ///   _(raw [`&str`](str) or [`Param`](crate::io::Param))_.
     /// - `input2_value` — value of the second input property _(in SI units)_.
     /// - `fluid_name` — name of the fluid _(raw [`&str`](str),
     ///   [`Substance`](crate::substance::Substance) or its subsets)_.
@@ -82,7 +82,7 @@ impl CoolProp {
     /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
     /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incomps.html)
     /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
-    /// - [`Param`](crate::Param)
+    /// - [`Param`](crate::io::Param)
     /// - [`Substance`](crate::substance::Substance)
     /// - [`Pure`](crate::substance::Pure)
     /// - [`IncompPure`](crate::substance::IncompPure)
@@ -116,15 +116,15 @@ impl CoolProp {
     /// # Args
     ///
     /// - `output_key` — key of the output
-    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::HumidAirParam))_.
+    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_.
     /// - `input1_key` — key of the first input property
-    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::HumidAirParam))_.
+    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_.
     /// - `input1_value` — value of the first input property _(in SI units)_.
     /// - `input2_key` — key of the second input property
-    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::HumidAirParam))_.
+    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_.
     /// - `input2_value` — value of the second input property _(in SI units)_.
     /// - `input3_key` — key of the third input property
-    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::HumidAirParam))_.
+    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_.
     /// - `input3_value` — value of the third input property _(in SI units)_.
     ///
     /// # Errors
@@ -148,7 +148,7 @@ impl CoolProp {
     ///
     /// - [HAPropsSI function](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html)
     /// - [HAPropsSI inputs/outputs](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
-    /// - [`HumidAirParam`](crate::HumidAirParam)
+    /// - [`HumidAirParam`](crate::io::HumidAirParam)
     pub fn ha_props_si(
         output_key: impl AsRef<str>,
         input1_key: impl AsRef<str>,
@@ -180,7 +180,7 @@ impl CoolProp {
     /// # Args
     ///
     /// - `output_key` — key of the _trivial_ output
-    ///   _(raw [`&str`](str) or [`Param`](crate::Param))_.
+    ///   _(raw [`&str`](str) or [`Param`](crate::io::Param))_.
     /// - `fluid_name` — name of the fluid _(raw [`&str`](str),
     ///   [`Substance`](crate::substance::Substance) or its subsets)_.
     ///
@@ -214,7 +214,7 @@ impl CoolProp {
     ///
     /// - [Props1SI function](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#trivial-inputs)
     /// - [Props1SI outputs _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
-    /// - [`Param`](crate::Param)
+    /// - [`Param`](crate::io::Param)
     /// - [`Substance`](crate::substance::Substance)
     /// - [`Pure`](crate::substance::Pure)
     /// - [`IncompPure`](crate::substance::IncompPure)

@@ -132,7 +132,7 @@ impl AbstractState {
     /// # Args
     ///
     /// - `input_pair_key` — specified input pair key
-    ///   _(raw [`u8`] or [`InputPair`](crate::InputPair))_.
+    ///   _(raw [`u8`] or [`InputPair`](crate::io::InputPair))_.
     /// - `input1` — value of the first input property _(in SI units)_.
     /// - `input2` — value of the second input property _(in SI units)_.
     ///
@@ -143,7 +143,7 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::InputPair;
+    /// use rfluids::io::InputPair;
     /// use rfluids::native::AbstractState;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
@@ -153,7 +153,7 @@ impl AbstractState {
     ///
     /// # See also
     ///
-    /// - [`InputPair`](crate::InputPair)
+    /// - [`InputPair`](crate::io::InputPair)
     pub fn update(
         &mut self,
         input_pair_key: impl Into<u8>,
@@ -180,7 +180,7 @@ impl AbstractState {
     /// # Args
     ///
     /// - `key` — specified output parameter key
-    ///   _(raw [`u8`] or [`Param`](crate::Param))_.
+    ///   _(raw [`u8`] or [`Param`](crate::io::Param))_.
     ///
     /// # Errors
     ///
@@ -195,7 +195,7 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::{InputPair, Param};
+    /// use rfluids::io::{InputPair, Param};
     /// use rfluids::native::AbstractState;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
@@ -211,7 +211,7 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::{InputPair, Param};
+    /// use rfluids::io::{InputPair, Param};
     /// use rfluids::native::AbstractState;
     ///
     /// let mut propylene_glycol = AbstractState::new("INCOMP", "MPG").unwrap();
@@ -228,7 +228,7 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::{InputPair, Param};
+    /// use rfluids::io::{InputPair, Param};
     /// use rfluids::native::AbstractState;
     ///
     /// let mut mixture = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
@@ -240,7 +240,7 @@ impl AbstractState {
     ///
     /// # See also
     ///
-    /// - [`Param`](crate::Param)
+    /// - [`Param`](crate::io::Param)
     pub fn keyed_output(&self, key: impl Into<u8>) -> Result<f64, CoolPropError> {
         let error = ErrorBuffer::default();
         let key = key.into();
@@ -261,7 +261,7 @@ impl AbstractState {
     /// # Args
     ///
     /// - `phase` — specified phase state
-    ///   _(raw [`&str`](str) or [`Phase`](crate::Phase))_.
+    ///   _(raw [`&str`](str) or [`Phase`](crate::io::Phase))_.
     ///
     /// # Errors
     ///
@@ -270,7 +270,7 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::{InputPair, Phase};
+    /// use rfluids::io::{InputPair, Phase};
     /// use rfluids::native::AbstractState;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
@@ -285,7 +285,7 @@ impl AbstractState {
     /// # See also
     ///
     /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
-    /// - [`Phase`](crate::Phase)
+    /// - [`Phase`](crate::io::Phase)
     pub fn specify_phase(&mut self, phase: impl AsRef<str>) -> Result<(), CoolPropError> {
         let error = ErrorBuffer::default();
         unsafe {
@@ -305,7 +305,7 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::{InputPair, Phase};
+    /// use rfluids::io::{InputPair, Phase};
     /// use rfluids::native::AbstractState;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
@@ -370,7 +370,7 @@ impl Drop for AbstractState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{InputPair, Param, Phase};
+    use crate::io::{InputPair, Param, Phase};
     use approx::assert_relative_eq;
     use rayon::prelude::*;
     use rstest::*;

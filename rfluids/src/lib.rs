@@ -27,8 +27,7 @@
 
 pub extern crate uom;
 
-pub use enums::*;
-
-mod enums;
 pub mod error;
+pub mod io;
 pub mod native;
+pub mod substance;
