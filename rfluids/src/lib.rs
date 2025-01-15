@@ -28,5 +28,5 @@
 pub extern crate uom;
 
 pub mod enums;
-pub mod errors;
+pub mod error;
 pub mod native;
