@@ -81,6 +81,7 @@ pub trait BackendName {
 ///     r32.as_ref()
 /// );
 /// ```
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum Substance {
     Pure(Pure),
     IncompPure(IncompPure),
