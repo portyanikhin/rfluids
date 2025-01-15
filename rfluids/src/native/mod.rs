@@ -1,4 +1,4 @@
-//! Implementation of the [CoolProp](https://coolprop.github.io/CoolProp/) native API.
+//! Implementation of the CoolProp native API.
 
 pub use high_level_api::CoolProp;
 pub use low_level_api::AbstractState;

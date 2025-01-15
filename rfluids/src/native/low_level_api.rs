@@ -13,11 +13,11 @@ impl AbstractState {
     ///
     /// # Args
     ///
-    /// - `backend_name` — name of the backend
-    ///   _(raw [`&str`](str) or [`Substance::backend`](crate::enums::Substance::backend))_.
+    /// - `backend_name` — name of the backend _(raw [`&str`](str)
+    ///   or [`BackendName::backend_name`](crate::substance::BackendName::backend_name))_.
     /// - `fluid_names` — names of the fluids separated by the `&` symbol
-    ///   or just a single fluid name
-    ///   _(raw [`&str`](str) or [`Substance`](crate::enums::Substance))_.
+    ///   or just a single fluid name _(raw [`&str`](str),
+    ///   [`Substance`](crate::substance::Substance) or its subsets)_.
     ///
     /// # Errors
     ///
@@ -58,7 +58,12 @@ impl AbstractState {
     /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
     /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incomps.html)
     /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
-    /// - [`Substance`](crate::enums::Substance)
+    /// - [`Substance`](crate::substance::Substance)
+    /// - [`Pure`](crate::substance::Pure)
+    /// - [`IncompPure`](crate::substance::IncompPure)
+    /// - [`BinaryMix`](crate::substance::BinaryMix)
+    /// - [`PredefinedMix`](crate::substance::PredefinedMix)
+    /// - [`Refrigerant`](crate::substance::Refrigerant)
     pub fn new(
         backend_name: impl AsRef<str>,
         fluid_names: impl AsRef<str>,
@@ -127,7 +132,7 @@ impl AbstractState {
     /// # Args
     ///
     /// - `input_pair_key` — specified input pair key
-    ///   _(raw [`u8`] or [`InputPair`](crate::enums::InputPair))_.
+    ///   _(raw [`u8`] or [`InputPair`](crate::InputPair))_.
     /// - `input1` — value of the first input property _(in SI units)_.
     /// - `input2` — value of the second input property _(in SI units)_.
     ///
@@ -138,7 +143,7 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::enums::InputPair;
+    /// use rfluids::InputPair;
     /// use rfluids::native::AbstractState;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
@@ -148,7 +153,7 @@ impl AbstractState {
     ///
     /// # See also
     ///
-    /// - [`InputPair`](crate::enums::InputPair)
+    /// - [`InputPair`](crate::InputPair)
     pub fn update(
         &mut self,
         input_pair_key: impl Into<u8>,
@@ -175,7 +180,7 @@ impl AbstractState {
     /// # Args
     ///
     /// - `key` — specified output parameter key
-    ///   _(raw [`u8`] or [`Param`](crate::enums::Param))_.
+    ///   _(raw [`u8`] or [`Param`](crate::Param))_.
     ///
     /// # Errors
     ///
@@ -190,7 +195,7 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::enums::{InputPair, Param};
+    /// use rfluids::{InputPair, Param};
     /// use rfluids::native::AbstractState;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
@@ -206,7 +211,7 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::enums::{InputPair, Param};
+    /// use rfluids::{InputPair, Param};
     /// use rfluids::native::AbstractState;
     ///
     /// let mut propylene_glycol = AbstractState::new("INCOMP", "MPG").unwrap();
@@ -223,7 +228,7 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::enums::{InputPair, Param};
+    /// use rfluids::{InputPair, Param};
     /// use rfluids::native::AbstractState;
     ///
     /// let mut mixture = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
@@ -235,7 +240,7 @@ impl AbstractState {
     ///
     /// # See also
     ///
-    /// - [`Param`](crate::enums::Param)
+    /// - [`Param`](crate::Param)
     pub fn keyed_output(&self, key: impl Into<u8>) -> Result<f64, CoolPropError> {
         let error = ErrorBuffer::default();
         let key = key.into();
@@ -256,7 +261,7 @@ impl AbstractState {
     /// # Args
     ///
     /// - `phase` — specified phase state
-    ///   _(raw [`&str`](str) or [`Phase`](crate::enums::Phase))_.
+    ///   _(raw [`&str`](str) or [`Phase`](crate::Phase))_.
     ///
     /// # Errors
     ///
@@ -265,7 +270,7 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::enums::{InputPair, Phase};
+    /// use rfluids::{InputPair, Phase};
     /// use rfluids::native::AbstractState;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
@@ -280,7 +285,7 @@ impl AbstractState {
     /// # See also
     ///
     /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
-    /// - [`Phase`](crate::enums::Phase)
+    /// - [`Phase`](crate::Phase)
     pub fn specify_phase(&mut self, phase: impl AsRef<str>) -> Result<(), CoolPropError> {
         let error = ErrorBuffer::default();
         unsafe {
@@ -300,7 +305,7 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::enums::{InputPair, Phase};
+    /// use rfluids::{InputPair, Phase};
     /// use rfluids::native::AbstractState;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
@@ -365,7 +370,7 @@ impl Drop for AbstractState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::enums::{InputPair, Param, Phase};
+    use crate::{InputPair, Param, Phase};
     use approx::assert_relative_eq;
     use rayon::prelude::*;
     use rstest::*;

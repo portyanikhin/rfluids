@@ -4,10 +4,10 @@ use strum_macros::{AsRefStr, EnumString};
 ///
 /// # Examples
 ///
-/// How to convert [`HumidAirParam`] into [`&str`](str):
+/// How to convert [`HumidAirParam`] to [`&str`](str):
 ///
 /// ```
-/// use rfluids::enums::HumidAirParam;
+/// use rfluids::HumidAirParam;
 ///
 /// assert_eq!(HumidAirParam::TDew.as_ref(), "D");
 /// ```
@@ -16,7 +16,7 @@ use strum_macros::{AsRefStr, EnumString};
 ///
 /// ```
 /// use std::str::FromStr;
-/// use rfluids::enums::HumidAirParam;
+/// use rfluids::HumidAirParam;
 ///
 /// assert_eq!(HumidAirParam::from_str("D"), Ok(HumidAirParam::TDew));
 ///

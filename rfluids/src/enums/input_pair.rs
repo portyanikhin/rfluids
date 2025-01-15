@@ -1,4 +1,4 @@
-use crate::enums::Param;
+use crate::Param;
 
 /// CoolProp input pairs.
 ///
@@ -7,7 +7,7 @@ use crate::enums::Param;
 /// How to convert [`InputPair`] into [`u8`]:
 ///
 /// ```
-/// use rfluids::enums::InputPair;
+/// use rfluids::InputPair;
 ///
 /// assert_eq!(u8::from(InputPair::PT), 9);
 /// ```
@@ -15,7 +15,7 @@ use crate::enums::Param;
 /// How to parse [`InputPair`] from two [`Param`]s:
 ///
 /// ```
-/// use rfluids::enums::{InputPair, Param};
+/// use rfluids::{InputPair, Param};
 ///
 /// assert_eq!(InputPair::try_from((Param::T, Param::P)), Ok(InputPair::PT));
 /// ```
