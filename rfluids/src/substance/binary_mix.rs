@@ -11,24 +11,14 @@ use strum_macros::{AsRefStr, EnumProperty, EnumString};
 ///
 /// # Examples
 ///
-/// How to convert [`BinaryMix`] to [`&str`](str):
-///
-/// ```
-/// use rfluids::substance::BinaryMix;
-///
-/// assert_eq!(BinaryMix::MPG.as_ref(), "MPG");
-/// ```
-///
-/// How to parse [`BinaryMix`] from [`&str`](str):
+/// Conversion between [`BinaryMix`] and [`&str`](str):
 ///
 /// ```
 /// use std::str::FromStr;
 /// use rfluids::substance::BinaryMix;
 ///
+/// assert_eq!(BinaryMix::MPG.as_ref(), "MPG");
 /// assert_eq!(BinaryMix::from_str("MPG"), Ok(BinaryMix::MPG));
-///
-/// // or
-///
 /// assert_eq!(BinaryMix::try_from("MPG"), Ok(BinaryMix::MPG));
 /// ```
 ///

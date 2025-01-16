@@ -4,44 +4,27 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 ///
 /// # Examples
 ///
-/// How to convert [`Phase`] to [`&str`](str):
-///
-/// ```
-/// use rfluids::io::Phase;
-///
-/// assert_eq!(Phase::Liquid.as_ref(), "phase_liquid");
-/// ```
-///
-/// How to parse [`Phase`] from [`&str`](str):
+/// Conversion between [`Phase`] and [`&str`](str):
 ///
 /// ```
 /// use std::str::FromStr;
 /// use rfluids::io::Phase;
 ///
+/// assert_eq!(Phase::Liquid.as_ref(), "phase_liquid");
 /// assert_eq!(Phase::from_str("phase_liquid"), Ok(Phase::Liquid));
-///
-/// // or
-///
 /// assert_eq!(Phase::try_from("liquid"), Ok(Phase::Liquid));
 /// ```
 ///
-/// How to convert [`Phase`] into [`u8`]:
+/// Conversion between [`Phase`] and [`u8`]:
 ///
 /// ```
 /// use rfluids::io::Phase;
 ///
 /// assert_eq!(u8::from(Phase::Gas), 5);
-/// ```
-///
-/// How to parse [`Phase`] from [`u8`]:
-///
-/// ```
-/// use rfluids::io::Phase;
-///
 /// assert_eq!(Phase::try_from(5), Ok(Phase::Gas));
 /// ```
 ///
-/// How to parse [`Phase`] from [`f64`]:
+/// Conversion between [`Phase`] and [`f64`]:
 ///
 /// ```
 /// use rfluids::io::Phase;

@@ -4,44 +4,27 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 ///
 /// # Examples
 ///
-/// How to convert [`FluidParam`] to [`&str`](str):
-///
-/// ```
-/// use rfluids::io::FluidParam;
-///
-/// assert_eq!(FluidParam::TMin.as_ref(), "T_min");
-/// ```
-///
-/// How to parse [`FluidParam`] from [`&str`](str):
+/// Conversion between [`FluidParam`] and [`&str`](str):
 ///
 /// ```
 /// use std::str::FromStr;
 /// use rfluids::io::FluidParam;
 ///
+/// assert_eq!(FluidParam::TMin.as_ref(), "T_min");
 /// assert_eq!(FluidParam::from_str("T_min"), Ok(FluidParam::TMin));
-///
-/// // or
-///
 /// assert_eq!(FluidParam::try_from("T_min"), Ok(FluidParam::TMin));
 /// ```
 ///
-/// How to convert [`FluidParam`] into [`u8`]:
+/// Conversion between [`FluidParam`] and [`u8`]:
 ///
 /// ```
 /// use rfluids::io::FluidParam;
 ///
 /// assert_eq!(u8::from(FluidParam::TMax), 15);
-/// ```
-///
-/// How to parse [`FluidParam`] from [`u8`]:
-///
-/// ```
-/// use rfluids::io::FluidParam;
-///
 /// assert_eq!(FluidParam::try_from(15), Ok(FluidParam::TMax));
 /// ```
 ///
-/// How to parse [`FluidParam`] from [`f64`]:
+/// Conversion between [`FluidParam`] and [`f64`]:
 ///
 /// ```
 /// use rfluids::io::FluidParam;
@@ -49,11 +32,15 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// assert_eq!(FluidParam::try_from(15.0), Ok(FluidParam::TMax));
 /// ```
 ///
-/// How to parse [`FluidInputPair`](crate::io::FluidInputPair) from two [`FluidParam`]s:
+/// Conversion between two [`FluidParam`]s and [`FluidInputPair`](crate::io::FluidInputPair):
 ///
 /// ```
 /// use rfluids::io::{FluidInputPair, FluidParam};
 ///
+/// assert_eq!(
+///     <(FluidParam, FluidParam)>::from(FluidInputPair::PT),
+///     (FluidParam::P, FluidParam::T)
+/// );
 /// assert_eq!(
 ///     FluidInputPair::try_from((FluidParam::T, FluidParam::P)),
 ///     Ok(FluidInputPair::PT)

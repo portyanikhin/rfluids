@@ -7,24 +7,14 @@ use strum_macros::{AsRefStr, EnumString};
 ///
 /// # Examples
 ///
-/// How to convert [`Pure`] to [`&str`](str):
-///
-/// ```
-/// use rfluids::substance::Pure;
-///
-/// assert_eq!(Pure::Water.as_ref(), "Water");
-/// ```
-///
-/// How to parse [`Pure`] from [`&str`](str):
+/// Conversion between [`Pure`] and [`&str`](str):
 ///
 /// ```
 /// use std::str::FromStr;
 /// use rfluids::substance::Pure;
 ///
+/// assert_eq!(Pure::Water.as_ref(), "Water");
 /// assert_eq!(Pure::from_str("Water"), Ok(Pure::Water));
-///
-/// // or
-///
 /// assert_eq!(Pure::try_from("H2O"), Ok(Pure::Water));
 /// ```
 ///
