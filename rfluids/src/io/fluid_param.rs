@@ -72,11 +72,11 @@ pub enum FluidParam {
     #[strum(to_string = "acentric_factor", serialize = "acentric")]
     AcentricFactor = 3,
 
-    /// Reducing point molar density _(mol/m3)_.
+    /// Reducing point molar density _(mol/m³)_.
     #[strum(to_string = "rhomolar_reducing")]
     DMolarReducing = 4,
 
-    /// Critical point molar density _(mol/m3)_.
+    /// Critical point molar density _(mol/m³)_.
     #[strum(to_string = "rhomolar_critical")]
     DMolarCritical = 5,
 
@@ -88,11 +88,11 @@ pub enum FluidParam {
     #[strum(to_string = "T_critical", serialize = "Tcrit")]
     TCritical = 7,
 
-    /// Reducing point mass density _(kg/m3)_.
+    /// Reducing point mass density _(kg/m³)_.
     #[strum(to_string = "rhomass_reducing")]
     DMassReducing = 8,
 
-    /// Critical point mass density _(kg/m3)_.
+    /// Critical point mass density _(kg/m³)_.
     #[strum(to_string = "rhomass_critical", serialize = "rhocrit")]
     DMassCritical = 9,
 
@@ -154,7 +154,7 @@ pub enum FluidParam {
     #[strum(to_string = "Delta")]
     Delta = 23,
 
-    /// Molar density _(mol/m3)_.
+    /// Molar density _(mol/m³)_.
     #[strum(to_string = "Dmolar")]
     DMolar = 24,
 
@@ -202,7 +202,7 @@ pub enum FluidParam {
     #[strum(to_string = "Gmolar_residual")]
     GMolarResidual = 35,
 
-    /// Mass density _(kg/m3)_.
+    /// Mass density _(kg/m³)_.
     #[strum(to_string = "Dmass", serialize = "D")]
     DMass = 36,
 

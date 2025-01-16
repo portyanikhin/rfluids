@@ -128,11 +128,11 @@ pub enum HumidAirParam {
     )]
     T,
 
-    /// Specific volume per unit of dry air _(m3/kg dry air)_.
+    /// Specific volume per unit of dry air _(m³/kg dry air)_.
     #[strum(to_string = "V", serialize = "Vda", serialize = "V_da")]
     Vda,
 
-    /// Specific volume per unit of humid air _(m3/kg humid air)_.
+    /// Specific volume per unit of humid air _(m³/kg humid air)_.
     #[strum(to_string = "Vha", serialize = "V_ha")]
     Vha,
 

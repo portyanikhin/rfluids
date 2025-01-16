@@ -46,19 +46,19 @@ pub enum FluidInputPair {
     /// Mass specific enthalpy _(J/kg)_, vapor quality _(dimensionless, from 0 to 1)_.
     HMassQ = 6,
 
-    /// Molar density _(mol/m3)_, vapor quality _(dimensionless, from 0 to 1)_.
+    /// Molar density _(mol/m³)_, vapor quality _(dimensionless, from 0 to 1)_.
     DMolarQ = 7,
 
-    /// Mass density _(kg/m3)_, vapor quality _(dimensionless, from 0 to 1)_.
+    /// Mass density _(kg/m³)_, vapor quality _(dimensionless, from 0 to 1)_.
     DMassQ = 8,
 
     /// Pressure _(Pa)_, temperature _(K)_.
     PT = 9,
 
-    /// Mass density _(kg/m3)_, temperature _(K)_.
+    /// Mass density _(kg/m³)_, temperature _(K)_.
     DMassT = 10,
 
-    /// Molar density _(mol/m3)_, temperature _(K)_.
+    /// Molar density _(mol/m³)_, temperature _(K)_.
     DMolarT = 11,
 
     /// Molar specific enthalpy _(J/mol)_, temperature _(K)_.
@@ -79,10 +79,10 @@ pub enum FluidInputPair {
     /// Temperature _(K)_, mass specific internal energy _(J/kg)_.
     TUMass = 17,
 
-    /// Mass density _(kg/m3)_, pressure _(Pa)_.
+    /// Mass density _(kg/m³)_, pressure _(Pa)_.
     DMassP = 18,
 
-    /// Molar density _(mol/m3)_, pressure _(Pa)_.
+    /// Molar density _(mol/m³)_, pressure _(Pa)_.
     DMolarP = 19,
 
     /// Mass specific enthalpy _(J/kg)_, pressure _(Pa)_.
@@ -115,22 +115,22 @@ pub enum FluidInputPair {
     /// Molar specific entropy _(J/mol/K)_, molar specific internal energy _(J/mol)_.
     SMolarUMolar = 29,
 
-    /// Mass density _(kg/m3)_, mass specific enthalpy _(J/kg)_.
+    /// Mass density _(kg/m³)_, mass specific enthalpy _(J/kg)_.
     DMassHMass = 30,
 
-    /// Molar density _(mol/m3)_, molar specific enthalpy _(J/mol)_.
+    /// Molar density _(mol/m³)_, molar specific enthalpy _(J/mol)_.
     DMolarHMolar = 31,
 
-    /// Mass density _(kg/m3)_, mass specific entropy _(J/kg/K)_.
+    /// Mass density _(kg/m³)_, mass specific entropy _(J/kg/K)_.
     DMassSMass = 32,
 
-    /// Molar density _(mol/m3)_, molar specific entropy _(J/mol/K)_.
+    /// Molar density _(mol/m³)_, molar specific entropy _(J/mol/K)_.
     DMolarSMolar = 33,
 
-    /// Mass density _(kg/m3)_, mass specific internal energy _(J/kg)_.
+    /// Mass density _(kg/m³)_, mass specific internal energy _(J/kg)_.
     DMassUMass = 34,
 
-    /// Molar density _(mol/m3)_, molar specific internal energy _(J/mol)_.
+    /// Molar density _(mol/m³)_, molar specific internal energy _(J/mol)_.
     DMolarUMolar = 35,
 }
 
