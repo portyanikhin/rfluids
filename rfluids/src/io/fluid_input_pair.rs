@@ -4,12 +4,23 @@ use crate::io::FluidParam;
 ///
 /// # Examples
 ///
-/// How to convert [`FluidInputPair`] into [`u8`]:
+/// How to convert [`FluidInputPair`] to [`u8`]:
 ///
 /// ```
 /// use rfluids::io::FluidInputPair;
 ///
 /// assert_eq!(u8::from(FluidInputPair::PT), 9);
+/// ```
+///
+/// How to convert [`FluidInputPair`] to two [`FluidParam`]s:
+///
+/// ```
+/// use rfluids::io::{FluidInputPair, FluidParam};
+///
+/// assert_eq!(
+///     <(FluidParam, FluidParam)>::from(FluidInputPair::PT),
+///     (FluidParam::P, FluidParam::T)
+/// );
 /// ```
 ///
 /// How to parse [`FluidInputPair`] from two [`FluidParam`]s:
@@ -133,6 +144,48 @@ pub enum FluidInputPair {
 impl From<FluidInputPair> for u8 {
     fn from(value: FluidInputPair) -> Self {
         value as u8
+    }
+}
+
+impl From<FluidInputPair> for (FluidParam, FluidParam) {
+    fn from(value: FluidInputPair) -> Self {
+        match value {
+            FluidInputPair::QT => (FluidParam::Q, FluidParam::T),
+            FluidInputPair::PQ => (FluidParam::P, FluidParam::Q),
+            FluidInputPair::QSMolar => (FluidParam::Q, FluidParam::SMolar),
+            FluidInputPair::QSMass => (FluidParam::Q, FluidParam::SMass),
+            FluidInputPair::HMolarQ => (FluidParam::HMolar, FluidParam::Q),
+            FluidInputPair::HMassQ => (FluidParam::HMass, FluidParam::Q),
+            FluidInputPair::DMolarQ => (FluidParam::DMolar, FluidParam::Q),
+            FluidInputPair::DMassQ => (FluidParam::DMass, FluidParam::Q),
+            FluidInputPair::PT => (FluidParam::P, FluidParam::T),
+            FluidInputPair::DMassT => (FluidParam::DMass, FluidParam::T),
+            FluidInputPair::DMolarT => (FluidParam::DMolar, FluidParam::T),
+            FluidInputPair::HMolarT => (FluidParam::HMolar, FluidParam::T),
+            FluidInputPair::HMassT => (FluidParam::HMass, FluidParam::T),
+            FluidInputPair::SMolarT => (FluidParam::SMolar, FluidParam::T),
+            FluidInputPair::SMassT => (FluidParam::SMass, FluidParam::T),
+            FluidInputPair::TUMolar => (FluidParam::T, FluidParam::UMolar),
+            FluidInputPair::TUMass => (FluidParam::T, FluidParam::UMass),
+            FluidInputPair::DMassP => (FluidParam::DMass, FluidParam::P),
+            FluidInputPair::DMolarP => (FluidParam::DMolar, FluidParam::P),
+            FluidInputPair::HMassP => (FluidParam::HMass, FluidParam::P),
+            FluidInputPair::HMolarP => (FluidParam::HMolar, FluidParam::P),
+            FluidInputPair::PSMass => (FluidParam::P, FluidParam::SMass),
+            FluidInputPair::PSMolar => (FluidParam::P, FluidParam::SMolar),
+            FluidInputPair::PUMass => (FluidParam::P, FluidParam::UMass),
+            FluidInputPair::PUMolar => (FluidParam::P, FluidParam::UMolar),
+            FluidInputPair::HMassSMass => (FluidParam::HMass, FluidParam::SMass),
+            FluidInputPair::HMolarSMolar => (FluidParam::HMolar, FluidParam::SMolar),
+            FluidInputPair::SMassUMass => (FluidParam::SMass, FluidParam::UMass),
+            FluidInputPair::SMolarUMolar => (FluidParam::SMolar, FluidParam::UMolar),
+            FluidInputPair::DMassHMass => (FluidParam::DMass, FluidParam::HMass),
+            FluidInputPair::DMolarHMolar => (FluidParam::DMolar, FluidParam::HMolar),
+            FluidInputPair::DMassSMass => (FluidParam::DMass, FluidParam::SMass),
+            FluidInputPair::DMolarSMolar => (FluidParam::DMolar, FluidParam::SMolar),
+            FluidInputPair::DMassUMass => (FluidParam::DMass, FluidParam::UMass),
+            FluidInputPair::DMolarUMolar => (FluidParam::DMolar, FluidParam::UMolar),
+        }
     }
 }
 
@@ -299,6 +352,49 @@ mod tests {
         #[case] expected: u8,
     ) {
         assert_eq!(u8::from(input_pair), expected);
+    }
+
+    #[rstest]
+    #[case(QT , (Q, T))]
+    #[case(PQ , (P, Q))]
+    #[case(QSMolar , (Q, SMolar))]
+    #[case(QSMass , (Q, SMass))]
+    #[case(HMolarQ , (HMolar, Q))]
+    #[case(HMassQ , (HMass, Q))]
+    #[case(DMolarQ , (DMolar, Q))]
+    #[case(DMassQ , (DMass, Q))]
+    #[case(PT , (P, T))]
+    #[case(DMassT , (DMass, T))]
+    #[case(DMolarT , (DMolar, T))]
+    #[case(HMolarT , (HMolar, T))]
+    #[case(HMassT , (HMass, T))]
+    #[case(SMolarT , (SMolar, T))]
+    #[case(SMassT , (SMass, T))]
+    #[case(TUMolar , (T, UMolar))]
+    #[case(TUMass , (T, UMass))]
+    #[case(DMassP , (DMass, P))]
+    #[case(DMolarP , (DMolar, P))]
+    #[case(HMassP , (HMass, P))]
+    #[case(HMolarP , (HMolar, P))]
+    #[case(PSMass , (P, SMass))]
+    #[case(PSMolar , (P, SMolar))]
+    #[case(PUMass , (P, UMass))]
+    #[case(PUMolar , (P, UMolar))]
+    #[case(HMassSMass , (HMass, SMass))]
+    #[case(HMolarSMolar , (HMolar, SMolar))]
+    #[case(SMassUMass , (SMass, UMass))]
+    #[case(SMolarUMolar , (SMolar, UMolar))]
+    #[case(DMassHMass , (DMass, HMass))]
+    #[case(DMolarHMolar , (DMolar, HMolar))]
+    #[case(DMassSMass , (DMass, SMass))]
+    #[case(DMolarSMolar , (DMolar, SMolar))]
+    #[case(DMassUMass , (DMass, UMass))]
+    #[case(DMolarUMolar , (DMolar, UMolar))]
+    fn two_params_from_input_pair_always_returns_expected_value(
+        #[case] input_pair: FluidInputPair,
+        #[case] expected: (FluidParam, FluidParam),
+    ) {
+        assert_eq!(<(FluidParam, FluidParam)>::from(input_pair), expected);
     }
 
     #[rstest]
