@@ -16,8 +16,8 @@ impl AbstractState {
     /// - `backend_name` — name of the backend _(raw [`&str`](str)
     ///   or [`BackendName::backend_name`](crate::substance::BackendName::backend_name))_.
     /// - `fluid_names` — names of the fluids separated by the `&` symbol
-    ///   or just a single fluid name _(raw [`&str`](str),
-    ///   [`Substance`](crate::substance::Substance) or its subsets)_.
+    ///   or just a single fluid name _(raw [`&str`](str) or
+    ///   [`substance` subsets](crate::substance))_.
     ///
     /// # Errors
     ///
@@ -58,12 +58,7 @@ impl AbstractState {
     /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
     /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incomps.html)
     /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
-    /// - [`Substance`](crate::substance::Substance)
-    /// - [`Pure`](crate::substance::Pure)
-    /// - [`IncompPure`](crate::substance::IncompPure)
-    /// - [`BinaryMix`](crate::substance::BinaryMix)
-    /// - [`PredefinedMix`](crate::substance::PredefinedMix)
-    /// - [`Refrigerant`](crate::substance::Refrigerant)
+    /// - [`substance` subsets](crate::substance)
     pub fn new(
         backend_name: impl AsRef<str>,
         fluid_names: impl AsRef<str>,

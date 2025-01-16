@@ -20,8 +20,8 @@ impl CoolProp {
     /// - `input2_key` — key of the second input property
     ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_.
     /// - `input2_value` — value of the second input property _(in SI units)_.
-    /// - `fluid_name` — name of the fluid _(raw [`&str`](str),
-    ///   [`Substance`](crate::substance::Substance) or its subsets)_.
+    /// - `fluid_name` — name of the fluid _(raw [`&str`](str) or
+    ///   [`substance` subsets](crate::substance))_.
     ///
     /// # Errors
     ///
@@ -83,12 +83,7 @@ impl CoolProp {
     /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incomps.html)
     /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
     /// - [`FluidParam`](crate::io::FluidParam)
-    /// - [`Substance`](crate::substance::Substance)
-    /// - [`Pure`](crate::substance::Pure)
-    /// - [`IncompPure`](crate::substance::IncompPure)
-    /// - [`BinaryMix`](crate::substance::BinaryMix)
-    /// - [`PredefinedMix`](crate::substance::PredefinedMix)
-    /// - [`Refrigerant`](crate::substance::Refrigerant)
+    /// - [`substance` subsets](crate::substance)
     pub fn props_si(
         output_key: impl AsRef<str>,
         input1_key: impl AsRef<str>,
@@ -181,8 +176,8 @@ impl CoolProp {
     ///
     /// - `output_key` — key of the _trivial_ output
     ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_.
-    /// - `fluid_name` — name of the fluid _(raw [`&str`](str),
-    ///   [`Substance`](crate::substance::Substance) or its subsets)_.
+    /// - `fluid_name` — name of the fluid _(raw [`&str`](str)
+    ///   or [`substance` subsets](crate::substance))_.
     ///
     /// # Errors
     ///
@@ -215,12 +210,7 @@ impl CoolProp {
     /// - [Props1SI function](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#trivial-inputs)
     /// - [Props1SI outputs _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
     /// - [`FluidParam`](crate::io::FluidParam)
-    /// - [`Substance`](crate::substance::Substance)
-    /// - [`Pure`](crate::substance::Pure)
-    /// - [`IncompPure`](crate::substance::IncompPure)
-    /// - [`BinaryMix`](crate::substance::BinaryMix)
-    /// - [`PredefinedMix`](crate::substance::PredefinedMix)
-    /// - [`Refrigerant`](crate::substance::Refrigerant)
+    /// - [`substance` subsets](crate::substance)
     pub fn props1_si(
         output_key: impl AsRef<str>,
         fluid_name: impl AsRef<str>,

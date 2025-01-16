@@ -25,6 +25,8 @@
 //!
 //! This project is licensed under [MIT License](https://github.com/portyanikhin/rfluids/blob/main/LICENSE).
 
+#![warn(missing_docs)]
+
 pub extern crate uom;
 
 pub mod error;
