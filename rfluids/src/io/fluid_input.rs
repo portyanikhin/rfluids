@@ -22,108 +22,73 @@ use uom::si::f64::{
 /// let density =
 ///     FluidInput::density(MassDensity::new::<gram_per_cubic_centimeter>(1.0));
 /// ```
-pub struct FluidInput {
-    key: FluidParam,
-    si_value: f64,
-}
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct FluidInput(FluidParam, f64);
 
 impl FluidInput {
     /// Mass density _(key: [`DMass`](FluidParam::DMass), SI units: kg/m³)_.
     pub fn density(value: MassDensity) -> Self {
-        Self {
-            key: FluidParam::DMass,
-            si_value: value.value,
-        }
+        Self(FluidParam::DMass, value.value)
     }
 
     /// Mass specific enthalpy _(key: [`HMass`](FluidParam::HMass), SI units: J/kg)_.
     pub fn enthalpy(value: AvailableEnergy) -> Self {
-        Self {
-            key: FluidParam::HMass,
-            si_value: value.value,
-        }
+        Self(FluidParam::HMass, value.value)
     }
 
     /// Mass specific entropy _(key: [`SMass`](FluidParam::SMass), SI units: J/kg/K)_.
     pub fn entropy(value: SpecificHeatCapacity) -> Self {
-        Self {
-            key: FluidParam::SMass,
-            si_value: value.value,
-        }
+        Self(FluidParam::SMass, value.value)
     }
 
     /// Mass specific internal energy _(key: [`UMass`](FluidParam::UMass), SI units: J/kg)_.
     pub fn internal_energy(value: AvailableEnergy) -> Self {
-        Self {
-            key: FluidParam::UMass,
-            si_value: value.value,
-        }
+        Self(FluidParam::UMass, value.value)
     }
 
     /// Molar density _(key: [`DMolar`](FluidParam::DMolar), SI units: mol/m³)_.
     pub fn molar_density(value: MolarConcentration) -> Self {
-        Self {
-            key: FluidParam::DMolar,
-            si_value: value.value,
-        }
+        Self(FluidParam::DMolar, value.value)
     }
 
     /// Molar specific enthalpy _(key: [`HMolar`](FluidParam::HMolar), SI units: J/mol)_.
     pub fn molar_enthalpy(value: MolarEnergy) -> Self {
-        Self {
-            key: FluidParam::HMolar,
-            si_value: value.value,
-        }
+        Self(FluidParam::HMolar, value.value)
     }
 
     /// Molar specific entropy _(key: [`SMolar`](FluidParam::SMolar), SI units: J/mol/K)_.
     pub fn molar_entropy(value: MolarHeatCapacity) -> Self {
-        Self {
-            key: FluidParam::SMolar,
-            si_value: value.value,
-        }
+        Self(FluidParam::SMolar, value.value)
     }
 
     /// Molar specific internal energy _(key: [`UMolar`](FluidParam::UMolar), SI units: J/mol)_.
     pub fn molar_internal_energy(value: MolarEnergy) -> Self {
-        Self {
-            key: FluidParam::UMolar,
-            si_value: value.value,
-        }
+        Self(FluidParam::UMolar, value.value)
     }
 
     /// Pressure _(key: [`P`](FluidParam::P), SI units: Pa)_.
     pub fn pressure(value: Pressure) -> Self {
-        Self {
-            key: FluidParam::P,
-            si_value: value.value,
-        }
+        Self(FluidParam::P, value.value)
     }
 
     /// Vapor quality _(key: [`Q`](FluidParam::Q), SI units: dimensionless, from 0 to 1)_.
     pub fn quality(value: Ratio) -> Self {
-        Self {
-            key: FluidParam::Q,
-            si_value: value.value,
-        }
+        Self(FluidParam::Q, value.value)
     }
 
     /// Temperature _(key: [`T`](FluidParam::T), SI units: K)_.
     pub fn temperature(value: ThermodynamicTemperature) -> Self {
-        Self {
-            key: FluidParam::T,
-            si_value: value.value,
-        }
+        Self(FluidParam::T, value.value)
     }
 }
 
 impl KeyedInput<FluidParam> for FluidInput {
     fn key(&self) -> FluidParam {
-        self.key
+        self.0
     }
 
     fn si_value(&self) -> f64 {
-        self.si_value
+        self.1
     }
 }
 
