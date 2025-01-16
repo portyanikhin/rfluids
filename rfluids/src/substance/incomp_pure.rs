@@ -10,22 +10,22 @@ use strum_macros::{AsRefStr, EnumString};
 /// How to convert [`IncompPure`] to [`&str`](str):
 ///
 /// ```
-/// use rfluids::substance;
+/// use rfluids::substance::IncompPure;
 ///
-/// assert_eq!(substance::IncompPure::Water.as_ref(), "Water");
+/// assert_eq!(IncompPure::Water.as_ref(), "Water");
 /// ```
 ///
 /// How to parse [`IncompPure`] from [`&str`](str):
 ///
 /// ```
 /// use std::str::FromStr;
-/// use rfluids::substance;
+/// use rfluids::substance::IncompPure;
 ///
-/// assert_eq!(substance::IncompPure::from_str("Water"), Ok(substance::IncompPure::Water));
+/// assert_eq!(IncompPure::from_str("Water"), Ok(IncompPure::Water));
 ///
 /// // or
 ///
-/// assert_eq!(substance::IncompPure::try_from("H2O"), Ok(substance::IncompPure::Water));
+/// assert_eq!(IncompPure::try_from("H2O"), Ok(IncompPure::Water));
 /// ```
 ///
 /// # See also

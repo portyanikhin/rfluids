@@ -91,7 +91,8 @@ pub enum Substance {
 }
 
 impl Substance {
-    /// Minimum possible fraction of binary mixture.
+    /// Minimum possible fraction of binary mixture
+    /// _([`Some`] for binary mixtures, [`None`] for others)_.
     ///
     /// # Examples
     ///
@@ -112,7 +113,8 @@ impl Substance {
         }
     }
 
-    /// Maximum possible fraction of binary mixture.
+    /// Maximum possible fraction of binary mixture
+    /// _([`Some`] for binary mixtures, [`None`] for others)_.
     ///
     /// # Examples
     ///

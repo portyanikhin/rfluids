@@ -10,27 +10,27 @@ use strum_macros::{AsRefStr, EnumString};
 /// How to convert [`PredefinedMix`] to [`&str`](str):
 ///
 /// ```
-/// use rfluids::substance;
+/// use rfluids::substance::PredefinedMix;
 ///
-/// assert_eq!(substance::PredefinedMix::TypicalNaturalGas.as_ref(), "TypicalNaturalGas.mix");
+/// assert_eq!(PredefinedMix::TypicalNaturalGas.as_ref(), "TypicalNaturalGas.mix");
 /// ```
 ///
 /// How to parse [`PredefinedMix`] from [`&str`](str):
 ///
 /// ```
 /// use std::str::FromStr;
-/// use rfluids::substance;
+/// use rfluids::substance::PredefinedMix;
 ///
 /// assert_eq!(
-///     substance::PredefinedMix::from_str("TypicalNaturalGas.mix"),
-///     Ok(substance::PredefinedMix::TypicalNaturalGas)
+///     PredefinedMix::from_str("TypicalNaturalGas.mix"),
+///     Ok(PredefinedMix::TypicalNaturalGas)
 /// );
 ///
 /// // or
 ///
 /// assert_eq!(
-///     substance::PredefinedMix::from_str("NaturalGas"),
-///     Ok(substance::PredefinedMix::TypicalNaturalGas)
+///     PredefinedMix::from_str("NaturalGas"),
+///     Ok(PredefinedMix::TypicalNaturalGas)
 /// );
 /// ```
 ///

@@ -10,28 +10,22 @@ use strum_macros::{AsRefStr, EnumString};
 /// How to convert [`Refrigerant`] to [`&str`](str):
 ///
 /// ```
-/// use rfluids::substance;
+/// use rfluids::substance::Refrigerant;
 ///
-/// assert_eq!(substance::Refrigerant::R32.as_ref(), "R32");
+/// assert_eq!(Refrigerant::R32.as_ref(), "R32");
 /// ```
 ///
 /// How to parse [`Refrigerant`] from [`&str`](str):
 ///
 /// ```
 /// use std::str::FromStr;
-/// use rfluids::substance;
+/// use rfluids::substance::Refrigerant;
 ///
-/// assert_eq!(
-///     substance::Refrigerant::from_str("R32"),
-///     Ok(substance::Refrigerant::R32)
-/// );
+/// assert_eq!(Refrigerant::from_str("R32"), Ok(Refrigerant::R32));
 ///
 /// // or
 ///
-/// assert_eq!(
-///     substance::Refrigerant::from_str("R32"),
-///     Ok(substance::Refrigerant::R32)
-/// );
+/// assert_eq!(Refrigerant::try_from("R32"), Ok(Refrigerant::R32));
 /// ```
 ///
 /// # See also
