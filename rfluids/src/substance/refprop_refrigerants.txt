@@ -1,0 +1,95 @@
+﻿// List of REFPROP-only refrigerants which are not available in CoolProp yet.
+// https://coolprop.github.io/CoolProp/coolprop/REFPROP.html
+
+#[strum(to_string = "R401A.mix", serialize = "R401A")]
+R401A,
+
+#[strum(to_string = "R401B.mix", serialize = "R401B")]
+R401B,
+
+#[strum(to_string = "R401C.mix", serialize = "R401C")]
+R401C,
+
+#[strum(to_string = "R402A.mix", serialize = "R402A")]
+R402A,
+
+#[strum(to_string = "R402B.mix", serialize = "R402B")]
+R402B,
+
+#[strum(to_string = "R403A.mix", serialize = "R403A")]
+R403A,
+
+#[strum(to_string = "R403B.mix", serialize = "R403B")]
+R403B,
+
+#[strum(to_string = "R405A.mix", serialize = "R405A")]
+R405A,
+
+#[strum(to_string = "R406A.mix", serialize = "R406A")]
+R406A,
+
+#[strum(to_string = "R408A.mix", serialize = "R408A")]
+R408A,
+
+#[strum(to_string = "R409A.mix", serialize = "R409A")]
+R409A,
+
+#[strum(to_string = "R409B.mix", serialize = "R409B")]
+R409B,
+
+#[strum(to_string = "R412A.mix", serialize = "R412A")]
+R412A,
+
+#[strum(to_string = "R413A.mix", serialize = "R413A")]
+R413A,
+
+#[strum(to_string = "R414A.mix", serialize = "R414A")]
+R414A,
+
+#[strum(to_string = "R414B.mix", serialize = "R414B")]
+R414B,
+
+#[strum(to_string = "R416A.mix", serialize = "R416A")]
+R416A,
+
+#[strum(to_string = "R418A.mix", serialize = "R418A")]
+R418A,
+
+#[strum(to_string = "R424A.mix", serialize = "R424A")]
+R424A,
+
+#[strum(to_string = "R426A.mix", serialize = "R426A")]
+R426A,
+
+#[strum(to_string = "R429A.mix", serialize = "R429A")]
+R429A,
+
+#[strum(to_string = "R435A.mix", serialize = "R435A")]
+R435A,
+
+#[strum(to_string = "R437A.mix", serialize = "R437A")]
+R437A,
+
+#[strum(to_string = "R438A.mix", serialize = "R438A")]
+R438A,
+
+#[strum(to_string = "R445A.mix", serialize = "R445A")]
+R445A,
+
+#[strum(to_string = "R446A.mix", serialize = "R446A")]
+R446A,
+
+#[strum(to_string = "R447A.mix", serialize = "R447A")]
+R447A,
+
+#[strum(to_string = "R448A.mix", serialize = "R448A")]
+R448A,
+
+#[strum(to_string = "R450A.mix", serialize = "R450A")]
+R450A,
+
+#[strum(to_string = "R453A.mix", serialize = "R453A")]
+R453A,
+
+#[strum(to_string = "R504.mix", serialize = "R504")]
+R504,

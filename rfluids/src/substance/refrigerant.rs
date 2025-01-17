@@ -21,6 +21,7 @@ use strum_macros::{AsRefStr, EnumString};
 /// # See also
 ///
 /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
+/// - [List of REFPROP-only refrigerants which are not available in CoolProp yet](https://github.com/portyanikhin/rfluids/blob/main/rfluids/src/substance/refprop_refrigerants.txt)
 //noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, Debug, Copy, Clone, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
@@ -134,27 +135,6 @@ pub enum Refrigerant {
     #[strum(to_string = "R365mfc")]
     R365mfc,
 
-    #[strum(to_string = "R401A.mix", serialize = "R401A")]
-    R401A,
-
-    #[strum(to_string = "R401B.mix", serialize = "R401B")]
-    R401B,
-
-    #[strum(to_string = "R401C.mix", serialize = "R401C")]
-    R401C,
-
-    #[strum(to_string = "R402A.mix", serialize = "R402A")]
-    R402A,
-
-    #[strum(to_string = "R402B.mix", serialize = "R402B")]
-    R402B,
-
-    #[strum(to_string = "R403A.mix", serialize = "R403A")]
-    R403A,
-
-    #[strum(to_string = "R403B.mix", serialize = "R403B")]
-    R403B,
-
     #[strum(to_string = "R404A")]
     R404A,
 
@@ -164,12 +144,6 @@ pub enum Refrigerant {
         serialize = "R404A-mix"
     )]
     R404AMix,
-
-    #[strum(to_string = "R405A.mix", serialize = "R405A")]
-    R405A,
-
-    #[strum(to_string = "R406A.mix", serialize = "R406A")]
-    R406A,
 
     #[strum(to_string = "R407A.mix", serialize = "R407A")]
     R407A,
@@ -196,15 +170,6 @@ pub enum Refrigerant {
     #[strum(to_string = "R407F.mix", serialize = "R407F")]
     R407F,
 
-    #[strum(to_string = "R408A.mix", serialize = "R408A")]
-    R408A,
-
-    #[strum(to_string = "R409A.mix", serialize = "R409A")]
-    R409A,
-
-    #[strum(to_string = "R409B.mix", serialize = "R409B")]
-    R409B,
-
     #[strum(to_string = "R410A")]
     R410A,
 
@@ -224,26 +189,11 @@ pub enum Refrigerant {
     #[strum(to_string = "R411B.mix", serialize = "R411B")]
     R411B,
 
-    #[strum(to_string = "R412A.mix", serialize = "R412A")]
-    R412A,
-
-    #[strum(to_string = "R413A.mix", serialize = "R413A")]
-    R413A,
-
-    #[strum(to_string = "R414A.mix", serialize = "R414A")]
-    R414A,
-
-    #[strum(to_string = "R414B.mix", serialize = "R414B")]
-    R414B,
-
     #[strum(to_string = "R415A.mix", serialize = "R415A")]
     R415A,
 
     #[strum(to_string = "R415B.mix", serialize = "R415B")]
     R415B,
-
-    #[strum(to_string = "R416A.mix", serialize = "R416A")]
-    R416A,
 
     #[strum(to_string = "R417A.mix", serialize = "R417A")]
     R417A,
@@ -253,9 +203,6 @@ pub enum Refrigerant {
 
     #[strum(to_string = "R417C.mix", serialize = "R417C")]
     R417C,
-
-    #[strum(to_string = "R418A.mix", serialize = "R418A")]
-    R418A,
 
     #[strum(to_string = "R419A.mix", serialize = "R419A")]
     R419A,
@@ -290,23 +237,14 @@ pub enum Refrigerant {
     #[strum(to_string = "R423A.mix", serialize = "R423A")]
     R423A,
 
-    #[strum(to_string = "R424A.mix", serialize = "R424A")]
-    R424A,
-
     #[strum(to_string = "R425A.mix", serialize = "R425A")]
     R425A,
-
-    #[strum(to_string = "R426A.mix", serialize = "R426A")]
-    R426A,
 
     #[strum(to_string = "R427A.mix", serialize = "R427A")]
     R427A,
 
     #[strum(to_string = "R428A.mix", serialize = "R428A")]
     R428A,
-
-    #[strum(to_string = "R429A.mix", serialize = "R429A")]
-    R429A,
 
     #[strum(to_string = "R430A.mix", serialize = "R430A")]
     R430A,
@@ -329,20 +267,11 @@ pub enum Refrigerant {
     #[strum(to_string = "R434A.mix", serialize = "R434A")]
     R434A,
 
-    #[strum(to_string = "R435A.mix", serialize = "R435A")]
-    R435A,
-
     #[strum(to_string = "R436A.mix", serialize = "R436A")]
     R436A,
 
     #[strum(to_string = "R436B.mix", serialize = "R436B")]
     R436B,
-
-    #[strum(to_string = "R437A.mix", serialize = "R437A")]
-    R437A,
-
-    #[strum(to_string = "R438A.mix", serialize = "R438A")]
-    R438A,
 
     #[strum(to_string = "R439A.mix", serialize = "R439A")]
     R439A,
@@ -365,26 +294,11 @@ pub enum Refrigerant {
     #[strum(to_string = "R444B.mix", serialize = "R444B")]
     R444B,
 
-    #[strum(to_string = "R445A.mix", serialize = "R445A")]
-    R445A,
-
-    #[strum(to_string = "R446A.mix", serialize = "R446A")]
-    R446A,
-
-    #[strum(to_string = "R447A.mix", serialize = "R447A")]
-    R447A,
-
-    #[strum(to_string = "R448A.mix", serialize = "R448A")]
-    R448A,
-
     #[strum(to_string = "R449A.mix", serialize = "R449A")]
     R449A,
 
     #[strum(to_string = "R449B.mix", serialize = "R449B")]
     R449B,
-
-    #[strum(to_string = "R450A.mix", serialize = "R450A")]
-    R450A,
 
     #[strum(to_string = "R451A.mix", serialize = "R451A")]
     R451A,
@@ -394,9 +308,6 @@ pub enum Refrigerant {
 
     #[strum(to_string = "R452A.mix", serialize = "R452A")]
     R452A,
-
-    #[strum(to_string = "R453A.mix", serialize = "R453A")]
-    R453A,
 
     #[strum(to_string = "R454A.mix", serialize = "R454A")]
     R454A,
@@ -415,9 +326,6 @@ pub enum Refrigerant {
 
     #[strum(to_string = "R503.mix", serialize = "R503")]
     R503,
-
-    #[strum(to_string = "R504.mix", serialize = "R504")]
-    R504,
 
     #[strum(to_string = "R507A")]
     R507A,
@@ -579,17 +487,8 @@ mod tests {
     #[case(R290, "R290")]
     #[case(RC318, "RC318")]
     #[case(R365mfc, "R365mfc")]
-    #[case(R401A, "R401A.mix")]
-    #[case(R401B, "R401B.mix")]
-    #[case(R401C, "R401C.mix")]
-    #[case(R402A, "R402A.mix")]
-    #[case(R402B, "R402B.mix")]
-    #[case(R403A, "R403A.mix")]
-    #[case(R403B, "R403B.mix")]
     #[case(R404A, "R404A")]
     #[case(R404AMix, "R404A.mix")]
-    #[case(R405A, "R405A.mix")]
-    #[case(R406A, "R406A.mix")]
     #[case(R407A, "R407A.mix")]
     #[case(R407B, "R407B.mix")]
     #[case(R407C, "R407C")]
@@ -597,25 +496,16 @@ mod tests {
     #[case(R407D, "R407D.mix")]
     #[case(R407E, "R407E.mix")]
     #[case(R407F, "R407F.mix")]
-    #[case(R408A, "R408A.mix")]
-    #[case(R409A, "R409A.mix")]
-    #[case(R409B, "R409B.mix")]
     #[case(R410A, "R410A")]
     #[case(R410AMix, "R410A.mix")]
     #[case(R410B, "R410B.mix")]
     #[case(R411A, "R411A.mix")]
     #[case(R411B, "R411B.mix")]
-    #[case(R412A, "R412A.mix")]
-    #[case(R413A, "R413A.mix")]
-    #[case(R414A, "R414A.mix")]
-    #[case(R414B, "R414B.mix")]
     #[case(R415A, "R415A.mix")]
     #[case(R415B, "R415B.mix")]
-    #[case(R416A, "R416A.mix")]
     #[case(R417A, "R417A.mix")]
     #[case(R417B, "R417B.mix")]
     #[case(R417C, "R417C.mix")]
-    #[case(R418A, "R418A.mix")]
     #[case(R419A, "R419A.mix")]
     #[case(R419B, "R419B.mix")]
     #[case(R420A, "R420A.mix")]
@@ -627,12 +517,9 @@ mod tests {
     #[case(R422D, "R422D.mix")]
     #[case(R422E, "R422E.mix")]
     #[case(R423A, "R423A.mix")]
-    #[case(R424A, "R424A.mix")]
     #[case(R425A, "R425A.mix")]
-    #[case(R426A, "R426A.mix")]
     #[case(R427A, "R427A.mix")]
     #[case(R428A, "R428A.mix")]
-    #[case(R429A, "R429A.mix")]
     #[case(R430A, "R430A.mix")]
     #[case(R431A, "R431A.mix")]
     #[case(R432A, "R432A.mix")]
@@ -640,11 +527,8 @@ mod tests {
     #[case(R433B, "R433B.mix")]
     #[case(R433C, "R433C.mix")]
     #[case(R434A, "R434A.mix")]
-    #[case(R435A, "R435A.mix")]
     #[case(R436A, "R436A.mix")]
     #[case(R436B, "R436B.mix")]
-    #[case(R437A, "R437A.mix")]
-    #[case(R438A, "R438A.mix")]
     #[case(R439A, "R439A.mix")]
     #[case(R440A, "R440A.mix")]
     #[case(R441A, "R441A.mix")]
@@ -652,24 +536,17 @@ mod tests {
     #[case(R443A, "R443A.mix")]
     #[case(R444A, "R444A.mix")]
     #[case(R444B, "R444B.mix")]
-    #[case(R445A, "R445A.mix")]
-    #[case(R446A, "R446A.mix")]
-    #[case(R447A, "R447A.mix")]
-    #[case(R448A, "R448A.mix")]
     #[case(R449A, "R449A.mix")]
     #[case(R449B, "R449B.mix")]
-    #[case(R450A, "R450A.mix")]
     #[case(R451A, "R451A.mix")]
     #[case(R451B, "R451B.mix")]
     #[case(R452A, "R452A.mix")]
-    #[case(R453A, "R453A.mix")]
     #[case(R454A, "R454A.mix")]
     #[case(R454B, "R454B.mix")]
     #[case(R500, "R500.mix")]
     #[case(R501, "R501.mix")]
     #[case(R502, "R502.mix")]
     #[case(R503, "R503.mix")]
-    #[case(R504, "R504.mix")]
     #[case(R507A, "R507A")]
     #[case(R507AMix, "R507A.mix")]
     #[case(R508A, "R508A.mix")]
@@ -744,17 +621,8 @@ mod tests {
     #[case(vec!["R290"], R290)]
     #[case(vec!["RC318"], RC318)]
     #[case(vec!["R365mfc"], R365mfc)]
-    #[case(vec!["R401A.mix", "R401A"], R401A)]
-    #[case(vec!["R401B.mix", "R401B"], R401B)]
-    #[case(vec!["R401C.mix", "R401C"], R401C)]
-    #[case(vec!["R402A.mix", "R402A"], R402A)]
-    #[case(vec!["R402B.mix", "R402B"], R402B)]
-    #[case(vec!["R403A.mix", "R403A"], R403A)]
-    #[case(vec!["R403B.mix", "R403B"], R403B)]
     #[case(vec!["R404A"], R404A)]
     #[case(vec!["R404A.mix", "R404AMix" , "R404A-mix"], R404AMix)]
-    #[case(vec!["R405A.mix", "R405A"], R405A)]
-    #[case(vec!["R406A.mix", "R406A"], R406A)]
     #[case(vec!["R407A.mix", "R407A"], R407A)]
     #[case(vec!["R407B.mix", "R407B"], R407B)]
     #[case(vec!["R407C"], R407C)]
@@ -762,25 +630,16 @@ mod tests {
     #[case(vec!["R407D.mix", "R407D"], R407D)]
     #[case(vec!["R407E.mix", "R407E"], R407E)]
     #[case(vec!["R407F.mix", "R407F"], R407F)]
-    #[case(vec!["R408A.mix", "R408A"], R408A)]
-    #[case(vec!["R409A.mix", "R409A"], R409A)]
-    #[case(vec!["R409B.mix", "R409B"], R409B)]
     #[case(vec!["R410A"], R410A)]
     #[case(vec!["R410A.mix", "R410AMix" ,  "R410A-mix"], R410AMix)]
     #[case(vec!["R410B.mix", "R410B"], R410B)]
     #[case(vec!["R411A.mix", "R411A"], R411A)]
     #[case(vec!["R411B.mix", "R411B"], R411B)]
-    #[case(vec!["R412A.mix", "R412A"], R412A)]
-    #[case(vec!["R413A.mix", "R413A"], R413A)]
-    #[case(vec!["R414A.mix", "R414A"], R414A)]
-    #[case(vec!["R414B.mix", "R414B"], R414B)]
     #[case(vec!["R415A.mix", "R415A"], R415A)]
     #[case(vec!["R415B.mix", "R415B"], R415B)]
-    #[case(vec!["R416A.mix", "R416A"], R416A)]
     #[case(vec!["R417A.mix", "R417A"], R417A)]
     #[case(vec!["R417B.mix", "R417B"], R417B)]
     #[case(vec!["R417C.mix", "R417C"], R417C)]
-    #[case(vec!["R418A.mix", "R418A"], R418A)]
     #[case(vec!["R419A.mix", "R419A"], R419A)]
     #[case(vec!["R419B.mix", "R419B"], R419B)]
     #[case(vec!["R420A.mix", "R420A"], R420A)]
@@ -792,12 +651,9 @@ mod tests {
     #[case(vec!["R422D.mix", "R422D"], R422D)]
     #[case(vec!["R422E.mix", "R422E"], R422E)]
     #[case(vec!["R423A.mix", "R423A"], R423A)]
-    #[case(vec!["R424A.mix", "R424A"], R424A)]
     #[case(vec!["R425A.mix", "R425A"], R425A)]
-    #[case(vec!["R426A.mix", "R426A"], R426A)]
     #[case(vec!["R427A.mix", "R427A"], R427A)]
     #[case(vec!["R428A.mix", "R428A"], R428A)]
-    #[case(vec!["R429A.mix", "R429A"], R429A)]
     #[case(vec!["R430A.mix", "R430A"], R430A)]
     #[case(vec!["R431A.mix", "R431A"], R431A)]
     #[case(vec!["R432A.mix", "R432A"], R432A)]
@@ -805,11 +661,8 @@ mod tests {
     #[case(vec!["R433B.mix", "R433B"], R433B)]
     #[case(vec!["R433C.mix", "R433C"], R433C)]
     #[case(vec!["R434A.mix", "R434A"], R434A)]
-    #[case(vec!["R435A.mix", "R435A"], R435A)]
     #[case(vec!["R436A.mix", "R436A"], R436A)]
     #[case(vec!["R436B.mix", "R436B"], R436B)]
-    #[case(vec!["R437A.mix", "R437A"], R437A)]
-    #[case(vec!["R438A.mix", "R438A"], R438A)]
     #[case(vec!["R439A.mix", "R439A"], R439A)]
     #[case(vec!["R440A.mix", "R440A"], R440A)]
     #[case(vec!["R441A.mix", "R441A"], R441A)]
@@ -817,24 +670,17 @@ mod tests {
     #[case(vec!["R443A.mix", "R443A"], R443A)]
     #[case(vec!["R444A.mix", "R444A"], R444A)]
     #[case(vec!["R444B.mix", "R444B"], R444B)]
-    #[case(vec!["R445A.mix", "R445A"], R445A)]
-    #[case(vec!["R446A.mix", "R446A"], R446A)]
-    #[case(vec!["R447A.mix", "R447A"], R447A)]
-    #[case(vec!["R448A.mix", "R448A"], R448A)]
     #[case(vec!["R449A.mix", "R449A"], R449A)]
     #[case(vec!["R449B.mix", "R449B"], R449B)]
-    #[case(vec!["R450A.mix", "R450A"], R450A)]
     #[case(vec!["R451A.mix", "R451A"], R451A)]
     #[case(vec!["R451B.mix", "R451B"], R451B)]
     #[case(vec!["R452A.mix", "R452A"], R452A)]
-    #[case(vec!["R453A.mix", "R453A"], R453A)]
     #[case(vec!["R454A.mix", "R454A"], R454A)]
     #[case(vec!["R454B.mix", "R454B"], R454B)]
     #[case(vec!["R500.mix", "R500"], R500)]
     #[case(vec!["R501.mix", "R501"], R501)]
     #[case(vec!["R502.mix", "R502"], R502)]
     #[case(vec!["R503.mix", "R503"], R503)]
-    #[case(vec!["R504.mix", "R504"], R504)]
     #[case(vec!["R507A"], R507A)]
     #[case(vec!["R507A.mix", "R507AMix" , "R507A-mix"], R507AMix)]
     #[case(vec!["R508A.mix", "R508A"], R508A)]
