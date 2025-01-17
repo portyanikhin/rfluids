@@ -469,9 +469,9 @@ mod tests {
     }
 
     #[rstest]
-    #[case((TCritical, CpMass))]
+    #[case((CvMass, CpMass))]
     #[case((Phase, DMolar))]
-    #[case((GWP100, ODP))]
+    #[case((Tau, Delta))]
     fn try_from_two_invalid_params_returns_err(#[case] invalid_params: (FluidParam, FluidParam)) {
         assert!(FluidInputPair::try_from(invalid_params).is_err());
     }

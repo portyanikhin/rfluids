@@ -1,3 +1,4 @@
+use crate::io::try_from;
 use strum_macros::{AsRefStr, EnumString, FromRepr};
 
 /// Phase states of fluids and mixtures.
@@ -137,11 +138,7 @@ impl TryFrom<f64> for Phase {
     type Error = strum::ParseError;
 
     fn try_from(value: f64) -> Result<Self, Self::Error> {
-        let val = value.trunc();
-        if val < u8::MIN as f64 || val > u8::MAX as f64 {
-            return Err(strum::ParseError::VariantNotFound);
-        }
-        Phase::try_from(val as u8)
+        try_from(value)
     }
 }
 
@@ -216,8 +213,9 @@ mod tests {
     #[case(6, TwoPhase)]
     #[case(7, Unknown)]
     #[case(8, NotImposed)]
-    fn try_from_valid_u8_returns_ok(#[case] valid_value: u8, #[case] expected: Phase) {
+    fn try_from_valid_u8_or_f64_returns_ok(#[case] valid_value: u8, #[case] expected: Phase) {
         assert_eq!(Phase::try_from(valid_value), Ok(expected));
+        assert_eq!(Phase::try_from(valid_value as f64), Ok(expected));
     }
 
     #[rstest]
@@ -225,20 +223,6 @@ mod tests {
     #[case(255)]
     fn try_from_invalid_u8_returns_err(#[case] invalid_value: u8) {
         assert!(Phase::try_from(invalid_value).is_err());
-    }
-
-    #[rstest]
-    #[case(0.0, Liquid)]
-    #[case(1.0, Supercritical)]
-    #[case(2.0, SupercriticalGas)]
-    #[case(3.0, SupercriticalLiquid)]
-    #[case(4.0, CriticalPoint)]
-    #[case(5.0, Gas)]
-    #[case(6.0, TwoPhase)]
-    #[case(7.0, Unknown)]
-    #[case(8.0, NotImposed)]
-    fn try_from_valid_f64_returns_ok(#[case] valid_value: f64, #[case] expected: Phase) {
-        assert_eq!(Phase::try_from(valid_value), Ok(expected));
     }
 
     #[rstest]

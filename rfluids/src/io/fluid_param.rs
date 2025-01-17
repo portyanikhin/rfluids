@@ -1,3 +1,4 @@
+use crate::io::try_from;
 use strum_macros::{AsRefStr, EnumString, FromRepr};
 
 /// CoolProp input/output parameters.
@@ -10,9 +11,9 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// use std::str::FromStr;
 /// use rfluids::io::FluidParam;
 ///
-/// assert_eq!(FluidParam::TMin.as_ref(), "T_min");
-/// assert_eq!(FluidParam::from_str("T_min"), Ok(FluidParam::TMin));
-/// assert_eq!(FluidParam::try_from("T_min"), Ok(FluidParam::TMin));
+/// assert_eq!(FluidParam::Conductivity.as_ref(), "conductivity");
+/// assert_eq!(FluidParam::from_str("conductivity"), Ok(FluidParam::Conductivity));
+/// assert_eq!(FluidParam::try_from("L"), Ok(FluidParam::Conductivity));
 /// ```
 ///
 /// Conversion between [`u8`]:
@@ -20,8 +21,8 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// ```
 /// use rfluids::io::FluidParam;
 ///
-/// assert_eq!(u8::from(FluidParam::TMax), 15);
-/// assert_eq!(FluidParam::try_from(15), Ok(FluidParam::TMax));
+/// assert_eq!(u8::from(FluidParam::Conductivity), 46);
+/// assert_eq!(FluidParam::try_from(46), Ok(FluidParam::Conductivity));
 /// ```
 ///
 /// Conversion between [`f64`]:
@@ -29,7 +30,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// ```
 /// use rfluids::io::FluidParam;
 ///
-/// assert_eq!(FluidParam::try_from(15.0), Ok(FluidParam::TMax));
+/// assert_eq!(FluidParam::try_from(46.0), Ok(FluidParam::Conductivity));
 /// ```
 ///
 /// Conversion between [`FluidInputPair`](crate::io::FluidInputPair):
@@ -49,89 +50,12 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 ///
 /// # See also
 ///
-/// - [CoolProp input/output parameters](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
+/// - [CoolProp input/output parameters _(only those for which the value in the "Trivial" column is "False")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
 //noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, FromRepr, Debug, Copy, Clone, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
 pub enum FluidParam {
-    /// Molar gas constant _(J/mol/K)_.
-    #[strum(to_string = "gas_constant")]
-    GasConstant = 1,
-
-    /// Molar mass _(kg/mol)_.
-    #[strum(
-        to_string = "molar_mass",
-        serialize = "M",
-        serialize = "molarmass",
-        serialize = "molemass"
-    )]
-    MolarMass = 2,
-
-    /// Acentric factor _(dimensionless)_.
-    #[strum(to_string = "acentric_factor", serialize = "acentric")]
-    AcentricFactor = 3,
-
-    /// Reducing point molar density _(mol/m³)_.
-    #[strum(to_string = "rhomolar_reducing")]
-    DMolarReducing = 4,
-
-    /// Critical point molar density _(mol/m³)_.
-    #[strum(to_string = "rhomolar_critical")]
-    DMolarCritical = 5,
-
-    /// Reducing point temperature _(K)_.
-    #[strum(to_string = "T_reducing")]
-    TReducing = 6,
-
-    /// Critical point temperature _(K)_.
-    #[strum(to_string = "T_critical", serialize = "Tcrit")]
-    TCritical = 7,
-
-    /// Reducing point mass density _(kg/m³)_.
-    #[strum(to_string = "rhomass_reducing")]
-    DMassReducing = 8,
-
-    /// Critical point mass density _(kg/m³)_.
-    #[strum(to_string = "rhomass_critical", serialize = "rhocrit")]
-    DMassCritical = 9,
-
-    /// Critical point pressure _(Pa)_.
-    #[strum(to_string = "P_critical", serialize = "Pcrit")]
-    PCritical = 10,
-
-    /// Reducing point pressure _(Pa)_.
-    #[strum(to_string = "P_reducing")]
-    PReducing = 11,
-
-    /// Triple point temperature _(K)_.
-    #[strum(to_string = "T_triple", serialize = "Ttriple")]
-    TTriple = 12,
-
-    /// Triple point pressure _(Pa)_.
-    #[strum(to_string = "P_triple", serialize = "Ptriple")]
-    PTriple = 13,
-
-    /// Minimum temperature _(K)_.
-    #[strum(to_string = "T_min", serialize = "Tmin")]
-    TMin = 14,
-
-    /// Maximum temperature _(K)_.
-    #[strum(to_string = "T_max", serialize = "Tmax")]
-    TMax = 15,
-
-    /// Maximum pressure _(Pa)_.
-    #[strum(to_string = "P_max", serialize = "Pmax")]
-    PMax = 16,
-
-    /// Minimum pressure _(Pa)_.
-    #[strum(to_string = "P_min", serialize = "Pmin")]
-    PMin = 17,
-
-    /// Dipole moment (C*m).
-    #[strum(to_string = "dipole_moment")]
-    DipoleMoment = 18,
-
     /// Temperature _(K)_.
     #[strum(to_string = "T")]
     T = 19,
@@ -342,6 +266,150 @@ pub enum FluidParam {
     #[strum(to_string = "PIP")]
     PIP = 67,
 
+    /// Phase index _(dimensionless)_.
+    #[strum(to_string = "Phase")]
+    Phase = 78,
+}
+
+impl From<FluidParam> for u8 {
+    fn from(value: FluidParam) -> Self {
+        value as u8
+    }
+}
+
+impl TryFrom<u8> for FluidParam {
+    type Error = strum::ParseError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        FluidParam::from_repr(value).ok_or(strum::ParseError::VariantNotFound)
+    }
+}
+
+impl TryFrom<f64> for FluidParam {
+    type Error = strum::ParseError;
+
+    fn try_from(value: f64) -> Result<Self, Self::Error> {
+        try_from(value)
+    }
+}
+
+/// CoolProp trivial output parameters.
+///
+/// # Examples
+///
+/// Conversion between [`&str`](str):
+///
+/// ```
+/// use std::str::FromStr;
+/// use rfluids::io::FluidTrivialParam;
+///
+/// assert_eq!(FluidTrivialParam::TMin.as_ref(), "T_min");
+/// assert_eq!(FluidTrivialParam::from_str("T_min"), Ok(FluidTrivialParam::TMin));
+/// assert_eq!(FluidTrivialParam::try_from("T_min"), Ok(FluidTrivialParam::TMin));
+/// ```
+///
+/// Conversion between [`u8`]:
+///
+/// ```
+/// use rfluids::io::FluidTrivialParam;
+///
+/// assert_eq!(u8::from(FluidTrivialParam::TMax), 15);
+/// assert_eq!(FluidTrivialParam::try_from(15), Ok(FluidTrivialParam::TMax));
+/// ```
+///
+/// Conversion between [`f64`]:
+///
+/// ```
+/// use rfluids::io::FluidTrivialParam;
+///
+/// assert_eq!(FluidTrivialParam::try_from(15.0), Ok(FluidTrivialParam::TMax));
+/// ```
+///
+/// # See also
+///
+/// - [CoolProp input/output parameters _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
+//noinspection SpellCheckingInspection
+#[derive(AsRefStr, EnumString, FromRepr, Debug, Copy, Clone, Eq, PartialEq)]
+#[strum(ascii_case_insensitive)]
+#[repr(u8)]
+pub enum FluidTrivialParam {
+    /// Molar gas constant _(J/mol/K)_.
+    #[strum(to_string = "gas_constant")]
+    GasConstant = 1,
+
+    /// Molar mass _(kg/mol)_.
+    #[strum(
+        to_string = "molar_mass",
+        serialize = "M",
+        serialize = "molarmass",
+        serialize = "molemass"
+    )]
+    MolarMass = 2,
+
+    /// Acentric factor _(dimensionless)_.
+    #[strum(to_string = "acentric_factor", serialize = "acentric")]
+    AcentricFactor = 3,
+
+    /// Reducing point molar density _(mol/m³)_.
+    #[strum(to_string = "rhomolar_reducing")]
+    DMolarReducing = 4,
+
+    /// Critical point molar density _(mol/m³)_.
+    #[strum(to_string = "rhomolar_critical")]
+    DMolarCritical = 5,
+
+    /// Reducing point temperature _(K)_.
+    #[strum(to_string = "T_reducing")]
+    TReducing = 6,
+
+    /// Critical point temperature _(K)_.
+    #[strum(to_string = "T_critical", serialize = "Tcrit")]
+    TCritical = 7,
+
+    /// Reducing point mass density _(kg/m³)_.
+    #[strum(to_string = "rhomass_reducing")]
+    DMassReducing = 8,
+
+    /// Critical point mass density _(kg/m³)_.
+    #[strum(to_string = "rhomass_critical", serialize = "rhocrit")]
+    DMassCritical = 9,
+
+    /// Critical point pressure _(Pa)_.
+    #[strum(to_string = "P_critical", serialize = "Pcrit")]
+    PCritical = 10,
+
+    /// Reducing point pressure _(Pa)_.
+    #[strum(to_string = "P_reducing")]
+    PReducing = 11,
+
+    /// Triple point temperature _(K)_.
+    #[strum(to_string = "T_triple", serialize = "Ttriple")]
+    TTriple = 12,
+
+    /// Triple point pressure _(Pa)_.
+    #[strum(to_string = "P_triple", serialize = "Ptriple")]
+    PTriple = 13,
+
+    /// Minimum temperature _(K)_.
+    #[strum(to_string = "T_min", serialize = "Tmin")]
+    TMin = 14,
+
+    /// Maximum temperature _(K)_.
+    #[strum(to_string = "T_max", serialize = "Tmax")]
+    TMax = 15,
+
+    /// Maximum pressure _(Pa)_.
+    #[strum(to_string = "P_max", serialize = "Pmax")]
+    PMax = 16,
+
+    /// Minimum pressure _(Pa)_.
+    #[strum(to_string = "P_min", serialize = "Pmin")]
+    PMin = 17,
+
+    /// Dipole moment (C*m).
+    #[strum(to_string = "dipole_moment")]
+    DipoleMoment = 18,
+
     /// Minimum fraction (mole, mass or volume) value
     /// for incompressible mixtures _(dimensionless, from 0 to 1)_.
     #[strum(to_string = "fraction_min")]
@@ -383,43 +451,37 @@ pub enum FluidParam {
     /// Ozone depletion potential _(dimensionless)_.
     #[strum(to_string = "ODP")]
     ODP = 77,
-
-    /// Phase index _(dimensionless)_.
-    #[strum(to_string = "Phase")]
-    Phase = 78,
 }
 
-impl From<FluidParam> for u8 {
-    fn from(value: FluidParam) -> Self {
+impl From<FluidTrivialParam> for u8 {
+    fn from(value: FluidTrivialParam) -> Self {
         value as u8
     }
 }
 
-impl TryFrom<u8> for FluidParam {
+impl TryFrom<u8> for FluidTrivialParam {
     type Error = strum::ParseError;
 
     fn try_from(value: u8) -> Result<Self, Self::Error> {
-        FluidParam::from_repr(value).ok_or(strum::ParseError::VariantNotFound)
+        FluidTrivialParam::from_repr(value).ok_or(strum::ParseError::VariantNotFound)
     }
 }
 
-impl TryFrom<f64> for FluidParam {
+impl TryFrom<f64> for FluidTrivialParam {
     type Error = strum::ParseError;
 
     fn try_from(value: f64) -> Result<Self, Self::Error> {
-        let val = value.trunc();
-        if val < u8::MIN as f64 || val > u8::MAX as f64 {
-            return Err(strum::ParseError::VariantNotFound);
-        }
-        FluidParam::try_from(val as u8)
+        try_from(value)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::FluidParam::*;
+    use super::FluidTrivialParam::*;
     use super::*;
     use rstest::*;
+    use std::fmt::Debug;
     use std::str::FromStr;
 
     //noinspection SpellCheckingInspection
@@ -505,7 +567,7 @@ mod tests {
     #[case(PH, "PH")]
     #[case(ODP, "ODP")]
     #[case(Phase, "Phase")]
-    fn as_ref_always_returns_expected_str(#[case] param: FluidParam, #[case] expected: &str) {
+    fn as_ref_always_returns_expected_str(#[case] param: impl AsRef<str>, #[case] expected: &str) {
         assert_eq!(param.as_ref(), expected);
     }
 
@@ -596,10 +658,18 @@ mod tests {
     #[case(vec!["PH"], PH)]
     #[case(vec!["ODP"], ODP)]
     #[case(vec!["Phase"], Phase)]
-    fn from_valid_str_returns_ok(#[case] valid_values: Vec<&str>, #[case] expected: FluidParam) {
+    fn from_valid_str_returns_ok<'a, T>(#[case] valid_values: Vec<&'a str>, #[case] expected: T)
+    where
+        T: FromStr<Err = strum::ParseError>
+            + TryFrom<&'a str, Error = strum::ParseError>
+            + Debug
+            + Copy
+            + Eq
+            + PartialEq,
+    {
         for s in valid_values {
-            assert_eq!(FluidParam::from_str(s), Ok(expected));
-            assert_eq!(FluidParam::try_from(s), Ok(expected));
+            assert_eq!(T::from_str(s), Ok(expected));
+            assert_eq!(T::try_from(s), Ok(expected));
         }
     }
 
@@ -609,6 +679,8 @@ mod tests {
     fn from_invalid_str_returns_err(#[case] invalid_value: &str) {
         assert!(FluidParam::from_str(invalid_value).is_err());
         assert!(FluidParam::try_from(invalid_value).is_err());
+        assert!(FluidTrivialParam::from_str(invalid_value).is_err());
+        assert!(FluidTrivialParam::try_from(invalid_value).is_err());
     }
 
     #[rstest]
@@ -691,10 +763,10 @@ mod tests {
     #[case(ODP, 77)]
     #[case(Phase, 78)]
     fn u8_from_param_always_returns_expected_value(
-        #[case] param: FluidParam,
+        #[case] param: impl Into<u8>,
         #[case] expected: u8,
     ) {
-        assert_eq!(u8::from(param), expected);
+        assert_eq!(param.into(), expected);
     }
 
     #[rstest]
@@ -776,8 +848,17 @@ mod tests {
     #[case(76, PH)]
     #[case(77, ODP)]
     #[case(78, Phase)]
-    fn try_from_valid_u8_returns_ok(#[case] valid_value: u8, #[case] expected: FluidParam) {
-        assert_eq!(FluidParam::try_from(valid_value), Ok(expected));
+    fn try_from_valid_u8_or_f64_returns_ok<T>(#[case] valid_value: u8, #[case] expected: T)
+    where
+        T: TryFrom<u8, Error = strum::ParseError>
+            + TryFrom<f64, Error = strum::ParseError>
+            + Debug
+            + Copy
+            + Eq
+            + PartialEq,
+    {
+        assert_eq!(T::try_from(valid_value), Ok(expected));
+        assert_eq!(T::try_from(valid_value as f64), Ok(expected));
     }
 
     #[rstest]
@@ -785,89 +866,7 @@ mod tests {
     #[case(255)]
     fn try_from_invalid_u8_returns_err(#[case] invalid_value: u8) {
         assert!(FluidParam::try_from(invalid_value).is_err());
-    }
-
-    #[rstest]
-    #[case(1.0, GasConstant)]
-    #[case(2.0, MolarMass)]
-    #[case(3.0, AcentricFactor)]
-    #[case(4.0, DMolarReducing)]
-    #[case(5.0, DMolarCritical)]
-    #[case(6.0, TReducing)]
-    #[case(7.0, TCritical)]
-    #[case(8.0, DMassReducing)]
-    #[case(9.0, DMassCritical)]
-    #[case(10.0, PCritical)]
-    #[case(11.0, PReducing)]
-    #[case(12.0, TTriple)]
-    #[case(13.0, PTriple)]
-    #[case(14.0, TMin)]
-    #[case(15.0, TMax)]
-    #[case(16.0, PMax)]
-    #[case(17.0, PMin)]
-    #[case(18.0, DipoleMoment)]
-    #[case(19.0, T)]
-    #[case(20.0, P)]
-    #[case(21.0, Q)]
-    #[case(22.0, Tau)]
-    #[case(23.0, Delta)]
-    #[case(24.0, DMolar)]
-    #[case(25.0, HMolar)]
-    #[case(26.0, SMolar)]
-    #[case(27.0, CpMolar)]
-    #[case(28.0, Cp0Molar)]
-    #[case(29.0, CvMolar)]
-    #[case(30.0, UMolar)]
-    #[case(31.0, GMolar)]
-    #[case(32.0, HelmholtzMolar)]
-    #[case(33.0, HMolarResidual)]
-    #[case(34.0, SMolarResidual)]
-    #[case(35.0, GMolarResidual)]
-    #[case(36.0, DMass)]
-    #[case(37.0, HMass)]
-    #[case(38.0, SMass)]
-    #[case(39.0, CpMass)]
-    #[case(40.0, Cp0Mass)]
-    #[case(41.0, CvMass)]
-    #[case(42.0, UMass)]
-    #[case(43.0, GMass)]
-    #[case(44.0, HelmholtzMass)]
-    #[case(45.0, DynamicViscosity)]
-    #[case(46.0, Conductivity)]
-    #[case(47.0, SurfaceTension)]
-    #[case(48.0, Prandtl)]
-    #[case(49.0, SoundSpeed)]
-    #[case(50.0, IsothermalCompressibility)]
-    #[case(51.0, IsobaricExpansionCoefficient)]
-    #[case(52.0, IsentropicExpansionCoefficient)]
-    #[case(53.0, FundamentalDerivativeOfGasDynamics)]
-    #[case(54.0, AlphaR)]
-    #[case(55.0, DAlphaRDTauConstDelta)]
-    #[case(56.0, DAlphaRDDeltaConstTau)]
-    #[case(57.0, Alpha0)]
-    #[case(58.0, DAlpha0DTauConstDelta)]
-    #[case(59.0, DAlpha0DDeltaConstTau)]
-    #[case(60.0, D2Alpha0DDelta2ConstTau)]
-    #[case(61.0, D3Alpha0DDelta3ConstTau)]
-    #[case(62.0, BVirial)]
-    #[case(63.0, CVirial)]
-    #[case(64.0, DBVirialDT)]
-    #[case(65.0, DCVirialDT)]
-    #[case(66.0, Z)]
-    #[case(67.0, PIP)]
-    #[case(68.0, MinFraction)]
-    #[case(69.0, MaxFraction)]
-    #[case(70.0, TFreeze)]
-    #[case(71.0, GWP20)]
-    #[case(72.0, GWP100)]
-    #[case(73.0, GWP500)]
-    #[case(74.0, FH)]
-    #[case(75.0, HH)]
-    #[case(76.0, PH)]
-    #[case(77.0, ODP)]
-    #[case(78.0, Phase)]
-    fn try_from_valid_f64_returns_ok(#[case] valid_value: f64, #[case] expected: FluidParam) {
-        assert_eq!(FluidParam::try_from(valid_value), Ok(expected));
+        assert!(FluidTrivialParam::try_from(invalid_value).is_err());
     }
 
     #[rstest]
@@ -876,5 +875,6 @@ mod tests {
     #[case(100e3)]
     fn try_from_invalid_f64_returns_err(#[case] invalid_value: f64) {
         assert!(FluidParam::try_from(invalid_value).is_err());
+        assert!(FluidTrivialParam::try_from(invalid_value).is_err());
     }
 }
