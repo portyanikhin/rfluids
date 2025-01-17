@@ -4,7 +4,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 ///
 /// # Examples
 ///
-/// Conversion between [`Phase`] and [`&str`](str):
+/// Conversion between [`&str`](str):
 ///
 /// ```
 /// use std::str::FromStr;
@@ -15,7 +15,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// assert_eq!(Phase::try_from("liquid"), Ok(Phase::Liquid));
 /// ```
 ///
-/// Conversion between [`Phase`] and [`u8`]:
+/// Conversion between [`u8`]:
 ///
 /// ```
 /// use rfluids::io::Phase;
@@ -24,7 +24,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// assert_eq!(Phase::try_from(5), Ok(Phase::Gas));
 /// ```
 ///
-/// Conversion between [`Phase`] and [`f64`]:
+/// Conversion between [`f64`]:
 ///
 /// ```
 /// use rfluids::io::Phase;

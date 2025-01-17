@@ -4,7 +4,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 ///
 /// # Examples
 ///
-/// Conversion between [`FluidParam`] and [`&str`](str):
+/// Conversion between [`&str`](str):
 ///
 /// ```
 /// use std::str::FromStr;
@@ -15,7 +15,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// assert_eq!(FluidParam::try_from("T_min"), Ok(FluidParam::TMin));
 /// ```
 ///
-/// Conversion between [`FluidParam`] and [`u8`]:
+/// Conversion between [`u8`]:
 ///
 /// ```
 /// use rfluids::io::FluidParam;
@@ -24,7 +24,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// assert_eq!(FluidParam::try_from(15), Ok(FluidParam::TMax));
 /// ```
 ///
-/// Conversion between [`FluidParam`] and [`f64`]:
+/// Conversion between [`f64`]:
 ///
 /// ```
 /// use rfluids::io::FluidParam;
@@ -32,7 +32,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// assert_eq!(FluidParam::try_from(15.0), Ok(FluidParam::TMax));
 /// ```
 ///
-/// Conversion between two [`FluidParam`]s and [`FluidInputPair`](crate::io::FluidInputPair):
+/// Conversion between [`FluidInputPair`](crate::io::FluidInputPair):
 ///
 /// ```
 /// use rfluids::io::{FluidInputPair, FluidParam};

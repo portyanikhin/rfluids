@@ -11,7 +11,7 @@ use strum_macros::{AsRefStr, EnumProperty, EnumString};
 ///
 /// # Examples
 ///
-/// Conversion between [`BinaryMix`] and [`&str`](str):
+/// Conversion between [`&str`](str):
 ///
 /// ```
 /// use std::str::FromStr;

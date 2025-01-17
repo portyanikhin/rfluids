@@ -4,7 +4,7 @@ use crate::io::FluidParam;
 ///
 /// # Examples
 ///
-/// Conversion between [`FluidInputPair`] and [`u8`]:
+/// Conversion between [`u8`]:
 ///
 /// ```
 /// use rfluids::io::FluidInputPair;
@@ -12,7 +12,7 @@ use crate::io::FluidParam;
 /// assert_eq!(u8::from(FluidInputPair::PT), 9);
 /// ```
 ///
-/// Conversion between [`FluidInputPair`] and two [`FluidParam`]s:
+/// Conversion between two [`FluidParam`]s:
 ///
 /// ```
 /// use rfluids::io::{FluidInputPair, FluidParam};

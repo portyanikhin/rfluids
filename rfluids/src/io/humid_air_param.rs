@@ -4,7 +4,7 @@ use strum_macros::{AsRefStr, EnumString};
 ///
 /// # Examples
 ///
-/// Conversion between [`HumidAirParam`] and [`&str`](str):
+/// Conversion between [`&str`](str):
 ///
 /// ```
 /// use std::str::FromStr;

@@ -7,7 +7,7 @@ use strum_macros::{AsRefStr, EnumString};
 ///
 /// # Examples
 ///
-/// Conversion between [`IncompPure`] and [`&str`](str):
+/// Conversion between [`&str`](str):
 ///
 /// ```
 /// use std::str::FromStr;
