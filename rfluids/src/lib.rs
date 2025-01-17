@@ -30,6 +30,15 @@
 pub extern crate uom;
 
 pub mod error;
+pub mod fluid;
 pub mod io;
 pub mod native;
 pub mod substance;
+
+/// A marker that determines the _presence_ of a defined state.
+#[derive(Debug)]
+pub struct DefinedState;
+
+/// A marker that determines the _absence_ of a defined state.
+#[derive(Debug)]
+pub struct UndefinedState;
