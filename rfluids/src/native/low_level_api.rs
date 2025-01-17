@@ -175,7 +175,8 @@ impl AbstractState {
     /// # Args
     ///
     /// - `key` — specified output parameter key
-    ///   _(raw [`u8`] or [`FluidParam`](crate::io::FluidParam))_.
+    ///   _(raw [`u8`], [`FluidParam`](crate::io::FluidParam) or
+    ///   [`FluidTrivialParam`](crate::io::FluidTrivialParam))_.
     ///
     /// # Errors
     ///
@@ -236,6 +237,7 @@ impl AbstractState {
     /// # See also
     ///
     /// - [`FluidParam`](crate::io::FluidParam)
+    /// - [`FluidTrivialParam`](crate::io::FluidTrivialParam)
     pub fn keyed_output(&self, key: impl Into<u8>) -> Result<f64, CoolPropError> {
         let error = ErrorBuffer::default();
         let key = key.into();

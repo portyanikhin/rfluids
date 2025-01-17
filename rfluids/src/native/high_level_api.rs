@@ -175,7 +175,7 @@ impl CoolProp {
     /// # Args
     ///
     /// - `output_key` — key of the _trivial_ output
-    ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_.
+    ///   _(raw [`&str`](str) or [`FluidTrivialParam`](crate::io::FluidTrivialParam))_.
     /// - `fluid_name` — name of the fluid _(raw [`&str`](str)
     ///   or [`substance` subsets](crate::substance))_.
     ///
@@ -209,7 +209,7 @@ impl CoolProp {
     ///
     /// - [Props1SI function](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#trivial-inputs)
     /// - [Props1SI outputs _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
-    /// - [`FluidParam`](crate::io::FluidParam)
+    /// - [`FluidTrivialParam`](crate::io::FluidTrivialParam)
     /// - [`substance` subsets](crate::substance)
     pub fn props1_si(
         output_key: impl AsRef<str>,

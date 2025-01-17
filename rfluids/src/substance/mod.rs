@@ -1,4 +1,12 @@
 //! CoolProp substances.
+//!
+//! Subsets:
+//!
+//!  - [`Pure`]
+//!  - [`IncompPure`]
+//!  - [`Refrigerant`]
+//!  - [`PredefinedMix`]
+//!  - [`BinaryMix`]
 
 #![allow(missing_docs, non_camel_case_types)]
 
