@@ -19,7 +19,7 @@ use strum_macros::{AsRefStr, EnumString};
 ///
 /// - [CoolProp humid air input/output parameters](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
 //noinspection SpellCheckingInspection
-#[derive(AsRefStr, EnumString, Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(AsRefStr, EnumString, Debug, Copy, Clone, Eq, PartialEq, Hash)]
 #[strum(ascii_case_insensitive)]
 pub enum HumidAirParam {
     /// Wet-bulb temperature _(K)_.
