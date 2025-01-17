@@ -419,7 +419,6 @@ mod tests {
         #[case] expected_message: &str,
     ) {
         let result = AbstractState::new(backend_name, fluid_names);
-        assert!(result.is_err());
         assert_eq!(result.unwrap_err().to_string(), expected_message);
     }
 
@@ -434,7 +433,6 @@ mod tests {
     fn set_fractions_invalid_inputs_returns_err() {
         let mut sut = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
         let result = sut.set_fractions(&[0.6, 0.4, 0.6]);
-        assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
             "Error: size of mole fraction vector [3] \
@@ -453,7 +451,6 @@ mod tests {
     fn update_invalid_inputs_returns_err() {
         let mut sut = AbstractState::new("HEOS", "Water").unwrap();
         let result = sut.update(FluidInputPair::PQ, 101325.0, -1.0);
-        assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
             "Error: Input vapor quality [Q] must be between 0 and 1"
@@ -465,7 +462,6 @@ mod tests {
         let mut sut = AbstractState::new("HEOS", "Water").unwrap();
         sut.update(FluidInputPair::PQ, 101325.0, 1.0).unwrap();
         let result = sut.keyed_output(FluidParam::CpMass);
-        assert!(result.is_ok());
         assert_relative_eq!(result.unwrap(), 2079.937085633241);
     }
 
@@ -473,7 +469,6 @@ mod tests {
     fn keyed_output_invalid_input_returns_err() {
         let sut = AbstractState::new("HEOS", "Water").unwrap();
         let result = sut.keyed_output(255);
-        assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
             "Error: Unable to match the key [255] in get_parameter_information for info [short]"
@@ -484,7 +479,6 @@ mod tests {
     fn keyed_output_non_trivial_with_not_defined_state_returns_err() {
         let sut = AbstractState::new("HEOS", "Water").unwrap();
         let result = sut.keyed_output(FluidParam::DMass);
-        assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
             "Unable to get the output with key '36' due to invalid or undefined state!"
@@ -506,7 +500,6 @@ mod tests {
     fn specify_phase_invalid_input_returns_err() {
         let mut sut = AbstractState::new("HEOS", "Water").unwrap();
         let result = sut.specify_phase("Hello, World!");
-        assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
             "Error: Your input name [Hello, World!] is not valid \

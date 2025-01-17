@@ -263,7 +263,6 @@ mod tests {
     #[test]
     fn props_si_water_density_in_standard_conditions_returns_ok() {
         let result = CoolProp::props_si("D", "P", 101325.0, "T", 293.15, "Water");
-        assert!(result.is_ok());
         assert_relative_eq!(result.unwrap(), 998.2071504679284);
     }
 
@@ -279,7 +278,6 @@ mod tests {
     #[test]
     fn props_si_invalid_input_returns_err() {
         let result = CoolProp::props_si("D", "P", 101325.0, "Q", -1.0, "Water");
-        assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
             "Input vapor quality [Q] must be between 0 and 1 : \
@@ -290,7 +288,6 @@ mod tests {
     #[test]
     fn ha_props_si_humid_air_humidity_in_standard_conditions_returns_ok() {
         let result = CoolProp::ha_props_si("W", "P", 101325.0, "T", 293.15, "R", 0.5);
-        assert!(result.is_ok());
         assert_relative_eq!(result.unwrap(), 0.007293697701992549);
     }
 
@@ -306,7 +303,6 @@ mod tests {
     #[test]
     fn ha_props_si_invalid_input_returns_err() {
         let result = CoolProp::ha_props_si("W", "P", 101325.0, "T", 293.15, "R", -0.5);
-        assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
             "The input for key (7) with value (-0.5) \
@@ -318,14 +314,12 @@ mod tests {
     #[test]
     fn props1_si_valid_input_returns_ok() {
         let result = CoolProp::props1_si("Tcrit", "Water");
-        assert!(result.is_ok());
         assert_relative_eq!(result.unwrap(), 647.096);
     }
 
     #[test]
     fn props1_si_invalid_input_returns_err() {
         let result = CoolProp::props1_si("T", "Water");
-        assert!(result.is_err());
         assert_eq!(
             result.unwrap_err().to_string(),
             "Unable to use input parameter [T] in Props1SI for fluid Water; \
@@ -343,7 +337,6 @@ mod tests {
     #[test]
     fn validate_result_invalid_number_returns_err() {
         let result = CoolProp::result(f64::NAN, COOLPROP.lock().unwrap());
-        assert!(result.is_err());
         assert_eq!(result.unwrap_err().to_string(), "Unknown error");
     }
 }

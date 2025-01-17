@@ -1,5 +1,5 @@
 use crate::io::{FluidParam, KeyedInput};
-use uom::si::f64::{
+use crate::uom::si::f64::{
     AvailableEnergy, MassDensity, MolarConcentration, MolarEnergy, MolarHeatCapacity, Pressure,
     Ratio, SpecificHeatCapacity, ThermodynamicTemperature,
 };
@@ -95,15 +95,15 @@ impl KeyedInput<FluidParam> for FluidInput {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use uom::si::available_energy::joule_per_kilogram;
-    use uom::si::mass_density::kilogram_per_cubic_meter;
-    use uom::si::molar_concentration::mole_per_cubic_meter;
-    use uom::si::molar_energy::joule_per_mole;
-    use uom::si::molar_heat_capacity::joule_per_kelvin_mole;
-    use uom::si::pressure::pascal;
-    use uom::si::ratio::ratio;
-    use uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
-    use uom::si::thermodynamic_temperature::kelvin;
+    use crate::uom::si::available_energy::joule_per_kilogram;
+    use crate::uom::si::mass_density::kilogram_per_cubic_meter;
+    use crate::uom::si::molar_concentration::mole_per_cubic_meter;
+    use crate::uom::si::molar_energy::joule_per_mole;
+    use crate::uom::si::molar_heat_capacity::joule_per_kelvin_mole;
+    use crate::uom::si::pressure::pascal;
+    use crate::uom::si::ratio::ratio;
+    use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
+    use crate::uom::si::thermodynamic_temperature::kelvin;
 
     #[test]
     fn density_always_returns_expected_key_and_si_value() {
