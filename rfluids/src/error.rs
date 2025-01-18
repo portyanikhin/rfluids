@@ -9,10 +9,9 @@ use thiserror::Error;
 #[error("{0}")]
 pub struct CoolPropError(pub(crate) String);
 
-/// Error during creation of [`Fluid`](crate::fluid::Fluid)
-/// from [`BinaryMix`](crate::substance::BinaryMix).
+/// Error during creation of [`BinaryMix`](crate::substance::BinaryMix).
 #[derive(Error, Debug, Clone)]
-pub enum FluidFromBinaryMixError {
+pub enum BinaryMixError {
     /// Specified fraction is invalid.
     #[error(
         "Specified fraction ({:?} %) is out of possible range [{:.1}; {:.1}] %!",
