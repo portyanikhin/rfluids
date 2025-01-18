@@ -35,11 +35,13 @@ pub mod io;
 pub mod native;
 pub mod substance;
 
-/// A marker that determines the _presence_ of a defined state.
+/// A marker that determines the _presence_ of
+/// a defined thermodynamic state.
 #[derive(Debug)]
 pub struct DefinedState;
 
-/// A marker that determines the _absence_ of a defined state.
+/// A marker that determines the _absence_ of
+/// a defined thermodynamic state.
 #[derive(Debug)]
 pub struct UndefinedState;
 
