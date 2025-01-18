@@ -80,7 +80,8 @@ impl AbstractState {
     ///
     /// # Args
     ///
-    /// - `fractions` — specified fractions _(dimensionless, from 0 to 1 each)_.
+    /// - `fractions` — fractions of the specified fluid
+    ///   _(dimensionless, from 0 to 1 each)_.
     ///
     /// # Errors
     ///
@@ -126,7 +127,7 @@ impl AbstractState {
     ///
     /// # Args
     ///
-    /// - `input_pair_key` — specified input pair key
+    /// - `input_pair_key` — input pair key
     ///   _(raw [`u8`] or [`FluidInputPair`](crate::io::FluidInputPair))_.
     /// - `input1` — value of the first input property _(in SI units)_.
     /// - `input2` — value of the second input property _(in SI units)_.
@@ -174,7 +175,7 @@ impl AbstractState {
     ///
     /// # Args
     ///
-    /// - `key` — specified output parameter key
+    /// - `key` — output parameter key
     ///   _(raw [`u8`], [`FluidParam`](crate::io::FluidParam) or
     ///   [`FluidTrivialParam`](crate::io::FluidTrivialParam))_.
     ///
@@ -257,7 +258,7 @@ impl AbstractState {
     ///
     /// # Args
     ///
-    /// - `phase` — specified phase state
+    /// - `phase` — phase state
     ///   _(raw [`&str`](str) or [`Phase`](crate::io::Phase))_.
     ///
     /// # Errors

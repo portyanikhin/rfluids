@@ -274,6 +274,11 @@ pub struct BinaryMix {
 impl BinaryMix {
     /// Creates and returns a new [`BinaryMix`] instance.
     ///
+    /// # Args
+    ///
+    /// - `kind` — binary mixture kind.
+    /// - `fraction` — fraction of the specified binary mixture kind.
+    ///
     /// # Errors
     ///
     /// For invalid fraction _(out of [[`min_fraction`](BinaryMixKind::min_fraction);
