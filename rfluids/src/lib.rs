@@ -42,3 +42,9 @@ pub struct DefinedState;
 /// A marker that determines the _absence_ of a defined state.
 #[derive(Debug)]
 pub struct UndefinedState;
+
+trait Remember<S, K> {
+    type Error;
+
+    fn remember(&mut self, src: S, key: K) -> Result<f64, Self::Error>;
+}

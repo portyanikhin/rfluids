@@ -1,10 +1,13 @@
 //! Thermophysical properties of substances.
 
+use crate::error::CoolPropError;
 use crate::io::{FluidParam, FluidTrivialParam};
 use crate::native::AbstractState;
 use crate::substance::*;
-use crate::UndefinedState;
+use crate::{Remember, UndefinedState};
+use std::collections::hash_map::Entry;
 use std::collections::HashMap;
+use std::hash::Hash;
 use std::marker::PhantomData;
 
 /// Provider of thermophysical properties of substances.
@@ -27,8 +30,8 @@ pub struct Fluid<S = UndefinedState> {
     /// Substance.
     pub substance: Substance,
     backend: AbstractState,
-    trivial_outputs_cache: HashMap<FluidTrivialParam, f64>,
-    outputs_cache: HashMap<FluidParam, f64>,
+    trivial_outputs: HashMap<FluidTrivialParam, f64>,
+    outputs: HashMap<FluidParam, f64>,
     state: PhantomData<S>,
 }
 
@@ -38,10 +41,24 @@ impl<T: Into<Substance>> From<T> for Fluid<UndefinedState> {
         Self {
             substance,
             backend: AbstractState::new(substance.backend_name(), substance).unwrap(),
-            trivial_outputs_cache: HashMap::new(),
-            outputs_cache: HashMap::new(),
+            trivial_outputs: HashMap::new(),
+            outputs: HashMap::new(),
             state: PhantomData,
         }
+    }
+}
+
+impl<K> Remember<&AbstractState, K> for HashMap<K, f64>
+where
+    K: Into<u8> + Copy + Eq + Hash,
+{
+    type Error = CoolPropError;
+
+    fn remember(&mut self, src: &AbstractState, key: K) -> Result<f64, CoolPropError> {
+        Ok(match self.entry(key) {
+            Entry::Occupied(entry) => *entry.get(),
+            Entry::Vacant(entry) => *entry.insert(src.keyed_output(key)?),
+        })
     }
 }
 
