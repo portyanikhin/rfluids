@@ -1,4 +1,5 @@
 use crate::substance::BackendName;
+use regex::Regex;
 #[cfg(test)]
 use strum_macros::EnumIter;
 use strum_macros::{AsRefStr, EnumString};
@@ -428,19 +429,192 @@ pub enum Refrigerant {
     R1270,
 }
 
+impl Refrigerant {
+    /// Category.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::substance::{Refrigerant, RefrigerantCategory};
+    ///
+    /// assert_eq!(Refrigerant::R32.category(), RefrigerantCategory::Pure);
+    /// assert_eq!(Refrigerant::R407C.category(), RefrigerantCategory::ZeotropicMix);
+    /// assert_eq!(Refrigerant::R507A.category(), RefrigerantCategory::AzeotropicMix);
+    /// ```
+    pub fn category(&self) -> RefrigerantCategory {
+        let zeotropic = Regex::new(r"^R4\d{2}").unwrap();
+        let azeotropic = Regex::new(r"^R5\d{2}").unwrap();
+        match self.as_ref() {
+            s if zeotropic.is_match(s) => RefrigerantCategory::ZeotropicMix,
+            s if azeotropic.is_match(s) => RefrigerantCategory::AzeotropicMix,
+            _ => RefrigerantCategory::Pure,
+        }
+    }
+}
+
 impl BackendName for Refrigerant {
     fn backend_name(&self) -> &'static str {
         "HEOS"
     }
 }
 
+/// [`Refrigerant`]s categories.
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+pub enum RefrigerantCategory {
+    /// Pure substance.
+    Pure,
+
+    /// Zeotropic mixture _(with a temperature glide)_.
+    ZeotropicMix,
+
+    /// Azeotropic mixture _(without a temperature glide)_.
+    AzeotropicMix,
+}
+
 #[cfg(test)]
 mod tests {
     use super::Refrigerant::*;
+    use super::RefrigerantCategory::*;
     use super::*;
     use rstest::*;
     use std::str::FromStr;
     use strum::IntoEnumIterator;
+
+    #[rstest]
+    #[case(R11, Pure)]
+    #[case(R12, Pure)]
+    #[case(R13, Pure)]
+    #[case(R13I1, Pure)]
+    #[case(R14, Pure)]
+    #[case(R21, Pure)]
+    #[case(R22, Pure)]
+    #[case(R23, Pure)]
+    #[case(R32, Pure)]
+    #[case(R40, Pure)]
+    #[case(R41, Pure)]
+    #[case(R50, Pure)]
+    #[case(R113, Pure)]
+    #[case(R114, Pure)]
+    #[case(R115, Pure)]
+    #[case(R116, Pure)]
+    #[case(R123, Pure)]
+    #[case(R124, Pure)]
+    #[case(R125, Pure)]
+    #[case(R134a, Pure)]
+    #[case(R141b, Pure)]
+    #[case(R142b, Pure)]
+    #[case(R143a, Pure)]
+    #[case(RE143a, Pure)]
+    #[case(R152a, Pure)]
+    #[case(R161, Pure)]
+    #[case(R170, Pure)]
+    #[case(R218, Pure)]
+    #[case(R227ea, Pure)]
+    #[case(R236ea, Pure)]
+    #[case(R236fa, Pure)]
+    #[case(R245ca, Pure)]
+    #[case(R245fa, Pure)]
+    #[case(R290, Pure)]
+    #[case(RC318, Pure)]
+    #[case(R365mfc, Pure)]
+    #[case(R404A, ZeotropicMix)]
+    #[case(R404AMix, ZeotropicMix)]
+    #[case(R407A, ZeotropicMix)]
+    #[case(R407B, ZeotropicMix)]
+    #[case(R407C, ZeotropicMix)]
+    #[case(R407CMix, ZeotropicMix)]
+    #[case(R407D, ZeotropicMix)]
+    #[case(R407E, ZeotropicMix)]
+    #[case(R407F, ZeotropicMix)]
+    #[case(R410A, ZeotropicMix)]
+    #[case(R410AMix, ZeotropicMix)]
+    #[case(R410B, ZeotropicMix)]
+    #[case(R411A, ZeotropicMix)]
+    #[case(R411B, ZeotropicMix)]
+    #[case(R415A, ZeotropicMix)]
+    #[case(R415B, ZeotropicMix)]
+    #[case(R417A, ZeotropicMix)]
+    #[case(R417B, ZeotropicMix)]
+    #[case(R417C, ZeotropicMix)]
+    #[case(R419A, ZeotropicMix)]
+    #[case(R419B, ZeotropicMix)]
+    #[case(R420A, ZeotropicMix)]
+    #[case(R421A, ZeotropicMix)]
+    #[case(R421B, ZeotropicMix)]
+    #[case(R422A, ZeotropicMix)]
+    #[case(R422B, ZeotropicMix)]
+    #[case(R422C, ZeotropicMix)]
+    #[case(R422D, ZeotropicMix)]
+    #[case(R422E, ZeotropicMix)]
+    #[case(R423A, ZeotropicMix)]
+    #[case(R425A, ZeotropicMix)]
+    #[case(R427A, ZeotropicMix)]
+    #[case(R428A, ZeotropicMix)]
+    #[case(R430A, ZeotropicMix)]
+    #[case(R431A, ZeotropicMix)]
+    #[case(R432A, ZeotropicMix)]
+    #[case(R433A, ZeotropicMix)]
+    #[case(R433B, ZeotropicMix)]
+    #[case(R433C, ZeotropicMix)]
+    #[case(R434A, ZeotropicMix)]
+    #[case(R436A, ZeotropicMix)]
+    #[case(R436B, ZeotropicMix)]
+    #[case(R439A, ZeotropicMix)]
+    #[case(R440A, ZeotropicMix)]
+    #[case(R441A, ZeotropicMix)]
+    #[case(R442A, ZeotropicMix)]
+    #[case(R443A, ZeotropicMix)]
+    #[case(R444A, ZeotropicMix)]
+    #[case(R444B, ZeotropicMix)]
+    #[case(R449A, ZeotropicMix)]
+    #[case(R449B, ZeotropicMix)]
+    #[case(R451A, ZeotropicMix)]
+    #[case(R451B, ZeotropicMix)]
+    #[case(R452A, ZeotropicMix)]
+    #[case(R454A, ZeotropicMix)]
+    #[case(R454B, ZeotropicMix)]
+    #[case(R500, AzeotropicMix)]
+    #[case(R501, AzeotropicMix)]
+    #[case(R502, AzeotropicMix)]
+    #[case(R503, AzeotropicMix)]
+    #[case(R507A, AzeotropicMix)]
+    #[case(R507AMix, AzeotropicMix)]
+    #[case(R508A, AzeotropicMix)]
+    #[case(R508B, AzeotropicMix)]
+    #[case(R509A, AzeotropicMix)]
+    #[case(R510A, AzeotropicMix)]
+    #[case(R511A, AzeotropicMix)]
+    #[case(R512A, AzeotropicMix)]
+    #[case(R513A, AzeotropicMix)]
+    #[case(R600, Pure)]
+    #[case(R600a, Pure)]
+    #[case(R601, Pure)]
+    #[case(R601a, Pure)]
+    #[case(R702, Pure)]
+    #[case(R704, Pure)]
+    #[case(R717, Pure)]
+    #[case(R718, Pure)]
+    #[case(R720, Pure)]
+    #[case(R728, Pure)]
+    #[case(R729, Pure)]
+    #[case(R732, Pure)]
+    #[case(R740, Pure)]
+    #[case(R744, Pure)]
+    #[case(R764, Pure)]
+    #[case(R846, Pure)]
+    #[case(R1150, Pure)]
+    #[case(R1233zdE, Pure)]
+    #[case(R1234yf, Pure)]
+    #[case(R1234zeE, Pure)]
+    #[case(R1234zeZ, Pure)]
+    #[case(R1243zf, Pure)]
+    #[case(R1270, Pure)]
+    fn category_always_returns_expected_value(
+        #[case] substance: Refrigerant,
+        #[case] expected: RefrigerantCategory,
+    ) {
+        assert_eq!(substance.category(), expected);
+    }
 
     #[test]
     fn backend_name_always_returns_heos() {
