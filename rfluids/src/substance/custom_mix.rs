@@ -1,5 +1,5 @@
 use crate::error::CustomMixError;
-use crate::substance::{BackendName, Substance};
+use crate::substance::{BackendName, RefrigerantCategory, Substance};
 use crate::uom::si::f64::Ratio;
 use crate::uom::si::ratio::ratio;
 use crate::uom::ConstZero;
@@ -96,10 +96,7 @@ impl CustomMix {
         if components.len() != fractions.len() {
             return Err(CustomMixError::InvalidLength);
         }
-        if components.iter().any(|c| {
-            !matches!(c, Substance::Pure(_) | Substance::Refrigerant(_))
-                || c.as_ref().ends_with(".mix")
-        }) {
+        if components.iter().any(Self::is_invalid_component) {
             return Err(CustomMixError::InvalidComponent);
         }
         if fractions
@@ -121,6 +118,14 @@ impl CustomMix {
             fractions,
             repr,
         })
+    }
+
+    fn is_invalid_component(component: &Substance) -> bool {
+        !matches!(component, Substance::Pure(_))
+            && !matches!(
+                component,
+                Substance::Refrigerant(r) if r.category() == RefrigerantCategory::Pure
+            )
     }
 }
 
