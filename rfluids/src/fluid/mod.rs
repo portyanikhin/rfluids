@@ -35,21 +35,50 @@ pub struct Fluid<S = DefinedState> {
     state: PhantomData<S>,
 }
 
-impl<T: Into<Substance>> From<T> for Fluid<UndefinedState> {
-    fn from(value: T) -> Self {
-        let substance = value.into();
-        let mut backend = AbstractState::new(substance.backend_name(), substance).unwrap();
-        if let Substance::BinaryMix(binary_mix) = substance {
+impl From<Substance> for Fluid<UndefinedState> {
+    fn from(value: Substance) -> Self {
+        let mut backend = AbstractState::new(value.backend_name(), value).unwrap();
+        if let Substance::BinaryMix(binary_mix) = value {
             backend.set_fractions(&[binary_mix.fraction.value]).unwrap();
         }
         Self {
-            substance,
+            substance: value,
             backend,
             update_request: None,
             trivial_outputs: HashMap::new(),
             outputs: HashMap::new(),
             state: PhantomData,
         }
+    }
+}
+
+impl From<Pure> for Fluid<UndefinedState> {
+    fn from(value: Pure) -> Self {
+        Substance::from(value).into()
+    }
+}
+
+impl From<IncompPure> for Fluid<UndefinedState> {
+    fn from(value: IncompPure) -> Self {
+        Substance::from(value).into()
+    }
+}
+
+impl From<Refrigerant> for Fluid<UndefinedState> {
+    fn from(value: Refrigerant) -> Self {
+        Substance::from(value).into()
+    }
+}
+
+impl From<PredefinedMix> for Fluid<UndefinedState> {
+    fn from(value: PredefinedMix) -> Self {
+        Substance::from(value).into()
+    }
+}
+
+impl From<BinaryMix> for Fluid<UndefinedState> {
+    fn from(value: BinaryMix) -> Self {
+        Substance::from(value).into()
     }
 }
 
