@@ -367,6 +367,7 @@ dependencies = [
  "approx",
  "coolprop-sys",
  "rayon",
+ "regex",
  "rstest",
  "strum",
  "strum_macros",
