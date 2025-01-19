@@ -24,12 +24,23 @@ pub trait BackendName {
     ///
     /// ```
     /// use rfluids::substance::*;
+    /// use rfluids::uom::si::f64::Ratio;
+    /// use rfluids::uom::si::ratio::percent;
     ///
     /// assert_eq!(Pure::Water.backend_name(), "HEOS");
     /// assert_eq!(IncompPure::Water.backend_name(), "INCOMP");
     /// assert_eq!(Refrigerant::R32.backend_name(), "HEOS");
     /// assert_eq!(PredefinedMix::TypicalNaturalGas.backend_name(), "HEOS");
     /// assert_eq!(BinaryMixKind::MPG.backend_name(), "INCOMP");
+    /// assert_eq!(
+    ///     CustomMix::try_new(
+    ///         [Pure::Water.into(), Pure::Ethanol.into()],
+    ///         [60.0, 40.0].map(Ratio::new::<percent>)
+    ///     )
+    ///     .unwrap()
+    ///     .backend_name(),
+    ///     "HEOS"
+    /// );
     /// ```
     fn backend_name(&self) -> &'static str;
 }

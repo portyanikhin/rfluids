@@ -4,7 +4,7 @@ use crate::io::FluidParam;
 ///
 /// # Examples
 ///
-/// Conversion between [`u8`]:
+/// Conversion to [`u8`]:
 ///
 /// ```
 /// use rfluids::io::FluidInputPair;
