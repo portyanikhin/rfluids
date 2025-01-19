@@ -3,12 +3,14 @@
 #![allow(missing_docs, non_camel_case_types)]
 
 pub use binary_mix::*;
+pub use custom_mix::*;
 pub use incomp_pure::*;
 pub use predefined_mix::*;
 pub use pure::*;
 pub use refrigerant::*;
 
 mod binary_mix;
+mod custom_mix;
 mod incomp_pure;
 mod predefined_mix;
 mod pure;

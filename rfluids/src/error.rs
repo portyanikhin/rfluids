@@ -28,3 +28,23 @@ pub enum BinaryMixError {
         max: Ratio,
     },
 }
+
+/// Error during creation of [`CustomMix`](crate::substance::CustomMix).
+#[derive(Error, Debug, Clone)]
+pub enum CustomMixError {
+    /// Lengths of the specified collections are invalid.
+    #[error("Collections of components and fractions should be of the same length!")]
+    InvalidLength,
+
+    /// Some of the specified components are not supported.
+    #[error("Only pure substances or refrigerants can be used to create custom mixtures!")]
+    InvalidComponent,
+
+    /// Some of the specified fractions are invalid.
+    #[error("All of the specified fractions should be exclusive between 0 and 100 %!")]
+    InvalidFraction,
+
+    /// The sum of the specified fractions is invalid.
+    #[error("The sum of the specified fractions should be equal to 100 %!")]
+    InvalidFractionsSum,
+}
