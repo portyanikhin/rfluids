@@ -26,6 +26,7 @@ pub trait BackendName {
     /// use rfluids::substance::*;
     /// use rfluids::uom::si::f64::Ratio;
     /// use rfluids::uom::si::ratio::percent;
+    /// use std::collections::HashMap;
     ///
     /// assert_eq!(Pure::Water.backend_name(), "HEOS");
     /// assert_eq!(IncompPure::Water.backend_name(), "INCOMP");
@@ -33,10 +34,10 @@ pub trait BackendName {
     /// assert_eq!(PredefinedMix::TypicalNaturalGas.backend_name(), "HEOS");
     /// assert_eq!(BinaryMixKind::MPG.backend_name(), "INCOMP");
     /// assert_eq!(
-    ///     CustomMix::try_new(
-    ///         [Pure::Water.into(), Pure::Ethanol.into()],
-    ///         [60.0, 40.0].map(Ratio::new::<percent>)
-    ///     )
+    ///     CustomMix::try_from(HashMap::from([
+    ///         (Pure::Water.into(), Ratio::new::<percent>(60.0)),
+    ///         (Pure::Ethanol.into(), Ratio::new::<percent>(40.0)),
+    ///     ]))
     ///     .unwrap()
     ///     .backend_name(),
     ///     "HEOS"
@@ -56,19 +57,19 @@ pub trait BackendName {
 ///  - [`BinaryMix`]
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Substance {
-    /// CoolProp pure or pseudo-pure substance.
+    /// Pure or pseudo-pure substance.
     Pure(Pure),
 
-    /// CoolProp incompressible pure substance.
+    /// Incompressible pure substance.
     IncompPure(IncompPure),
 
-    /// CoolProp refrigerant.
+    /// Refrigerant.
     Refrigerant(Refrigerant),
 
-    /// CoolProp predefined mixture.
+    /// Predefined mixture.
     PredefinedMix(PredefinedMix),
 
-    /// CoolProp incompressible binary mixture _(mass-based or volume-based)_.
+    /// Incompressible binary mixture _(mass-based or volume-based)_.
     BinaryMix(BinaryMix),
 }
 
