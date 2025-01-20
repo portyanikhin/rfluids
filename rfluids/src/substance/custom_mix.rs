@@ -1,131 +1,66 @@
 use crate::error::CustomMixError;
-use crate::substance::{BackendName, RefrigerantCategory, Substance};
+use crate::substance::{BackendName, Pure, Refrigerant, RefrigerantCategory};
 use crate::uom::si::f64::Ratio;
 use crate::uom::si::ratio::ratio;
 use crate::uom::ConstZero;
+use std::collections::HashMap;
 
-/// CoolProp custom mixture.
+/// CoolProp custom mixture
+/// _(only pure substances and pure refrigerants are supported)_.
 ///
 /// # Examples
 ///
-/// Conversion to [`&str`](str):
-///
 /// ```
-/// use rfluids::substance::{CustomMix, Pure};
+/// use rfluids::substance::{CustomMix, Pure, Refrigerant};
 /// use rfluids::uom::si::f64::Ratio;
 /// use rfluids::uom::si::ratio::percent;
+/// use std::collections::HashMap;
 ///
-/// let mix = CustomMix::try_new(
-///     [Pure::Water.into(), Pure::Ethanol.into()],
-///     [60.0, 40.0].map(Ratio::new::<percent>)
-/// ).unwrap();
-/// assert_eq!(mix.as_ref(), "Water&Ethanol");
+/// assert!(CustomMix::try_from(HashMap::from([
+///     (Pure::Water.into(), Ratio::new::<percent>(60.0)),
+///     (Pure::Ethanol.into(), Ratio::new::<percent>(40.0)),
+/// ]))
+/// .is_ok());
+///
+/// assert!(CustomMix::try_from(HashMap::from([
+///     (Refrigerant::R32.into(), Ratio::new::<percent>(50.0)),
+///     (Refrigerant::R125.into(), Ratio::new::<percent>(50.0)),
+/// ]))
+/// .is_ok());
 /// ```
 ///
 /// # See also
 ///
 /// - [Custom mixtures](https://coolprop.github.io/CoolProp/fluid_properties/Mixtures.html)
 #[derive(Debug, Clone, PartialEq)]
-pub struct CustomMix {
-    /// Specified components.
-    pub components: Vec<Substance>,
-    /// Specified fractions of each component.
-    pub fractions: Vec<Ratio>,
-    repr: String,
-}
+#[non_exhaustive]
+pub struct CustomMix(pub HashMap<CustomMixComponent, Ratio>);
 
-impl CustomMix {
-    /// Creates and returns a new [`CustomMix`] instance
-    /// _(only pure substances or refrigerants are supported)_.
-    ///
-    /// # Args
-    ///
-    /// - `components` — collection of components.
-    /// - `fractions` — collection of fractions of each component.
-    ///
-    /// # Errors
-    ///
-    /// For invalid inputs, a [`CustomMixError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::substance::*;
-    /// use rfluids::uom::si::f64::Ratio;
-    /// use rfluids::uom::si::ratio::percent;
-    ///
-    /// assert!(CustomMix::try_new(
-    ///     [Pure::Water.into(), Pure::Ethanol.into()],
-    ///     [60.0, 40.0].map(Ratio::new::<percent>)
-    /// )
-    /// .is_ok());
-    ///
-    /// assert!(CustomMix::try_new(
-    ///     [Refrigerant::R32.into(), Refrigerant::R125.into()],
-    ///     [50.0, 50.0].map(Ratio::new::<percent>)
-    /// )
-    /// .is_ok());
-    ///
-    /// assert!(CustomMix::try_new(
-    ///     [Refrigerant::R32.into(), Refrigerant::R125.into()],
-    ///     [-50.0, 50.0].map(Ratio::new::<percent>)
-    /// )
-    /// .is_err());
-    ///
-    /// assert!(CustomMix::try_new(
-    ///     [
-    ///         PredefinedMix::TypicalNaturalGas.into(),
-    ///         BinaryMix::try_new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))
-    ///             .unwrap()
-    ///             .into()
-    ///     ],
-    ///     [50.0, 50.0].map(Ratio::new::<percent>)
-    /// )
-    /// .is_err());
-    /// ```
-    ///
-    /// # See also
-    ///
-    /// - [Custom mixtures](https://coolprop.github.io/CoolProp/fluid_properties/Mixtures.html)
-    pub fn try_new(
-        components: impl IntoIterator<Item = Substance>,
-        fractions: impl IntoIterator<Item = Ratio>,
-    ) -> Result<Self, CustomMixError> {
-        let components: Vec<_> = components.into_iter().collect();
-        let fractions: Vec<_> = fractions.into_iter().collect();
-        if components.len() != fractions.len() {
-            return Err(CustomMixError::InvalidLength);
+impl TryFrom<HashMap<CustomMixComponent, Ratio>> for CustomMix {
+    type Error = CustomMixError;
+
+    fn try_from(value: HashMap<CustomMixComponent, Ratio>) -> Result<Self, Self::Error> {
+        if value.len() < 2 {
+            return Err(CustomMixError::NotEnoughComponents);
         }
-        if components.iter().any(Self::is_invalid_component) {
+        if value.keys().any(|component| {
+            matches!(
+                component,
+                CustomMixComponent::Refrigerant(r) if r.category() != RefrigerantCategory::Pure
+            )
+        }) {
             return Err(CustomMixError::InvalidComponent);
         }
-        if fractions
-            .iter()
+        if value
+            .values()
             .any(|f| f <= &Ratio::ZERO || f >= &Ratio::new::<ratio>(1.0))
         {
             return Err(CustomMixError::InvalidFraction);
         }
-        if (fractions.iter().map(|f| f.value).sum::<f64>() - 1.0).abs() > 1e-6 {
+        if (value.values().map(|f| f.value).sum::<f64>() - 1.0).abs() > 1e-6 {
             return Err(CustomMixError::InvalidFractionsSum);
         }
-        let repr = components
-            .iter()
-            .map(|c| c.as_ref())
-            .collect::<Vec<_>>()
-            .join("&");
-        Ok(Self {
-            components,
-            fractions,
-            repr,
-        })
-    }
-
-    fn is_invalid_component(component: &Substance) -> bool {
-        !matches!(component, Substance::Pure(_))
-            && !matches!(
-                component,
-                Substance::Refrigerant(r) if r.category() == RefrigerantCategory::Pure
-            )
+        Ok(Self(value))
     }
 }
 
@@ -135,93 +70,121 @@ impl BackendName for CustomMix {
     }
 }
 
-impl AsRef<str> for CustomMix {
+/// Custom mixture component _(pure substance or pure refrigerant)_.
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
+pub enum CustomMixComponent {
+    /// Pure or pseudo-pure substance.
+    Pure(Pure),
+
+    /// Refrigerant.
+    Refrigerant(Refrigerant),
+}
+
+impl AsRef<str> for CustomMixComponent {
     fn as_ref(&self) -> &str {
-        self.repr.as_ref()
+        match self {
+            CustomMixComponent::Pure(pure) => pure.as_ref(),
+            CustomMixComponent::Refrigerant(refrigerant) => refrigerant.as_ref(),
+        }
+    }
+}
+
+impl From<Pure> for CustomMixComponent {
+    fn from(value: Pure) -> Self {
+        Self::Pure(value)
+    }
+}
+
+impl From<Refrigerant> for CustomMixComponent {
+    fn from(value: Refrigerant) -> Self {
+        Self::Refrigerant(value)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::substance::*;
-    use crate::uom::si::ratio::percent;
-    use rstest::*;
 
-    #[rstest]
-    #[case(vec![Pure::Water.into(), Pure::Ethanol.into()], vec![60.0, 40.0])]
-    #[case(vec![Refrigerant::R32.into(), Refrigerant::R125.into()], vec![50.0, 50.0])]
-    fn try_new_from_valid_components_and_fractions_always_returns_ok(
-        #[case] components: Vec<Substance>,
-        #[case] fractions: Vec<f64>,
-    ) {
-        assert!(
-            CustomMix::try_new(components, fractions.into_iter().map(Ratio::new::<percent>))
-                .is_ok()
-        );
+    mod custom_mix {
+        use super::*;
+        use crate::uom::si::ratio::percent;
+        use rstest::*;
+
+        #[rstest]
+        #[case(HashMap::from([(Pure::Water.into(), 60.0), (Pure::Ethanol.into(), 40.0)]))]
+        #[case(HashMap::from([(Refrigerant::R32.into(), 50.0), (Refrigerant::R125.into(), 50.0)]))]
+        fn try_new_from_valid_components_and_fractions_always_returns_ok(
+            #[case] components: HashMap<CustomMixComponent, f64>,
+        ) {
+            assert!(CustomMix::try_from(HashMap::from_iter(
+                components
+                    .into_iter()
+                    .map(|c| (c.0, Ratio::new::<percent>(c.1)))
+            ))
+            .is_ok());
+        }
+
+        #[rstest]
+        #[case(HashMap::from([(Pure::Water.into(), 60.0)]), CustomMixError::NotEnoughComponents)]
+        #[case(
+            HashMap::from([(Pure::Water.into(), 50.0), (Pure::Water.into(), 50.0)]),
+            CustomMixError::NotEnoughComponents
+        )]
+        #[case(
+            HashMap::from([(Refrigerant::R32.into(), 50.0), (Refrigerant::R407C.into(), 50.0)]),
+            CustomMixError::InvalidComponent
+        )]
+        #[case(
+            HashMap::from([(Refrigerant::R32.into(), -50.0), (Refrigerant::R125.into(), 50.0)]),
+            CustomMixError::InvalidFraction
+        )]
+        #[case(
+            HashMap::from([(Refrigerant::R32.into(), 150.0), (Refrigerant::R125.into(), 50.0)]),
+            CustomMixError::InvalidFraction
+        )]
+        #[case(
+            HashMap::from([(Refrigerant::R32.into(), 40.0), (Refrigerant::R125.into(), 40.0)]),
+            CustomMixError::InvalidFractionsSum
+        )]
+        fn try_new_from_invalid_components_or_fractions_always_returns_err(
+            #[case] components: HashMap<CustomMixComponent, f64>,
+            #[case] expected: CustomMixError,
+        ) {
+            assert_eq!(
+                CustomMix::try_from(HashMap::from_iter(
+                    components
+                        .into_iter()
+                        .map(|c| (c.0, Ratio::new::<percent>(c.1)))
+                ))
+                .unwrap_err(),
+                expected
+            );
+        }
+
+        #[test]
+        fn backend_name_always_returns_heos() {
+            let sut = CustomMix::try_from(HashMap::from([
+                (Pure::Water.into(), Ratio::new::<percent>(60.0)),
+                (Pure::Ethanol.into(), Ratio::new::<percent>(40.0)),
+            ]))
+            .unwrap();
+            assert_eq!(sut.backend_name(), "HEOS");
+        }
     }
 
-    #[rstest]
-    #[case(
-        vec![Pure::Water.into(), Pure::Ethanol.into(), Pure::Air.into()],
-        vec![60.0, 40.0],
-        "Collections of components and fractions should be of the same length!"
-    )]
-    #[case(
-        vec![Pure::Water.into(), PredefinedMix::TypicalNaturalGas.into()],
-        vec![60.0, 40.0],
-        "Only pure substances or refrigerants can be used to create custom mixtures!"
-    )]
-    #[case(
-        vec![Pure::Water.into(), Refrigerant::R500.into()],
-        vec![60.0, 40.0],
-        "Only pure substances or refrigerants can be used to create custom mixtures!"
-    )]
-    #[case(
-        vec![Refrigerant::R32.into(), Refrigerant::R125.into()],
-        vec![-50.0, 50.0],
-        "All of the specified fractions should be exclusive between 0 and 100 %!"
-    )]
-    #[case(
-        vec![Refrigerant::R32.into(), Refrigerant::R125.into()],
-        vec![150.0, 50.0],
-        "All of the specified fractions should be exclusive between 0 and 100 %!"
-    )]
-    #[case(
-        vec![Refrigerant::R32.into(), Refrigerant::R125.into()],
-        vec![40.0, 40.0],
-        "The sum of the specified fractions should be equal to 100 %!"
-    )]
-    fn try_new_from_invalid_components_or_fractions_always_returns_err(
-        #[case] components: Vec<Substance>,
-        #[case] fractions: Vec<f64>,
-        #[case] expected: &str,
-    ) {
-        assert_eq!(
-            CustomMix::try_new(components, fractions.into_iter().map(Ratio::new::<percent>))
-                .unwrap_err()
-                .to_string(),
-            expected
-        );
-    }
+    mod custom_mix_component {
+        use super::*;
 
-    #[test]
-    fn backend_name_always_returns_heos() {
-        let sut = CustomMix::try_new(
-            vec![Pure::Water.into(), Pure::Ethanol.into()],
-            vec![60.0, 40.0].into_iter().map(Ratio::new::<percent>),
-        )
-        .unwrap();
-        assert_eq!(sut.backend_name(), "HEOS");
-    }
-
-    #[test]
-    fn as_ref_always_returns_expected_str() {
-        let sut = CustomMix::try_new(
-            vec![Refrigerant::R32.into(), Refrigerant::R125.into()],
-            vec![50.0, 50.0].into_iter().map(Ratio::new::<percent>),
-        )
-        .unwrap();
-        assert_eq!(sut.as_ref(), "R32&R125");
+        #[test]
+        pub fn custom_mix_component_is_transparent() {
+            assert_eq!(
+                CustomMixComponent::from(Pure::Water).as_ref(),
+                Pure::Water.as_ref()
+            );
+            assert_eq!(
+                CustomMixComponent::from(Refrigerant::R32).as_ref(),
+                Refrigerant::R32.as_ref()
+            );
+        }
     }
 }

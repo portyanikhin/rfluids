@@ -555,17 +555,21 @@ mod tests {
         fn try_new_with_invalid_fraction_always_returns_err() {
             let delta = Ratio::new::<part_per_billion>(1.0);
             for kind in BinaryMixKind::iter() {
-                assert!(BinaryMix::try_new(kind, kind.min_fraction() - delta).is_err());
                 assert_eq!(
-                    BinaryMix::try_new(kind, kind.max_fraction() + delta)
-                        .unwrap_err()
-                        .to_string(),
-                    format!(
-                        "Specified fraction ({:?} %) is out of possible range [{:.1}; {:.1}] %!",
-                        (kind.max_fraction() + delta).get::<percent>(),
-                        kind.min_fraction().get::<percent>(),
-                        kind.max_fraction().get::<percent>()
-                    )
+                    BinaryMix::try_new(kind, kind.min_fraction() - delta).unwrap_err(),
+                    BinaryMixError::InvalidFraction {
+                        specified: kind.min_fraction() - delta,
+                        min: kind.min_fraction(),
+                        max: kind.max_fraction(),
+                    }
+                );
+                assert_eq!(
+                    BinaryMix::try_new(kind, kind.max_fraction() + delta).unwrap_err(),
+                    BinaryMixError::InvalidFraction {
+                        specified: kind.max_fraction() + delta,
+                        min: kind.min_fraction(),
+                        max: kind.max_fraction(),
+                    }
                 );
             }
         }
