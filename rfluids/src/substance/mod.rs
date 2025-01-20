@@ -34,7 +34,7 @@ pub trait BackendName {
     /// assert_eq!(PredefinedMix::TypicalNaturalGas.backend_name(), "HEOS");
     /// assert_eq!(BinaryMixKind::MPG.backend_name(), "INCOMP");
     /// assert_eq!(
-    ///     CustomMix::try_from(HashMap::from([
+    ///     CustomMix::mass_based(HashMap::from([
     ///         (Pure::Water.into(), Ratio::new::<percent>(60.0)),
     ///         (Pure::Ethanol.into(), Ratio::new::<percent>(40.0)),
     ///     ]))
