@@ -509,7 +509,7 @@ mod tests {
     }
 
     #[test]
-    fn unspecify_phase_always_unspecifies_phase_for_all_further_calculations() {
+    fn unspecify_phase_unspecifies_phase_for_all_further_calculations() {
         let mut sut = AbstractState::new("HEOS", "Water").unwrap();
         sut.specify_phase(Phase::Gas).unwrap();
         let mut result = sut.update(FluidInputPair::PT, 101325.0, 293.15);

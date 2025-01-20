@@ -291,10 +291,10 @@ impl BinaryMix {
     /// use rfluids::uom::si::f64::Ratio;
     /// use rfluids::uom::si::ratio::percent;
     ///
-    /// assert!(BinaryMix::try_new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).is_ok());
-    /// assert!(BinaryMix::try_new(BinaryMixKind::MPG, Ratio::new::<percent>(100.0)).is_err());
+    /// assert!(BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).is_ok());
+    /// assert!(BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(100.0)).is_err());
     /// ```
-    pub fn try_new(kind: BinaryMixKind, fraction: Ratio) -> Result<Self, BinaryMixError> {
+    pub fn try_from(kind: BinaryMixKind, fraction: Ratio) -> Result<Self, BinaryMixError> {
         if !(kind.min_fraction()..=kind.max_fraction()).contains(&fraction) {
             return Err(BinaryMixError::InvalidFraction {
                 specified: fraction,
@@ -320,11 +320,11 @@ impl BinaryMix {
     /// use rfluids::uom::si::f64::Ratio;
     /// use rfluids::uom::si::ratio::percent;
     ///
-    /// assert!(BinaryMix::try_new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).is_ok());
-    /// assert!(BinaryMix::try_new(BinaryMixKind::MPG, Ratio::new::<percent>(100.0)).is_err());
+    /// assert!(BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).is_ok());
+    /// assert!(BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(100.0)).is_err());
     /// ```
     pub fn with(&self, other_fraction: Ratio) -> Result<Self, BinaryMixError> {
-        Self::try_new(self.kind, other_fraction)
+        Self::try_from(self.kind, other_fraction)
     }
 }
 
@@ -390,7 +390,7 @@ mod tests {
         #[case(ZLC, 0.3, 0.7)]
         #[case(ZM, 0.0, 1.0)]
         #[case(ZMC, 0.3, 0.7)]
-        fn min_max_fractions_always_returns_expected_values(
+        fn min_max_fractions_returns_expected_values(
             #[case] substance: BinaryMixKind,
             #[case] expected_min_fraction: f64,
             #[case] expected_max_fraction: f64,
@@ -406,7 +406,7 @@ mod tests {
         }
 
         #[test]
-        fn backend_name_always_returns_incomp() {
+        fn backend_name_returns_incomp() {
             for substance in BinaryMixKind::iter() {
                 assert_eq!(substance.backend_name(), "INCOMP");
             }
@@ -462,10 +462,7 @@ mod tests {
         #[case(ZLC, "ZLC")]
         #[case(ZM, "ZM")]
         #[case(ZMC, "ZMC")]
-        fn as_ref_always_returns_expected_str(
-            #[case] substance: BinaryMixKind,
-            #[case] expected: &str,
-        ) {
+        fn as_ref_returns_expected_str(#[case] substance: BinaryMixKind, #[case] expected: &str) {
             assert_eq!(substance.as_ref(), expected);
         }
 
@@ -539,24 +536,24 @@ mod tests {
         use strum::IntoEnumIterator;
 
         #[test]
-        fn try_new_with_valid_fraction_always_returns_ok() {
+        fn try_new_with_valid_fraction_returns_ok() {
             for kind in BinaryMixKind::iter() {
-                assert!(BinaryMix::try_new(kind, kind.min_fraction()).is_ok());
-                assert!(BinaryMix::try_new(
+                assert!(BinaryMix::try_from(kind, kind.min_fraction()).is_ok());
+                assert!(BinaryMix::try_from(
                     kind,
                     0.5 * (kind.min_fraction() + kind.max_fraction())
                 )
                 .is_ok());
-                assert!(BinaryMix::try_new(kind, kind.max_fraction()).is_ok());
+                assert!(BinaryMix::try_from(kind, kind.max_fraction()).is_ok());
             }
         }
 
         #[test]
-        fn try_new_with_invalid_fraction_always_returns_err() {
+        fn try_new_with_invalid_fraction_returns_err() {
             let delta = Ratio::new::<part_per_billion>(1.0);
             for kind in BinaryMixKind::iter() {
                 assert_eq!(
-                    BinaryMix::try_new(kind, kind.min_fraction() - delta).unwrap_err(),
+                    BinaryMix::try_from(kind, kind.min_fraction() - delta).unwrap_err(),
                     BinaryMixError::InvalidFraction {
                         specified: kind.min_fraction() - delta,
                         min: kind.min_fraction(),
@@ -564,7 +561,7 @@ mod tests {
                     }
                 );
                 assert_eq!(
-                    BinaryMix::try_new(kind, kind.max_fraction() + delta).unwrap_err(),
+                    BinaryMix::try_from(kind, kind.max_fraction() + delta).unwrap_err(),
                     BinaryMixError::InvalidFraction {
                         specified: kind.max_fraction() + delta,
                         min: kind.min_fraction(),
@@ -575,8 +572,8 @@ mod tests {
         }
 
         #[test]
-        fn with_other_fraction_always_returns_binary_mix_with_same_kind_and_other_fraction() {
-            let sut = BinaryMix::try_new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap();
+        fn with_other_fraction_returns_binary_mix_with_same_kind_and_other_fraction() {
+            let sut = BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap();
             let other_fraction = Ratio::new::<percent>(20.0);
             let sut_with_other_fraction = sut.with(other_fraction).unwrap();
             assert_eq!(sut_with_other_fraction.kind, sut.kind);

@@ -160,7 +160,7 @@ mod tests {
     #[case(TwoPhase, "phase_twophase")]
     #[case(Unknown, "phase_unknown")]
     #[case(NotImposed, "phase_not_imposed")]
-    fn as_ref_always_returns_expected_str(#[case] phase: Phase, #[case] expected: &str) {
+    fn as_ref_returns_expected_str(#[case] phase: Phase, #[case] expected: &str) {
         assert_eq!(phase.as_ref(), expected);
     }
 
@@ -199,7 +199,7 @@ mod tests {
     #[case(TwoPhase, 6)]
     #[case(Unknown, 7)]
     #[case(NotImposed, 8)]
-    fn u8_from_phase_always_returns_expected_value(#[case] phase: Phase, #[case] expected: u8) {
+    fn u8_from_phase_returns_expected_value(#[case] phase: Phase, #[case] expected: u8) {
         assert_eq!(u8::from(phase), expected);
     }
 

@@ -349,7 +349,7 @@ mod tests {
     use strum::IntoEnumIterator;
 
     #[test]
-    fn backend_name_always_returns_heos() {
+    fn backend_name_returns_heos() {
         for substance in Pure::iter() {
             assert_eq!(substance.backend_name(), "HEOS");
         }
@@ -439,7 +439,7 @@ mod tests {
     #[case(trans2Butene, "trans-2-Butene")]
     #[case(Water, "Water")]
     #[case(Xenon, "Xenon")]
-    fn as_ref_always_returns_expected_str(#[case] substance: Pure, #[case] expected: &str) {
+    fn as_ref_returns_expected_str(#[case] substance: Pure, #[case] expected: &str) {
         assert_eq!(substance.as_ref(), expected);
     }
 

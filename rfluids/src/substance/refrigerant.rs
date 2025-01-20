@@ -609,7 +609,7 @@ mod tests {
     #[case(R1234zeZ, Pure)]
     #[case(R1243zf, Pure)]
     #[case(R1270, Pure)]
-    fn category_always_returns_expected_value(
+    fn category_returns_expected_value(
         #[case] substance: Refrigerant,
         #[case] expected: RefrigerantCategory,
     ) {
@@ -617,7 +617,7 @@ mod tests {
     }
 
     #[test]
-    fn backend_name_always_returns_heos() {
+    fn backend_name_returns_heos() {
         for substance in Refrigerant::iter() {
             assert_eq!(substance.backend_name(), "HEOS");
         }
@@ -753,7 +753,7 @@ mod tests {
     #[case(R1234zeZ, "R1234ze(Z)")]
     #[case(R1243zf, "R1243zf")]
     #[case(R1270, "R1270")]
-    fn as_ref_always_returns_expected_str(#[case] substance: Refrigerant, #[case] expected: &str) {
+    fn as_ref_returns_expected_str(#[case] substance: Refrigerant, #[case] expected: &str) {
         assert_eq!(substance.as_ref(), expected);
     }
 

@@ -340,7 +340,7 @@ mod tests {
     #[case(DMolarSMolar, 33)]
     #[case(DMassUMass, 34)]
     #[case(DMolarUMolar, 35)]
-    fn u8_from_input_pair_always_returns_expected_value(
+    fn u8_from_input_pair_returns_expected_value(
         #[case] input_pair: FluidInputPair,
         #[case] expected: u8,
     ) {
@@ -383,7 +383,7 @@ mod tests {
     #[case(DMolarSMolar , (DMolar, SMolar))]
     #[case(DMassUMass , (DMass, UMass))]
     #[case(DMolarUMolar , (DMolar, UMolar))]
-    fn two_params_from_input_pair_always_returns_expected_value(
+    fn two_params_from_input_pair_returns_expected_value(
         #[case] input_pair: FluidInputPair,
         #[case] expected: (FluidParam, FluidParam),
     ) {

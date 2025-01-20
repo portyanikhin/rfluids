@@ -174,7 +174,7 @@ mod tests {
     #[case(Vha, "Vha")]
     #[case(W, "W")]
     #[case(Z, "Z")]
-    fn as_ref_always_returns_expected_str(#[case] param: HumidAirParam, #[case] expected: &str) {
+    fn as_ref_returns_expected_str(#[case] param: HumidAirParam, #[case] expected: &str) {
         assert_eq!(param.as_ref(), expected);
     }
 

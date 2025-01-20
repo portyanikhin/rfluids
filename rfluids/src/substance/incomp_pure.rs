@@ -222,7 +222,7 @@ mod tests {
     use strum::IntoEnumIterator;
 
     #[test]
-    fn backend_name_always_returns_incomp() {
+    fn backend_name_returns_incomp() {
         for substance in IncompPure::iter() {
             assert_eq!(substance.backend_name(), "INCOMP");
         }
@@ -290,7 +290,7 @@ mod tests {
     #[case(ZS40, "ZS40")]
     #[case(ZS45, "ZS45")]
     #[case(ZS55, "ZS55")]
-    fn as_ref_always_returns_expected_str(#[case] substance: IncompPure, #[case] expected: &str) {
+    fn as_ref_returns_expected_str(#[case] substance: IncompPure, #[case] expected: &str) {
         assert_eq!(substance.as_ref(), expected);
     }
 

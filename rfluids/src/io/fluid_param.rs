@@ -567,7 +567,7 @@ mod tests {
     #[case(PH, "PH")]
     #[case(ODP, "ODP")]
     #[case(Phase, "Phase")]
-    fn as_ref_always_returns_expected_str(#[case] param: impl AsRef<str>, #[case] expected: &str) {
+    fn as_ref_returns_expected_str(#[case] param: impl AsRef<str>, #[case] expected: &str) {
         assert_eq!(param.as_ref(), expected);
     }
 
@@ -762,10 +762,7 @@ mod tests {
     #[case(PH, 76)]
     #[case(ODP, 77)]
     #[case(Phase, 78)]
-    fn u8_from_param_always_returns_expected_value(
-        #[case] param: impl Into<u8>,
-        #[case] expected: u8,
-    ) {
+    fn u8_from_param_returns_expected_value(#[case] param: impl Into<u8>, #[case] expected: u8) {
         assert_eq!(param.into(), expected);
     }
 

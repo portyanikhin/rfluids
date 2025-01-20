@@ -113,7 +113,7 @@ mod tests {
         #[rstest]
         #[case(HashMap::from([(Pure::Water.into(), 60.0), (Pure::Ethanol.into(), 40.0)]))]
         #[case(HashMap::from([(Refrigerant::R32.into(), 50.0), (Refrigerant::R125.into(), 50.0)]))]
-        fn try_new_from_valid_components_and_fractions_always_returns_ok(
+        fn try_new_from_valid_components_and_fractions_returns_ok(
             #[case] components: HashMap<CustomMixComponent, f64>,
         ) {
             assert!(CustomMix::try_from(HashMap::from_iter(
@@ -146,7 +146,7 @@ mod tests {
             HashMap::from([(Refrigerant::R32.into(), 40.0), (Refrigerant::R125.into(), 40.0)]),
             CustomMixError::InvalidFractionsSum
         )]
-        fn try_new_from_invalid_components_or_fractions_always_returns_err(
+        fn try_new_from_invalid_components_or_fractions_returns_err(
             #[case] components: HashMap<CustomMixComponent, f64>,
             #[case] expected: CustomMixError,
         ) {
@@ -162,7 +162,7 @@ mod tests {
         }
 
         #[test]
-        fn backend_name_always_returns_heos() {
+        fn backend_name_returns_heos() {
             let sut = CustomMix::try_from(HashMap::from([
                 (Pure::Water.into(), Ratio::new::<percent>(60.0)),
                 (Pure::Ethanol.into(), Ratio::new::<percent>(40.0)),

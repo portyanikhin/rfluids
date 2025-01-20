@@ -79,7 +79,7 @@ mod tests {
     use strum::IntoEnumIterator;
 
     #[test]
-    fn backend_name_always_returns_heos() {
+    fn backend_name_returns_heos() {
         for substance in PredefinedMix::iter() {
             assert_eq!(substance.backend_name(), "HEOS");
         }
@@ -96,10 +96,7 @@ mod tests {
     #[case(HighN2, "HighN2.mix")]
     #[case(NaturalGasSample, "NaturalGasSample.mix")]
     #[case(TypicalNaturalGas, "TypicalNaturalGas.mix")]
-    fn as_ref_always_returns_expected_str(
-        #[case] substance: PredefinedMix,
-        #[case] expected: &str,
-    ) {
+    fn as_ref_returns_expected_str(#[case] substance: PredefinedMix, #[case] expected: &str) {
         assert_eq!(substance.as_ref(), expected);
     }
 

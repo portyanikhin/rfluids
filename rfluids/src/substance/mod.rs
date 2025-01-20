@@ -142,7 +142,7 @@ mod tests {
             .chain(PredefinedMix::iter().map(Substance::from))
             .chain(BinaryMixKind::iter().map(|kind| {
                 Substance::from(
-                    BinaryMix::try_new(kind, 0.5 * (kind.min_fraction() + kind.max_fraction()))
+                    BinaryMix::try_from(kind, 0.5 * (kind.min_fraction() + kind.max_fraction()))
                         .unwrap(),
                 )
             }))

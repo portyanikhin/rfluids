@@ -63,7 +63,7 @@ mod tests {
     use approx::assert_relative_eq;
 
     #[test]
-    fn two_fluid_inputs_from_fluid_update_request_always_returns_expected_value() {
+    fn two_fluid_inputs_from_fluid_update_request_returns_expected_value() {
         let request = FluidUpdateRequest(FluidInputPair::PT, 101325.0, 293.15);
         let result = <(FluidInput, FluidInput)>::from(request);
         assert_eq!(result.0.key, FluidParam::P);
@@ -73,7 +73,7 @@ mod tests {
     }
 
     #[test]
-    fn try_from_two_valid_inputs_with_invariant_order_always_returns_ok() {
+    fn try_from_two_valid_inputs_with_invariant_order_returns_ok() {
         let input1 = FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
         let input2 = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
         let result1 = FluidUpdateRequest::try_from((input1, input2)).unwrap();
@@ -85,7 +85,7 @@ mod tests {
     }
 
     #[test]
-    fn try_from_two_invalid_inputs_always_returns_err() {
+    fn try_from_two_invalid_inputs_returns_err() {
         let input = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
         assert!(FluidUpdateRequest::try_from((input, input)).is_err());
     }
