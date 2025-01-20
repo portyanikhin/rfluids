@@ -13,9 +13,9 @@ impl AbstractState {
     ///
     /// # Args
     ///
-    /// - `backend_name` — name of the backend _(raw [`&str`](str)
+    /// - `backend_name` -- name of the backend _(raw [`&str`](str)
     ///   or [`BackendName::backend_name`](crate::substance::BackendName::backend_name))_.
-    /// - `fluid_names` — names of the fluids separated by the `&` symbol
+    /// - `fluid_names` -- names of the fluids separated by the `&` symbol
     ///   or just a single fluid name _(raw [`&str`](str),
     ///   [`Substance`](crate::substance::Substance) or its subset)_.
     ///
@@ -76,11 +76,15 @@ impl AbstractState {
         Self::result(Self { ptr }, error)
     }
 
-    /// Set the fractions _(mole, mass or volume — it will be defined automatically)_.
+    /// Set the fractions _(mole, mass or volume)_[^note].
+    ///
+    /// [^note]:  It will be defined automatically, depending on the specified backend.
+    /// For example, the `"HEOS"` backend uses mole fractions and the `"INCOMP"` backend --
+    /// mass or volume fractions, depending on which substance is specified.
     ///
     /// # Args
     ///
-    /// - `fractions` — fractions of the specified fluid
+    /// - `fractions` -- fractions of the specified fluid
     ///   _(dimensionless, from 0 to 1 each)_.
     ///
     /// # Errors
@@ -105,7 +109,7 @@ impl AbstractState {
     /// use rfluids::native::AbstractState;
     ///
     /// let mut mixture = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
-    /// let result = mixture.set_fractions(&[0.6, 0.4]);
+    /// let result = mixture.set_fractions(&[0.8, 0.2]);
     /// assert!(result.is_ok());
     /// ```
     pub fn set_fractions(&mut self, fractions: &[f64]) -> Result<(), CoolPropError> {
@@ -127,10 +131,10 @@ impl AbstractState {
     ///
     /// # Args
     ///
-    /// - `input_pair_key` — input pair key
+    /// - `input_pair_key` -- input pair key
     ///   _(raw [`u8`] or [`FluidInputPair`](crate::io::FluidInputPair))_.
-    /// - `input1` — value of the first input property _(in SI units)_.
-    /// - `input2` — value of the second input property _(in SI units)_.
+    /// - `input1` -- value of the first input property _(in SI units)_.
+    /// - `input2` -- value of the second input property _(in SI units)_.
     ///
     /// # Errors
     ///
@@ -175,7 +179,7 @@ impl AbstractState {
     ///
     /// # Args
     ///
-    /// - `key` — output parameter key
+    /// - `key` -- output parameter key
     ///   _(raw [`u8`], [`FluidParam`](crate::io::FluidParam) or
     ///   [`FluidTrivialParam`](crate::io::FluidTrivialParam))_.
     ///
@@ -221,7 +225,7 @@ impl AbstractState {
     /// ## Mixtures
     ///
     /// To calculate the density of ethanol aqueous solution
-    /// (with ethanol _40 %_ mass fraction) at _200 kPa_ and _4 °C_:
+    /// (with ethanol _20 %_ mole fraction) at _200 kPa_ and _4 °C_:
     ///
     /// ```
     /// use approx::assert_relative_eq;
@@ -229,10 +233,10 @@ impl AbstractState {
     /// use rfluids::native::AbstractState;
     ///
     /// let mut mixture = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
-    /// mixture.set_fractions(&[0.6, 0.4]).unwrap();
+    /// mixture.set_fractions(&[0.8, 0.2]).unwrap();
     /// mixture.update(FluidInputPair::PT, 200e3, 277.15).unwrap();
     /// let result = mixture.keyed_output(FluidParam::DMass).unwrap();
-    /// assert_relative_eq!(result, 859.5296602799147);
+    /// assert_relative_eq!(result, 883.8826353773796);
     /// ```
     ///
     /// # See also
@@ -258,7 +262,7 @@ impl AbstractState {
     ///
     /// # Args
     ///
-    /// - `phase` — phase state
+    /// - `phase` -- phase state
     ///   _(raw [`&str`](str) or [`Phase`](crate::io::Phase))_.
     ///
     /// # Errors

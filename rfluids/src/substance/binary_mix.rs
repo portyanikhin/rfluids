@@ -276,8 +276,8 @@ impl BinaryMix {
     ///
     /// # Args
     ///
-    /// - `kind` — binary mixture kind.
-    /// - `fraction` — fraction of the specified binary mixture kind.
+    /// - `kind` -- binary mixture kind.
+    /// - `fraction` -- fraction of the specified binary mixture kind.
     ///
     /// # Errors
     ///

@@ -12,15 +12,15 @@ impl CoolProp {
     ///
     /// # Args
     ///
-    /// - `output_key` — key of the output
+    /// - `output_key` -- key of the output
     ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_.
-    /// - `input1_key` — key of the first input property
+    /// - `input1_key` -- key of the first input property
     ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_.
-    /// - `input1_value` — value of the first input property _(in SI units)_.
-    /// - `input2_key` — key of the second input property
+    /// - `input1_value` -- value of the first input property _(in SI units)_.
+    /// - `input2_key` -- key of the second input property
     ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_.
-    /// - `input2_value` — value of the second input property _(in SI units)_.
-    /// - `fluid_name` — name of the fluid _(raw [`&str`](str),
+    /// - `input2_value` -- value of the second input property _(in SI units)_.
+    /// - `fluid_name` -- name of the fluid _(raw [`&str`](str),
     ///   [`Substance`](crate::substance::Substance) or its subset)_.
     ///
     /// # Errors
@@ -110,17 +110,17 @@ impl CoolProp {
     ///
     /// # Args
     ///
-    /// - `output_key` — key of the output
+    /// - `output_key` -- key of the output
     ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_.
-    /// - `input1_key` — key of the first input property
+    /// - `input1_key` -- key of the first input property
     ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_.
-    /// - `input1_value` — value of the first input property _(in SI units)_.
-    /// - `input2_key` — key of the second input property
+    /// - `input1_value` -- value of the first input property _(in SI units)_.
+    /// - `input2_key` -- key of the second input property
     ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_.
-    /// - `input2_value` — value of the second input property _(in SI units)_.
-    /// - `input3_key` — key of the third input property
+    /// - `input2_value` -- value of the second input property _(in SI units)_.
+    /// - `input3_key` -- key of the third input property
     ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_.
-    /// - `input3_value` — value of the third input property _(in SI units)_.
+    /// - `input3_value` -- value of the third input property _(in SI units)_.
     ///
     /// # Errors
     ///
@@ -174,9 +174,9 @@ impl CoolProp {
     ///
     /// # Args
     ///
-    /// - `output_key` — key of the _trivial_ output
+    /// - `output_key` -- key of the _trivial_ output
     ///   _(raw [`&str`](str) or [`FluidTrivialParam`](crate::io::FluidTrivialParam))_.
-    /// - `fluid_name` — name of the fluid _(raw [`&str`](str),
+    /// - `fluid_name` -- name of the fluid _(raw [`&str`](str),
     ///   [`Substance`](crate::substance::Substance) or its subset)_.
     ///
     /// # Errors
