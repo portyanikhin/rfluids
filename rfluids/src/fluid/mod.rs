@@ -26,8 +26,7 @@ pub struct Fluid<T = Substance, S = DefinedState>
 where
     T: BackendName + Debug + Clone,
 {
-    /// Substance.
-    pub substance: T,
+    substance: T,
     backend: AbstractState,
     update_request: Option<FluidUpdateRequest>,
     trivial_outputs: HashMap<FluidTrivialParam, f64>,
