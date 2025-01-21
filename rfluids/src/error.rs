@@ -48,3 +48,12 @@ pub enum CustomMixError {
     #[error("The sum of the specified fractions must be equal to 100 %!")]
     InvalidFractionsSum,
 }
+
+/// Error during creation of [`Fluid`](crate::fluid::Fluid)
+/// from [`CustomMix`](crate::substance::CustomMix).
+#[derive(Error, Debug, Clone)]
+pub enum FluidFromCustomMixError {
+    /// Specified custom mixture is not supported.
+    #[error("Specified custom mixture is not supported! {0}")]
+    Unsupported(#[from] CoolPropError),
+}

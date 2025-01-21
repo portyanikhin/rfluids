@@ -2,32 +2,32 @@
 
 mod common;
 
+use crate::error::FluidFromCustomMixError;
 use crate::fluid::common::FluidUpdateRequest;
 use crate::io::{FluidParam, FluidTrivialParam};
 use crate::native::AbstractState;
 use crate::substance::*;
 use crate::{DefinedState, UndefinedState};
 use std::collections::HashMap;
+use std::fmt::Debug;
 use std::marker::PhantomData;
 
 /// Provider of thermophysical properties of substances.
 ///
-/// It works with [`Substance`] or any of its subsets:
-///
-/// - pure or pseudo-pure substances _([`Pure`])_;
-/// - incompressible pure substances _([`IncompPure`])_;
-/// - refrigerants _([`Refrigerant`])_;
-/// - predefined mixtures _([`PredefinedMix`])_;
-/// - incompressible binary mixtures _([`BinaryMix`])_.
-///
 /// It implements the [typestate pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
-/// and has one generic type parameter `S` _(state type, [`DefinedState`] or [`UndefinedState`])_.
+/// and has two generic type parameters:
 ///
-/// Depending on `S`, the `Fluid` instance has different functionality.
+/// - `T` -- substance type _([`Substance`] or [`CustomMix`])_.
+/// - `S` -- state type _([`DefinedState`] or [`UndefinedState`])_.
+///
+/// Depending on `T` and `S`, the `Fluid` instance has different functionality.
 #[derive(Debug)]
-pub struct Fluid<S = DefinedState> {
+pub struct Fluid<T = Substance, S = DefinedState>
+where
+    T: BackendName + Debug + Clone,
+{
     /// Substance.
-    pub substance: Substance,
+    pub substance: T,
     backend: AbstractState,
     update_request: Option<FluidUpdateRequest>,
     trivial_outputs: HashMap<FluidTrivialParam, f64>,
@@ -35,7 +35,18 @@ pub struct Fluid<S = DefinedState> {
     state: PhantomData<S>,
 }
 
-impl From<Substance> for Fluid<UndefinedState> {
+impl From<Substance> for Fluid<Substance, UndefinedState> {
+    /// Creates and returns a new [`Fluid`] instance
+    /// with [`UndefinedState`] from any [`Substance`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::fluid::Fluid;
+    /// use rfluids::substance::{Pure, Substance};
+    ///
+    /// let water = Fluid::from(Substance::from(Pure::Water));
+    /// ```
     fn from(value: Substance) -> Self {
         let mut backend = AbstractState::new(value.backend_name(), value).unwrap();
         if let Substance::BinaryMix(binary_mix) = value {
@@ -52,33 +63,146 @@ impl From<Substance> for Fluid<UndefinedState> {
     }
 }
 
-impl From<Pure> for Fluid<UndefinedState> {
+impl From<Pure> for Fluid<Substance, UndefinedState> {
+    /// Creates and returns a new [`Fluid`] instance
+    /// with [`UndefinedState`] from [`Pure`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::fluid::Fluid;
+    /// use rfluids::substance::Pure;
+    ///
+    /// let water = Fluid::from(Pure::Water);
+    /// ```
     fn from(value: Pure) -> Self {
         Substance::from(value).into()
     }
 }
 
-impl From<IncompPure> for Fluid<UndefinedState> {
+impl From<IncompPure> for Fluid<Substance, UndefinedState> {
+    /// Creates and returns a new [`Fluid`] instance
+    /// with [`UndefinedState`] from [`IncompPure`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::fluid::Fluid;
+    /// use rfluids::substance::IncompPure;
+    ///
+    /// let incomp_water = Fluid::from(IncompPure::Water);
+    /// ```
     fn from(value: IncompPure) -> Self {
         Substance::from(value).into()
     }
 }
 
-impl From<Refrigerant> for Fluid<UndefinedState> {
+impl From<Refrigerant> for Fluid<Substance, UndefinedState> {
+    /// Creates and returns a new [`Fluid`] instance
+    /// with [`UndefinedState`] from [`Refrigerant`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::fluid::Fluid;
+    /// use rfluids::substance::Refrigerant;
+    ///
+    /// let r32 = Fluid::from(Refrigerant::R32);
+    /// ```
     fn from(value: Refrigerant) -> Self {
         Substance::from(value).into()
     }
 }
 
-impl From<PredefinedMix> for Fluid<UndefinedState> {
+impl From<PredefinedMix> for Fluid<Substance, UndefinedState> {
+    /// Creates and returns a new [`Fluid`] instance
+    /// with [`UndefinedState`] from [`PredefinedMix`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::fluid::Fluid;
+    /// use rfluids::substance::PredefinedMix;
+    ///
+    /// let natural_gas = Fluid::from(PredefinedMix::TypicalNaturalGas);
+    /// ```
     fn from(value: PredefinedMix) -> Self {
         Substance::from(value).into()
     }
 }
 
-impl From<BinaryMix> for Fluid<UndefinedState> {
+impl From<BinaryMix> for Fluid<Substance, UndefinedState> {
+    /// Creates and returns a new [`Fluid`] instance
+    /// with [`UndefinedState`] from [`BinaryMix`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::fluid::Fluid;
+    /// use rfluids::substance::{BinaryMix, BinaryMixKind};
+    /// use rfluids::uom::si::f64::Ratio;
+    /// use rfluids::uom::si::ratio::percent;
+    ///
+    /// let propylene_glycol = Fluid::from(
+    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    /// );
+    /// ```
     fn from(value: BinaryMix) -> Self {
         Substance::from(value).into()
+    }
+}
+
+impl TryFrom<CustomMix> for Fluid<CustomMix, UndefinedState> {
+    type Error = FluidFromCustomMixError;
+
+    /// Creates and returns a new [`Fluid`] instance
+    /// with [`UndefinedState`] from [`CustomMix`].
+    ///
+    /// # Errors
+    ///
+    /// For unsupported custom mixtures, a [`FluidFromCustomMixError`] is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::fluid::Fluid;
+    /// use rfluids::substance::{CustomMix, Pure, Refrigerant};
+    /// use rfluids::uom::si::f64::Ratio;
+    /// use rfluids::uom::si::ratio::percent;
+    /// use std::collections::HashMap;
+    ///
+    /// let supported_mix = CustomMix::mass_based(HashMap::from([
+    ///     (Pure::Water.into(), Ratio::new::<percent>(60.0)),
+    ///     (Pure::Ethanol.into(), Ratio::new::<percent>(40.0)),
+    /// ]))
+    /// .unwrap();
+    /// assert!(Fluid::try_from(supported_mix).is_ok());
+    ///
+    /// let unsupported_mix = CustomMix::mass_based(HashMap::from([
+    ///     (Pure::Orthohydrogen.into(), Ratio::new::<percent>(60.0)),
+    ///     (Refrigerant::R32.into(), Ratio::new::<percent>(40.0)),
+    /// ]))
+    /// .unwrap();
+    /// assert!(Fluid::try_from(unsupported_mix).is_err());
+    /// ```
+    //noinspection RsUnwrap
+    fn try_from(value: CustomMix) -> Result<Self, Self::Error> {
+        let mix = value.to_mole_based();
+        let (substances, fractions): (Vec<&str>, Vec<f64>) = mix
+            .components()
+            .iter()
+            .map(|component| (component.0.as_ref(), component.1.value))
+            .unzip();
+        let mut backend = AbstractState::new(value.backend_name(), substances.join("&"))?;
+        backend.set_fractions(&fractions).unwrap();
+        Ok(Self {
+            substance: value,
+            backend,
+            update_request: None,
+            trivial_outputs: HashMap::new(),
+            outputs: HashMap::new(),
+            state: PhantomData,
+        })
     }
 }
 
@@ -86,6 +210,8 @@ impl From<BinaryMix> for Fluid<UndefinedState> {
 mod tests {
     use super::*;
     use strum::IntoEnumIterator;
+    use uom::si::f64::Ratio;
+    use uom::si::ratio::percent;
 
     #[test]
     fn from_each_pure_does_not_panic() {
@@ -119,9 +245,29 @@ mod tests {
     fn from_each_binary_mix_does_not_panic() {
         for kind in BinaryMixKind::iter() {
             let _fluid = Fluid::from(
-                BinaryMix::try_new(kind, 0.5 * (kind.min_fraction() + kind.max_fraction()))
+                BinaryMix::try_from(kind, 0.5 * (kind.min_fraction() + kind.max_fraction()))
                     .unwrap(),
             );
         }
+    }
+
+    #[test]
+    fn try_from_supported_custom_mix_returns_ok() {
+        let supported_mix = CustomMix::mass_based(HashMap::from([
+            (Refrigerant::R32.into(), Ratio::new::<percent>(70.0)),
+            (Refrigerant::R134a.into(), Ratio::new::<percent>(30.0)),
+        ]))
+        .unwrap();
+        assert!(Fluid::try_from(supported_mix).is_ok());
+    }
+
+    #[test]
+    fn try_from_unsupported_custom_mix_returns_err() {
+        let unsupported_mix = CustomMix::mole_based(HashMap::from([
+            (Pure::Xenon.into(), Ratio::new::<percent>(10.0)),
+            (Refrigerant::R22.into(), Ratio::new::<percent>(90.0)),
+        ]))
+        .unwrap();
+        assert!(Fluid::try_from(unsupported_mix).is_err());
     }
 }
