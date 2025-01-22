@@ -23,8 +23,8 @@ use std::marker::PhantomData;
 /// It implements the [typestate pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
 /// and has two generic type parameters:
 ///
-/// - `T` -- substance type _([`Substance`] or [`CustomMix`])_.
-/// - `S` -- state type _([`Defined`] or [`Undefined`])_.
+/// - `T` -- substance variant _([`Substance`] or [`CustomMix`])_.
+/// - `S` -- state variant _([`Defined`] or [`Undefined`])_.
 ///
 /// Depending on `T` and `S`, the `Fluid` instance has different functionality.
 #[derive(Debug)]

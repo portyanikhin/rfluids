@@ -1,3 +1,4 @@
+use crate::error::FluidUpdateError;
 use crate::io::{FluidInput, FluidInputPair, FluidParam, Input};
 
 /// CoolProp fluids update request.
@@ -12,10 +13,14 @@ impl From<FluidUpdateRequest> for (FluidInput, FluidInput) {
 }
 
 impl TryFrom<(FluidInput, FluidInput)> for FluidUpdateRequest {
-    type Error = strum::ParseError;
+    type Error = FluidUpdateError;
 
     fn try_from(value: (FluidInput, FluidInput)) -> Result<Self, Self::Error> {
-        let key = FluidInputPair::try_from((value.0.key(), value.1.key()))?;
+        let key = FluidInputPair::try_from((value.0.key(), value.1.key()))
+            .map_err(|_| FluidUpdateError::InvalidInputPair(value.0.key(), value.1.key()))?;
+        if !value.0.si_value().is_finite() || !value.1.si_value().is_finite() {
+            return Err(FluidUpdateError::InvalidInputValue);
+        }
         let (value1, value2) =
             if <(FluidParam, FluidParam)>::from(key) == (value.0.key(), value.1.key()) {
                 (value.0.si_value(), value.1.si_value())
@@ -33,6 +38,7 @@ mod tests {
     use crate::uom::si::pressure::atmosphere;
     use crate::uom::si::thermodynamic_temperature::degree_celsius;
     use approx::assert_relative_eq;
+    use rstest::*;
 
     #[test]
     fn two_fluid_inputs_from_fluid_update_request_returns_expected_value() {
@@ -57,8 +63,25 @@ mod tests {
     }
 
     #[test]
-    fn try_from_two_invalid_inputs_returns_err() {
+    fn try_from_two_same_inputs_returns_err() {
         let input = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
-        assert!(FluidUpdateRequest::try_from((input, input)).is_err());
+        assert_eq!(
+            FluidUpdateRequest::try_from((input, input)).unwrap_err(),
+            FluidUpdateError::InvalidInputPair(input.key(), input.key())
+        );
+    }
+
+    #[rstest]
+    fn try_from_non_finite_inputs_returns_err(
+        #[values(f64::NAN, f64::INFINITY, -f64::INFINITY)] value1: f64,
+        #[values(f64::NAN, f64::INFINITY, -f64::INFINITY, 1.0)] value2: f64,
+    ) {
+        let input1 =
+            FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(value1));
+        let input2 = FluidInput::pressure(Pressure::new::<atmosphere>(value2));
+        assert_eq!(
+            FluidUpdateRequest::try_from((input1, input2)).unwrap_err(),
+            FluidUpdateError::InvalidInputValue
+        );
     }
 }
