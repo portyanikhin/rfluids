@@ -1,4 +1,3 @@
-use crate::substance::BackendName;
 use regex::Regex;
 #[cfg(test)]
 use strum_macros::EnumIter;
@@ -452,12 +451,6 @@ impl Refrigerant {
     }
 }
 
-impl BackendName for Refrigerant {
-    fn backend_name(&self) -> &'static str {
-        "HEOS"
-    }
-}
-
 /// [`Refrigerant`]s categories.
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum RefrigerantCategory {
@@ -478,7 +471,6 @@ mod tests {
     use super::*;
     use rstest::*;
     use std::str::FromStr;
-    use strum::IntoEnumIterator;
 
     #[rstest]
     #[case(R11, Pure)]
@@ -614,13 +606,6 @@ mod tests {
         #[case] expected: RefrigerantCategory,
     ) {
         assert_eq!(substance.category(), expected);
-    }
-
-    #[test]
-    fn backend_name_returns_heos() {
-        for substance in Refrigerant::iter() {
-            assert_eq!(substance.backend_name(), "HEOS");
-        }
     }
 
     //noinspection SpellCheckingInspection

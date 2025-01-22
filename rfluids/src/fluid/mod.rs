@@ -1,13 +1,19 @@
 //! Thermophysical properties of substances.
 
-mod common;
+pub use backend_name::*;
+pub use substance_variant::*;
+
+mod backend_name;
+mod defined_state;
+mod invariant_state;
+mod substance_variant;
+mod undefined_state;
 
 use crate::error::FluidFromCustomMixError;
-use crate::fluid::common::FluidUpdateRequest;
-use crate::io::{FluidParam, FluidTrivialParam};
+use crate::io::{FluidParam, FluidTrivialParam, FluidUpdateRequest};
 use crate::native::AbstractState;
+use crate::state::{Defined, StateVariant, Undefined};
 use crate::substance::*;
-use crate::{DefinedState, UndefinedState};
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::marker::PhantomData;
@@ -18,14 +24,11 @@ use std::marker::PhantomData;
 /// and has two generic type parameters:
 ///
 /// - `T` -- substance type _([`Substance`] or [`CustomMix`])_.
-/// - `S` -- state type _([`DefinedState`] or [`UndefinedState`])_.
+/// - `S` -- state type _([`Defined`] or [`Undefined`])_.
 ///
 /// Depending on `T` and `S`, the `Fluid` instance has different functionality.
 #[derive(Debug)]
-pub struct Fluid<T = Substance, S = DefinedState>
-where
-    T: BackendName + Debug + Clone,
-{
+pub struct Fluid<T: SubstanceVariant = Substance, S: StateVariant = Defined> {
     substance: T,
     backend: AbstractState,
     update_request: Option<FluidUpdateRequest>,
@@ -34,9 +37,9 @@ where
     state: PhantomData<S>,
 }
 
-impl From<Substance> for Fluid<Substance, UndefinedState> {
+impl From<Substance> for Fluid<Substance, Undefined> {
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`UndefinedState`] from any [`Substance`].
+    /// with [`Undefined`] from any [`Substance`].
     ///
     /// # Examples
     ///
@@ -62,9 +65,9 @@ impl From<Substance> for Fluid<Substance, UndefinedState> {
     }
 }
 
-impl From<Pure> for Fluid<Substance, UndefinedState> {
+impl From<Pure> for Fluid<Substance, Undefined> {
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`UndefinedState`] from [`Pure`].
+    /// with [`Undefined`] from [`Pure`].
     ///
     /// # Examples
     ///
@@ -79,9 +82,9 @@ impl From<Pure> for Fluid<Substance, UndefinedState> {
     }
 }
 
-impl From<IncompPure> for Fluid<Substance, UndefinedState> {
+impl From<IncompPure> for Fluid<Substance, Undefined> {
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`UndefinedState`] from [`IncompPure`].
+    /// with [`Undefined`] from [`IncompPure`].
     ///
     /// # Examples
     ///
@@ -96,9 +99,9 @@ impl From<IncompPure> for Fluid<Substance, UndefinedState> {
     }
 }
 
-impl From<Refrigerant> for Fluid<Substance, UndefinedState> {
+impl From<Refrigerant> for Fluid<Substance, Undefined> {
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`UndefinedState`] from [`Refrigerant`].
+    /// with [`Undefined`] from [`Refrigerant`].
     ///
     /// # Examples
     ///
@@ -113,9 +116,9 @@ impl From<Refrigerant> for Fluid<Substance, UndefinedState> {
     }
 }
 
-impl From<PredefinedMix> for Fluid<Substance, UndefinedState> {
+impl From<PredefinedMix> for Fluid<Substance, Undefined> {
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`UndefinedState`] from [`PredefinedMix`].
+    /// with [`Undefined`] from [`PredefinedMix`].
     ///
     /// # Examples
     ///
@@ -130,9 +133,9 @@ impl From<PredefinedMix> for Fluid<Substance, UndefinedState> {
     }
 }
 
-impl From<BinaryMix> for Fluid<Substance, UndefinedState> {
+impl From<BinaryMix> for Fluid<Substance, Undefined> {
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`UndefinedState`] from [`BinaryMix`].
+    /// with [`Undefined`] from [`BinaryMix`].
     ///
     /// # Examples
     ///
@@ -151,11 +154,11 @@ impl From<BinaryMix> for Fluid<Substance, UndefinedState> {
     }
 }
 
-impl TryFrom<CustomMix> for Fluid<CustomMix, UndefinedState> {
+impl TryFrom<CustomMix> for Fluid<CustomMix, Undefined> {
     type Error = FluidFromCustomMixError;
 
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`UndefinedState`] from [`CustomMix`].
+    /// with [`Undefined`] from [`CustomMix`].
     ///
     /// # Errors
     ///

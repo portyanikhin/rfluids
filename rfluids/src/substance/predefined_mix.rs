@@ -1,4 +1,3 @@
-use crate::substance::BackendName;
 #[cfg(test)]
 use strum_macros::EnumIter;
 use strum_macros::{AsRefStr, EnumString};
@@ -64,26 +63,12 @@ pub enum PredefinedMix {
     TypicalNaturalGas,
 }
 
-impl BackendName for PredefinedMix {
-    fn backend_name(&self) -> &'static str {
-        "HEOS"
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::PredefinedMix::*;
     use super::*;
     use rstest::*;
     use std::str::FromStr;
-    use strum::IntoEnumIterator;
-
-    #[test]
-    fn backend_name_returns_heos() {
-        for substance in PredefinedMix::iter() {
-            assert_eq!(substance.backend_name(), "HEOS");
-        }
-    }
 
     //noinspection SpellCheckingInspection
     #[rstest]

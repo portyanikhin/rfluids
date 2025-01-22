@@ -1,7 +1,7 @@
 use crate::io::try_from;
 use strum_macros::{AsRefStr, EnumString, FromRepr};
 
-/// CoolProp input/output parameters.
+/// CoolProp fluids input/output parameters.
 ///
 /// # Examples
 ///
@@ -50,7 +50,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 ///
 /// # See also
 ///
-/// - [CoolProp input/output parameters _(only those for which the value in the "Trivial" column is "False")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
+/// - [CoolProp fluids input/output parameters _(only those for which the value in the "Trivial" column is "False")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
 //noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, FromRepr, Debug, Copy, Clone, Eq, PartialEq, Hash)]
 #[strum(ascii_case_insensitive)]
@@ -293,7 +293,7 @@ impl TryFrom<f64> for FluidParam {
     }
 }
 
-/// CoolProp trivial output parameters.
+/// CoolProp fluids trivial output parameters.
 ///
 /// # Examples
 ///
@@ -327,7 +327,7 @@ impl TryFrom<f64> for FluidParam {
 ///
 /// # See also
 ///
-/// - [CoolProp input/output parameters _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
+/// - [CoolProp fluids input/output parameters _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
 //noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, FromRepr, Debug, Copy, Clone, Eq, PartialEq, Hash)]
 #[strum(ascii_case_insensitive)]

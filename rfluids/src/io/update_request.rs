@@ -1,13 +1,8 @@
-use crate::error::CoolPropError;
 use crate::io::{FluidInput, FluidInputPair, FluidParam, Input};
-use crate::native::AbstractState;
-use crate::Remember;
-use std::collections::hash_map::Entry;
-use std::collections::HashMap;
-use std::hash::Hash;
 
+/// CoolProp fluids update request.
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub(crate) struct FluidUpdateRequest(pub FluidInputPair, pub f64, pub f64);
+pub struct FluidUpdateRequest(pub(crate) FluidInputPair, pub(crate) f64, pub(crate) f64);
 
 impl From<FluidUpdateRequest> for (FluidInput, FluidInput) {
     fn from(value: FluidUpdateRequest) -> Self {
@@ -28,20 +23,6 @@ impl TryFrom<(FluidInput, FluidInput)> for FluidUpdateRequest {
                 (value.1.si_value(), value.0.si_value())
             };
         Ok(Self(key, value1, value2))
-    }
-}
-
-impl<K> Remember<&AbstractState, K> for HashMap<K, f64>
-where
-    K: Into<u8> + Copy + Eq + Hash,
-{
-    type Error = CoolPropError;
-
-    fn remember(&mut self, src: &AbstractState, key: K) -> Result<f64, CoolPropError> {
-        Ok(match self.entry(key) {
-            Entry::Occupied(entry) => *entry.get(),
-            Entry::Vacant(entry) => *entry.insert(src.keyed_output(key)?),
-        })
     }
 }
 

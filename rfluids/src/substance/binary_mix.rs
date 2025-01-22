@@ -1,5 +1,4 @@
 use crate::error::BinaryMixError;
-use crate::substance::BackendName;
 use crate::uom::si::f64::Ratio;
 use crate::uom::si::ratio::ratio;
 use std::str::FromStr;
@@ -253,12 +252,6 @@ impl BinaryMixKind {
     }
 }
 
-impl BackendName for BinaryMixKind {
-    fn backend_name(&self) -> &'static str {
-        "INCOMP"
-    }
-}
-
 /// [`BinaryMixKind`] with specified fraction.
 #[derive(Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
@@ -339,7 +332,6 @@ mod tests {
         use crate::uom::si::f64::Ratio;
         use crate::uom::si::ratio::ratio;
         use rstest::*;
-        use strum::IntoEnumIterator;
 
         #[rstest]
         #[case(FRE, 0.19, 0.5)]
@@ -403,13 +395,6 @@ mod tests {
                 substance.max_fraction(),
                 Ratio::new::<ratio>(expected_max_fraction)
             );
-        }
-
-        #[test]
-        fn backend_name_returns_incomp() {
-            for substance in BinaryMixKind::iter() {
-                assert_eq!(substance.backend_name(), "INCOMP");
-            }
         }
 
         //noinspection SpellCheckingInspection

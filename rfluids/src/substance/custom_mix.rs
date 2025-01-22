@@ -1,7 +1,8 @@
 use crate::error::CustomMixError;
+use crate::fluid::BackendName;
 use crate::io::FluidTrivialParam::MolarMass;
 use crate::native::AbstractState;
-use crate::substance::{BackendName, Pure, Refrigerant, RefrigerantCategory};
+use crate::substance::{Pure, Refrigerant, RefrigerantCategory};
 use crate::uom::si::f64::Ratio;
 use crate::uom::si::ratio::ratio;
 use crate::uom::ConstZero;
@@ -181,12 +182,6 @@ impl CustomMix {
     }
 }
 
-impl BackendName for CustomMix {
-    fn backend_name(&self) -> &'static str {
-        "HEOS"
-    }
-}
-
 /// Custom mixture component.
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub enum CustomMixComponent {
@@ -195,15 +190,6 @@ pub enum CustomMixComponent {
 
     /// Pure refrigerant.
     Refrigerant(Refrigerant),
-}
-
-impl BackendName for CustomMixComponent {
-    fn backend_name(&self) -> &'static str {
-        match self {
-            CustomMixComponent::Pure(pure) => pure.backend_name(),
-            CustomMixComponent::Refrigerant(refrigerant) => refrigerant.backend_name(),
-        }
-    }
 }
 
 impl AsRef<str> for CustomMixComponent {
@@ -333,16 +319,6 @@ mod tests {
             ));
         }
 
-        #[test]
-        fn backend_name_returns_heos() {
-            let sut = CustomMix::mass_based(HashMap::from([
-                (Pure::Water.into(), Ratio::new::<percent>(60.0)),
-                (Pure::Ethanol.into(), Ratio::new::<percent>(40.0)),
-            ]))
-            .unwrap();
-            assert_eq!(sut.backend_name(), "HEOS");
-        }
-
         fn matches(mix: CustomMix, expected: [(&str, f64); 2]) -> bool {
             mix.components().len() == expected.len()
                 && mix
@@ -364,16 +340,8 @@ mod tests {
         #[test]
         pub fn custom_mix_component_is_transparent() {
             assert_eq!(
-                CustomMixComponent::from(Pure::Water).backend_name(),
-                Pure::Water.backend_name()
-            );
-            assert_eq!(
                 CustomMixComponent::from(Pure::Water).as_ref(),
                 Pure::Water.as_ref()
-            );
-            assert_eq!(
-                CustomMixComponent::from(Refrigerant::R32).backend_name(),
-                Refrigerant::R32.backend_name()
             );
             assert_eq!(
                 CustomMixComponent::from(Refrigerant::R32).as_ref(),

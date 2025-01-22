@@ -1,4 +1,3 @@
-use crate::substance::BackendName;
 #[cfg(test)]
 use strum_macros::EnumIter;
 use strum_macros::{AsRefStr, EnumString};
@@ -207,26 +206,12 @@ pub enum IncompPure {
     ZS55,
 }
 
-impl BackendName for IncompPure {
-    fn backend_name(&self) -> &'static str {
-        "INCOMP"
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::IncompPure::*;
     use super::*;
     use rstest::*;
     use std::str::FromStr;
-    use strum::IntoEnumIterator;
-
-    #[test]
-    fn backend_name_returns_incomp() {
-        for substance in IncompPure::iter() {
-            assert_eq!(substance.backend_name(), "INCOMP");
-        }
-    }
 
     //noinspection SpellCheckingInspection
     #[rstest]

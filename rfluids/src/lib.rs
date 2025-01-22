@@ -29,24 +29,10 @@
 
 pub extern crate uom;
 
+mod cache;
 pub mod error;
 pub mod fluid;
 pub mod io;
 pub mod native;
+pub mod state;
 pub mod substance;
-
-/// A marker that determines the _presence_ of
-/// a defined thermodynamic state.
-#[derive(Debug)]
-pub struct DefinedState;
-
-/// A marker that determines the _absence_ of
-/// a defined thermodynamic state.
-#[derive(Debug)]
-pub struct UndefinedState;
-
-trait Remember<S, K> {
-    type Error;
-
-    fn remember(&mut self, src: S, key: K) -> Result<f64, Self::Error>;
-}
