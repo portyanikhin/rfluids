@@ -1,11 +1,12 @@
 //! Error handling.
 
+use crate::io::FluidParam;
 use crate::uom::si::f64::Ratio;
 use crate::uom::si::ratio::percent;
 use thiserror::Error;
 
 /// CoolProp internal error.
-#[derive(Error, Debug, Clone)]
+#[derive(Error, Debug, Clone, Eq, PartialEq)]
 #[error("{0}")]
 pub struct CoolPropError(pub(crate) String);
 
@@ -56,4 +57,20 @@ pub enum FluidFromCustomMixError {
     /// Specified custom mixture is not supported.
     #[error("Specified custom mixture is not supported! {0}")]
     Unsupported(#[from] CoolPropError),
+}
+
+/// Error during [`Fluid::update`](crate::fluid::Fluid::update).
+#[derive(Error, Debug, Clone, Eq, PartialEq)]
+pub enum FluidUpdateError {
+    /// Specified inputs are invalid.
+    #[error("Specified inputs ({0:?}, {1:?}) are not supported!")]
+    InvalidInputPair(FluidParam, FluidParam),
+
+    /// Some of the specified input value is infinite or NaN.
+    #[error("Input values must be finite!")]
+    InvalidInputValue,
+
+    /// Specified fluid state is invalid.
+    #[error("Specified fluid state is invalid! {0}")]
+    InvalidState(#[from] CoolPropError),
 }
