@@ -39,7 +39,7 @@ pub struct Fluid<T: SubstanceVariant = Substance, S: StateVariant = Defined> {
 
 impl From<Substance> for Fluid<Substance, Undefined> {
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`Undefined`] from any [`Substance`].
+    /// with [`Undefined`] state variant from any [`Substance`].
     ///
     /// # Examples
     ///
@@ -66,7 +66,7 @@ impl From<Substance> for Fluid<Substance, Undefined> {
 
 impl From<Pure> for Fluid<Substance, Undefined> {
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`Undefined`] from [`Pure`].
+    /// with [`Undefined`] state variant from [`Pure`].
     ///
     /// # Examples
     ///
@@ -82,7 +82,7 @@ impl From<Pure> for Fluid<Substance, Undefined> {
 
 impl From<IncompPure> for Fluid<Substance, Undefined> {
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`Undefined`] from [`IncompPure`].
+    /// with [`Undefined`] state variant from [`IncompPure`].
     ///
     /// # Examples
     ///
@@ -98,7 +98,7 @@ impl From<IncompPure> for Fluid<Substance, Undefined> {
 
 impl From<Refrigerant> for Fluid<Substance, Undefined> {
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`Undefined`] from [`Refrigerant`].
+    /// with [`Undefined`] state variant from [`Refrigerant`].
     ///
     /// # Examples
     ///
@@ -114,7 +114,7 @@ impl From<Refrigerant> for Fluid<Substance, Undefined> {
 
 impl From<PredefinedMix> for Fluid<Substance, Undefined> {
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`Undefined`] from [`PredefinedMix`].
+    /// with [`Undefined`] state variant from [`PredefinedMix`].
     ///
     /// # Examples
     ///
@@ -130,7 +130,7 @@ impl From<PredefinedMix> for Fluid<Substance, Undefined> {
 
 impl From<BinaryMix> for Fluid<Substance, Undefined> {
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`Undefined`] from [`BinaryMix`].
+    /// with [`Undefined`] state variant from [`BinaryMix`].
     ///
     /// # Examples
     ///
@@ -151,7 +151,7 @@ impl TryFrom<CustomMix> for Fluid<CustomMix, Undefined> {
     type Error = FluidFromCustomMixError;
 
     /// Creates and returns a new [`Fluid`] instance
-    /// with [`Undefined`] from [`CustomMix`].
+    /// with [`Undefined`] state variant from [`CustomMix`].
     ///
     /// # Errors
     ///
