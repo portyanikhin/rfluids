@@ -44,8 +44,7 @@ impl From<Substance> for Fluid<Substance, Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::fluid::Fluid;
-    /// use rfluids::substance::{Pure, Substance};
+    /// use rfluids::prelude::fluid::*;
     ///
     /// let water = Fluid::from(Substance::from(Pure::Water));
     /// ```
@@ -72,8 +71,7 @@ impl From<Pure> for Fluid<Substance, Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::fluid::Fluid;
-    /// use rfluids::substance::Pure;
+    /// use rfluids::prelude::fluid::*;
     ///
     /// let water = Fluid::from(Pure::Water);
     /// ```
@@ -89,8 +87,7 @@ impl From<IncompPure> for Fluid<Substance, Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::fluid::Fluid;
-    /// use rfluids::substance::IncompPure;
+    /// use rfluids::prelude::fluid::*;
     ///
     /// let incomp_water = Fluid::from(IncompPure::Water);
     /// ```
@@ -106,8 +103,7 @@ impl From<Refrigerant> for Fluid<Substance, Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::fluid::Fluid;
-    /// use rfluids::substance::Refrigerant;
+    /// use rfluids::prelude::fluid::*;
     ///
     /// let r32 = Fluid::from(Refrigerant::R32);
     /// ```
@@ -123,8 +119,7 @@ impl From<PredefinedMix> for Fluid<Substance, Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::fluid::Fluid;
-    /// use rfluids::substance::PredefinedMix;
+    /// use rfluids::prelude::fluid::*;
     ///
     /// let natural_gas = Fluid::from(PredefinedMix::TypicalNaturalGas);
     /// ```
@@ -140,9 +135,7 @@ impl From<BinaryMix> for Fluid<Substance, Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::fluid::Fluid;
-    /// use rfluids::substance::{BinaryMix, BinaryMixKind};
-    /// use rfluids::uom::si::f64::Ratio;
+    /// use rfluids::prelude::fluid::*;
     /// use rfluids::uom::si::ratio::percent;
     ///
     /// let propylene_glycol = Fluid::from(
@@ -167,9 +160,7 @@ impl TryFrom<CustomMix> for Fluid<CustomMix, Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::fluid::Fluid;
-    /// use rfluids::substance::{CustomMix, Pure, Refrigerant};
-    /// use rfluids::uom::si::f64::Ratio;
+    /// use rfluids::prelude::fluid::*;
     /// use rfluids::uom::si::ratio::percent;
     /// use std::collections::HashMap;
     ///

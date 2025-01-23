@@ -28,7 +28,7 @@ impl AbstractState {
     /// For pure fluids:
     ///
     /// ```
-    /// use rfluids::native::AbstractState;
+    /// use rfluids::prelude::native::*;
     ///
     /// let water = AbstractState::new("HEOS", "Water");
     /// assert!(water.is_ok());
@@ -37,7 +37,7 @@ impl AbstractState {
     /// For incompressible binary mixtures:
     ///
     /// ```
-    /// use rfluids::native::AbstractState;
+    /// use rfluids::prelude::native::*;
     ///
     /// let propylene_glycol = AbstractState::new("INCOMP", "MPG");
     /// assert!(propylene_glycol.is_ok());
@@ -46,7 +46,7 @@ impl AbstractState {
     /// For mixtures:
     ///
     /// ```
-    /// use rfluids::native::AbstractState;
+    /// use rfluids::prelude::native::*;
     ///
     /// let mixture = AbstractState::new("HEOS", "Water&Ethanol");
     /// assert!(mixture.is_ok());
@@ -96,7 +96,7 @@ impl AbstractState {
     /// For incompressible binary mixtures:
     ///
     /// ```
-    /// use rfluids::native::AbstractState;
+    /// use rfluids::prelude::native::*;
     ///
     /// let mut propylene_glycol = AbstractState::new("INCOMP", "MPG").unwrap();
     /// let result = propylene_glycol.set_fractions(&[0.6]);
@@ -106,7 +106,7 @@ impl AbstractState {
     /// For mixtures:
     ///
     /// ```
-    /// use rfluids::native::AbstractState;
+    /// use rfluids::prelude::native::*;
     ///
     /// let mut mixture = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
     /// let result = mixture.set_fractions(&[0.8, 0.2]);
@@ -143,8 +143,7 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::io::FluidInputPair;
-    /// use rfluids::native::AbstractState;
+    /// use rfluids::prelude::native::*;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
     /// let result = water.update(FluidInputPair::PT, 101325.0, 293.15);
@@ -196,8 +195,7 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::io::{FluidInputPair, FluidParam};
-    /// use rfluids::native::AbstractState;
+    /// use rfluids::prelude::native::*;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
     /// water.update(FluidInputPair::PQ, 101325.0, 1.0).unwrap();
@@ -212,8 +210,7 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::io::{FluidInputPair, FluidParam};
-    /// use rfluids::native::AbstractState;
+    /// use rfluids::prelude::native::*;
     ///
     /// let mut propylene_glycol = AbstractState::new("INCOMP", "MPG").unwrap();
     /// propylene_glycol.set_fractions(&[0.6]).unwrap();
@@ -229,8 +226,7 @@ impl AbstractState {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::io::{FluidInputPair, FluidParam};
-    /// use rfluids::native::AbstractState;
+    /// use rfluids::prelude::native::*;
     ///
     /// let mut mixture = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
     /// mixture.set_fractions(&[0.8, 0.2]).unwrap();
@@ -272,8 +268,7 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::io::{FluidInputPair, Phase};
-    /// use rfluids::native::AbstractState;
+    /// use rfluids::prelude::native::*;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
     /// water.specify_phase(Phase::Liquid).unwrap();
@@ -307,8 +302,7 @@ impl AbstractState {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::io::{FluidInputPair, Phase};
-    /// use rfluids::native::AbstractState;
+    /// use rfluids::prelude::native::*;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water").unwrap();
     /// water.specify_phase(Phase::Gas).unwrap();
