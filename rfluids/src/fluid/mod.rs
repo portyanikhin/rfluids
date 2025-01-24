@@ -12,7 +12,7 @@ mod undefined;
 use crate::error::FluidFromCustomMixError;
 use crate::io::{FluidParam, FluidTrivialParam, FluidUpdateRequest};
 use crate::native::AbstractState;
-use crate::state::{Defined, StateVariant, Undefined};
+use crate::state_variant::{Defined, StateVariant, Undefined};
 use crate::substance::*;
 use std::collections::HashMap;
 use std::fmt::Debug;

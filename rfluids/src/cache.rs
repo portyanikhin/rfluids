@@ -4,7 +4,7 @@ use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 use std::hash::Hash;
 
-trait Remember<S, K> {
+pub(crate) trait Remember<S, K> {
     type Error;
 
     fn remember(&mut self, src: S, key: K) -> Result<f64, Self::Error>;

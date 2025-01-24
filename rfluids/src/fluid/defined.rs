@@ -1,7 +1,7 @@
 use crate::error::FluidUpdateError;
 use crate::fluid::{Fluid, SubstanceVariant};
 use crate::io::FluidInput;
-use crate::state::Defined;
+use crate::state_variant::Defined;
 
 impl<T: SubstanceVariant> Fluid<T, Defined> {
     /// Updates the state and returns a mutable reference to itself.

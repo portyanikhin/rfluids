@@ -35,5 +35,5 @@ pub mod fluid;
 pub mod io;
 pub mod native;
 pub mod prelude;
-pub mod state;
+pub mod state_variant;
 pub mod substance;

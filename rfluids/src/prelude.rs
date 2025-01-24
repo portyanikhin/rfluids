@@ -8,7 +8,7 @@ pub mod fluid {
 
     pub use crate::fluid::*;
     pub use crate::io::{FluidInput, Phase};
-    pub use crate::state::*;
+    pub use crate::state_variant::*;
     pub use crate::substance::*;
     pub use crate::uom::si::f64::{
         AvailableEnergy, MassDensity, MolarConcentration, MolarEnergy, MolarHeatCapacity, Pressure,

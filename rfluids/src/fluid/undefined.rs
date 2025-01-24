@@ -1,7 +1,7 @@
 use crate::error::FluidUpdateError;
 use crate::fluid::{Fluid, SubstanceVariant};
 use crate::io::FluidInput;
-use crate::state::{Defined, Undefined};
+use crate::state_variant::{Defined, Undefined};
 use std::collections::HashMap;
 use std::marker::PhantomData;
 
