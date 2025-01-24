@@ -4,10 +4,10 @@ pub use backend_name::*;
 pub use substance_variant::*;
 
 mod backend_name;
-mod defined_state;
-mod invariant_state;
+mod defined;
+mod invariant;
 mod substance_variant;
-mod undefined_state;
+mod undefined;
 
 use crate::error::FluidFromCustomMixError;
 use crate::io::{FluidParam, FluidTrivialParam, FluidUpdateRequest};
