@@ -315,6 +315,195 @@ pub enum Pure {
     #[strum(to_string = "SES36")]
     SES36,
 
+    #[strum(to_string = "R11")]
+    R11,
+
+    #[strum(to_string = "R12")]
+    R12,
+
+    #[strum(to_string = "R13")]
+    R13,
+
+    #[strum(to_string = "R13I1", serialize = "CF3I")]
+    R13I1,
+
+    #[strum(to_string = "R14")]
+    R14,
+
+    #[strum(to_string = "R21")]
+    R21,
+
+    #[strum(to_string = "R22")]
+    R22,
+
+    #[strum(to_string = "R23")]
+    R23,
+
+    #[strum(to_string = "R32")]
+    R32,
+
+    #[strum(to_string = "R40")]
+    R40,
+
+    #[strum(to_string = "R41")]
+    R41,
+
+    #[strum(to_string = "R50")]
+    R50,
+
+    #[strum(to_string = "R113")]
+    R113,
+
+    #[strum(to_string = "R114")]
+    R114,
+
+    #[strum(to_string = "R115")]
+    R115,
+
+    #[strum(to_string = "R116")]
+    R116,
+
+    #[strum(to_string = "R123")]
+    R123,
+
+    #[strum(to_string = "R124")]
+    R124,
+
+    #[strum(to_string = "R125")]
+    R125,
+
+    #[strum(to_string = "R134a")]
+    R134a,
+
+    #[strum(to_string = "R141b")]
+    R141b,
+
+    #[strum(to_string = "R142b")]
+    R142b,
+
+    #[strum(to_string = "R143a")]
+    R143a,
+
+    #[strum(to_string = "RE143a")]
+    RE143a,
+
+    #[strum(to_string = "R152a")]
+    R152a,
+
+    #[strum(to_string = "R161")]
+    R161,
+
+    #[strum(to_string = "R170")]
+    R170,
+
+    #[strum(to_string = "R218")]
+    R218,
+
+    #[strum(to_string = "R227ea")]
+    R227ea,
+
+    #[strum(to_string = "R236ea")]
+    R236ea,
+
+    #[strum(to_string = "R236fa")]
+    R236fa,
+
+    #[strum(to_string = "R245ca")]
+    R245ca,
+
+    #[strum(to_string = "R245fa")]
+    R245fa,
+
+    #[strum(to_string = "R290")]
+    R290,
+
+    #[strum(to_string = "RC318")]
+    RC318,
+
+    #[strum(to_string = "R365mfc")]
+    R365mfc,
+
+    #[strum(to_string = "R404A")]
+    R404A,
+
+    #[strum(to_string = "R407C")]
+    R407C,
+
+    #[strum(to_string = "R410A")]
+    R410A,
+
+    #[strum(to_string = "R507A")]
+    R507A,
+
+    #[strum(to_string = "R600")]
+    R600,
+
+    #[strum(to_string = "R600a")]
+    R600a,
+
+    #[strum(to_string = "R601")]
+    R601,
+
+    #[strum(to_string = "R601a")]
+    R601a,
+
+    #[strum(to_string = "R702")]
+    R702,
+
+    #[strum(to_string = "R704")]
+    R704,
+
+    #[strum(to_string = "R717")]
+    R717,
+
+    #[strum(to_string = "R718")]
+    R718,
+
+    #[strum(to_string = "R720")]
+    R720,
+
+    #[strum(to_string = "R728")]
+    R728,
+
+    #[strum(to_string = "R729")]
+    R729,
+
+    #[strum(to_string = "R732")]
+    R732,
+
+    #[strum(to_string = "R740")]
+    R740,
+
+    #[strum(to_string = "R744")]
+    R744,
+
+    #[strum(to_string = "SulfurDioxide", serialize = "R764")]
+    R764,
+
+    #[strum(to_string = "SulfurHexafluoride", serialize = "R846")]
+    R846,
+
+    #[strum(to_string = "R1150")]
+    R1150,
+
+    #[strum(to_string = "R1233zd(E)", serialize = "R1233zdE")]
+    R1233zdE,
+
+    #[strum(to_string = "R1234yf")]
+    R1234yf,
+
+    #[strum(to_string = "R1234ze(E)", serialize = "R1234zeE")]
+    R1234zeE,
+
+    #[strum(to_string = "R1234ze(Z)", serialize = "R1234zeZ")]
+    R1234zeZ,
+
+    #[strum(to_string = "R1243zf")]
+    R1243zf,
+
+    #[strum(to_string = "R1270")]
+    R1270,
+
     #[strum(to_string = "SulfurDioxide", serialize = "SO2")]
     SulfurDioxide,
 
@@ -417,6 +606,69 @@ mod tests {
     #[case(Propylene, "Propylene")]
     #[case(Propyne, "Propyne")]
     #[case(pXylene, "p-Xylene")]
+    #[case(R11, "R11")]
+    #[case(R12, "R12")]
+    #[case(R13, "R13")]
+    #[case(R13I1, "R13I1")]
+    #[case(R14, "R14")]
+    #[case(R21, "R21")]
+    #[case(R22, "R22")]
+    #[case(R23, "R23")]
+    #[case(R32, "R32")]
+    #[case(R40, "R40")]
+    #[case(R41, "R41")]
+    #[case(R50, "R50")]
+    #[case(R113, "R113")]
+    #[case(R114, "R114")]
+    #[case(R115, "R115")]
+    #[case(R116, "R116")]
+    #[case(R123, "R123")]
+    #[case(R124, "R124")]
+    #[case(R125, "R125")]
+    #[case(R134a, "R134a")]
+    #[case(R141b, "R141b")]
+    #[case(R142b, "R142b")]
+    #[case(R143a, "R143a")]
+    #[case(RE143a, "RE143a")]
+    #[case(R152a, "R152a")]
+    #[case(R161, "R161")]
+    #[case(R170, "R170")]
+    #[case(R218, "R218")]
+    #[case(R227ea, "R227ea")]
+    #[case(R236ea, "R236ea")]
+    #[case(R236fa, "R236fa")]
+    #[case(R245ca, "R245ca")]
+    #[case(R245fa, "R245fa")]
+    #[case(R290, "R290")]
+    #[case(RC318, "RC318")]
+    #[case(R365mfc, "R365mfc")]
+    #[case(R404A, "R404A")]
+    #[case(R407C, "R407C")]
+    #[case(R410A, "R410A")]
+    #[case(R507A, "R507A")]
+    #[case(R600, "R600")]
+    #[case(R600a, "R600a")]
+    #[case(R601, "R601")]
+    #[case(R601a, "R601a")]
+    #[case(R702, "R702")]
+    #[case(R704, "R704")]
+    #[case(R717, "R717")]
+    #[case(R718, "R718")]
+    #[case(R720, "R720")]
+    #[case(R728, "R728")]
+    #[case(R729, "R729")]
+    #[case(R732, "R732")]
+    #[case(R740, "R740")]
+    #[case(R744, "R744")]
+    #[case(R764, "SulfurDioxide")]
+    #[case(R846, "SulfurHexafluoride")]
+    #[case(R1150, "R1150")]
+    #[case(R1233zdE, "R1233zd(E)")]
+    #[case(R1234yf, "R1234yf")]
+    #[case(R1234zeE, "R1234ze(E)")]
+    #[case(R1234zeZ, "R1234ze(Z)")]
+    #[case(R1243zf, "R1243zf")]
+    #[case(R1270, "R1270")]
     #[case(SES36, "SES36")]
     #[case(SulfurDioxide, "SulfurDioxide")]
     #[case(SulfurHexafluoride, "SulfurHexafluoride")]
@@ -504,9 +756,72 @@ mod tests {
     #[case(vec!["Propylene"], Propylene)]
     #[case(vec!["Propyne"], Propyne)]
     #[case(vec!["p-Xylene", "pXylene" ,  "PC8H10"], pXylene)]
+    #[case(vec!["R11"], R11)]
+    #[case(vec!["R12"], R12)]
+    #[case(vec!["R13"], R13)]
+    #[case(vec!["R13I1", "CF3I"], R13I1)]
+    #[case(vec!["R14"], R14)]
+    #[case(vec!["R21"], R21)]
+    #[case(vec!["R22"], R22)]
+    #[case(vec!["R23"], R23)]
+    #[case(vec!["R32"], R32)]
+    #[case(vec!["R40"], R40)]
+    #[case(vec!["R41"], R41)]
+    #[case(vec!["R50"], R50)]
+    #[case(vec!["R113"], R113)]
+    #[case(vec!["R114"], R114)]
+    #[case(vec!["R115"], R115)]
+    #[case(vec!["R116"], R116)]
+    #[case(vec!["R123"], R123)]
+    #[case(vec!["R124"], R124)]
+    #[case(vec!["R125"], R125)]
+    #[case(vec!["R134a"], R134a)]
+    #[case(vec!["R141b"], R141b)]
+    #[case(vec!["R142b"], R142b)]
+    #[case(vec!["R143a"], R143a)]
+    #[case(vec!["RE143a"], RE143a)]
+    #[case(vec!["R152a"], R152a)]
+    #[case(vec!["R161"], R161)]
+    #[case(vec!["R170"], R170)]
+    #[case(vec!["R218"], R218)]
+    #[case(vec!["R227ea"], R227ea)]
+    #[case(vec!["R236ea"], R236ea)]
+    #[case(vec!["R236fa"], R236fa)]
+    #[case(vec!["R245ca"], R245ca)]
+    #[case(vec!["R245fa"], R245fa)]
+    #[case(vec!["R290"], R290)]
+    #[case(vec!["RC318"], RC318)]
+    #[case(vec!["R365mfc"], R365mfc)]
+    #[case(vec!["R404A"], R404A)]
+    #[case(vec!["R407C"], R407C)]
+    #[case(vec!["R410A"], R410A)]
+    #[case(vec!["R507A"], R507A)]
+    #[case(vec!["R600a"], R600a)]
+    #[case(vec!["R600"], R600)]
+    #[case(vec!["R601a"], R601a)]
+    #[case(vec!["R601"], R601)]
+    #[case(vec!["R702"], R702)]
+    #[case(vec!["R704"], R704)]
+    #[case(vec!["R717"], R717)]
+    #[case(vec!["R718"], R718)]
+    #[case(vec!["R720"], R720)]
+    #[case(vec!["R728"], R728)]
+    #[case(vec!["R729"], R729)]
+    #[case(vec!["R732"], R732)]
+    #[case(vec!["R740"], R740)]
+    #[case(vec!["R744"], R744)]
+    #[case(vec!["R764", "SulfurDioxide"], R764)]
+    #[case(vec!["R846", "SulfurHexafluoride"], R846)]
+    #[case(vec!["R1150"], R1150)]
+    #[case(vec!["R1233zd(E)", "R1233zdE"], R1233zdE)]
+    #[case(vec!["R1234yf"], R1234yf)]
+    #[case(vec!["R1234ze(E)", "R1234zeE"], R1234zeE)]
+    #[case(vec!["R1234ze(Z)", "R1234zeZ"], R1234zeZ)]
+    #[case(vec!["R1243zf"], R1243zf)]
+    #[case(vec!["R1270"], R1270)]
     #[case(vec!["SES36"], SES36)]
-    #[case(vec!["SulfurDioxide", "SO2"], SulfurDioxide)]
-    #[case(vec!["SulfurHexafluoride", "SF6"], SulfurHexafluoride)]
+    #[case(vec!["SO2"], SulfurDioxide)]
+    #[case(vec!["SF6"], SulfurHexafluoride)]
     #[case(vec!["Toluene"], Toluene)]
     #[case(vec!["trans-2-Butene", "T2BUTENE"], trans2Butene)]
     #[case(vec!["Water", "H2O"], Water)]

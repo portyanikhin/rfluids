@@ -29,7 +29,6 @@
 
 pub extern crate uom;
 
-mod cache;
 pub mod error;
 pub mod fluid;
 pub mod io;

@@ -10,7 +10,6 @@ pub trait BackendName {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::fluid::BackendName;
     /// use rfluids::substance::*;
     /// use rfluids::uom::si::f64::Ratio;
     /// use rfluids::uom::si::ratio::percent;
@@ -18,13 +17,12 @@ pub trait BackendName {
     ///
     /// assert_eq!(Pure::Water.backend_name(), "HEOS");
     /// assert_eq!(IncompPure::Water.backend_name(), "INCOMP");
-    /// assert_eq!(Refrigerant::R32.backend_name(), "HEOS");
-    /// assert_eq!(PredefinedMix::TypicalNaturalGas.backend_name(), "HEOS");
+    /// assert_eq!(PredefinedMix::R444A.backend_name(), "HEOS");
     /// assert_eq!(BinaryMixKind::MPG.backend_name(), "INCOMP");
     /// assert_eq!(
     ///     CustomMix::mass_based(HashMap::from([
-    ///         (Pure::Water.into(), Ratio::new::<percent>(60.0)),
-    ///         (Pure::Ethanol.into(), Ratio::new::<percent>(40.0)),
+    ///         (Pure::Water, Ratio::new::<percent>(60.0)),
+    ///         (Pure::Ethanol, Ratio::new::<percent>(40.0)),
     ///     ]))
     ///     .unwrap()
     ///     .backend_name(),
@@ -59,7 +57,6 @@ impl BackendName for Substance {
         match self {
             Substance::Pure(pure) => pure.backend_name(),
             Substance::IncompPure(incomp_pure) => incomp_pure.backend_name(),
-            Substance::Refrigerant(refrigerant) => refrigerant.backend_name(),
             Substance::PredefinedMix(predefined_mix) => predefined_mix.backend_name(),
             Substance::BinaryMix(binary_mix) => binary_mix.kind.backend_name(),
         }
@@ -68,11 +65,9 @@ impl BackendName for Substance {
 
 heos!(Pure);
 incomp!(IncompPure);
-heos!(Refrigerant);
 heos!(PredefinedMix);
 incomp!(BinaryMixKind);
 heos!(CustomMix);
-heos!(CustomMixComponent);
 
 #[cfg(test)]
 mod tests {
@@ -86,7 +81,6 @@ mod tests {
     #[rstest]
     #[case(Substance::from(Pure::Water), HELMHOLTZ_EOS_BACKEND_NAME)]
     #[case(Substance::from(IncompPure::Water), INCOMP_BACKEND_NAME)]
-    #[case(Substance::from(Refrigerant::R32), HELMHOLTZ_EOS_BACKEND_NAME)]
     #[case(
         Substance::from(PredefinedMix::TypicalNaturalGas),
         HELMHOLTZ_EOS_BACKEND_NAME
@@ -116,13 +110,6 @@ mod tests {
     }
 
     #[test]
-    fn refrigerant_returns_heos() {
-        for substance in Refrigerant::iter() {
-            assert_eq!(substance.backend_name(), HELMHOLTZ_EOS_BACKEND_NAME);
-        }
-    }
-
-    #[test]
     fn predefined_mix_returns_heos() {
         for substance in PredefinedMix::iter() {
             assert_eq!(substance.backend_name(), HELMHOLTZ_EOS_BACKEND_NAME);
@@ -139,22 +126,10 @@ mod tests {
     #[test]
     fn custom_mix_returns_heos() {
         let sut = CustomMix::mass_based(HashMap::from([
-            (Pure::Water.into(), Ratio::new::<percent>(60.0)),
-            (Pure::Ethanol.into(), Ratio::new::<percent>(40.0)),
+            (Pure::Water, Ratio::new::<percent>(60.0)),
+            (Pure::Ethanol, Ratio::new::<percent>(40.0)),
         ]))
         .unwrap();
         assert_eq!(sut.backend_name(), HELMHOLTZ_EOS_BACKEND_NAME);
-    }
-
-    #[test]
-    pub fn custom_mix_component_returns_heos() {
-        assert_eq!(
-            CustomMixComponent::from(Pure::Water).backend_name(),
-            HELMHOLTZ_EOS_BACKEND_NAME
-        );
-        assert_eq!(
-            CustomMixComponent::from(Refrigerant::R32).backend_name(),
-            HELMHOLTZ_EOS_BACKEND_NAME
-        );
     }
 }

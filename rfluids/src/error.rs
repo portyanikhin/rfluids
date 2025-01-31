@@ -37,10 +37,6 @@ pub enum CustomMixError {
     #[error("At least 2 unique components must be provided!")]
     NotEnoughComponents,
 
-    /// Some of the specified components are not supported.
-    #[error("Only pure substances or pure refrigerants can be used to create custom mixtures!")]
-    InvalidComponent,
-
     /// Some of the specified fractions are invalid.
     #[error("All of the specified fractions must be exclusive between 0 and 100 %!")]
     InvalidFraction,

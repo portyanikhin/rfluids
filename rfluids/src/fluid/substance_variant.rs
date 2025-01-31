@@ -1,7 +1,6 @@
 use crate::error::FluidUpdateError;
-use crate::fluid::BackendName;
 use crate::io::{FluidInput, FluidInputPair, FluidUpdateRequest};
-use crate::substance::{CustomMix, Substance};
+use crate::substance::{BackendName, CustomMix, Substance};
 use std::fmt::Debug;
 
 /// CoolProp substance variant.

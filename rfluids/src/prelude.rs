@@ -19,7 +19,6 @@ pub mod fluid {
 pub mod native {
     //! Prelude imports of [`native`](crate::native) module.
 
-    pub use crate::fluid::BackendName;
     pub use crate::io::{FluidInputPair, FluidParam, FluidTrivialParam, Phase};
     pub use crate::native::*;
     pub use crate::substance::*;

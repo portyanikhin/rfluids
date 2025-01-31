@@ -1,9 +1,7 @@
 //! Thermophysical properties of substances.
 
-pub use backend_name::*;
 pub use substance_variant::*;
 
-mod backend_name;
 mod defined;
 mod invariant;
 mod substance_variant;
@@ -96,22 +94,6 @@ impl From<IncompPure> for Fluid<Substance, Undefined> {
     }
 }
 
-impl From<Refrigerant> for Fluid<Substance, Undefined> {
-    /// Creates and returns a new [`Fluid`] instance
-    /// with [`Undefined`] state variant from [`Refrigerant`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::prelude::fluid::*;
-    ///
-    /// let r32 = Fluid::from(Refrigerant::R32);
-    /// ```
-    fn from(value: Refrigerant) -> Self {
-        Substance::from(value).into()
-    }
-}
-
 impl From<PredefinedMix> for Fluid<Substance, Undefined> {
     /// Creates and returns a new [`Fluid`] instance
     /// with [`Undefined`] state variant from [`PredefinedMix`].
@@ -165,15 +147,15 @@ impl TryFrom<CustomMix> for Fluid<CustomMix, Undefined> {
     /// use std::collections::HashMap;
     ///
     /// let supported_mix = CustomMix::mass_based(HashMap::from([
-    ///     (Pure::Water.into(), Ratio::new::<percent>(60.0)),
-    ///     (Pure::Ethanol.into(), Ratio::new::<percent>(40.0)),
+    ///     (Pure::Water, Ratio::new::<percent>(60.0)),
+    ///     (Pure::Ethanol, Ratio::new::<percent>(40.0)),
     /// ]))
     /// .unwrap();
     /// assert!(Fluid::try_from(supported_mix).is_ok());
     ///
     /// let unsupported_mix = CustomMix::mass_based(HashMap::from([
-    ///     (Pure::Orthohydrogen.into(), Ratio::new::<percent>(60.0)),
-    ///     (Refrigerant::R32.into(), Ratio::new::<percent>(40.0)),
+    ///     (Pure::Orthohydrogen, Ratio::new::<percent>(60.0)),
+    ///     (Pure::R32, Ratio::new::<percent>(40.0)),
     /// ]))
     /// .unwrap();
     /// assert!(Fluid::try_from(unsupported_mix).is_err());
@@ -221,13 +203,6 @@ mod tests {
     }
 
     #[test]
-    fn from_each_refrigerant_does_not_panic() {
-        for substance in Refrigerant::iter() {
-            let _fluid = Fluid::from(substance);
-        }
-    }
-
-    #[test]
     fn from_each_predefined_mix_does_not_panic() {
         for substance in PredefinedMix::iter() {
             let _fluid = Fluid::from(substance);
@@ -247,8 +222,8 @@ mod tests {
     #[test]
     fn try_from_supported_custom_mix_returns_ok() {
         let supported_mix = CustomMix::mass_based(HashMap::from([
-            (Refrigerant::R32.into(), Ratio::new::<percent>(70.0)),
-            (Refrigerant::R134a.into(), Ratio::new::<percent>(30.0)),
+            (Pure::R32, Ratio::new::<percent>(70.0)),
+            (Pure::R134a, Ratio::new::<percent>(30.0)),
         ]))
         .unwrap();
         assert!(Fluid::try_from(supported_mix).is_ok());
@@ -257,8 +232,8 @@ mod tests {
     #[test]
     fn try_from_unsupported_custom_mix_returns_err() {
         let unsupported_mix = CustomMix::mole_based(HashMap::from([
-            (Pure::Xenon.into(), Ratio::new::<percent>(10.0)),
-            (Refrigerant::R22.into(), Ratio::new::<percent>(90.0)),
+            (Pure::Xenon, Ratio::new::<percent>(10.0)),
+            (Pure::R22, Ratio::new::<percent>(90.0)),
         ]))
         .unwrap();
         assert!(Fluid::try_from(unsupported_mix).is_err());
