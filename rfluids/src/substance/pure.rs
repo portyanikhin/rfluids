@@ -1,3 +1,5 @@
+// cSpell:disable
+
 #[cfg(test)]
 use strum_macros::EnumIter;
 use strum_macros::{AsRefStr, EnumString};
@@ -20,7 +22,6 @@ use strum_macros::{AsRefStr, EnumString};
 /// # See also
 ///
 /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
-//noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, Debug, Copy, Clone, Eq, PartialEq, Hash)]
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(test, derive(EnumIter))]
@@ -340,7 +341,6 @@ mod tests {
     use rstest::*;
     use std::str::FromStr;
 
-    //noinspection SpellCheckingInspection
     #[rstest]
     #[case(Acetone, "Acetone")]
     #[case(Air, "Air")]
@@ -428,7 +428,6 @@ mod tests {
         assert_eq!(substance.as_ref(), expected);
     }
 
-    //noinspection SpellCheckingInspection
     #[rstest]
     #[case(vec!["Acetone"], Acetone)]
     #[case(vec!["Air"], Air)]

@@ -36,7 +36,6 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// # See also
 ///
 /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
-//noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, FromRepr, Debug, Copy, Clone, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
@@ -149,7 +148,6 @@ mod tests {
     use rstest::*;
     use std::str::FromStr;
 
-    //noinspection SpellCheckingInspection
     #[rstest]
     #[case(Liquid, "phase_liquid")]
     #[case(Supercritical, "phase_supercritical")]
@@ -164,7 +162,6 @@ mod tests {
         assert_eq!(phase.as_ref(), expected);
     }
 
-    //noinspection SpellCheckingInspection
     #[rstest]
     #[case(vec!["phase_liquid", "liquid"], Liquid)]
     #[case(vec!["phase_supercritical", "supercritical"], Supercritical)]

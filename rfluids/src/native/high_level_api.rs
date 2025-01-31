@@ -1,3 +1,5 @@
+// cSpell:disable
+
 use crate::error::CoolPropError;
 use crate::native::common::{const_ptr_c_char, MessageBuffer, COOLPROP};
 use core::ffi::c_char;
@@ -168,7 +170,6 @@ impl CoolProp {
         Self::result(value, lock)
     }
 
-    //noinspection SpellCheckingInspection
     /// Returns a value that doesn't depend on the thermodynamic state
     /// of pure/pseudo-pure fluid or mixture _(trivial output)_.
     ///
@@ -310,7 +311,6 @@ mod tests {
         );
     }
 
-    //noinspection SpellCheckingInspection
     #[test]
     fn props1_si_valid_input_returns_ok() {
         let result = CoolProp::props1_si("Tcrit", "Water");

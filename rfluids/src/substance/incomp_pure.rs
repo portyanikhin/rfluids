@@ -1,3 +1,5 @@
+// cSpell:disable
+
 #[cfg(test)]
 use strum_macros::EnumIter;
 use strum_macros::{AsRefStr, EnumString};
@@ -20,7 +22,6 @@ use strum_macros::{AsRefStr, EnumString};
 /// # See also
 ///
 /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incomps.html)
-//noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, Debug, Copy, Clone, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(test, derive(EnumIter))]
@@ -213,7 +214,6 @@ mod tests {
     use rstest::*;
     use std::str::FromStr;
 
-    //noinspection SpellCheckingInspection
     #[rstest]
     #[case(AS10, "AS10")]
     #[case(AS20, "AS20")]
@@ -279,7 +279,6 @@ mod tests {
         assert_eq!(substance.as_ref(), expected);
     }
 
-    //noinspection SpellCheckingInspection
     #[rstest]
     #[case(vec!["AS10"], AS10)]
     #[case(vec!["AS20"], AS20)]

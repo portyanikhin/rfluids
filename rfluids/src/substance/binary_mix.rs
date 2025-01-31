@@ -1,3 +1,5 @@
+// cSpell:disable
+
 use crate::error::BinaryMixError;
 use crate::uom::si::f64::Ratio;
 use crate::uom::si::ratio::ratio;
@@ -25,7 +27,6 @@ use strum_macros::{AsRefStr, EnumProperty, EnumString};
 /// # See also
 ///
 /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incomps.html)
-//noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, EnumProperty, Debug, Copy, Clone, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(test, derive(EnumIter))]
@@ -397,7 +398,6 @@ mod tests {
             );
         }
 
-        //noinspection SpellCheckingInspection
         #[rstest]
         #[case(FRE, "FRE")]
         #[case(IceEA, "IceEA")]
@@ -451,7 +451,6 @@ mod tests {
             assert_eq!(substance.as_ref(), expected);
         }
 
-        //noinspection SpellCheckingInspection
         #[rstest]
         #[case("FRE", FRE)]
         #[case("IceEA", IceEA)]

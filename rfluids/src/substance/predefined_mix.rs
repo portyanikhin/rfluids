@@ -1,3 +1,5 @@
+// cSpell:disable
+
 #[cfg(test)]
 use strum_macros::EnumIter;
 use strum_macros::{AsRefStr, EnumString};
@@ -26,7 +28,6 @@ use strum_macros::{AsRefStr, EnumString};
 /// # See also
 ///
 /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
-//noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, Debug, Copy, Clone, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(test, derive(EnumIter))]
@@ -70,7 +71,6 @@ mod tests {
     use rstest::*;
     use std::str::FromStr;
 
-    //noinspection SpellCheckingInspection
     #[rstest]
     #[case(Air, "Air.mix")]
     #[case(Amarillo, "Amarillo.mix")]
@@ -85,7 +85,6 @@ mod tests {
         assert_eq!(substance.as_ref(), expected);
     }
 
-    //noinspection SpellCheckingInspection
     #[rstest]
     #[case(vec!["Air.mix", "Air"], Air)]
     #[case(vec!["Amarillo.mix", "Amarillo"], Amarillo)]

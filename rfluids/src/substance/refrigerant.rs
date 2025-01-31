@@ -22,7 +22,6 @@ use strum_macros::{AsRefStr, EnumString};
 ///
 /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
 /// - [List of REFPROP-only refrigerants which are not available in CoolProp yet](https://github.com/portyanikhin/rfluids/blob/main/rfluids/src/substance/refprop_refrigerants.txt)
-//noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, Debug, Copy, Clone, Eq, PartialEq, Hash)]
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(test, derive(EnumIter))]
@@ -608,7 +607,6 @@ mod tests {
         assert_eq!(substance.category(), expected);
     }
 
-    //noinspection SpellCheckingInspection
     #[rstest]
     #[case(R11, "R11")]
     #[case(R12, "R12")]
@@ -742,7 +740,6 @@ mod tests {
         assert_eq!(substance.as_ref(), expected);
     }
 
-    //noinspection SpellCheckingInspection
     #[rstest]
     #[case(vec!["R11"], R11)]
     #[case(vec!["R12"], R12)]

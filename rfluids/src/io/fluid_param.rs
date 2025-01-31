@@ -1,3 +1,5 @@
+// cSpell:disable
+
 use crate::io::try_from;
 use strum_macros::{AsRefStr, EnumString, FromRepr};
 
@@ -51,7 +53,6 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// # See also
 ///
 /// - [CoolProp fluids input/output parameters _(only those for which the value in the "Trivial" column is "False")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
-//noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, FromRepr, Debug, Copy, Clone, Eq, PartialEq, Hash)]
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
@@ -328,7 +329,6 @@ impl TryFrom<f64> for FluidParam {
 /// # See also
 ///
 /// - [CoolProp fluids input/output parameters _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
-//noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, FromRepr, Debug, Copy, Clone, Eq, PartialEq, Hash)]
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
@@ -484,7 +484,6 @@ mod tests {
     use std::fmt::Debug;
     use std::str::FromStr;
 
-    //noinspection SpellCheckingInspection
     #[rstest]
     #[case(GasConstant, "gas_constant")]
     #[case(MolarMass, "molar_mass")]
@@ -571,7 +570,6 @@ mod tests {
         assert_eq!(param.as_ref(), expected);
     }
 
-    //noinspection SpellCheckingInspection
     #[rstest]
     #[case(vec!["gas_constant"], GasConstant)]
     #[case(vec!["molar_mass", "M", "molarmass", "molemass"], MolarMass)]

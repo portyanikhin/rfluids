@@ -1,3 +1,5 @@
+// cSpell:disable
+
 use strum_macros::{AsRefStr, EnumString};
 
 /// CoolProp humid air input/output parameters.
@@ -18,7 +20,6 @@ use strum_macros::{AsRefStr, EnumString};
 /// # See also
 ///
 /// - [CoolProp humid air input/output parameters](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
-//noinspection SpellCheckingInspection
 #[derive(AsRefStr, EnumString, Debug, Copy, Clone, Eq, PartialEq, Hash)]
 #[strum(ascii_case_insensitive)]
 pub enum HumidAirParam {
@@ -178,7 +179,6 @@ mod tests {
         assert_eq!(param.as_ref(), expected);
     }
 
-    //noinspection SpellCheckingInspection
     #[rstest]
     #[case(vec!["B", "Twb", "T_wb", "WetBulb", "TWetBulb"], TWetBulb)]
     #[case(vec!["C", "Cp", "Cpda", "Cp_da"], Cpda)]
