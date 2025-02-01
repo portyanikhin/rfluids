@@ -24,7 +24,7 @@ mod pure;
 ///  - [`IncompPure`]
 ///  - [`PredefinedMix`]
 ///  - [`BinaryMix`]
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Substance {
     /// Pure or pseudo-pure substance.
     Pure(Pure),
@@ -37,17 +37,9 @@ pub enum Substance {
 
     /// Incompressible binary mixture _(mass-based or volume-based)_.
     BinaryMix(BinaryMix),
-}
 
-impl AsRef<str> for Substance {
-    fn as_ref(&self) -> &str {
-        match self {
-            Substance::Pure(pure) => pure.as_ref(),
-            Substance::IncompPure(incomp_pure) => incomp_pure.as_ref(),
-            Substance::PredefinedMix(predefined_mix) => predefined_mix.as_ref(),
-            Substance::BinaryMix(binary_mix) => binary_mix.kind.as_ref(),
-        }
-    }
+    /// Custom mixture.
+    CustomMix(CustomMix),
 }
 
 impl From<Pure> for Substance {
@@ -74,44 +66,8 @@ impl From<BinaryMix> for Substance {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use rstest::*;
-    use strum::IntoEnumIterator;
-
-    #[fixture]
-    fn all_substances() -> Vec<Substance> {
-        Pure::iter()
-            .map(Substance::from)
-            .chain(IncompPure::iter().map(Substance::from))
-            .chain(PredefinedMix::iter().map(Substance::from))
-            .chain(BinaryMixKind::iter().map(|kind| {
-                Substance::from(
-                    BinaryMix::try_from(kind, 0.5 * (kind.min_fraction() + kind.max_fraction()))
-                        .unwrap(),
-                )
-            }))
-            .collect()
-    }
-
-    #[rstest]
-    fn substance_is_transparent(all_substances: Vec<Substance>) {
-        for substance in all_substances {
-            match substance {
-                Substance::Pure(pure) => {
-                    assert_eq!(substance.as_ref(), pure.as_ref());
-                }
-                Substance::IncompPure(incomp_pure) => {
-                    assert_eq!(substance.as_ref(), incomp_pure.as_ref());
-                }
-                Substance::PredefinedMix(predefined_mix) => {
-                    assert_eq!(substance.as_ref(), predefined_mix.as_ref());
-                }
-                Substance::BinaryMix(binary_mix) => {
-                    assert_eq!(substance.as_ref(), binary_mix.kind.as_ref());
-                }
-            }
-        }
+impl From<CustomMix> for Substance {
+    fn from(value: CustomMix) -> Self {
+        Self::CustomMix(value)
     }
 }

@@ -1,9 +1,9 @@
 use crate::error::FluidUpdateError;
-use crate::fluid::{Fluid, SubstanceVariant};
+use crate::fluid::Fluid;
 use crate::io::FluidInput;
 use crate::state_variant::Defined;
 
-impl<T: SubstanceVariant> Fluid<T, Defined> {
+impl Fluid<Defined> {
     /// Updates the state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -25,18 +25,18 @@ impl<T: SubstanceVariant> Fluid<T, Defined> {
     /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
     ///
     /// // After creation Fluid has Undefined state variant
-    /// let mut water: Fluid<_, Undefined> = Fluid::from(Pure::Water);
+    /// let mut water: Fluid<Undefined> = Fluid::from(Pure::Water);
     ///
     /// // First update will move value above and
     /// // perform conversion between Undefined and Defined state variants
-    /// let mut water: Fluid<_, Defined> = water.update(
+    /// let mut water: Fluid<Defined> = water.update(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(1.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0)),
     /// ).unwrap();
     ///
     /// // Secondary updates will work in place and
     /// // return mutable reference to the Fluid
-    /// let result: Result<&mut Fluid<_, Defined>, FluidUpdateError> = water.update(
+    /// let result: Result<&mut Fluid<Defined>, FluidUpdateError> = water.update(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(2.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(40.0)),
     /// );
@@ -55,16 +55,12 @@ impl<T: SubstanceVariant> Fluid<T, Defined> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::uom::si::available_energy::kilojoule_per_kilogram;
-    use crate::uom::si::f64::{AvailableEnergy, Pressure, ThermodynamicTemperature};
+    use crate::error::FluidUpdateError;
+    use crate::substance::Pure;
+    use crate::uom::si::f64::{Pressure, ThermodynamicTemperature};
     use crate::uom::si::pressure::atmosphere;
     use crate::uom::si::thermodynamic_temperature::degree_celsius;
     use rstest::*;
-
-    #[fixture]
-    fn enthalpy(#[default(100.0)] value: f64) -> FluidInput {
-        FluidInput::enthalpy(AvailableEnergy::new::<kilojoule_per_kilogram>(value))
-    }
 
     #[fixture]
     fn temperature(#[default(20.0)] value: f64) -> FluidInput {
@@ -86,139 +82,51 @@ mod tests {
         pressure
     }
 
-    mod substance {
-        use super::*;
-        use crate::error::FluidUpdateError;
-        use crate::substance::{Pure, Substance};
-
-        #[fixture]
-        fn sut(temperature: FluidInput, pressure: FluidInput) -> Fluid<Substance, Defined> {
-            Fluid::from(Pure::Water)
-                .update(temperature, pressure)
-                .unwrap()
-        }
-
-        #[rstest]
-        fn update_valid_inputs_returns_ok(
-            mut sut: Fluid<Substance, Defined>,
-            temperature: FluidInput,
-            pressure: FluidInput,
-        ) {
-            assert!(sut.update(temperature, pressure).is_ok());
-        }
-
-        #[rstest]
-        fn update_same_inputs_returns_err(
-            mut sut: Fluid<Substance, Defined>,
-            pressure: FluidInput,
-        ) {
-            assert_eq!(
-                sut.update(pressure, pressure).unwrap_err(),
-                FluidUpdateError::InvalidInputPair(pressure.key(), pressure.key())
-            );
-        }
-
-        #[rstest]
-        fn update_invalid_inputs_returns_err(
-            mut sut: Fluid<Substance, Defined>,
-            temperature: FluidInput,
-            infinite_pressure: FluidInput,
-        ) {
-            assert_eq!(
-                sut.update(temperature, infinite_pressure).unwrap_err(),
-                FluidUpdateError::InvalidInputValue
-            );
-        }
-
-        #[rstest]
-        fn update_invalid_state_returns_err(
-            mut sut: Fluid<Substance, Defined>,
-            temperature: FluidInput,
-            negative_pressure: FluidInput,
-        ) {
-            assert!(matches!(
-                sut.update(temperature, negative_pressure).unwrap_err(),
-                FluidUpdateError::InvalidState(_)
-            ));
-        }
-    }
-
-    mod custom_mix {
-        use super::*;
-        use crate::error::FluidUpdateError;
-        use crate::substance::{CustomMix, Pure};
-        use std::collections::HashMap;
-        use uom::si::f64::Ratio;
-        use uom::si::ratio::percent;
-
-        #[fixture]
-        fn sut(temperature: FluidInput, pressure: FluidInput) -> Fluid<CustomMix, Defined> {
-            Fluid::try_from(
-                CustomMix::mass_based(HashMap::from([
-                    (Pure::Water.into(), Ratio::new::<percent>(50.0)),
-                    (Pure::Ethanol.into(), Ratio::new::<percent>(50.0)),
-                ]))
-                .unwrap(),
-            )
-            .unwrap()
+    #[fixture]
+    fn sut(temperature: FluidInput, pressure: FluidInput) -> Fluid<Defined> {
+        Fluid::from(Pure::Water)
             .update(temperature, pressure)
             .unwrap()
-        }
+    }
 
-        #[rstest]
-        fn update_valid_inputs_returns_ok(
-            mut sut: Fluid<CustomMix, Defined>,
-            temperature: FluidInput,
-            pressure: FluidInput,
-        ) {
-            assert!(sut.update(temperature, pressure).is_ok());
-        }
+    #[rstest]
+    fn update_valid_inputs_returns_ok(
+        mut sut: Fluid<Defined>,
+        temperature: FluidInput,
+        pressure: FluidInput,
+    ) {
+        assert!(sut.update(temperature, pressure).is_ok());
+    }
 
-        #[rstest]
-        fn update_same_inputs_returns_err(
-            mut sut: Fluid<CustomMix, Defined>,
-            pressure: FluidInput,
-        ) {
-            assert_eq!(
-                sut.update(pressure, pressure).unwrap_err(),
-                FluidUpdateError::InvalidInputPair(pressure.key(), pressure.key())
-            );
-        }
+    #[rstest]
+    fn update_same_inputs_returns_err(mut sut: Fluid<Defined>, pressure: FluidInput) {
+        assert_eq!(
+            sut.update(pressure, pressure).unwrap_err(),
+            FluidUpdateError::InvalidInputPair(pressure.key(), pressure.key())
+        );
+    }
 
-        #[rstest]
-        fn update_unsupported_inputs_returns_err(
-            mut sut: Fluid<CustomMix, Defined>,
-            pressure: FluidInput,
-            enthalpy: FluidInput,
-        ) {
-            assert_eq!(
-                sut.update(pressure, enthalpy).unwrap_err(),
-                FluidUpdateError::InvalidInputPair(pressure.key(), enthalpy.key())
-            );
-        }
+    #[rstest]
+    fn update_invalid_inputs_returns_err(
+        mut sut: Fluid<Defined>,
+        temperature: FluidInput,
+        infinite_pressure: FluidInput,
+    ) {
+        assert_eq!(
+            sut.update(temperature, infinite_pressure).unwrap_err(),
+            FluidUpdateError::InvalidInputValue
+        );
+    }
 
-        #[rstest]
-        fn update_invalid_inputs_returns_err(
-            mut sut: Fluid<CustomMix, Defined>,
-            temperature: FluidInput,
-            infinite_pressure: FluidInput,
-        ) {
-            assert_eq!(
-                sut.update(temperature, infinite_pressure).unwrap_err(),
-                FluidUpdateError::InvalidInputValue
-            );
-        }
-
-        #[rstest]
-        fn update_invalid_state_returns_err(
-            mut sut: Fluid<CustomMix, Defined>,
-            temperature: FluidInput,
-            negative_pressure: FluidInput,
-        ) {
-            assert!(matches!(
-                sut.update(temperature, negative_pressure).unwrap_err(),
-                FluidUpdateError::InvalidState(_)
-            ));
-        }
+    #[rstest]
+    fn update_invalid_state_returns_err(
+        mut sut: Fluid<Defined>,
+        temperature: FluidInput,
+        negative_pressure: FluidInput,
+    ) {
+        assert!(matches!(
+            sut.update(temperature, negative_pressure).unwrap_err(),
+            FluidUpdateError::InvalidState(_)
+        ));
     }
 }

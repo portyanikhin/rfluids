@@ -52,17 +52,6 @@ macro_rules! incomp {
     };
 }
 
-impl BackendName for Substance {
-    fn backend_name(&self) -> &'static str {
-        match self {
-            Substance::Pure(pure) => pure.backend_name(),
-            Substance::IncompPure(incomp_pure) => incomp_pure.backend_name(),
-            Substance::PredefinedMix(predefined_mix) => predefined_mix.backend_name(),
-            Substance::BinaryMix(binary_mix) => binary_mix.kind.backend_name(),
-        }
-    }
-}
-
 heos!(Pure);
 incomp!(IncompPure);
 heos!(PredefinedMix);
@@ -72,28 +61,10 @@ heos!(CustomMix);
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rstest::*;
     use std::collections::HashMap;
     use strum::IntoEnumIterator;
     use uom::si::f64::Ratio;
     use uom::si::ratio::percent;
-
-    #[rstest]
-    #[case(Substance::from(Pure::Water), HELMHOLTZ_EOS_BACKEND_NAME)]
-    #[case(Substance::from(IncompPure::Water), INCOMP_BACKEND_NAME)]
-    #[case(
-        Substance::from(PredefinedMix::TypicalNaturalGas),
-        HELMHOLTZ_EOS_BACKEND_NAME
-    )]
-    #[case(
-        Substance::from(BinaryMix::try_from(
-            BinaryMixKind::MPG, Ratio::new::<percent>(40.0)
-        ).unwrap()),
-        INCOMP_BACKEND_NAME
-    )]
-    fn substance_is_transparent(#[case] substance: Substance, #[case] expected: &'static str) {
-        assert_eq!(substance.backend_name(), expected);
-    }
 
     #[test]
     fn pure_returns_heos() {

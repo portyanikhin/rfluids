@@ -1,14 +1,14 @@
 //! Thermophysical properties of substances.
 
-pub use substance_variant::*;
-
 mod defined;
 mod invariant;
-mod substance_variant;
+mod requests;
 mod undefined;
 
+use requests::{FluidCreateRequest, FluidUpdateRequest};
+
 use crate::error::FluidFromCustomMixError;
-use crate::io::{FluidParam, FluidTrivialParam, FluidUpdateRequest};
+use crate::io::{FluidParam, FluidTrivialParam};
 use crate::native::AbstractState;
 use crate::state_variant::{Defined, StateVariant, Undefined};
 use crate::substance::*;
@@ -26,8 +26,8 @@ use std::marker::PhantomData;
 ///
 /// Depending on `T` and `S`, the `Fluid` instance has different functionality.
 #[derive(Debug)]
-pub struct Fluid<T: SubstanceVariant = Substance, S: StateVariant = Defined> {
-    substance: T,
+pub struct Fluid<S: StateVariant = Defined> {
+    substance: Substance,
     backend: AbstractState,
     update_request: Option<FluidUpdateRequest>,
     trivial_outputs: HashMap<FluidTrivialParam, f64>,
@@ -35,34 +35,62 @@ pub struct Fluid<T: SubstanceVariant = Substance, S: StateVariant = Defined> {
     state: PhantomData<S>,
 }
 
-impl From<Substance> for Fluid<Substance, Undefined> {
+impl TryFrom<Substance> for Fluid<Undefined> {
+    type Error = FluidFromCustomMixError;
+
     /// Creates and returns a new [`Fluid`] instance
     /// with [`Undefined`] state variant from any [`Substance`].
+    ///
+    /// # Errors
+    ///
+    /// For unsupported custom mixtures, a [`FluidFromCustomMixError`] is returned.
     ///
     /// # Examples
     ///
     /// ```
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::ratio::percent;
+    /// use std::collections::HashMap;
     ///
-    /// let water = Fluid::from(Substance::from(Pure::Water));
+    /// let water = Substance::from(Pure::Water);
+    /// assert!(Fluid::try_from(water).is_ok());
+    ///
+    /// let supported_mix = Substance::from(
+    ///     CustomMix::mass_based(HashMap::from([
+    ///         (Pure::Water, Ratio::new::<percent>(60.0)),
+    ///         (Pure::Ethanol, Ratio::new::<percent>(40.0)),
+    ///     ]))
+    ///     .unwrap(),
+    /// );
+    /// assert!(Fluid::try_from(supported_mix).is_ok());
+    ///
+    /// let unsupported_mix = Substance::from(
+    ///     CustomMix::mass_based(HashMap::from([
+    ///         (Pure::Orthohydrogen, Ratio::new::<percent>(60.0)),
+    ///         (Pure::R32, Ratio::new::<percent>(40.0)),
+    ///     ]))
+    ///     .unwrap(),
+    /// );
+    /// assert!(Fluid::try_from(unsupported_mix).is_err());
     /// ```
-    fn from(value: Substance) -> Self {
-        let mut backend = AbstractState::new(value.backend_name(), value).unwrap();
-        if let Substance::BinaryMix(binary_mix) = value {
-            backend.set_fractions(&[binary_mix.fraction.value]).unwrap();
+    fn try_from(value: Substance) -> Result<Self, Self::Error> {
+        let request = FluidCreateRequest::from(&value);
+        let mut backend = AbstractState::new(request.backend_name, request.name)?;
+        if let Some(fractions) = request.fractions {
+            backend.set_fractions(&fractions).unwrap();
         }
-        Self {
+        Ok(Self {
             substance: value,
             backend,
             update_request: None,
             trivial_outputs: HashMap::new(),
             outputs: HashMap::new(),
             state: PhantomData,
-        }
+        })
     }
 }
 
-impl From<Pure> for Fluid<Substance, Undefined> {
+impl From<Pure> for Fluid<Undefined> {
     /// Creates and returns a new [`Fluid`] instance
     /// with [`Undefined`] state variant from [`Pure`].
     ///
@@ -74,11 +102,11 @@ impl From<Pure> for Fluid<Substance, Undefined> {
     /// let water = Fluid::from(Pure::Water);
     /// ```
     fn from(value: Pure) -> Self {
-        Substance::from(value).into()
+        Substance::from(value).try_into().unwrap()
     }
 }
 
-impl From<IncompPure> for Fluid<Substance, Undefined> {
+impl From<IncompPure> for Fluid<Undefined> {
     /// Creates and returns a new [`Fluid`] instance
     /// with [`Undefined`] state variant from [`IncompPure`].
     ///
@@ -90,11 +118,11 @@ impl From<IncompPure> for Fluid<Substance, Undefined> {
     /// let incomp_water = Fluid::from(IncompPure::Water);
     /// ```
     fn from(value: IncompPure) -> Self {
-        Substance::from(value).into()
+        Substance::from(value).try_into().unwrap()
     }
 }
 
-impl From<PredefinedMix> for Fluid<Substance, Undefined> {
+impl From<PredefinedMix> for Fluid<Undefined> {
     /// Creates and returns a new [`Fluid`] instance
     /// with [`Undefined`] state variant from [`PredefinedMix`].
     ///
@@ -103,14 +131,14 @@ impl From<PredefinedMix> for Fluid<Substance, Undefined> {
     /// ```
     /// use rfluids::prelude::fluid::*;
     ///
-    /// let natural_gas = Fluid::from(PredefinedMix::TypicalNaturalGas);
+    /// let r444a = Fluid::from(PredefinedMix::R444A);
     /// ```
     fn from(value: PredefinedMix) -> Self {
-        Substance::from(value).into()
+        Substance::from(value).try_into().unwrap()
     }
 }
 
-impl From<BinaryMix> for Fluid<Substance, Undefined> {
+impl From<BinaryMix> for Fluid<Undefined> {
     /// Creates and returns a new [`Fluid`] instance
     /// with [`Undefined`] state variant from [`BinaryMix`].
     ///
@@ -125,11 +153,11 @@ impl From<BinaryMix> for Fluid<Substance, Undefined> {
     /// );
     /// ```
     fn from(value: BinaryMix) -> Self {
-        Substance::from(value).into()
+        Substance::from(value).try_into().unwrap()
     }
 }
 
-impl TryFrom<CustomMix> for Fluid<CustomMix, Undefined> {
+impl TryFrom<CustomMix> for Fluid<Undefined> {
     type Error = FluidFromCustomMixError;
 
     /// Creates and returns a new [`Fluid`] instance
@@ -160,24 +188,8 @@ impl TryFrom<CustomMix> for Fluid<CustomMix, Undefined> {
     /// .unwrap();
     /// assert!(Fluid::try_from(unsupported_mix).is_err());
     /// ```
-    //noinspection RsUnwrap
     fn try_from(value: CustomMix) -> Result<Self, Self::Error> {
-        let mix = value.to_mole_based();
-        let (substances, fractions): (Vec<&str>, Vec<f64>) = mix
-            .components()
-            .iter()
-            .map(|component| (component.0.as_ref(), component.1.value))
-            .unzip();
-        let mut backend = AbstractState::new(value.backend_name(), substances.join("&"))?;
-        backend.set_fractions(&fractions).unwrap();
-        Ok(Self {
-            substance: value,
-            backend,
-            update_request: None,
-            trivial_outputs: HashMap::new(),
-            outputs: HashMap::new(),
-            state: PhantomData,
-        })
+        Substance::from(value).try_into()
     }
 }
 
