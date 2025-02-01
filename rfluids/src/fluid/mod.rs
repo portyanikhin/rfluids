@@ -19,12 +19,9 @@ use std::marker::PhantomData;
 /// Provider of thermophysical properties of substances.
 ///
 /// It implements the [typestate pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
-/// and has two generic type parameters:
+/// and has one generic type parameter: `S` -- state variant _([`Defined`] or [`Undefined`])_.
 ///
-/// - `T` -- substance variant _([`Substance`] or [`CustomMix`])_.
-/// - `S` -- state variant _([`Defined`] or [`Undefined`])_.
-///
-/// Depending on `T` and `S`, the `Fluid` instance has different functionality.
+/// Depending on and `S`, the `Fluid` instance has different functionality.
 #[derive(Debug)]
 pub struct Fluid<S: StateVariant = Defined> {
     substance: Substance,
