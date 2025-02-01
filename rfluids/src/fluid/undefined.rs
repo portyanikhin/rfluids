@@ -65,7 +65,7 @@ impl Fluid<Undefined> {
 mod tests {
     use super::*;
     use crate::error::FluidUpdateError;
-    use crate::substance::Pure;
+    use crate::substance::{Pure, Substance};
     use crate::uom::si::f64::{Pressure, ThermodynamicTemperature};
     use crate::uom::si::pressure::atmosphere;
     use crate::uom::si::thermodynamic_temperature::degree_celsius;
@@ -94,6 +94,14 @@ mod tests {
     #[fixture]
     fn sut() -> Fluid<Undefined> {
         Fluid::from(Pure::Water)
+    }
+
+    #[test]
+    fn substance_returns_entered_value() {
+        let water = Pure::Water;
+        let substance = Substance::from(water);
+        let sut = Fluid::from(water);
+        assert_eq!(sut.substance(), &substance);
     }
 
     #[rstest]
