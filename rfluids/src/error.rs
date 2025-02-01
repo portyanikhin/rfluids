@@ -59,14 +59,14 @@ pub enum FluidFromCustomMixError {
 #[derive(Error, Debug, Clone, Eq, PartialEq)]
 pub enum FluidUpdateError {
     /// Specified inputs are invalid.
-    #[error("Specified inputs ({0:?}, {1:?}) are not supported!")]
+    #[error("Specified inputs ({0:?}, {1:?}) are invalid!")]
     InvalidInputPair(FluidParam, FluidParam),
 
     /// Some of the specified input value is infinite or NaN.
     #[error("Input values must be finite!")]
     InvalidInputValue,
 
-    /// Specified fluid state is invalid.
-    #[error("Specified fluid state is invalid! {0}")]
-    InvalidState(#[from] CoolPropError),
+    /// Failed to update the fluid state due to unsupported inputs or invalid state.
+    #[error("Failed to update the fluid state! {0}")]
+    UpdateFailed(#[from] CoolPropError),
 }

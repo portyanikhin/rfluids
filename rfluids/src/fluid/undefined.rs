@@ -141,7 +141,7 @@ mod tests {
     ) {
         assert!(matches!(
             sut.update(temperature, negative_pressure).unwrap_err(),
-            FluidUpdateError::InvalidState(_)
+            FluidUpdateError::UpdateFailed(_)
         ));
     }
 }
