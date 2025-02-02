@@ -219,6 +219,15 @@ mod tests {
         assert_eq!(r32.gwp100().unwrap(), 675.0);
     }
 
+    #[test]
+    fn gwp500_returns_option() {
+        let mut water = Fluid::from(Pure::Water);
+        assert!(water.gwp500().is_none());
+        let mut r32 = Fluid::from(Pure::R32);
+        assert!(r32.gwp500().is_some());
+        assert_eq!(r32.gwp500().unwrap(), 205.0);
+    }
+
     #[rstest]
     fn update_valid_inputs_returns_ok(
         sut: Fluid<Undefined>,
