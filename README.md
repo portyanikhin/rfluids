@@ -11,4 +11,3 @@ Simple, full-featured, lightweight, cross-platform
 - Linux x64
 - macOS x64
 - macOS ARM64
-
