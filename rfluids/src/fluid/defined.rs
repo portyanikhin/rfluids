@@ -303,6 +303,13 @@ mod tests {
     }
 
     #[rstest]
+    fn reducing_density_returns_option(mut water: Fluid, mut incomp_water: Fluid) {
+        assert!(water.reducing_density().is_some());
+        assert_relative_eq!(water.reducing_density().unwrap().value, 322.0);
+        assert!(incomp_water.reducing_density().is_none());
+    }
+
+    #[rstest]
     fn reducing_molar_density_returns_option(mut water: Fluid, mut incomp_water: Fluid) {
         assert!(water.reducing_molar_density().is_some());
         assert_relative_eq!(

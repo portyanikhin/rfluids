@@ -457,6 +457,31 @@ impl<S: StateVariant> Fluid<S> {
         non_negative(self.trivial_output(FluidTrivialParam::PH))
     }
 
+    /// Reducing point mass density
+    /// _(key: [`DMassReducing`](FluidTrivialParam::DMassReducing), SI units: kg/m³)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::ratio::percent;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert_relative_eq!(water.reducing_density().unwrap().value, 322.0);
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    /// );
+    /// assert!(propylene_glycol.reducing_density().is_none());
+    /// ```
+    pub fn reducing_density(&mut self) -> Option<MassDensity> {
+        // Due to CoolProp bug
+        density_from_molar_density(self.reducing_molar_density(), self.molar_mass())
+    }
+
     /// Reducing point molar density
     /// _(key: [`DMolarReducing`](FluidTrivialParam::DMolarReducing), SI units: mol/m³)_.
     ///
@@ -512,6 +537,13 @@ fn non_negative(value: Option<f64>) -> Option<f64> {
     value.and_then(|v| if v >= 0.0 { Some(v) } else { None })
 }
 
+fn density_from_molar_density(
+    molar_density: Option<MolarConcentration>,
+    molar_mass: Option<MolarMass>,
+) -> Option<MassDensity> {
+    Some(molar_density? * molar_mass?)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -527,5 +559,25 @@ mod tests {
         #[case] expected: Option<f64>,
     ) {
         assert_eq!(non_negative(value), expected);
+    }
+
+    #[rstest]
+    #[case(None, None, None)]
+    #[case(Some(1.0), None, None)]
+    #[case(None, Some(1.0), None)]
+    #[case(Some(21.0), Some(2.0), Some(42.0))]
+    fn density_from_molar_density_returns_expected_value(
+        #[case] molar_density: Option<f64>,
+        #[case] molar_mass: Option<f64>,
+        #[case] expected: Option<f64>,
+    ) {
+        assert_eq!(
+            density_from_molar_density(
+                molar_density.map(MolarConcentration::new::<mole_per_cubic_meter>),
+                molar_mass.map(MolarMass::new::<kilogram_per_mole>)
+            )
+            .map(|v| v.value),
+            expected
+        );
     }
 }
