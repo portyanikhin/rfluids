@@ -65,6 +65,12 @@ impl Clone for Fluid<Defined> {
     }
 }
 
+impl PartialEq for Fluid<Defined> {
+    fn eq(&self, other: &Self) -> bool {
+        self.substance == other.substance && self.update_request == other.update_request
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -154,8 +160,7 @@ mod tests {
     #[rstest]
     fn clone_returns_new_instance(sut: Fluid<Defined>) {
         let clone = sut.clone();
-        assert_eq!(clone.substance, sut.substance);
-        assert_eq!(clone.update_request, sut.update_request);
+        assert_eq!(clone, sut);
         assert_eq!(clone.outputs, sut.outputs);
         assert_eq!(clone.trivial_outputs, sut.trivial_outputs);
     }
