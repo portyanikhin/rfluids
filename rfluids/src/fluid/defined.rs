@@ -52,6 +52,19 @@ impl Fluid<Defined> {
     }
 }
 
+impl Clone for Fluid<Defined> {
+    fn clone(&self) -> Self {
+        let inputs: (FluidInput, FluidInput) = self.update_request.unwrap().into();
+        let mut fluid = Fluid::try_from(self.substance.clone())
+            .unwrap()
+            .update(inputs.0, inputs.1)
+            .unwrap();
+        fluid.trivial_outputs = self.trivial_outputs.clone();
+        fluid.outputs = self.outputs.clone();
+        fluid
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -136,5 +149,14 @@ mod tests {
             sut.update(temperature, negative_pressure).unwrap_err(),
             FluidUpdateError::UpdateFailed(_)
         ));
+    }
+
+    #[rstest]
+    fn clone_returns_new_instance(sut: Fluid<Defined>) {
+        let clone = sut.clone();
+        assert_eq!(clone.substance, sut.substance);
+        assert_eq!(clone.update_request, sut.update_request);
+        assert_eq!(clone.outputs, sut.outputs);
+        assert_eq!(clone.trivial_outputs, sut.trivial_outputs);
     }
 }
