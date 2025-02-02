@@ -21,7 +21,7 @@ use std::marker::PhantomData;
 /// It implements the [typestate pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
 /// and has one generic type parameter: `S` -- state variant _([`Defined`] or [`Undefined`])_.
 ///
-/// Depending on and `S`, the `Fluid` instance has different functionality.
+/// Depending on `S`, the `Fluid` instance has different functionality.
 #[derive(Debug)]
 pub struct Fluid<S: StateVariant = Defined> {
     substance: Substance,

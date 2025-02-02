@@ -1,9 +1,8 @@
 use crate::error::FluidUpdateError;
 use crate::fluid::Fluid;
 use crate::io::FluidInput;
-use crate::state_variant::Defined;
 
-impl Fluid<Defined> {
+impl Fluid {
     /// Updates the state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -27,16 +26,17 @@ impl Fluid<Defined> {
     /// // After creation Fluid has Undefined state variant
     /// let mut water: Fluid<Undefined> = Fluid::from(Pure::Water);
     ///
-    /// // First update will move value above and
+    /// // First update will move the initial value and
     /// // perform conversion between Undefined and Defined state variants
-    /// let mut water: Fluid<Defined> = water.update(
+    /// // (since Defined is the default state variant, it can be omitted)
+    /// let mut water: Fluid = water.update(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(1.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0)),
     /// ).unwrap();
     ///
     /// // Secondary updates will work in place and
     /// // return mutable reference to the Fluid
-    /// let result: Result<&mut Fluid<Defined>, FluidUpdateError> = water.update(
+    /// let result: Result<&mut Fluid, FluidUpdateError> = water.update(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(2.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(40.0)),
     /// );
@@ -52,7 +52,7 @@ impl Fluid<Defined> {
     }
 }
 
-impl Clone for Fluid<Defined> {
+impl Clone for Fluid {
     fn clone(&self) -> Self {
         let inputs: (FluidInput, FluidInput) = self.update_request.unwrap().into();
         let mut fluid = Fluid::try_from(self.substance.clone())
@@ -65,7 +65,7 @@ impl Clone for Fluid<Defined> {
     }
 }
 
-impl PartialEq for Fluid<Defined> {
+impl PartialEq for Fluid {
     fn eq(&self, other: &Self) -> bool {
         self.substance == other.substance && self.update_request == other.update_request
     }
@@ -102,7 +102,7 @@ mod tests {
     }
 
     #[fixture]
-    fn sut(temperature: FluidInput, pressure: FluidInput) -> Fluid<Defined> {
+    fn sut(temperature: FluidInput, pressure: FluidInput) -> Fluid {
         Fluid::from(Pure::Water)
             .update(temperature, pressure)
             .unwrap()
@@ -118,7 +118,7 @@ mod tests {
 
     #[rstest]
     fn update_valid_inputs_returns_ok(
-        mut sut: Fluid<Defined>,
+        mut sut: Fluid,
         temperature: FluidInput,
         pressure: FluidInput,
     ) {
@@ -126,7 +126,7 @@ mod tests {
     }
 
     #[rstest]
-    fn update_same_inputs_returns_err(mut sut: Fluid<Defined>, pressure: FluidInput) {
+    fn update_same_inputs_returns_err(mut sut: Fluid, pressure: FluidInput) {
         assert_eq!(
             sut.update(pressure, pressure).unwrap_err(),
             FluidUpdateError::InvalidInputPair(pressure.key(), pressure.key())
@@ -135,7 +135,7 @@ mod tests {
 
     #[rstest]
     fn update_invalid_inputs_returns_err(
-        mut sut: Fluid<Defined>,
+        mut sut: Fluid,
         temperature: FluidInput,
         infinite_pressure: FluidInput,
     ) {
@@ -147,7 +147,7 @@ mod tests {
 
     #[rstest]
     fn update_invalid_state_returns_err(
-        mut sut: Fluid<Defined>,
+        mut sut: Fluid,
         temperature: FluidInput,
         negative_pressure: FluidInput,
     ) {
@@ -158,7 +158,7 @@ mod tests {
     }
 
     #[rstest]
-    fn clone_returns_new_instance(sut: Fluid<Defined>) {
+    fn clone_returns_new_instance(sut: Fluid) {
         let clone = sut.clone();
         assert_eq!(clone, sut);
         assert_eq!(clone.outputs, sut.outputs);

@@ -1,12 +1,13 @@
 use crate::error::FluidUpdateError;
 use crate::fluid::Fluid;
 use crate::io::FluidInput;
-use crate::state_variant::{Defined, Undefined};
+use crate::state_variant::Undefined;
 use std::collections::HashMap;
 use std::marker::PhantomData;
 
 impl Fluid<Undefined> {
-    /// Updates the state and returns itself with [`Defined`] state variant.
+    /// Updates the state and returns itself with
+    /// [`Defined`](crate::state_variant::Defined) state variant.
     ///
     /// # Args
     ///
@@ -29,16 +30,17 @@ impl Fluid<Undefined> {
     /// // After creation Fluid has Undefined state variant
     /// let mut water: Fluid<Undefined> = Fluid::from(Pure::Water);
     ///
-    /// // First update will move value above and
+    /// // First update will move the initial value and
     /// // perform conversion between Undefined and Defined state variants
-    /// let mut water: Fluid<Defined> = water.update(
+    /// // (since Defined is the default state variant, it can be omitted)
+    /// let mut water: Fluid = water.update(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(1.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0)),
     /// ).unwrap();
     ///
     /// // Secondary updates will work in place and
     /// // return mutable reference to the Fluid
-    /// let result: Result<&mut Fluid<Defined>, FluidUpdateError> = water.update(
+    /// let result: Result<&mut Fluid, FluidUpdateError> = water.update(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(2.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(40.0)),
     /// );
@@ -48,7 +50,7 @@ impl Fluid<Undefined> {
         mut self,
         input1: FluidInput,
         input2: FluidInput,
-    ) -> Result<Fluid<Defined>, FluidUpdateError> {
+    ) -> Result<Fluid, FluidUpdateError> {
         self.inner_update(input1, input2)?;
         Ok(Fluid {
             substance: self.substance,
