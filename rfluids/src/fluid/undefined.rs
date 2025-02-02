@@ -155,6 +155,17 @@ mod tests {
         assert!(incomp_water.critical_molar_density().is_none());
     }
 
+    #[test]
+    fn critical_pressure_density_returns_option() {
+        let mut water = Fluid::from(Pure::Water);
+        assert!(water.critical_pressure().is_some());
+        assert_relative_eq!(water.critical_pressure().unwrap().value, 22.064e6);
+        let mut r444a = Fluid::from(PredefinedMix::R444A);
+        assert!(r444a.critical_pressure().is_none());
+        let mut incomp_water = Fluid::from(IncompPure::Water);
+        assert!(incomp_water.critical_pressure().is_none());
+    }
+
     #[rstest]
     fn update_valid_inputs_returns_ok(
         sut: Fluid<Undefined>,
