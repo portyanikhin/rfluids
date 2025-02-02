@@ -208,7 +208,7 @@ mod tests {
             .update(temperature, pressure)
             .unwrap();
         assert!(water.flammability_hazard().is_some());
-        assert_relative_eq!(water.flammability_hazard().unwrap(), 0.0);
+        assert_eq!(water.flammability_hazard().unwrap(), 0.0);
         let mut incomp_water = Fluid::from(IncompPure::Water)
             .update(temperature, pressure)
             .unwrap();
@@ -278,11 +278,24 @@ mod tests {
             .update(temperature, pressure)
             .unwrap();
         assert!(water.health_hazard().is_some());
-        assert_relative_eq!(water.health_hazard().unwrap(), 0.0);
+        assert_eq!(water.health_hazard().unwrap(), 0.0);
         let mut incomp_water = Fluid::from(IncompPure::Water)
             .update(temperature, pressure)
             .unwrap();
         assert!(incomp_water.health_hazard().is_none());
+    }
+
+    #[rstest]
+    fn max_pressure_returns_option(temperature: FluidInput, pressure: FluidInput) {
+        let mut water = Fluid::from(Pure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(water.max_pressure().is_some());
+        assert_eq!(water.max_pressure().unwrap().value, 1e9);
+        let mut incomp_water = Fluid::from(IncompPure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(incomp_water.max_pressure().is_none());
     }
 
     #[rstest]

@@ -290,11 +290,29 @@ impl<S: StateVariant> Fluid<S> {
         non_negative(self.trivial_output(FluidTrivialParam::HH))
     }
 
-    pub(crate) fn trivial_output(&mut self, key: FluidTrivialParam) -> Option<f64> {
-        match self.trivial_outputs.entry(key) {
-            Entry::Occupied(entry) => *entry.get(),
-            Entry::Vacant(entry) => *entry.insert(self.backend.keyed_output(key).ok()),
-        }
+    /// Maximum pressure
+    /// _(key: [`PMax`](FluidTrivialParam::PMax), SI units: Pa)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::ratio::percent;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert_eq!(water.max_pressure().unwrap().value, 1e9);
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    /// );
+    /// assert!(propylene_glycol.max_pressure().is_none());
+    /// ```
+    pub fn max_pressure(&mut self) -> Option<Pressure> {
+        Some(Pressure::new::<pascal>(non_negative(
+            self.trivial_output(FluidTrivialParam::PMax),
+        )?))
     }
 
     pub(crate) fn inner_update(
@@ -309,6 +327,13 @@ impl<S: StateVariant> Fluid<S> {
         self.outputs.insert(input2.key(), input2.si_value());
         self.update_request = Some(request);
         Ok(())
+    }
+
+    fn trivial_output(&mut self, key: FluidTrivialParam) -> Option<f64> {
+        match self.trivial_outputs.entry(key) {
+            Entry::Occupied(entry) => *entry.get(),
+            Entry::Vacant(entry) => *entry.insert(self.backend.keyed_output(key).ok()),
+        }
     }
 }
 
