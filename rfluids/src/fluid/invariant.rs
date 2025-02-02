@@ -1,14 +1,42 @@
 use super::requests::FluidUpdateRequest;
 use super::Fluid;
 use crate::error::FluidUpdateError;
-use crate::io::FluidInput;
+use crate::io::{FluidInput, FluidTrivialParam};
 use crate::state_variant::StateVariant;
 use crate::substance::Substance;
+use std::collections::hash_map::Entry;
 
 impl<S: StateVariant> Fluid<S> {
     /// Specified substance.
     pub fn substance(&self) -> &Substance {
         &self.substance
+    }
+
+    /// Acentric factor
+    /// _(key: [`AcentricFactor`](FluidTrivialParam::AcentricFactor), dimensionless)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::fluid::*;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert!(water.acentric_factor().is_some());
+    ///
+    /// let mut r444a = Fluid::from(PredefinedMix::R444A);
+    /// assert!(r444a.acentric_factor().is_none());
+    /// ```
+    pub fn acentric_factor(&mut self) -> Option<f64> {
+        self.trivial_output(FluidTrivialParam::AcentricFactor)
+    }
+
+    pub(crate) fn trivial_output(&mut self, key: FluidTrivialParam) -> Option<f64> {
+        match self.trivial_outputs.entry(key) {
+            Entry::Occupied(entry) => *entry.get(),
+            Entry::Vacant(entry) => *entry.insert(self.backend.keyed_output(key).ok()),
+        }
     }
 
     pub(crate) fn inner_update(

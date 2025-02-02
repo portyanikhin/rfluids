@@ -75,10 +75,11 @@ impl PartialEq for Fluid {
 mod tests {
     use super::*;
     use crate::error::FluidUpdateError;
-    use crate::substance::{Pure, Substance};
+    use crate::substance::*;
     use crate::uom::si::f64::{Pressure, ThermodynamicTemperature};
     use crate::uom::si::pressure::atmosphere;
     use crate::uom::si::thermodynamic_temperature::degree_celsius;
+    use approx::assert_relative_eq;
     use rstest::*;
 
     #[fixture]
@@ -114,6 +115,19 @@ mod tests {
         let substance = Substance::from(water);
         let sut = Fluid::from(water).update(temperature, pressure).unwrap();
         assert_eq!(sut.substance(), &substance);
+    }
+
+    #[rstest]
+    fn acentric_factor_returns_option(temperature: FluidInput, pressure: FluidInput) {
+        let mut water = Fluid::from(Pure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(water.acentric_factor().is_some());
+        assert_relative_eq!(water.acentric_factor().unwrap(), 0.3442920843);
+        let mut r444a = Fluid::from(PredefinedMix::R444A)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(r444a.acentric_factor().is_none());
     }
 
     #[rstest]
