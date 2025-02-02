@@ -168,7 +168,7 @@ mod tests {
     }
 
     #[rstest]
-    fn critical_pressure_density_returns_option(temperature: FluidInput, pressure: FluidInput) {
+    fn critical_pressure_returns_option(temperature: FluidInput, pressure: FluidInput) {
         let mut water = Fluid::from(Pure::Water)
             .update(temperature, pressure)
             .unwrap();
@@ -182,6 +182,23 @@ mod tests {
             .update(temperature, pressure)
             .unwrap();
         assert!(incomp_water.critical_pressure().is_none());
+    }
+
+    #[rstest]
+    fn critical_temperature_returns_option(temperature: FluidInput, pressure: FluidInput) {
+        let mut water = Fluid::from(Pure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(water.critical_temperature().is_some());
+        assert_relative_eq!(water.critical_temperature().unwrap().value, 647.096);
+        let mut r444a = Fluid::from(PredefinedMix::R444A)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(r444a.critical_temperature().is_none());
+        let mut incomp_water = Fluid::from(IncompPure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(incomp_water.critical_temperature().is_none());
     }
 
     #[rstest]

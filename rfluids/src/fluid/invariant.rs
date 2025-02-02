@@ -1,14 +1,14 @@
-use uom::si::pressure::pascal;
-
 use super::requests::FluidUpdateRequest;
 use super::Fluid;
 use crate::error::FluidUpdateError;
 use crate::io::{FluidInput, FluidTrivialParam};
 use crate::state_variant::StateVariant;
 use crate::substance::Substance;
-use crate::uom::si::f64::{MassDensity, MolarConcentration, Pressure};
+use crate::uom::si::f64::{MassDensity, MolarConcentration, Pressure, ThermodynamicTemperature};
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
 use crate::uom::si::molar_concentration::mole_per_cubic_meter;
+use crate::uom::si::pressure::pascal;
+use crate::uom::si::thermodynamic_temperature::kelvin;
 use std::collections::hash_map::Entry;
 
 impl<S: StateVariant> Fluid<S> {
@@ -123,6 +123,34 @@ impl<S: StateVariant> Fluid<S> {
         }
         Some(Pressure::new::<pascal>(
             self.trivial_output(FluidTrivialParam::PCritical)?,
+        ))
+    }
+
+    /// Critical point temperature
+    /// _(key: [`TCritical`](FluidTrivialParam::TCritical), SI units: K)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert!(water.critical_temperature().is_some());
+    /// assert_relative_eq!(water.critical_temperature().unwrap().value, 647.096);
+    ///
+    /// let mut r444a = Fluid::from(PredefinedMix::R444A);
+    /// assert!(r444a.critical_temperature().is_none());
+    /// ```
+    pub fn critical_temperature(&mut self) -> Option<ThermodynamicTemperature> {
+        // Due to CoolProp freeze
+        if let Substance::PredefinedMix(_) = self.substance {
+            return None;
+        }
+        Some(ThermodynamicTemperature::new::<kelvin>(
+            self.trivial_output(FluidTrivialParam::TCritical)?,
         ))
     }
 
