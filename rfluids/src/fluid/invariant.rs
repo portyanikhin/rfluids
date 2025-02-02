@@ -4,8 +4,9 @@ use crate::error::FluidUpdateError;
 use crate::io::{FluidInput, FluidTrivialParam};
 use crate::state_variant::StateVariant;
 use crate::substance::Substance;
-use crate::uom::si::f64::MassDensity;
+use crate::uom::si::f64::{MassDensity, MolarConcentration};
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
+use crate::uom::si::molar_concentration::mole_per_cubic_meter;
 use std::collections::hash_map::Entry;
 
 impl<S: StateVariant> Fluid<S> {
@@ -61,6 +62,38 @@ impl<S: StateVariant> Fluid<S> {
         }
         Some(MassDensity::new::<kilogram_per_cubic_meter>(
             self.trivial_output(FluidTrivialParam::DMassCritical)?,
+        ))
+    }
+
+    /// Critical point mass density
+    /// _(key: [`DMolarCritical`](FluidTrivialParam::DMolarCritical), SI units: mol/m³)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert!(water.critical_molar_density().is_some());
+    /// assert_relative_eq!(
+    ///     water.critical_molar_density().unwrap().value,
+    ///     17873.72799560906
+    /// );
+    ///
+    /// let mut r444a = Fluid::from(PredefinedMix::R444A);
+    /// assert!(r444a.critical_molar_density().is_none());
+    /// ```
+    pub fn critical_molar_density(&mut self) -> Option<MolarConcentration> {
+        // Due to CoolProp freeze
+        if let Substance::PredefinedMix(_) = self.substance {
+            return None;
+        }
+
+        Some(MolarConcentration::new::<mole_per_cubic_meter>(
+            self.trivial_output(FluidTrivialParam::DMolarCritical)?,
         ))
     }
 

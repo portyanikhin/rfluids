@@ -148,6 +148,26 @@ mod tests {
     }
 
     #[rstest]
+    fn critical_molar_density_returns_option(temperature: FluidInput, pressure: FluidInput) {
+        let mut water = Fluid::from(Pure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(water.critical_molar_density().is_some());
+        assert_relative_eq!(
+            water.critical_molar_density().unwrap().value,
+            17873.72799560906
+        );
+        let mut r444a = Fluid::from(PredefinedMix::R444A)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(r444a.critical_molar_density().is_none());
+        let mut incomp_water = Fluid::from(IncompPure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(incomp_water.critical_molar_density().is_none());
+    }
+
+    #[rstest]
     fn update_valid_inputs_returns_ok(
         mut sut: Fluid,
         temperature: FluidInput,
