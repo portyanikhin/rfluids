@@ -303,6 +303,16 @@ mod tests {
     }
 
     #[rstest]
+    fn reducing_molar_density_returns_option(mut water: Fluid, mut incomp_water: Fluid) {
+        assert!(water.reducing_molar_density().is_some());
+        assert_relative_eq!(
+            water.reducing_molar_density().unwrap().value,
+            17873.72799560906
+        );
+        assert!(incomp_water.reducing_molar_density().is_none());
+    }
+
+    #[rstest]
     fn update_valid_inputs_returns_ok(
         mut water: Fluid,
         temperature: FluidInput,

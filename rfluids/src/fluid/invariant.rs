@@ -457,6 +457,35 @@ impl<S: StateVariant> Fluid<S> {
         non_negative(self.trivial_output(FluidTrivialParam::PH))
     }
 
+    /// Reducing point molar density
+    /// _(key: [`DMolarReducing`](FluidTrivialParam::DMolarReducing), SI units: mol/m³)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::ratio::percent;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert_relative_eq!(
+    ///     water.reducing_molar_density().unwrap().value,
+    ///     17873.72799560906
+    /// );
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    /// );
+    /// assert!(propylene_glycol.reducing_molar_density().is_none());
+    /// ```
+    pub fn reducing_molar_density(&mut self) -> Option<MolarConcentration> {
+        Some(MolarConcentration::new::<mole_per_cubic_meter>(
+            non_negative(self.trivial_output(FluidTrivialParam::DMolarReducing))?,
+        ))
+    }
+
     pub(crate) fn inner_update(
         &mut self,
         input1: FluidInput,
