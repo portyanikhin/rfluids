@@ -246,6 +246,12 @@ mod tests {
         assert!(incomp_water.max_pressure().is_none());
     }
 
+    #[test]
+    fn max_temperature_returns_expected_value() {
+        let mut water = Fluid::from(Pure::Water);
+        assert_eq!(water.max_temperature().value, 2e3);
+    }
+
     #[rstest]
     fn update_valid_inputs_returns_ok(
         sut: Fluid<Undefined>,

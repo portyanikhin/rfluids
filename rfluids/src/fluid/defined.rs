@@ -299,6 +299,14 @@ mod tests {
     }
 
     #[rstest]
+    fn max_temperature_returns_expected_value(temperature: FluidInput, pressure: FluidInput) {
+        let mut water = Fluid::from(Pure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert_eq!(water.max_temperature().value, 2e3);
+    }
+
+    #[rstest]
     fn update_valid_inputs_returns_ok(
         mut sut: Fluid,
         temperature: FluidInput,

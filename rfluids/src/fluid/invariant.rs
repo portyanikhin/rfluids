@@ -315,6 +315,23 @@ impl<S: StateVariant> Fluid<S> {
         )?))
     }
 
+    /// Maximum temperature
+    /// _(key: [`TMax`](FluidTrivialParam::TMax), SI units: K)_.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::fluid::*;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert_eq!(water.max_temperature().value, 2e3);
+    /// ```
+    pub fn max_temperature(&mut self) -> ThermodynamicTemperature {
+        ThermodynamicTemperature::new::<kelvin>(
+            non_negative(self.trivial_output(FluidTrivialParam::TMax)).unwrap(),
+        )
+    }
+
     pub(crate) fn inner_update(
         &mut self,
         input1: FluidInput,
