@@ -228,6 +228,15 @@ mod tests {
         assert_eq!(r32.gwp500().unwrap(), 205.0);
     }
 
+    #[test]
+    fn health_hazard_returns_option() {
+        let mut water = Fluid::from(Pure::Water);
+        assert!(water.health_hazard().is_some());
+        assert_relative_eq!(water.health_hazard().unwrap(), 0.0);
+        let mut incomp_water = Fluid::from(IncompPure::Water);
+        assert!(incomp_water.health_hazard().is_none());
+    }
+
     #[rstest]
     fn update_valid_inputs_returns_ok(
         sut: Fluid<Undefined>,

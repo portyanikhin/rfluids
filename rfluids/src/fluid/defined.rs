@@ -273,6 +273,19 @@ mod tests {
     }
 
     #[rstest]
+    fn health_hazard_returns_option(temperature: FluidInput, pressure: FluidInput) {
+        let mut water = Fluid::from(Pure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(water.health_hazard().is_some());
+        assert_relative_eq!(water.health_hazard().unwrap(), 0.0);
+        let mut incomp_water = Fluid::from(IncompPure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(incomp_water.health_hazard().is_none());
+    }
+
+    #[rstest]
     fn update_valid_inputs_returns_ok(
         mut sut: Fluid,
         temperature: FluidInput,

@@ -264,6 +264,32 @@ impl<S: StateVariant> Fluid<S> {
         self.trivial_output(FluidTrivialParam::GWP500)
     }
 
+    /// Health hazard index
+    /// _(key: [`HH`](FluidTrivialParam::HH), dimensionless)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::ratio::percent;
+    ///
+    /// let mut acetone = Fluid::from(Pure::Acetone);
+    /// assert_eq!(acetone.health_hazard().unwrap(), 2.0);
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert_eq!(water.health_hazard().unwrap(), 0.0);
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    /// );
+    /// assert!(propylene_glycol.health_hazard().is_none());
+    /// ```
+    pub fn health_hazard(&mut self) -> Option<f64> {
+        self.trivial_output(FluidTrivialParam::HH)
+    }
+
     pub(crate) fn trivial_output(&mut self, key: FluidTrivialParam) -> Option<f64> {
         match self.trivial_outputs.entry(key) {
             Entry::Occupied(entry) => *entry.get(),
