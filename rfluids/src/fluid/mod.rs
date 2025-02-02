@@ -27,7 +27,7 @@ pub struct Fluid<S: StateVariant = Defined> {
     backend: AbstractState,
     update_request: Option<FluidUpdateRequest>,
     outputs: HashMap<FluidParam, f64>,
-    trivial_outputs: HashMap<FluidTrivialParam, f64>,
+    trivial_outputs: HashMap<FluidTrivialParam, Option<f64>>,
     state: PhantomData<S>,
 }
 
