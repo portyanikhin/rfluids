@@ -204,6 +204,26 @@ impl<S: StateVariant> Fluid<S> {
         ))
     }
 
+    /// 20-year global warming potential
+    /// _(key: [`GWP20`](FluidTrivialParam::GWP20), dimensionless)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::fluid::*;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert!(water.gwp20().is_none());
+    ///
+    /// let mut r32 = Fluid::from(Pure::R32);
+    /// assert_eq!(r32.gwp20().unwrap(), 2330.0);
+    /// ```
+    pub fn gwp20(&mut self) -> Option<f64> {
+        self.trivial_output(FluidTrivialParam::GWP20)
+    }
+
     pub(crate) fn trivial_output(&mut self, key: FluidTrivialParam) -> Option<f64> {
         match self.trivial_outputs.entry(key) {
             Entry::Occupied(entry) => *entry.get(),

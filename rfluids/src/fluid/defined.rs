@@ -234,6 +234,19 @@ mod tests {
     }
 
     #[rstest]
+    fn gwp20_returns_option(temperature: FluidInput, pressure: FluidInput) {
+        let mut water = Fluid::from(Pure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(water.gwp20().is_none());
+        let mut r32 = Fluid::from(Pure::R32)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(r32.gwp20().is_some());
+        assert_eq!(r32.gwp20().unwrap(), 2330.0);
+    }
+
+    #[rstest]
     fn update_valid_inputs_returns_ok(
         mut sut: Fluid,
         temperature: FluidInput,
