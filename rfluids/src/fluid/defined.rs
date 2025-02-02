@@ -202,6 +202,19 @@ mod tests {
     }
 
     #[rstest]
+    fn flammability_hazard_returns_option(temperature: FluidInput, pressure: FluidInput) {
+        let mut water = Fluid::from(Pure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(water.flammability_hazard().is_some());
+        assert_relative_eq!(water.flammability_hazard().unwrap(), 0.0);
+        let mut incomp_water = Fluid::from(IncompPure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(incomp_water.flammability_hazard().is_none());
+    }
+
+    #[rstest]
     fn update_valid_inputs_returns_ok(
         mut sut: Fluid,
         temperature: FluidInput,

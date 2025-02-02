@@ -177,6 +177,15 @@ mod tests {
         assert!(incomp_water.critical_temperature().is_none());
     }
 
+    #[test]
+    fn flammability_hazard_returns_option() {
+        let mut water = Fluid::from(Pure::Water);
+        assert!(water.flammability_hazard().is_some());
+        assert_relative_eq!(water.flammability_hazard().unwrap(), 0.0);
+        let mut incomp_water = Fluid::from(IncompPure::Water);
+        assert!(incomp_water.flammability_hazard().is_none());
+    }
+
     #[rstest]
     fn update_valid_inputs_returns_ok(
         sut: Fluid<Undefined>,

@@ -29,7 +29,6 @@ impl<S: StateVariant> Fluid<S> {
     /// use rfluids::prelude::fluid::*;
     ///
     /// let mut water = Fluid::from(Pure::Water);
-    /// assert!(water.acentric_factor().is_some());
     /// assert_relative_eq!(water.acentric_factor().unwrap(), 0.3442920843);
     ///
     /// let mut r444a = Fluid::from(PredefinedMix::R444A);
@@ -51,7 +50,6 @@ impl<S: StateVariant> Fluid<S> {
     /// use rfluids::prelude::fluid::*;
     ///
     /// let mut water = Fluid::from(Pure::Water);
-    /// assert!(water.critical_density().is_some());
     /// assert_relative_eq!(water.critical_density().unwrap().value, 322.0);
     ///
     /// let mut r444a = Fluid::from(PredefinedMix::R444A);
@@ -79,7 +77,6 @@ impl<S: StateVariant> Fluid<S> {
     /// use rfluids::prelude::fluid::*;
     ///
     /// let mut water = Fluid::from(Pure::Water);
-    /// assert!(water.critical_molar_density().is_some());
     /// assert_relative_eq!(
     ///     water.critical_molar_density().unwrap().value,
     ///     17873.72799560906
@@ -110,7 +107,6 @@ impl<S: StateVariant> Fluid<S> {
     /// use rfluids::prelude::fluid::*;
     ///
     /// let mut water = Fluid::from(Pure::Water);
-    /// assert!(water.critical_pressure().is_some());
     /// assert_relative_eq!(water.critical_pressure().unwrap().value, 22.064e6);
     ///
     /// let mut r444a = Fluid::from(PredefinedMix::R444A);
@@ -138,7 +134,6 @@ impl<S: StateVariant> Fluid<S> {
     /// use rfluids::prelude::fluid::*;
     ///
     /// let mut water = Fluid::from(Pure::Water);
-    /// assert!(water.critical_temperature().is_some());
     /// assert_relative_eq!(water.critical_temperature().unwrap().value, 647.096);
     ///
     /// let mut r444a = Fluid::from(PredefinedMix::R444A);
@@ -152,6 +147,32 @@ impl<S: StateVariant> Fluid<S> {
         Some(ThermodynamicTemperature::new::<kelvin>(
             self.trivial_output(FluidTrivialParam::TCritical)?,
         ))
+    }
+
+    /// Flammability hazard index
+    /// _(key: [`FH`](FluidTrivialParam::FH), dimensionless)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::ratio::percent;
+    ///
+    /// let mut acetone = Fluid::from(Pure::Acetone);
+    /// assert_eq!(acetone.flammability_hazard().unwrap(), 3.0);
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert_eq!(water.flammability_hazard().unwrap(), 0.0);
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    /// );
+    /// assert!(propylene_glycol.flammability_hazard().is_none());
+    /// ```
+    pub fn flammability_hazard(&mut self) -> Option<f64> {
+        self.trivial_output(FluidTrivialParam::FH)
     }
 
     pub(crate) fn trivial_output(&mut self, key: FluidTrivialParam) -> Option<f64> {
