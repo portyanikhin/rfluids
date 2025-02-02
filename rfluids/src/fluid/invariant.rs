@@ -431,6 +431,32 @@ impl<S: StateVariant> Fluid<S> {
         non_negative(self.trivial_output(FluidTrivialParam::ODP))
     }
 
+    /// Physical hazard index
+    /// _(key: [`PH`](FluidTrivialParam::PH), dimensionless)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::ratio::percent;
+    ///
+    /// let mut carbon_monoxide = Fluid::from(Pure::CarbonMonoxide);
+    /// assert_eq!(carbon_monoxide.physical_hazard().unwrap(), 3.0);
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert_eq!(water.physical_hazard().unwrap(), 0.0);
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    /// );
+    /// assert!(propylene_glycol.physical_hazard().is_none());
+    /// ```
+    pub fn physical_hazard(&mut self) -> Option<f64> {
+        non_negative(self.trivial_output(FluidTrivialParam::PH))
+    }
+
     pub(crate) fn inner_update(
         &mut self,
         input1: FluidInput,

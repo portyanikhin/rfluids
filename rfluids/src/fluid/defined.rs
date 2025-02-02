@@ -296,6 +296,13 @@ mod tests {
     }
 
     #[rstest]
+    fn physical_hazard_returns_option(mut water: Fluid, mut incomp_water: Fluid) {
+        assert!(water.physical_hazard().is_some());
+        assert_eq!(water.physical_hazard().unwrap(), 0.0);
+        assert!(incomp_water.physical_hazard().is_none());
+    }
+
+    #[rstest]
     fn update_valid_inputs_returns_ok(
         mut water: Fluid,
         temperature: FluidInput,
