@@ -1,10 +1,14 @@
+use uom::si::molar_mass::kilogram_per_mole;
+
 use super::requests::FluidUpdateRequest;
 use super::Fluid;
 use crate::error::FluidUpdateError;
 use crate::io::{FluidInput, FluidTrivialParam};
 use crate::state_variant::StateVariant;
 use crate::substance::Substance;
-use crate::uom::si::f64::{MassDensity, MolarConcentration, Pressure, ThermodynamicTemperature};
+use crate::uom::si::f64::{
+    MassDensity, MolarConcentration, MolarMass, Pressure, ThermodynamicTemperature,
+};
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
 use crate::uom::si::molar_concentration::mole_per_cubic_meter;
 use crate::uom::si::pressure::pascal;
@@ -376,6 +380,32 @@ impl<S: StateVariant> Fluid<S> {
         ThermodynamicTemperature::new::<kelvin>(
             non_negative(self.trivial_output(FluidTrivialParam::TMin)).unwrap(),
         )
+    }
+
+    /// Molar mass
+    /// _(key: [`MolarMass`](FluidTrivialParam::MolarMass), SI units: kg/mol)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::ratio::percent;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert_relative_eq!(water.molar_mass().unwrap().value, 0.018015268);
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    /// );
+    /// assert!(propylene_glycol.molar_mass().is_none());
+    /// ```
+    pub fn molar_mass(&mut self) -> Option<MolarMass> {
+        Some(MolarMass::new::<kilogram_per_mole>(non_negative(
+            self.trivial_output(FluidTrivialParam::MolarMass),
+        )?))
     }
 
     pub(crate) fn inner_update(

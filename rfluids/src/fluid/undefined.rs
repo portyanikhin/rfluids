@@ -262,6 +262,15 @@ mod tests {
     }
 
     #[test]
+    fn molar_mass_returns_option() {
+        let mut water = Fluid::from(Pure::Water);
+        assert!(water.molar_mass().is_some());
+        assert_relative_eq!(water.molar_mass().unwrap().value, 0.018015268);
+        let mut incomp_water = Fluid::from(IncompPure::Water);
+        assert!(incomp_water.molar_mass().is_none());
+    }
+
+    #[test]
     fn min_temperature_returns_expected_value() {
         let mut water = Fluid::from(Pure::Water);
         assert_eq!(water.min_temperature().value, 273.16);
