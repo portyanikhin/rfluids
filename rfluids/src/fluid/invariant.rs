@@ -60,9 +60,9 @@ impl<S: StateVariant> Fluid<S> {
         if let Substance::PredefinedMix(_) = self.substance {
             return None;
         }
-        Some(MassDensity::new::<kilogram_per_cubic_meter>(
-            self.trivial_output(FluidTrivialParam::DMassCritical)?,
-        ))
+        Some(MassDensity::new::<kilogram_per_cubic_meter>(non_negative(
+            self.trivial_output(FluidTrivialParam::DMassCritical),
+        )?))
     }
 
     /// Critical point molar density
@@ -91,7 +91,7 @@ impl<S: StateVariant> Fluid<S> {
             return None;
         }
         Some(MolarConcentration::new::<mole_per_cubic_meter>(
-            self.trivial_output(FluidTrivialParam::DMolarCritical)?,
+            non_negative(self.trivial_output(FluidTrivialParam::DMolarCritical))?,
         ))
     }
 
@@ -117,9 +117,9 @@ impl<S: StateVariant> Fluid<S> {
         if let Substance::PredefinedMix(_) = self.substance {
             return None;
         }
-        Some(Pressure::new::<pascal>(
-            self.trivial_output(FluidTrivialParam::PCritical)?,
-        ))
+        Some(Pressure::new::<pascal>(non_negative(
+            self.trivial_output(FluidTrivialParam::PCritical),
+        )?))
     }
 
     /// Critical point temperature
@@ -144,9 +144,9 @@ impl<S: StateVariant> Fluid<S> {
         if let Substance::PredefinedMix(_) = self.substance {
             return None;
         }
-        Some(ThermodynamicTemperature::new::<kelvin>(
-            self.trivial_output(FluidTrivialParam::TCritical)?,
-        ))
+        Some(ThermodynamicTemperature::new::<kelvin>(non_negative(
+            self.trivial_output(FluidTrivialParam::TCritical),
+        )?))
     }
 
     /// Flammability hazard index
@@ -172,7 +172,7 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(propylene_glycol.flammability_hazard().is_none());
     /// ```
     pub fn flammability_hazard(&mut self) -> Option<f64> {
-        self.trivial_output(FluidTrivialParam::FH)
+        non_negative(self.trivial_output(FluidTrivialParam::FH))
     }
 
     /// Freezing temperature for incompressible mixtures
@@ -199,9 +199,9 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     /// ```
     pub fn freezing_temperature(&mut self) -> Option<ThermodynamicTemperature> {
-        Some(ThermodynamicTemperature::new::<kelvin>(
-            self.trivial_output(FluidTrivialParam::TFreeze)?,
-        ))
+        Some(ThermodynamicTemperature::new::<kelvin>(non_negative(
+            self.trivial_output(FluidTrivialParam::TFreeze),
+        )?))
     }
 
     /// 20-year global warming potential
@@ -221,7 +221,7 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_eq!(r32.gwp20().unwrap(), 2330.0);
     /// ```
     pub fn gwp20(&mut self) -> Option<f64> {
-        self.trivial_output(FluidTrivialParam::GWP20)
+        non_negative(self.trivial_output(FluidTrivialParam::GWP20))
     }
 
     /// 100-year global warming potential
@@ -241,7 +241,7 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_eq!(r32.gwp100().unwrap(), 675.0);
     /// ```
     pub fn gwp100(&mut self) -> Option<f64> {
-        self.trivial_output(FluidTrivialParam::GWP100)
+        non_negative(self.trivial_output(FluidTrivialParam::GWP100))
     }
 
     /// 500-year global warming potential
@@ -261,7 +261,7 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_eq!(r32.gwp500().unwrap(), 205.0);
     /// ```
     pub fn gwp500(&mut self) -> Option<f64> {
-        self.trivial_output(FluidTrivialParam::GWP500)
+        non_negative(self.trivial_output(FluidTrivialParam::GWP500))
     }
 
     /// Health hazard index
@@ -287,7 +287,7 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(propylene_glycol.health_hazard().is_none());
     /// ```
     pub fn health_hazard(&mut self) -> Option<f64> {
-        self.trivial_output(FluidTrivialParam::HH)
+        non_negative(self.trivial_output(FluidTrivialParam::HH))
     }
 
     pub(crate) fn trivial_output(&mut self, key: FluidTrivialParam) -> Option<f64> {
@@ -309,5 +309,27 @@ impl<S: StateVariant> Fluid<S> {
         self.outputs.insert(input2.key(), input2.si_value());
         self.update_request = Some(request);
         Ok(())
+    }
+}
+
+fn non_negative(value: Option<f64>) -> Option<f64> {
+    value.and_then(|v| if v >= 0.0 { Some(v) } else { None })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rstest::*;
+
+    #[rstest]
+    #[case(None, None)]
+    #[case(Some(-1.0), None)]
+    #[case(Some(0.0), Some(0.0))]
+    #[case(Some(1.0), Some(1.0))]
+    fn non_negative_returns_none_for_negative_value(
+        #[case] value: Option<f64>,
+        #[case] expected: Option<f64>,
+    ) {
+        assert_eq!(non_negative(value), expected);
     }
 }
