@@ -4,6 +4,8 @@ use crate::error::FluidUpdateError;
 use crate::io::{FluidInput, FluidTrivialParam};
 use crate::state_variant::StateVariant;
 use crate::substance::Substance;
+use crate::uom::si::f64::MassDensity;
+use crate::uom::si::mass_density::kilogram_per_cubic_meter;
 use std::collections::hash_map::Entry;
 
 impl<S: StateVariant> Fluid<S> {
@@ -20,16 +22,46 @@ impl<S: StateVariant> Fluid<S> {
     /// # Examples
     ///
     /// ```
+    /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert!(water.acentric_factor().is_some());
+    /// assert_relative_eq!(water.acentric_factor().unwrap(), 0.3442920843);
     ///
     /// let mut r444a = Fluid::from(PredefinedMix::R444A);
     /// assert!(r444a.acentric_factor().is_none());
     /// ```
     pub fn acentric_factor(&mut self) -> Option<f64> {
         self.trivial_output(FluidTrivialParam::AcentricFactor)
+    }
+
+    /// Critical point mass density
+    /// _(key: [`DMassCritical`](FluidTrivialParam::DMassCritical), SI units: kg/m³)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert!(water.critical_density().is_some());
+    /// assert_relative_eq!(water.critical_density().unwrap().value, 322.0);
+    ///
+    /// let mut r444a = Fluid::from(PredefinedMix::R444A);
+    /// assert!(r444a.critical_density().is_none());
+    /// ```
+    pub fn critical_density(&mut self) -> Option<MassDensity> {
+        // Due to CoolProp freeze
+        if let Substance::PredefinedMix(_) = self.substance {
+            return None;
+        }
+        Some(MassDensity::new::<kilogram_per_cubic_meter>(
+            self.trivial_output(FluidTrivialParam::DMassCritical)?,
+        ))
     }
 
     pub(crate) fn trivial_output(&mut self, key: FluidTrivialParam) -> Option<f64> {

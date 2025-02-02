@@ -121,13 +121,24 @@ mod tests {
         assert_eq!(sut.substance(), &substance);
     }
 
-    #[rstest]
+    #[test]
     fn acentric_factor_returns_option() {
         let mut water = Fluid::from(Pure::Water);
         assert!(water.acentric_factor().is_some());
         assert_relative_eq!(water.acentric_factor().unwrap(), 0.3442920843);
         let mut r444a = Fluid::from(PredefinedMix::R444A);
         assert!(r444a.acentric_factor().is_none());
+    }
+
+    #[test]
+    fn critical_density_returns_option() {
+        let mut water = Fluid::from(Pure::Water);
+        assert!(water.critical_density().is_some());
+        assert_relative_eq!(water.critical_density().unwrap().value, 322.0);
+        let mut r444a = Fluid::from(PredefinedMix::R444A);
+        assert!(r444a.critical_density().is_none());
+        let mut incomp_water = Fluid::from(IncompPure::Water);
+        assert!(incomp_water.critical_density().is_none());
     }
 
     #[rstest]
