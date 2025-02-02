@@ -261,6 +261,12 @@ mod tests {
         assert!(incomp_water.min_pressure().is_none());
     }
 
+    #[test]
+    fn min_temperature_returns_expected_value() {
+        let mut water = Fluid::from(Pure::Water);
+        assert_eq!(water.min_temperature().value, 273.16);
+    }
+
     #[rstest]
     fn update_valid_inputs_returns_ok(
         sut: Fluid<Undefined>,

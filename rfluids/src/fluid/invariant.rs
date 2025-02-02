@@ -361,6 +361,23 @@ impl<S: StateVariant> Fluid<S> {
         )?))
     }
 
+    /// Minimum temperature
+    /// _(key: [`TMin`](FluidTrivialParam::TMin), SI units: K)_.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::fluid::*;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert_eq!(water.min_temperature().value, 273.16);
+    /// ```
+    pub fn min_temperature(&mut self) -> ThermodynamicTemperature {
+        ThermodynamicTemperature::new::<kelvin>(
+            non_negative(self.trivial_output(FluidTrivialParam::TMin)).unwrap(),
+        )
+    }
+
     pub(crate) fn inner_update(
         &mut self,
         input1: FluidInput,

@@ -320,6 +320,14 @@ mod tests {
     }
 
     #[rstest]
+    fn min_temperature_returns_expected_value(temperature: FluidInput, pressure: FluidInput) {
+        let mut water = Fluid::from(Pure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert_eq!(water.min_temperature().value, 273.16);
+    }
+
+    #[rstest]
     fn update_valid_inputs_returns_ok(
         mut sut: Fluid,
         temperature: FluidInput,
