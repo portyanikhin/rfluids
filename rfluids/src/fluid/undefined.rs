@@ -110,8 +110,28 @@ mod tests {
     }
 
     #[fixture]
-    fn sut() -> Fluid<Undefined> {
+    fn water() -> Fluid<Undefined> {
         Fluid::from(Pure::Water)
+    }
+
+    #[fixture]
+    fn r32() -> Fluid<Undefined> {
+        Fluid::from(Pure::R32)
+    }
+
+    #[fixture]
+    fn incomp_water() -> Fluid<Undefined> {
+        Fluid::from(IncompPure::Water)
+    }
+
+    #[fixture]
+    fn r444a() -> Fluid<Undefined> {
+        Fluid::from(PredefinedMix::R444A)
+    }
+
+    #[fixture]
+    fn propylene_glycol() -> Fluid<Undefined> {
+        Fluid::from(BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap())
     }
 
     #[test]
@@ -122,78 +142,80 @@ mod tests {
         assert_eq!(sut.substance(), &substance);
     }
 
-    #[test]
-    fn acentric_factor_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn acentric_factor_returns_option(mut water: Fluid<Undefined>, mut r444a: Fluid<Undefined>) {
         assert!(water.acentric_factor().is_some());
         assert_relative_eq!(water.acentric_factor().unwrap(), 0.3442920843);
-        let mut r444a = Fluid::from(PredefinedMix::R444A);
         assert!(r444a.acentric_factor().is_none());
     }
 
-    #[test]
-    fn critical_density_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn critical_density_returns_option(
+        mut water: Fluid<Undefined>,
+        mut r444a: Fluid<Undefined>,
+        mut incomp_water: Fluid<Undefined>,
+    ) {
         assert!(water.critical_density().is_some());
         assert_relative_eq!(water.critical_density().unwrap().value, 322.0);
-        let mut r444a = Fluid::from(PredefinedMix::R444A);
         assert!(r444a.critical_density().is_none());
-        let mut incomp_water = Fluid::from(IncompPure::Water);
         assert!(incomp_water.critical_density().is_none());
     }
 
-    #[test]
-    fn critical_molar_density_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn critical_molar_density_returns_option(
+        mut water: Fluid<Undefined>,
+        mut r444a: Fluid<Undefined>,
+        mut incomp_water: Fluid<Undefined>,
+    ) {
         assert!(water.critical_molar_density().is_some());
         assert_relative_eq!(
             water.critical_molar_density().unwrap().value,
             17873.72799560906
         );
-        let mut r444a = Fluid::from(PredefinedMix::R444A);
         assert!(r444a.critical_molar_density().is_none());
-        let mut incomp_water = Fluid::from(IncompPure::Water);
         assert!(incomp_water.critical_molar_density().is_none());
     }
 
-    #[test]
-    fn critical_pressure_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn critical_pressure_returns_option(
+        mut water: Fluid<Undefined>,
+        mut r444a: Fluid<Undefined>,
+        mut incomp_water: Fluid<Undefined>,
+    ) {
         assert!(water.critical_pressure().is_some());
         assert_relative_eq!(water.critical_pressure().unwrap().value, 22.064e6);
-        let mut r444a = Fluid::from(PredefinedMix::R444A);
         assert!(r444a.critical_pressure().is_none());
-        let mut incomp_water = Fluid::from(IncompPure::Water);
         assert!(incomp_water.critical_pressure().is_none());
     }
 
-    #[test]
-    fn critical_temperature_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn critical_temperature_returns_option(
+        mut water: Fluid<Undefined>,
+        mut r444a: Fluid<Undefined>,
+        mut incomp_water: Fluid<Undefined>,
+    ) {
         assert!(water.critical_temperature().is_some());
         assert_relative_eq!(water.critical_temperature().unwrap().value, 647.096);
-        let mut r444a = Fluid::from(PredefinedMix::R444A);
         assert!(r444a.critical_temperature().is_none());
-        let mut incomp_water = Fluid::from(IncompPure::Water);
         assert!(incomp_water.critical_temperature().is_none());
     }
 
-    #[test]
-    fn flammability_hazard_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn flammability_hazard_returns_option(
+        mut water: Fluid<Undefined>,
+        mut incomp_water: Fluid<Undefined>,
+    ) {
         assert!(water.flammability_hazard().is_some());
         assert_eq!(water.flammability_hazard().unwrap(), 0.0);
-        let mut incomp_water = Fluid::from(IncompPure::Water);
         assert!(incomp_water.flammability_hazard().is_none());
     }
 
-    #[test]
-    fn freezing_temperature_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn freezing_temperature_returns_option(
+        mut water: Fluid<Undefined>,
+        mut propylene_glycol: Fluid<Undefined>,
+    ) {
         assert!(water.freezing_temperature().is_none());
-        let mut propylene_glycol = Fluid::from(
-            BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
-        );
         assert!(propylene_glycol.freezing_temperature().is_some());
         assert_relative_eq!(
             propylene_glycol.freezing_temperature().unwrap().value,
@@ -201,126 +223,119 @@ mod tests {
         );
     }
 
-    #[test]
-    fn gwp20_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn gwp20_returns_option(mut water: Fluid<Undefined>, mut r32: Fluid<Undefined>) {
         assert!(water.gwp20().is_none());
-        let mut r32 = Fluid::from(Pure::R32);
         assert!(r32.gwp20().is_some());
         assert_eq!(r32.gwp20().unwrap(), 2330.0);
     }
 
-    #[test]
-    fn gwp100_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn gwp100_returns_option(mut water: Fluid<Undefined>, mut r32: Fluid<Undefined>) {
         assert!(water.gwp100().is_none());
-        let mut r32 = Fluid::from(Pure::R32);
         assert!(r32.gwp100().is_some());
         assert_eq!(r32.gwp100().unwrap(), 675.0);
     }
 
-    #[test]
-    fn gwp500_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn gwp500_returns_option(mut water: Fluid<Undefined>, mut r32: Fluid<Undefined>) {
         assert!(water.gwp500().is_none());
-        let mut r32 = Fluid::from(Pure::R32);
         assert!(r32.gwp500().is_some());
         assert_eq!(r32.gwp500().unwrap(), 205.0);
     }
 
-    #[test]
-    fn health_hazard_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn health_hazard_returns_option(
+        mut water: Fluid<Undefined>,
+        mut incomp_water: Fluid<Undefined>,
+    ) {
         assert!(water.health_hazard().is_some());
         assert_eq!(water.health_hazard().unwrap(), 0.0);
-        let mut incomp_water = Fluid::from(IncompPure::Water);
         assert!(incomp_water.health_hazard().is_none());
     }
 
-    #[test]
-    fn max_pressure_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn max_pressure_returns_option(
+        mut water: Fluid<Undefined>,
+        mut incomp_water: Fluid<Undefined>,
+    ) {
         assert!(water.max_pressure().is_some());
         assert_eq!(water.max_pressure().unwrap().value, 1e9);
-        let mut incomp_water = Fluid::from(IncompPure::Water);
         assert!(incomp_water.max_pressure().is_none());
     }
 
-    #[test]
-    fn max_temperature_returns_expected_value() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn max_temperature_returns_expected_value(mut water: Fluid<Undefined>) {
         assert_eq!(water.max_temperature().value, 2e3);
     }
 
-    #[test]
-    fn min_pressure_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn min_pressure_returns_option(
+        mut water: Fluid<Undefined>,
+        mut incomp_water: Fluid<Undefined>,
+    ) {
         assert!(water.min_pressure().is_some());
         assert_relative_eq!(water.min_pressure().unwrap().value, 611.6548008968684);
-        let mut incomp_water = Fluid::from(IncompPure::Water);
         assert!(incomp_water.min_pressure().is_none());
     }
 
-    #[test]
-    fn molar_mass_returns_option() {
-        let mut water = Fluid::from(Pure::Water);
-        assert!(water.molar_mass().is_some());
-        assert_relative_eq!(water.molar_mass().unwrap().value, 0.018015268);
-        let mut incomp_water = Fluid::from(IncompPure::Water);
-        assert!(incomp_water.molar_mass().is_none());
-    }
-
-    #[test]
-    fn min_temperature_returns_expected_value() {
-        let mut water = Fluid::from(Pure::Water);
+    #[rstest]
+    fn min_temperature_returns_expected_value(mut water: Fluid<Undefined>) {
         assert_eq!(water.min_temperature().value, 273.16);
     }
 
     #[rstest]
-    fn update_valid_inputs_returns_ok(
-        sut: Fluid<Undefined>,
-        temperature: FluidInput,
-        pressure: FluidInput,
-    ) {
-        assert!(sut.update(temperature, pressure).is_ok());
+    fn molar_mass_returns_option(mut water: Fluid<Undefined>, mut incomp_water: Fluid<Undefined>) {
+        assert!(water.molar_mass().is_some());
+        assert_relative_eq!(water.molar_mass().unwrap().value, 0.018015268);
+        assert!(incomp_water.molar_mass().is_none());
     }
 
     #[rstest]
-    fn update_same_inputs_returns_err(sut: Fluid<Undefined>, pressure: FluidInput) {
+    fn update_valid_inputs_returns_ok(
+        water: Fluid<Undefined>,
+        temperature: FluidInput,
+        pressure: FluidInput,
+    ) {
+        assert!(water.update(temperature, pressure).is_ok());
+    }
+
+    #[rstest]
+    fn update_same_inputs_returns_err(water: Fluid<Undefined>, pressure: FluidInput) {
         assert_eq!(
-            sut.update(pressure, pressure).unwrap_err(),
+            water.update(pressure, pressure).unwrap_err(),
             FluidUpdateError::InvalidInputPair(pressure.key(), pressure.key())
         );
     }
 
     #[rstest]
     fn update_invalid_inputs_returns_err(
-        sut: Fluid<Undefined>,
+        water: Fluid<Undefined>,
         temperature: FluidInput,
         infinite_pressure: FluidInput,
     ) {
         assert_eq!(
-            sut.update(temperature, infinite_pressure).unwrap_err(),
+            water.update(temperature, infinite_pressure).unwrap_err(),
             FluidUpdateError::InvalidInputValue
         );
     }
 
     #[rstest]
     fn update_invalid_state_returns_err(
-        sut: Fluid<Undefined>,
+        water: Fluid<Undefined>,
         temperature: FluidInput,
         negative_pressure: FluidInput,
     ) {
         assert!(matches!(
-            sut.update(temperature, negative_pressure).unwrap_err(),
+            water.update(temperature, negative_pressure).unwrap_err(),
             FluidUpdateError::UpdateFailed(_)
         ));
     }
 
     #[rstest]
-    fn clone_returns_new_instance(sut: Fluid<Undefined>) {
-        let clone = sut.clone();
-        assert_eq!(clone, sut);
-        assert_eq!(clone.trivial_outputs, sut.trivial_outputs);
+    fn clone_returns_new_instance(water: Fluid<Undefined>) {
+        let clone = water.clone();
+        assert_eq!(clone, water);
+        assert_eq!(clone.trivial_outputs, water.trivial_outputs);
     }
 }
