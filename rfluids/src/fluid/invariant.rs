@@ -175,6 +175,35 @@ impl<S: StateVariant> Fluid<S> {
         self.trivial_output(FluidTrivialParam::FH)
     }
 
+    /// Freezing temperature for incompressible mixtures
+    /// _(key: [`TFreeze`](FluidTrivialParam::TFreeze), SI units: K)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::ratio::percent;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert!(water.freezing_temperature().is_none());
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    /// );
+    /// assert_relative_eq!(
+    ///     propylene_glycol.freezing_temperature().unwrap().value,
+    ///     252.58175495305838
+    /// );
+    /// ```
+    pub fn freezing_temperature(&mut self) -> Option<ThermodynamicTemperature> {
+        Some(ThermodynamicTemperature::new::<kelvin>(
+            self.trivial_output(FluidTrivialParam::TFreeze)?,
+        ))
+    }
+
     pub(crate) fn trivial_output(&mut self, key: FluidTrivialParam) -> Option<f64> {
         match self.trivial_outputs.entry(key) {
             Entry::Occupied(entry) => *entry.get(),

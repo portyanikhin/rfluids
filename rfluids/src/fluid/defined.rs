@@ -76,8 +76,9 @@ mod tests {
     use super::*;
     use crate::error::FluidUpdateError;
     use crate::substance::*;
-    use crate::uom::si::f64::{Pressure, ThermodynamicTemperature};
+    use crate::uom::si::f64::{Pressure, Ratio, ThermodynamicTemperature};
     use crate::uom::si::pressure::atmosphere;
+    use crate::uom::si::ratio::percent;
     use crate::uom::si::thermodynamic_temperature::degree_celsius;
     use approx::assert_relative_eq;
     use rstest::*;
@@ -212,6 +213,24 @@ mod tests {
             .update(temperature, pressure)
             .unwrap();
         assert!(incomp_water.flammability_hazard().is_none());
+    }
+
+    #[rstest]
+    fn freezing_temperature_returns_option(temperature: FluidInput, pressure: FluidInput) {
+        let mut water = Fluid::from(Pure::Water)
+            .update(temperature, pressure)
+            .unwrap();
+        assert!(water.freezing_temperature().is_none());
+        let mut propylene_glycol = Fluid::from(
+            BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+        )
+        .update(temperature, pressure)
+        .unwrap();
+        assert!(propylene_glycol.freezing_temperature().is_some());
+        assert_relative_eq!(
+            propylene_glycol.freezing_temperature().unwrap().value,
+            252.58175495305838
+        );
     }
 
     #[rstest]
