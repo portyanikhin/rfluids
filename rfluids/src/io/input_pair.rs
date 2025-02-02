@@ -1,4 +1,4 @@
-use crate::io::FluidParam;
+use super::FluidParam;
 
 /// CoolProp fluids input pairs.
 ///

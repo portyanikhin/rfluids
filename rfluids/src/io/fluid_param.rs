@@ -1,6 +1,6 @@
 // cSpell:disable
 
-use crate::io::try_from;
+use super::try_from;
 use strum_macros::{AsRefStr, EnumString, FromRepr};
 
 /// CoolProp fluids input/output parameters.

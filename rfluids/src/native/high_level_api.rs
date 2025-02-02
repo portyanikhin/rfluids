@@ -1,7 +1,7 @@
 // cSpell:disable
 
+use super::common::{const_ptr_c_char, MessageBuffer, COOLPROP};
 use crate::error::CoolPropError;
-use crate::native::common::{const_ptr_c_char, MessageBuffer, COOLPROP};
 use core::ffi::c_char;
 use std::sync::MutexGuard;
 

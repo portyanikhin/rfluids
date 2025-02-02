@@ -1,5 +1,5 @@
+use super::common::{const_ptr_c_char, ErrorBuffer, COOLPROP};
 use crate::error::CoolPropError;
-use crate::native::common::{const_ptr_c_char, ErrorBuffer, COOLPROP};
 use core::ffi::{c_char, c_long};
 
 /// CoolProp thread safe low-level API.

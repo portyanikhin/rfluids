@@ -1,4 +1,4 @@
-use crate::io::try_from;
+use super::try_from;
 use strum_macros::{AsRefStr, EnumString, FromRepr};
 
 /// Phase states of fluids and mixtures.

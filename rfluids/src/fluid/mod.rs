@@ -5,13 +5,12 @@ mod invariant;
 mod requests;
 mod undefined;
 
-use requests::{FluidCreateRequest, FluidUpdateRequest};
-
 use crate::error::FluidFromCustomMixError;
 use crate::io::{FluidParam, FluidTrivialParam};
 use crate::native::AbstractState;
 use crate::state_variant::{Defined, StateVariant, Undefined};
 use crate::substance::*;
+use requests::*;
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::marker::PhantomData;
@@ -27,8 +26,8 @@ pub struct Fluid<S: StateVariant = Defined> {
     substance: Substance,
     backend: AbstractState,
     update_request: Option<FluidUpdateRequest>,
-    trivial_outputs: HashMap<FluidTrivialParam, f64>,
     outputs: HashMap<FluidParam, f64>,
+    trivial_outputs: HashMap<FluidTrivialParam, f64>,
     state: PhantomData<S>,
 }
 
@@ -80,8 +79,8 @@ impl TryFrom<Substance> for Fluid<Undefined> {
             substance: value,
             backend,
             update_request: None,
-            trivial_outputs: HashMap::new(),
             outputs: HashMap::new(),
+            trivial_outputs: HashMap::new(),
             state: PhantomData,
         })
     }

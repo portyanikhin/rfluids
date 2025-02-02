@@ -1,4 +1,4 @@
-use crate::io::FluidParam;
+use super::FluidParam;
 use crate::uom::si::f64::{
     AvailableEnergy, MassDensity, MolarConcentration, MolarEnergy, MolarHeatCapacity, Pressure,
     Ratio, SpecificHeatCapacity, ThermodynamicTemperature,

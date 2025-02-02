@@ -1,4 +1,4 @@
-use crate::substance::*;
+use super::*;
 
 const HELMHOLTZ_EOS_BACKEND_NAME: &str = "HEOS";
 const INCOMP_BACKEND_NAME: &str = "INCOMP";

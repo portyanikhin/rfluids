@@ -1,5 +1,5 @@
+use super::Fluid;
 use crate::error::FluidUpdateError;
-use crate::fluid::Fluid;
 use crate::io::FluidInput;
 use crate::state_variant::Undefined;
 use std::collections::HashMap;
@@ -56,8 +56,8 @@ impl Fluid<Undefined> {
             substance: self.substance,
             backend: self.backend,
             update_request: self.update_request,
-            trivial_outputs: self.trivial_outputs,
             outputs: HashMap::new(),
+            trivial_outputs: self.trivial_outputs,
             state: PhantomData,
         })
     }

@@ -1,5 +1,5 @@
+use super::Fluid;
 use crate::error::FluidUpdateError;
-use crate::fluid::Fluid;
 use crate::io::FluidInput;
 
 impl Fluid {
@@ -59,8 +59,8 @@ impl Clone for Fluid {
             .unwrap()
             .update(inputs.0, inputs.1)
             .unwrap();
-        fluid.trivial_outputs = self.trivial_outputs.clone();
         fluid.outputs = self.outputs.clone();
+        fluid.trivial_outputs = self.trivial_outputs.clone();
         fluid
     }
 }

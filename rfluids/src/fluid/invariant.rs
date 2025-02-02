@@ -1,10 +1,9 @@
+use super::requests::FluidUpdateRequest;
+use super::Fluid;
 use crate::error::FluidUpdateError;
-use crate::fluid::Fluid;
 use crate::io::FluidInput;
 use crate::state_variant::StateVariant;
 use crate::substance::Substance;
-
-use super::requests::FluidUpdateRequest;
 
 impl<S: StateVariant> Fluid<S> {
     /// Specified substance.
