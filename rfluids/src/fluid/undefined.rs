@@ -115,6 +115,11 @@ mod tests {
     }
 
     #[fixture]
+    fn r22() -> Fluid<Undefined> {
+        Fluid::from(Pure::R22)
+    }
+
+    #[fixture]
     fn r32() -> Fluid<Undefined> {
         Fluid::from(Pure::R32)
     }
@@ -289,6 +294,18 @@ mod tests {
         assert!(water.molar_mass().is_some());
         assert_relative_eq!(water.molar_mass().unwrap().value, 0.018015268);
         assert!(incomp_water.molar_mass().is_none());
+    }
+
+    #[rstest]
+    fn opd_returns_option(
+        mut water: Fluid<Undefined>,
+        mut r32: Fluid<Undefined>,
+        mut r22: Fluid<Undefined>,
+    ) {
+        assert!(water.odp().is_none());
+        assert!(r32.odp().is_none());
+        assert!(r22.odp().is_some());
+        assert_eq!(r22.odp().unwrap(), 0.05);
     }
 
     #[rstest]

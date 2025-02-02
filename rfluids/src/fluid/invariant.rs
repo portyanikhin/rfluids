@@ -408,6 +408,29 @@ impl<S: StateVariant> Fluid<S> {
         )?))
     }
 
+    /// Ozone depletion potential
+    /// _(key: [`ODP`](FluidTrivialParam::ODP), dimensionless)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::fluid::*;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert!(water.odp().is_none());
+    ///
+    /// let mut r32 = Fluid::from(Pure::R32);
+    /// assert!(r32.odp().is_none());
+    ///
+    /// let mut r22 = Fluid::from(Pure::R22);
+    /// assert_eq!(r22.odp().unwrap(), 0.05);
+    /// ```
+    pub fn odp(&mut self) -> Option<f64> {
+        non_negative(self.trivial_output(FluidTrivialParam::ODP))
+    }
+
     pub(crate) fn inner_update(
         &mut self,
         input1: FluidInput,
