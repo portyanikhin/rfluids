@@ -56,7 +56,7 @@ pub enum FluidFromCustomMixError {
 }
 
 /// Error during [`Fluid::update`](crate::fluid::Fluid::update)
-/// or [`Fluid<Undefined>::in_state`](crate::fluid::Fluid<Undefined>::in_state).
+/// or [`Fluid::in_state`](crate::fluid::Fluid::in_state).
 #[derive(Error, Debug, Clone, Eq, PartialEq)]
 pub enum FluidStateError {
     /// Specified inputs are invalid.

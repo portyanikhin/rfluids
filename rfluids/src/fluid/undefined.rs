@@ -6,7 +6,7 @@ use std::collections::HashMap;
 use std::marker::PhantomData;
 
 impl Fluid<Undefined> {
-    /// Updates the state and returns itself with
+    /// Updates the thermodynamic state and returns itself with
     /// [`Defined`](crate::state_variant::Defined) state variant.
     ///
     /// # Args
@@ -39,18 +39,27 @@ impl Fluid<Undefined> {
     /// ).unwrap();
     ///
     /// // The `Fluid` instance now has `Defined` state variant
-    /// // and it's state can be updated in place by calling `update` method
+    /// // and it's thermodynamic state can be updated in place by calling `update` method
     /// // (which returns a mutable reference to the instance)
     /// let same_water_in_new_state: Result<&mut Fluid, FluidStateError> = water.update(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(2.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(40.0)),
     /// );
     /// assert!(same_water_in_new_state.is_ok());
+    ///
+    /// // Calling `in_state` method on `Fluid<Defined>` will return
+    /// // a new instance in the specified thermodynamic state
+    /// let new_water: Result<Fluid, FluidStateError> = water.in_state(
+    ///     FluidInput::pressure(Pressure::new::<atmosphere>(4.0)),
+    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(80.0)),
+    /// );
+    /// assert!(new_water.is_ok());
     /// ```
     ///
     /// # See also
     ///
     /// - [`Fluid::update`](crate::fluid::Fluid::update)
+    /// - [`Fluid::in_state`](crate::fluid::Fluid::in_state)
     pub fn in_state(
         mut self,
         input1: FluidInput,
