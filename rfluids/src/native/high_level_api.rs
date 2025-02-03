@@ -5,7 +5,7 @@ use crate::error::CoolPropError;
 use core::ffi::c_char;
 use std::sync::MutexGuard;
 
-/// CoolProp thread safe high-level API.
+/// `CoolProp` thread safe high-level API.
 pub struct CoolProp;
 
 impl CoolProp {
@@ -104,7 +104,7 @@ impl CoolProp {
                 const_ptr_c_char!(fluid_name.as_ref().trim()),
             )
         };
-        Self::result(value, lock)
+        Self::result(value, &lock)
     }
 
     /// Returns a value that depends on the thermodynamic state of humid air.
@@ -166,7 +166,7 @@ impl CoolProp {
                 input3_value,
             )
         };
-        Self::result(value, lock)
+        Self::result(value, &lock)
     }
 
     /// Returns a value that doesn't depend on the thermodynamic state
@@ -221,12 +221,12 @@ impl CoolProp {
                 const_ptr_c_char!(fluid_name.as_ref().trim()),
             )
         };
-        Self::result(value, lock)
+        Self::result(value, &lock)
     }
 
     fn result(
         value: f64,
-        lock: MutexGuard<coolprop_sys::bindings::CoolProp>,
+        lock: &MutexGuard<coolprop_sys::bindings::CoolProp>,
     ) -> Result<f64, CoolPropError> {
         if !value.is_finite() {
             let message = Self::get_error_message(lock);
@@ -235,7 +235,7 @@ impl CoolProp {
         Ok(value)
     }
 
-    fn get_error_message(lock: MutexGuard<coolprop_sys::bindings::CoolProp>) -> Option<String> {
+    fn get_error_message(lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> Option<String> {
         let message = MessageBuffer::default();
         let _unused = unsafe {
             lock.get_global_param_string(
@@ -261,22 +261,22 @@ mod tests {
 
     #[test]
     fn props_si_water_density_in_standard_conditions_returns_ok() {
-        let result = CoolProp::props_si("D", "P", 101325.0, "T", 293.15, "Water");
-        assert_relative_eq!(result.unwrap(), 998.2071504679284);
+        let result = CoolProp::props_si("D", "P", 101_325.0, "T", 293.15, "Water");
+        assert_relative_eq!(result.unwrap(), 998.207_150_467_928_4);
     }
 
     #[test]
     fn props_si_is_thread_safe() {
         let result: Vec<Result<f64, CoolPropError>> = (101_000..101_500)
             .into_par_iter()
-            .map(move |p| CoolProp::props_si("T", "P", p as f64, "Q", 0.0, "Water"))
+            .map(move |p| CoolProp::props_si("T", "P", f64::from(p), "Q", 0.0, "Water"))
             .collect();
-        assert!(result.iter().all(|r| r.is_ok()));
+        assert!(result.iter().all(Result::is_ok));
     }
 
     #[test]
     fn props_si_invalid_input_returns_err() {
-        let result = CoolProp::props_si("D", "P", 101325.0, "Q", -1.0, "Water");
+        let result = CoolProp::props_si("D", "P", 101_325.0, "Q", -1.0, "Water");
         assert_eq!(
             result.unwrap_err().to_string(),
             "Input vapor quality [Q] must be between 0 and 1 : \
@@ -286,22 +286,22 @@ mod tests {
 
     #[test]
     fn ha_props_si_humid_air_humidity_in_standard_conditions_returns_ok() {
-        let result = CoolProp::ha_props_si("W", "P", 101325.0, "T", 293.15, "R", 0.5);
-        assert_relative_eq!(result.unwrap(), 0.007293697701992549);
+        let result = CoolProp::ha_props_si("W", "P", 101_325.0, "T", 293.15, "R", 0.5);
+        assert_relative_eq!(result.unwrap(), 0.007_293_697_701_992_549);
     }
 
     #[test]
     fn ha_props_si_is_thread_safe() {
         let result: Vec<Result<f64, CoolPropError>> = (101_000..101_500)
             .into_par_iter()
-            .map(move |p| CoolProp::ha_props_si("W", "P", p as f64, "T", 293.15, "R", 0.5))
+            .map(move |p| CoolProp::ha_props_si("W", "P", f64::from(p), "T", 293.15, "R", 0.5))
             .collect();
-        assert!(result.iter().all(|r| r.is_ok()));
+        assert!(result.iter().all(Result::is_ok));
     }
 
     #[test]
     fn ha_props_si_invalid_input_returns_err() {
-        let result = CoolProp::ha_props_si("W", "P", 101325.0, "T", 293.15, "R", -0.5);
+        let result = CoolProp::ha_props_si("W", "P", 101_325.0, "T", 293.15, "R", -0.5);
         assert_eq!(
             result.unwrap_err().to_string(),
             "The input for key (7) with value (-0.5) \
@@ -328,13 +328,13 @@ mod tests {
 
     #[test]
     fn validate_result_valid_number_returns_ok() {
-        let result = CoolProp::result(42.0, COOLPROP.lock().unwrap());
+        let result = CoolProp::result(42.0, &COOLPROP.lock().unwrap());
         assert!(result.is_ok());
     }
 
     #[test]
     fn validate_result_invalid_number_returns_err() {
-        let result = CoolProp::result(f64::NAN, COOLPROP.lock().unwrap());
+        let result = CoolProp::result(f64::NAN, &COOLPROP.lock().unwrap());
         assert_eq!(result.unwrap_err().to_string(), "Unknown error");
     }
 }

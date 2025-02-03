@@ -2,7 +2,7 @@
 
 use strum_macros::{AsRefStr, EnumString};
 
-/// CoolProp humid air input/output parameters.
+/// `CoolProp` humid air input/output parameters.
 ///
 /// # Examples
 ///

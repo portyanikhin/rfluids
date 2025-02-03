@@ -1,4 +1,4 @@
-//! CoolProp substances.
+//! `CoolProp` substances.
 
 #![allow(missing_docs, non_camel_case_types)]
 
@@ -16,7 +16,7 @@ mod incomp_pure;
 mod predefined_mix;
 mod pure;
 
-/// CoolProp substance.
+/// `CoolProp` substance.
 ///
 /// Superset of:
 ///

@@ -5,7 +5,7 @@ use crate::uom::si::f64::Ratio;
 use crate::uom::si::ratio::percent;
 use thiserror::Error;
 
-/// CoolProp internal error.
+/// `CoolProp` internal error.
 #[derive(Error, Debug, Clone, Eq, PartialEq)]
 #[error("{0}")]
 pub struct CoolPropError(pub(crate) String);

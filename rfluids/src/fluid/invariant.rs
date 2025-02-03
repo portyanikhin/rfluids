@@ -17,6 +17,7 @@ use std::collections::hash_map::Entry;
 
 impl<S: StateVariant> Fluid<S> {
     /// Specified substance.
+    #[must_use]
     pub fn substance(&self) -> &Substance {
         &self.substance
     }

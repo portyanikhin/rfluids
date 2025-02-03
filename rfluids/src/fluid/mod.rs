@@ -9,8 +9,8 @@ use crate::error::FluidFromCustomMixError;
 use crate::io::{FluidParam, FluidTrivialParam};
 use crate::native::AbstractState;
 use crate::state_variant::{Defined, StateVariant, Undefined};
-use crate::substance::*;
-use requests::*;
+use crate::substance::{BinaryMix, CustomMix, IncompPure, PredefinedMix, Pure, Substance};
+use requests::{FluidCreateRequest, FluidUpdateRequest};
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::marker::PhantomData;
@@ -192,6 +192,7 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::substance::*;
     use strum::IntoEnumIterator;
     use uom::si::f64::Ratio;
     use uom::si::ratio::percent;

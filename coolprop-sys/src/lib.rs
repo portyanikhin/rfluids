@@ -16,7 +16,7 @@
 //! coolprop-sys = "0.1.0-alpha"
 //! ```
 //!
-//! **NB.** It comes with native CoolProp dynamic libraries for supported platforms.
+//! **NB.** It comes with native `CoolProp` dynamic libraries for supported platforms.
 //! The library required for your platform will be automatically
 //! copied to the target directory during build.
 //!
@@ -26,7 +26,7 @@
 
 pub mod bindings;
 
-/// CoolProp dynamic library absolute path.
+/// `CoolProp` dynamic library absolute path.
 #[cfg(target_os = "windows")]
 pub const COOLPROP_PATH: &str = concat!(env!("OUT_DIR"), "/CoolProp.dll");
 #[cfg(target_os = "linux")]

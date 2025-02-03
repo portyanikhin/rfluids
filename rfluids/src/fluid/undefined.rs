@@ -66,7 +66,7 @@ impl Fluid<Undefined> {
 impl Clone for Fluid<Undefined> {
     fn clone(&self) -> Self {
         let mut fluid = Fluid::try_from(self.substance.clone()).unwrap();
-        fluid.trivial_outputs = self.trivial_outputs.clone();
+        fluid.trivial_outputs.clone_from(&self.trivial_outputs);
         fluid
     }
 }
@@ -150,7 +150,7 @@ mod tests {
     #[rstest]
     fn acentric_factor_returns_option(mut water: Fluid<Undefined>, mut r444a: Fluid<Undefined>) {
         assert!(water.acentric_factor().is_some());
-        assert_relative_eq!(water.acentric_factor().unwrap(), 0.3442920843);
+        assert_relative_eq!(water.acentric_factor().unwrap(), 0.344_292_084_3);
         assert!(r444a.acentric_factor().is_none());
     }
 
@@ -175,7 +175,7 @@ mod tests {
         assert!(water.critical_molar_density().is_some());
         assert_relative_eq!(
             water.critical_molar_density().unwrap().value,
-            17873.72799560906
+            17_873.727_995_609_06
         );
         assert!(r444a.critical_molar_density().is_none());
         assert!(incomp_water.critical_molar_density().is_none());
@@ -224,7 +224,7 @@ mod tests {
         assert!(propylene_glycol.freezing_temperature().is_some());
         assert_relative_eq!(
             propylene_glycol.freezing_temperature().unwrap().value,
-            252.58175495305838
+            252.581_754_953_058_38
         );
     }
 
@@ -280,7 +280,7 @@ mod tests {
         mut incomp_water: Fluid<Undefined>,
     ) {
         assert!(water.min_pressure().is_some());
-        assert_relative_eq!(water.min_pressure().unwrap().value, 611.6548008968684);
+        assert_relative_eq!(water.min_pressure().unwrap().value, 611.654_800_896_868_4);
         assert!(incomp_water.min_pressure().is_none());
     }
 
@@ -292,7 +292,7 @@ mod tests {
     #[rstest]
     fn molar_mass_returns_option(mut water: Fluid<Undefined>, mut incomp_water: Fluid<Undefined>) {
         assert!(water.molar_mass().is_some());
-        assert_relative_eq!(water.molar_mass().unwrap().value, 0.018015268);
+        assert_relative_eq!(water.molar_mass().unwrap().value, 0.018_015_268);
         assert!(incomp_water.molar_mass().is_none());
     }
 
@@ -336,7 +336,7 @@ mod tests {
         assert!(water.reducing_molar_density().is_some());
         assert_relative_eq!(
             water.reducing_molar_density().unwrap().value,
-            17873.72799560906
+            17_873.727_995_609_06
         );
         assert!(incomp_water.reducing_molar_density().is_none());
     }
@@ -367,7 +367,10 @@ mod tests {
         mut incomp_water: Fluid<Undefined>,
     ) {
         assert!(water.triple_pressure().is_some());
-        assert_relative_eq!(water.triple_pressure().unwrap().value, 611.6548008968684);
+        assert_relative_eq!(
+            water.triple_pressure().unwrap().value,
+            611.654_800_896_868_4
+        );
         assert!(incomp_water.triple_pressure().is_none());
     }
 

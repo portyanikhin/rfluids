@@ -1,4 +1,4 @@
-//! CoolProp inputs/outputs.
+//! `CoolProp` inputs/outputs.
 
 pub use fluid_param::*;
 pub use humid_air_param::*;
@@ -16,7 +16,7 @@ pub(crate) fn try_from<T: TryFrom<u8, Error = strum::ParseError>>(
     value: f64,
 ) -> Result<T, strum::ParseError> {
     let val = value.trunc();
-    if val < u8::MIN as f64 || val > u8::MAX as f64 {
+    if val < f64::from(u8::MIN) || val > f64::from(u8::MAX) {
         return Err(strum::ParseError::VariantNotFound);
     }
     T::try_from(val as u8)

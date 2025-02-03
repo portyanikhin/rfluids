@@ -42,56 +42,67 @@ pub type FluidInput = Input<FluidParam>;
 
 impl FluidInput {
     /// Mass density _(key: [`DMass`](FluidParam::DMass), SI units: kg/m³)_.
+    #[must_use]
     pub fn density(value: MassDensity) -> Self {
         Self(FluidParam::DMass, value.value)
     }
 
     /// Mass specific enthalpy _(key: [`HMass`](FluidParam::HMass), SI units: J/kg)_.
+    #[must_use]
     pub fn enthalpy(value: AvailableEnergy) -> Self {
         Self(FluidParam::HMass, value.value)
     }
 
     /// Mass specific entropy _(key: [`SMass`](FluidParam::SMass), SI units: J/kg/K)_.
+    #[must_use]
     pub fn entropy(value: SpecificHeatCapacity) -> Self {
         Self(FluidParam::SMass, value.value)
     }
 
     /// Mass specific internal energy _(key: [`UMass`](FluidParam::UMass), SI units: J/kg)_.
+    #[must_use]
     pub fn internal_energy(value: AvailableEnergy) -> Self {
         Self(FluidParam::UMass, value.value)
     }
 
     /// Molar density _(key: [`DMolar`](FluidParam::DMolar), SI units: mol/m³)_.
+    #[must_use]
     pub fn molar_density(value: MolarConcentration) -> Self {
         Self(FluidParam::DMolar, value.value)
     }
 
     /// Molar specific enthalpy _(key: [`HMolar`](FluidParam::HMolar), SI units: J/mol)_.
+    #[must_use]
     pub fn molar_enthalpy(value: MolarEnergy) -> Self {
         Self(FluidParam::HMolar, value.value)
     }
 
     /// Molar specific entropy _(key: [`SMolar`](FluidParam::SMolar), SI units: J/mol/K)_.
+    #[must_use]
     pub fn molar_entropy(value: MolarHeatCapacity) -> Self {
         Self(FluidParam::SMolar, value.value)
     }
 
     /// Molar specific internal energy _(key: [`UMolar`](FluidParam::UMolar), SI units: J/mol)_.
+    #[must_use]
     pub fn molar_internal_energy(value: MolarEnergy) -> Self {
         Self(FluidParam::UMolar, value.value)
     }
 
     /// Pressure _(key: [`P`](FluidParam::P), SI units: Pa)_.
+    #[must_use]
     pub fn pressure(value: Pressure) -> Self {
         Self(FluidParam::P, value.value)
     }
 
     /// Vapor quality _(key: [`Q`](FluidParam::Q), SI units: dimensionless, from 0 to 1)_.
+    #[must_use]
     pub fn quality(value: Ratio) -> Self {
         Self(FluidParam::Q, value.value)
     }
 
     /// Temperature _(key: [`T`](FluidParam::T), SI units: K)_.
+    #[must_use]
     pub fn temperature(value: ThermodynamicTemperature) -> Self {
         Self(FluidParam::T, value.value)
     }

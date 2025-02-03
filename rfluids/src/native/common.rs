@@ -75,7 +75,7 @@ impl From<MessageBuffer> for String {
 
 macro_rules! const_ptr_c_char {
     ($value:expr) => {
-        format!("{}{}", $value, "\0").as_ptr() as *const c_char
+        format!("{}{}", $value, "\0").as_ptr().cast::<c_char>()
     };
 }
 

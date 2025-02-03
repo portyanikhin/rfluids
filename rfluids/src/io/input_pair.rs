@@ -1,6 +1,6 @@
 use super::FluidParam;
 
-/// CoolProp fluids input pairs.
+/// `CoolProp` fluids input pairs.
 ///
 /// # Examples
 ///

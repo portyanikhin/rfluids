@@ -3,7 +3,7 @@
 use super::try_from;
 use strum_macros::{AsRefStr, EnumString, FromRepr};
 
-/// CoolProp fluids input/output parameters.
+/// `CoolProp` fluids input/output parameters.
 ///
 /// # Examples
 ///
@@ -294,7 +294,7 @@ impl TryFrom<f64> for FluidParam {
     }
 }
 
-/// CoolProp fluids trivial output parameters.
+/// `CoolProp` fluids trivial output parameters.
 ///
 /// # Examples
 ///
@@ -853,7 +853,7 @@ mod tests {
             + PartialEq,
     {
         assert_eq!(T::try_from(valid_value), Ok(expected));
-        assert_eq!(T::try_from(valid_value as f64), Ok(expected));
+        assert_eq!(T::try_from(f64::from(valid_value)), Ok(expected));
     }
 
     #[rstest]

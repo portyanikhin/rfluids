@@ -110,7 +110,7 @@ pub enum Phase {
     #[strum(to_string = "phase_unknown", serialize = "unknown")]
     Unknown = 7,
 
-    /// CoolProp to determine phase.
+    /// `CoolProp` to determine phase.
     #[strum(
         to_string = "phase_not_imposed",
         serialize = "not_imposed",
@@ -212,7 +212,7 @@ mod tests {
     #[case(8, NotImposed)]
     fn try_from_valid_u8_or_f64_returns_ok(#[case] valid_value: u8, #[case] expected: Phase) {
         assert_eq!(Phase::try_from(valid_value), Ok(expected));
-        assert_eq!(Phase::try_from(valid_value as f64), Ok(expected));
+        assert_eq!(Phase::try_from(f64::from(valid_value)), Ok(expected));
     }
 
     #[rstest]

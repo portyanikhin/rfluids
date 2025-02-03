@@ -17,7 +17,7 @@
 //! rfluids = "0.1.0-alpha"
 //! ```
 //!
-//! **NB.** It comes with native CoolProp dynamic libraries for supported platforms.
+//! **NB.** It comes with native `CoolProp` dynamic libraries for supported platforms.
 //! The library required for your platform will be automatically
 //! copied to the target directory during build.
 //!
@@ -25,7 +25,15 @@
 //!
 //! This project is licensed under [MIT License](https://github.com/portyanikhin/rfluids/blob/main/LICENSE).
 
-#![warn(missing_docs)]
+#![warn(clippy::all, clippy::pedantic, missing_docs)]
+#![allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_sign_loss,
+    clippy::float_cmp,
+    clippy::too_many_lines,
+    clippy::missing_panics_doc
+)]
 
 pub extern crate uom;
 

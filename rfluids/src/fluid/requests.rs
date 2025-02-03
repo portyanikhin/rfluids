@@ -1,6 +1,6 @@
 use crate::error::FluidUpdateError;
 use crate::io::{FluidInput, FluidInputPair, FluidParam, Input};
-use crate::substance::*;
+use crate::substance::{BackendName, Substance};
 use std::borrow::Cow;
 
 pub(crate) struct FluidCreateRequest<'a> {
@@ -84,6 +84,7 @@ mod tests {
 
     mod create_request {
         use super::*;
+        use crate::substance::*;
         use crate::uom::si::f64::Ratio;
         use crate::uom::si::ratio::percent;
         use std::collections::HashMap;
@@ -156,7 +157,7 @@ mod tests {
 
         #[test]
         fn two_fluid_inputs_from_fluid_update_request_returns_expected_value() {
-            let request = FluidUpdateRequest(FluidInputPair::PT, 101325.0, 293.15);
+            let request = FluidUpdateRequest(FluidInputPair::PT, 101_325.0, 293.15);
             let result = <(FluidInput, FluidInput)>::from(request);
             assert_eq!(result.0.key(), FluidParam::P);
             assert_eq!(result.0.si_value(), request.1);
@@ -173,7 +174,7 @@ mod tests {
             let result2 = FluidUpdateRequest::try_from((input2, input1)).unwrap();
             assert_eq!(result1, result2);
             assert_eq!(result1.0, FluidInputPair::PT);
-            assert_relative_eq!(result1.1, 101325.0);
+            assert_relative_eq!(result1.1, 101_325.0);
             assert_relative_eq!(result1.2, 293.15);
         }
 

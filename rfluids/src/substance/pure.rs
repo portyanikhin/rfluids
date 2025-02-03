@@ -4,7 +4,7 @@
 use strum_macros::EnumIter;
 use strum_macros::{AsRefStr, EnumString};
 
-/// CoolProp pure or pseudo-pure substances.
+/// `CoolProp` pure or pseudo-pure substances.
 ///
 /// # Examples
 ///

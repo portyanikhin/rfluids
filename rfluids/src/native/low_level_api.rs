@@ -2,7 +2,7 @@ use super::common::{const_ptr_c_char, ErrorBuffer, COOLPROP};
 use crate::error::CoolPropError;
 use core::ffi::{c_char, c_long};
 
-/// CoolProp thread safe low-level API.
+/// `CoolProp` thread safe low-level API.
 #[derive(Debug)]
 pub struct AbstractState {
     ptr: c_long,
@@ -162,7 +162,7 @@ impl AbstractState {
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_update(
                 self.ptr,
-                input_pair_key.into() as c_long,
+                c_long::from(input_pair_key.into()),
                 input1,
                 input2,
                 error.code,
@@ -244,7 +244,7 @@ impl AbstractState {
         let value = unsafe {
             COOLPROP.lock().unwrap().AbstractState_keyed_output(
                 self.ptr,
-                key as c_long,
+                c_long::from(key),
                 error.code,
                 error.message.buffer,
                 error.message.capacity,
@@ -340,8 +340,7 @@ impl AbstractState {
         Self::result((), error)?;
         if !value.is_finite() {
             return Err(CoolPropError(format!(
-                "Unable to get the output with key '{}' due to invalid or undefined state!",
-                key
+                "Unable to get the output with key '{key}' due to invalid or undefined state!",
             )));
         }
         Ok(value)
@@ -377,11 +376,11 @@ mod tests {
             .map(move |p| {
                 let mut sut = AbstractState::new("HEOS", "Water").unwrap();
                 sut.specify_phase(Phase::TwoPhase).unwrap();
-                sut.update(FluidInputPair::PQ, p as f64, 0.0).unwrap();
+                sut.update(FluidInputPair::PQ, f64::from(p), 0.0).unwrap();
                 sut.keyed_output(FluidParam::T)
             })
             .collect();
-        assert!(result.iter().all(|r| r.is_ok()));
+        assert!(result.iter().all(Result::is_ok));
     }
 
     #[rstest]
@@ -441,14 +440,14 @@ mod tests {
     #[test]
     fn update_valid_inputs_returns_ok() {
         let mut sut = AbstractState::new("HEOS", "Water").unwrap();
-        let result = sut.update(FluidInputPair::PT, 101325.0, 293.15);
+        let result = sut.update(FluidInputPair::PT, 101_325.0, 293.15);
         assert!(result.is_ok());
     }
 
     #[test]
     fn update_invalid_inputs_returns_err() {
         let mut sut = AbstractState::new("HEOS", "Water").unwrap();
-        let result = sut.update(FluidInputPair::PQ, 101325.0, -1.0);
+        let result = sut.update(FluidInputPair::PQ, 101_325.0, -1.0);
         assert_eq!(
             result.unwrap_err().to_string(),
             "Error: Input vapor quality [Q] must be between 0 and 1"
@@ -458,9 +457,9 @@ mod tests {
     #[test]
     fn keyed_output_valid_state_returns_ok() {
         let mut sut = AbstractState::new("HEOS", "Water").unwrap();
-        sut.update(FluidInputPair::PQ, 101325.0, 1.0).unwrap();
+        sut.update(FluidInputPair::PQ, 101_325.0, 1.0).unwrap();
         let result = sut.keyed_output(FluidParam::CpMass);
-        assert_relative_eq!(result.unwrap(), 2079.937085633241);
+        assert_relative_eq!(result.unwrap(), 2_079.937_085_633_241);
     }
 
     #[test]
@@ -487,10 +486,10 @@ mod tests {
     fn specify_phase_valid_input_specifies_phase_for_all_further_calculations() {
         let mut sut = AbstractState::new("HEOS", "Water").unwrap();
         sut.specify_phase(Phase::Liquid).unwrap();
-        let mut result = sut.update(FluidInputPair::PT, 101325.0, 293.15);
+        let mut result = sut.update(FluidInputPair::PT, 101_325.0, 293.15);
         assert!(result.is_ok());
         sut.specify_phase(Phase::Gas).unwrap();
-        result = sut.update(FluidInputPair::PT, 101325.0, 293.15);
+        result = sut.update(FluidInputPair::PT, 101_325.0, 293.15);
         assert!(result.is_err());
     }
 
@@ -509,10 +508,10 @@ mod tests {
     fn unspecify_phase_unspecifies_phase_for_all_further_calculations() {
         let mut sut = AbstractState::new("HEOS", "Water").unwrap();
         sut.specify_phase(Phase::Gas).unwrap();
-        let mut result = sut.update(FluidInputPair::PT, 101325.0, 293.15);
+        let mut result = sut.update(FluidInputPair::PT, 101_325.0, 293.15);
         assert!(result.is_err());
         sut.unspecify_phase();
-        result = sut.update(FluidInputPair::PT, 101325.0, 293.15);
+        result = sut.update(FluidInputPair::PT, 101_325.0, 293.15);
         assert!(result.is_ok());
     }
 }

@@ -1,11 +1,11 @@
-use super::*;
+use super::{BinaryMixKind, CustomMix, IncompPure, PredefinedMix, Pure};
 
 const HELMHOLTZ_EOS_BACKEND_NAME: &str = "HEOS";
 const INCOMP_BACKEND_NAME: &str = "INCOMP";
 
-/// CoolProp backend name.
+/// `CoolProp` backend name.
 pub trait BackendName {
-    /// Returns CoolProp backend name.
+    /// Returns `CoolProp` backend name.
     ///
     /// # Examples
     ///

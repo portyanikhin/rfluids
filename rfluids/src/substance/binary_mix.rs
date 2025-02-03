@@ -9,7 +9,7 @@ use strum::EnumProperty;
 use strum_macros::EnumIter;
 use strum_macros::{AsRefStr, EnumProperty, EnumString};
 
-/// CoolProp incompressible binary mixtures _(mass-based or volume-based)_.
+/// `CoolProp` incompressible binary mixtures _(mass-based or volume-based)_.
 ///
 /// # Examples
 ///
@@ -233,6 +233,7 @@ impl BinaryMixKind {
     ///
     /// assert_eq!(substance::BinaryMixKind::MPG.min_fraction(), Ratio::new::<percent>(0.0));
     /// ```
+    #[must_use]
     pub fn min_fraction(&self) -> Ratio {
         Ratio::new::<ratio>(f64::from_str(self.get_str("min_fraction").unwrap()).unwrap())
     }
@@ -248,6 +249,7 @@ impl BinaryMixKind {
     ///
     /// assert_eq!(substance::BinaryMixKind::MPG.max_fraction(), Ratio::new::<percent>(60.0));
     /// ```
+    #[must_use]
     pub fn max_fraction(&self) -> Ratio {
         Ratio::new::<ratio>(f64::from_str(self.get_str("max_fraction").unwrap()).unwrap())
     }

@@ -7,7 +7,7 @@ use crate::uom::si::ratio::ratio;
 use crate::uom::ConstZero;
 use std::collections::HashMap;
 
-/// CoolProp custom mixture.
+/// `CoolProp` custom mixture.
 ///
 /// # See also
 ///
@@ -119,13 +119,14 @@ impl CustomMix {
     /// .unwrap();
     /// assert_ne!(mass_based_mix.to_mole_based(), mass_based_mix);
     /// ```
+    #[must_use]
     pub fn to_mole_based(&self) -> Self {
         match self {
             CustomMix::MassBased(c) => {
                 let mut components = c.clone().into_iter().collect::<Vec<_>>();
                 let mut sum = 0.0;
                 for component in &mut components {
-                    component.1 /= Self::molar_mass(&component.0);
+                    component.1 /= Self::molar_mass(component.0);
                     sum += component.1.value;
                 }
                 for component in &mut components {
@@ -133,15 +134,15 @@ impl CustomMix {
                 }
                 Self::MoleBased(HashMap::from_iter(components))
             }
-            _ => self.clone(),
+            CustomMix::MoleBased(_) => self.clone(),
         }
     }
 
     /// Specified components and their fractions.
+    #[must_use]
     pub fn components(&self) -> &HashMap<Pure, Ratio> {
         match self {
-            CustomMix::MoleBased(components) => components,
-            CustomMix::MassBased(components) => components,
+            CustomMix::MoleBased(components) | CustomMix::MassBased(components) => components,
         }
     }
 
@@ -161,7 +162,7 @@ impl CustomMix {
         Ok(())
     }
 
-    fn molar_mass(component: &Pure) -> f64 {
+    fn molar_mass(component: Pure) -> f64 {
         AbstractState::new(component.backend_name(), component.as_ref())
             .unwrap()
             .keyed_output(MolarMass)
@@ -181,18 +182,20 @@ mod tests {
     #[case(HashMap::from([(Pure::Water, 60.0), (Pure::Ethanol, 40.0)]))]
     #[case(HashMap::from([(Pure::R32, 50.0), (Pure::R125, 50.0)]))]
     fn mole_or_mass_based_from_valid_input_returns_ok(#[case] components: HashMap<Pure, f64>) {
-        assert!(CustomMix::mole_based(HashMap::from_iter(
+        assert!(CustomMix::mole_based(
             components
                 .clone()
                 .into_iter()
                 .map(|c| (c.0, Ratio::new::<percent>(c.1)))
-        ))
+                .collect()
+        )
         .is_ok());
-        assert!(CustomMix::mass_based(HashMap::from_iter(
+        assert!(CustomMix::mass_based(
             components
                 .into_iter()
                 .map(|c| (c.0, Ratio::new::<percent>(c.1)))
-        ))
+                .collect()
+        )
         .is_ok());
     }
 
@@ -219,21 +222,23 @@ mod tests {
         #[case] expected: CustomMixError,
     ) {
         assert_eq!(
-            CustomMix::mole_based(HashMap::from_iter(
+            CustomMix::mole_based(
                 components
                     .clone()
                     .into_iter()
                     .map(|c| (c.0, Ratio::new::<percent>(c.1)))
-            ))
+                    .collect()
+            )
             .unwrap_err(),
             expected
         );
         assert_eq!(
-            CustomMix::mass_based(HashMap::from_iter(
+            CustomMix::mass_based(
                 components
                     .into_iter()
                     .map(|c| (c.0, Ratio::new::<percent>(c.1)))
-            ))
+                    .collect()
+            )
             .unwrap_err(),
             expected
         );
@@ -248,7 +253,7 @@ mod tests {
         .unwrap();
         let result = sut.to_mole_based();
         assert_eq!(result, sut);
-        assert!(matches(result, [("Water", 0.8), ("Ethanol", 0.2)]));
+        assert!(matches(&result, [("Water", 0.8), ("Ethanol", 0.2)]));
     }
 
     #[test]
@@ -260,14 +265,17 @@ mod tests {
         .unwrap();
         let result = sut.to_mole_based();
         assert_ne!(result, sut);
-        assert!(matches(sut, [("R32", 0.5), ("R125", 0.5)]));
+        assert!(matches(&sut, [("R32", 0.5), ("R125", 0.5)]));
         assert!(matches(
-            result,
-            [("R32", 0.6976146993758624), ("R125", 0.30238530062413754)]
+            &result,
+            [
+                ("R32", 0.697_614_699_375_862_4),
+                ("R125", 0.302_385_300_624_137_54)
+            ]
         ));
     }
 
-    fn matches(mix: CustomMix, expected: [(&str, f64); 2]) -> bool {
+    fn matches(mix: &CustomMix, expected: [(&str, f64); 2]) -> bool {
         mix.components().len() == expected.len()
             && mix
                 .components()
