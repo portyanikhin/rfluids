@@ -352,6 +352,16 @@ mod tests {
     }
 
     #[rstest]
+    fn reducing_temperature_returns_option(
+        mut water: Fluid<Undefined>,
+        mut incomp_water: Fluid<Undefined>,
+    ) {
+        assert!(water.reducing_temperature().is_some());
+        assert_relative_eq!(water.reducing_temperature().unwrap().value, 647.096);
+        assert!(incomp_water.reducing_temperature().is_none());
+    }
+
+    #[rstest]
     fn update_valid_inputs_returns_ok(
         water: Fluid<Undefined>,
         temperature: FluidInput,
