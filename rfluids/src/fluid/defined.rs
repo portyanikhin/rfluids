@@ -341,6 +341,13 @@ mod tests {
     }
 
     #[rstest]
+    fn triple_temperature_returns_option(mut water: Fluid, mut incomp_water: Fluid) {
+        assert!(water.triple_temperature().is_some());
+        assert_relative_eq!(water.triple_temperature().unwrap().value, 273.16);
+        assert!(incomp_water.triple_temperature().is_none());
+    }
+
+    #[rstest]
     fn update_valid_inputs_returns_ok(
         mut water: Fluid,
         temperature: FluidInput,

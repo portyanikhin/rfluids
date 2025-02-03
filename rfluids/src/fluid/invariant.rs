@@ -592,6 +592,32 @@ impl<S: StateVariant> Fluid<S> {
         )?))
     }
 
+    /// Triple point temperature
+    /// _(key: [`TTriple`](FluidTrivialParam::TTriple), SI units: K)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::ratio::percent;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert_relative_eq!(water.triple_temperature().unwrap().value, 273.16);
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    /// );
+    /// assert!(propylene_glycol.triple_temperature().is_none());
+    /// ```
+    pub fn triple_temperature(&mut self) -> Option<ThermodynamicTemperature> {
+        Some(ThermodynamicTemperature::new::<kelvin>(non_negative(
+            self.trivial_output(FluidTrivialParam::TTriple),
+        )?))
+    }
+
     pub(crate) fn inner_update(
         &mut self,
         input1: FluidInput,
