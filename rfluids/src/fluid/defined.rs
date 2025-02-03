@@ -3,7 +3,7 @@ use crate::error::FluidStateError;
 use crate::io::FluidInput;
 
 impl Fluid {
-    /// Updates the state and returns a mutable reference to itself.
+    /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
     /// # Args
     ///
@@ -35,18 +35,26 @@ impl Fluid {
     /// ).unwrap();
     ///
     /// // The `Fluid` instance now has `Defined` state variant
-    /// // and it's state can be updated in place by calling `update` method
+    /// // and it's thermodynamic state can be updated in place by calling `update` method
     /// // (which returns a mutable reference to the instance)
     /// let same_water_in_new_state: Result<&mut Fluid, FluidStateError> = water.update(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(2.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(40.0)),
     /// );
     /// assert!(same_water_in_new_state.is_ok());
+    ///
+    /// // Calling `in_state` method on `Fluid<Defined>` will return
+    /// // a new instance in the specified thermodynamic state
+    /// let new_water: Result<Fluid, FluidStateError> = water.in_state(
+    ///     FluidInput::pressure(Pressure::new::<atmosphere>(4.0)),
+    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(80.0)),
+    /// );
+    /// assert!(new_water.is_ok());
     /// ```
     ///
     /// # See also
     ///
-    /// - [`Fluid<Undefined>::in_state`](crate::fluid::Fluid<Undefined>::in_state)
+    /// - [`Fluid::in_state`](crate::fluid::Fluid::in_state)
     pub fn update(
         &mut self,
         input1: FluidInput,
@@ -54,6 +62,70 @@ impl Fluid {
     ) -> Result<&mut Self, FluidStateError> {
         self.inner_update(input1, input2)?;
         Ok(self)
+    }
+
+    /// Returns a new instance in the specified thermodynamic state.
+    ///
+    /// # Args
+    ///
+    /// - input1 -- first input property.
+    /// - input2 -- second input property.
+    ///
+    /// # Errors
+    ///
+    /// For invalid/unsupported inputs or invalid state,
+    /// a [`FluidStateError`] is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::error::FluidStateError;
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::pressure::atmosphere;
+    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
+    ///
+    /// // After creation the `Fluid` instance has `Undefined` state variant
+    /// let mut water: Fluid<Undefined> = Fluid::from(Pure::Water);
+    ///
+    /// // Calling `in_state` method will move the initial value and
+    /// // perform conversion between `Undefined` and `Defined` state variants
+    /// // (since `Defined` is the default state variant, it can be omitted)
+    /// let mut water: Fluid = water.in_state(
+    ///     FluidInput::pressure(Pressure::new::<atmosphere>(1.0)),
+    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0)),
+    /// ).unwrap();
+    ///
+    /// // The `Fluid` instance now has `Defined` state variant
+    /// // and it's thermodynamic state can be updated in place by calling `update` method
+    /// // (which returns a mutable reference to the instance)
+    /// let same_water_in_new_state: Result<&mut Fluid, FluidStateError> = water.update(
+    ///     FluidInput::pressure(Pressure::new::<atmosphere>(2.0)),
+    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(40.0)),
+    /// );
+    /// assert!(same_water_in_new_state.is_ok());
+    ///
+    /// // Calling `in_state` method on `Fluid<Defined>` will return
+    /// // a new instance in the specified thermodynamic state
+    /// let new_water: Result<Fluid, FluidStateError> = water.in_state(
+    ///     FluidInput::pressure(Pressure::new::<atmosphere>(4.0)),
+    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(80.0)),
+    /// );
+    /// assert!(new_water.is_ok());
+    /// ```
+    ///
+    /// # See also
+    ///
+    /// - [`Fluid::update`](crate::fluid::Fluid::update)
+    pub fn in_state(
+        &self,
+        input1: FluidInput,
+        input2: FluidInput,
+    ) -> Result<Self, FluidStateError> {
+        let mut fluid = Fluid::try_from(self.substance.clone())
+            .unwrap()
+            .in_state(input1, input2)?;
+        fluid.trivial_outputs.clone_from(&self.trivial_outputs);
+        Ok(fluid)
     }
 }
 
@@ -392,6 +464,47 @@ mod tests {
     ) {
         assert!(matches!(
             water.update(temperature, negative_pressure).unwrap_err(),
+            FluidStateError::UpdateFailed(_)
+        ));
+    }
+
+    #[rstest]
+    fn in_state_valid_inputs_returns_ok(
+        water: Fluid,
+        temperature: FluidInput,
+        pressure: FluidInput,
+    ) {
+        assert!(water.in_state(temperature, pressure).is_ok());
+    }
+
+    #[rstest]
+    fn in_state_same_inputs_returns_err(water: Fluid, pressure: FluidInput) {
+        assert_eq!(
+            water.in_state(pressure, pressure).unwrap_err(),
+            FluidStateError::InvalidInputPair(pressure.key(), pressure.key())
+        );
+    }
+
+    #[rstest]
+    fn in_state_invalid_inputs_returns_err(
+        water: Fluid,
+        temperature: FluidInput,
+        infinite_pressure: FluidInput,
+    ) {
+        assert_eq!(
+            water.in_state(temperature, infinite_pressure).unwrap_err(),
+            FluidStateError::InvalidInputValue
+        );
+    }
+
+    #[rstest]
+    fn in_state_invalid_state_returns_err(
+        water: Fluid,
+        temperature: FluidInput,
+        negative_pressure: FluidInput,
+    ) {
+        assert!(matches!(
+            water.in_state(temperature, negative_pressure).unwrap_err(),
             FluidStateError::UpdateFailed(_)
         ));
     }
