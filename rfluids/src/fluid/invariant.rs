@@ -511,6 +511,32 @@ impl<S: StateVariant> Fluid<S> {
         ))
     }
 
+    /// Reducing point pressure
+    /// _(key: [`PReducing`](FluidTrivialParam::PReducing), SI units: Pa)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::ratio::percent;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert_relative_eq!(water.reducing_pressure().unwrap().value, 22.064e6);
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    /// );
+    /// assert!(propylene_glycol.reducing_pressure().is_none());
+    /// ```
+    pub fn reducing_pressure(&mut self) -> Option<Pressure> {
+        Some(Pressure::new::<pascal>(non_negative(
+            self.trivial_output(FluidTrivialParam::PReducing),
+        )?))
+    }
+
     pub(crate) fn inner_update(
         &mut self,
         input1: FluidInput,

@@ -342,6 +342,16 @@ mod tests {
     }
 
     #[rstest]
+    fn reducing_pressure_returns_option(
+        mut water: Fluid<Undefined>,
+        mut incomp_water: Fluid<Undefined>,
+    ) {
+        assert!(water.reducing_pressure().is_some());
+        assert_relative_eq!(water.reducing_pressure().unwrap().value, 22.064e6);
+        assert!(incomp_water.reducing_pressure().is_none());
+    }
+
+    #[rstest]
     fn update_valid_inputs_returns_ok(
         water: Fluid<Undefined>,
         temperature: FluidInput,
