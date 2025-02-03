@@ -20,10 +20,11 @@ mod pure;
 ///
 /// Superset of:
 ///
-///  - [`Pure`]
-///  - [`IncompPure`]
-///  - [`PredefinedMix`]
-///  - [`BinaryMix`]
+/// - [`Pure`]
+/// - [`IncompPure`]
+/// - [`PredefinedMix`]
+/// - [`BinaryMix`]
+/// - [`CustomMix`]
 #[derive(Debug, Clone, PartialEq)]
 pub enum Substance {
     /// Pure or pseudo-pure substance.

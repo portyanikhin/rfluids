@@ -22,8 +22,8 @@ impl CoolProp {
     /// - `input2_key` -- key of the second input property
     ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_.
     /// - `input2_value` -- value of the second input property _(in SI units)_.
-    /// - `fluid_name` -- name of the fluid _(raw [`&str`](str),
-    ///   [`Substance`](crate::substance::Substance) or its subset)_.
+    /// - `fluid_name` -- name of the fluid
+    ///   _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_.
     ///
     /// # Errors
     ///
@@ -177,8 +177,8 @@ impl CoolProp {
     ///
     /// - `output_key` -- key of the _trivial_ output
     ///   _(raw [`&str`](str) or [`FluidTrivialParam`](crate::io::FluidTrivialParam))_.
-    /// - `fluid_name` -- name of the fluid _(raw [`&str`](str),
-    ///   [`Substance`](crate::substance::Substance) or its subset)_.
+    /// - `fluid_name` -- name of the fluid
+    ///   _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_.
     ///
     /// # Errors
     ///

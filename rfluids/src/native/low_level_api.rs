@@ -15,9 +15,8 @@ impl AbstractState {
     ///
     /// - `backend_name` -- name of the backend _(raw [`&str`](str)
     ///   or [`BackendName::backend_name`](crate::substance::BackendName::backend_name))_.
-    /// - `fluid_names` -- names of the fluids separated by the `&` symbol
-    ///   or just a single fluid name _(raw [`&str`](str),
-    ///   [`Substance`](crate::substance::Substance) or its subset)_.
+    /// - `fluid_names` -- names of the fluids separated by the `&` symbol or just a single
+    ///   fluid name _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_.
     ///
     /// # Errors
     ///
