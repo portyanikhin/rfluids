@@ -9,8 +9,7 @@ use std::sync::MutexGuard;
 pub struct CoolProp;
 
 impl CoolProp {
-    /// Returns a value that depends on the thermodynamic state
-    /// of pure/pseudo-pure fluid or mixture.
+    /// Returns a value that depends on the thermodynamic state of the fluid.
     ///
     /// # Args
     ///
@@ -171,7 +170,7 @@ impl CoolProp {
     }
 
     /// Returns a value that doesn't depend on the thermodynamic state
-    /// of pure/pseudo-pure fluid or mixture _(trivial output)_.
+    /// of the fluid _(trivial output)_.
     ///
     /// # Args
     ///
@@ -199,11 +198,10 @@ impl CoolProp {
     /// R32 100-year global warming potential _(dimensionless)_:
     ///
     /// ```
-    /// use approx::assert_relative_eq;
     /// use rfluids::prelude::native::*;
     ///
     /// let result = CoolProp::props1_si("GWP100", "R32").unwrap();
-    /// assert_relative_eq!(result, 675.0);
+    /// assert_eq!(result, 675.0);
     /// ```
     ///
     /// # See also
