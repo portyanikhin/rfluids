@@ -55,9 +55,10 @@ pub enum FluidFromCustomMixError {
     Unsupported(#[from] CoolPropError),
 }
 
-/// Error during [`Fluid::update`](crate::fluid::Fluid::update).
+/// Error during [`Fluid::update`](crate::fluid::Fluid::update)
+/// or [`Fluid<Undefined>::in_state`](crate::fluid::Fluid<Undefined>::in_state).
 #[derive(Error, Debug, Clone, Eq, PartialEq)]
-pub enum FluidUpdateError {
+pub enum FluidStateError {
     /// Specified inputs are invalid.
     #[error("Specified inputs ({0:?}, {1:?}) are invalid!")]
     InvalidInputPair(FluidParam, FluidParam),

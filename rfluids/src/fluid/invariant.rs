@@ -2,7 +2,7 @@ use uom::si::molar_mass::kilogram_per_mole;
 
 use super::requests::FluidUpdateRequest;
 use super::Fluid;
-use crate::error::FluidUpdateError;
+use crate::error::FluidStateError;
 use crate::io::{FluidInput, FluidTrivialParam};
 use crate::state_variant::StateVariant;
 use crate::substance::Substance;
@@ -623,7 +623,7 @@ impl<S: StateVariant> Fluid<S> {
         &mut self,
         input1: FluidInput,
         input2: FluidInput,
-    ) -> Result<(), FluidUpdateError> {
+    ) -> Result<(), FluidStateError> {
         let request: FluidUpdateRequest = (input1, input2).try_into()?;
         self.backend.update(request.0, request.1, request.2)?;
         self.outputs.clear();

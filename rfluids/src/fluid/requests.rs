@@ -1,4 +1,4 @@
-use crate::error::FluidUpdateError;
+use crate::error::FluidStateError;
 use crate::io::{FluidInput, FluidInputPair, FluidParam, Input};
 use crate::substance::{BackendName, Substance};
 use std::borrow::Cow;
@@ -60,13 +60,13 @@ impl From<FluidUpdateRequest> for (FluidInput, FluidInput) {
 }
 
 impl TryFrom<(FluidInput, FluidInput)> for FluidUpdateRequest {
-    type Error = FluidUpdateError;
+    type Error = FluidStateError;
 
     fn try_from(value: (FluidInput, FluidInput)) -> Result<Self, Self::Error> {
         let key = FluidInputPair::try_from((value.0.key(), value.1.key()))
-            .map_err(|_| FluidUpdateError::InvalidInputPair(value.0.key(), value.1.key()))?;
+            .map_err(|_| FluidStateError::InvalidInputPair(value.0.key(), value.1.key()))?;
         if !value.0.si_value().is_finite() || !value.1.si_value().is_finite() {
-            return Err(FluidUpdateError::InvalidInputValue);
+            return Err(FluidStateError::InvalidInputValue);
         }
         let (value1, value2) =
             if <(FluidParam, FluidParam)>::from(key) == (value.0.key(), value.1.key()) {
@@ -183,7 +183,7 @@ mod tests {
             let input = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
             assert_eq!(
                 FluidUpdateRequest::try_from((input, input)).unwrap_err(),
-                FluidUpdateError::InvalidInputPair(input.key(), input.key())
+                FluidStateError::InvalidInputPair(input.key(), input.key())
             );
         }
 
@@ -197,7 +197,7 @@ mod tests {
             let input2 = FluidInput::pressure(Pressure::new::<atmosphere>(value2));
             assert_eq!(
                 FluidUpdateRequest::try_from((input1, input2)).unwrap_err(),
-                FluidUpdateError::InvalidInputValue
+                FluidStateError::InvalidInputValue
             );
         }
     }
