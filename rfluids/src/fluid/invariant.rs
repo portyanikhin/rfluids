@@ -563,6 +563,35 @@ impl<S: StateVariant> Fluid<S> {
         )?))
     }
 
+    /// Triple point pressure
+    /// _(key: [`PTriple`](FluidTrivialParam::PTriple), SI units: Pa)_.
+    ///
+    /// If it's not available for the specified substance, returns [`None`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::ratio::percent;
+    ///
+    /// let mut water = Fluid::from(Pure::Water);
+    /// assert_relative_eq!(
+    ///     water.triple_pressure().unwrap().value,
+    ///     611.6548008968684
+    /// );
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    /// );
+    /// assert!(propylene_glycol.triple_pressure().is_none());
+    /// ```
+    pub fn triple_pressure(&mut self) -> Option<Pressure> {
+        Some(Pressure::new::<pascal>(non_negative(
+            self.trivial_output(FluidTrivialParam::PTriple),
+        )?))
+    }
+
     pub(crate) fn inner_update(
         &mut self,
         input1: FluidInput,

@@ -334,6 +334,13 @@ mod tests {
     }
 
     #[rstest]
+    fn triple_pressure_returns_option(mut water: Fluid, mut incomp_water: Fluid) {
+        assert!(water.triple_pressure().is_some());
+        assert_relative_eq!(water.triple_pressure().unwrap().value, 611.6548008968684);
+        assert!(incomp_water.triple_pressure().is_none());
+    }
+
+    #[rstest]
     fn update_valid_inputs_returns_ok(
         mut water: Fluid,
         temperature: FluidInput,
