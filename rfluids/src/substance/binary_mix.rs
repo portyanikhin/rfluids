@@ -333,62 +333,6 @@ impl BinaryMix {
     pub fn new_si(kind: BinaryMixKind, fraction: f64) -> Result<Self, BinaryMixError> {
         Self::new(kind, Ratio::new::<ratio>(fraction))
     }
-
-    /// Creates and returns a new [`BinaryMix`] instance
-    /// with same [`kind`](BinaryMix::kind) and other [`fraction`](BinaryMix::fraction).
-    ///
-    /// # Errors
-    ///
-    /// For invalid fraction _(out of [[`min_fraction`](BinaryMixKind::min_fraction);
-    /// [`max_fraction`](BinaryMixKind::max_fraction)] range)_, a [`BinaryMixError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::substance::{BinaryMix, BinaryMixKind};
-    /// use rfluids::uom::si::f64::Ratio;
-    /// use rfluids::uom::si::ratio::percent;
-    ///
-    /// let propylene_glycol = BinaryMix::new(
-    ///     BinaryMixKind::MPG, Ratio::new::<percent>(40.0)
-    /// ).unwrap();
-    /// assert!(propylene_glycol.with_fraction(Ratio::new::<percent>(20.0)).is_ok());
-    /// assert!(propylene_glycol.with_fraction(Ratio::new::<percent>(100.0)).is_err());
-    /// ```
-    ///
-    /// # See also
-    ///
-    /// - [`BinaryMix::with_fraction_si`](BinaryMix::with_fraction_si)
-    pub fn with_fraction(&self, other_fraction: Ratio) -> Result<Self, BinaryMixError> {
-        Self::new(self.kind, other_fraction)
-    }
-
-    /// Creates and returns a new [`BinaryMix`] instance
-    /// with same [`kind`](BinaryMix::kind) and other [`fraction`](BinaryMix::fraction)
-    /// passed in SI units _(dimensionless, from 0 to 1)_.
-    ///
-    /// # Errors
-    ///
-    /// For invalid fraction _(out of [[`min_fraction`](BinaryMixKind::min_fraction);
-    /// [`max_fraction`](BinaryMixKind::max_fraction)] range)_, a [`BinaryMixError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::substance::{BinaryMix, BinaryMixKind};
-    ///
-    /// let propylene_glycol =
-    ///     BinaryMix::new_si(BinaryMixKind::MPG, 0.4).unwrap();
-    /// assert!(propylene_glycol.with_fraction_si(0.2).is_ok());
-    /// assert!(propylene_glycol.with_fraction_si(1.0).is_err());
-    /// ```
-    ///
-    /// # See also
-    ///
-    /// - [`BinaryMix::with_fraction`](BinaryMix::with_fraction)
-    pub fn with_fraction_si(&self, other_fraction: f64) -> Result<Self, BinaryMixError> {
-        Self::new_si(self.kind, other_fraction)
-    }
 }
 
 #[cfg(test)]
@@ -585,7 +529,7 @@ mod tests {
 
     mod binary_mix {
         use super::*;
-        use crate::uom::si::ratio::{part_per_billion, percent};
+        use crate::uom::si::ratio::part_per_billion;
         use strum::IntoEnumIterator;
 
         #[test]
@@ -636,19 +580,6 @@ mod tests {
                     }
                 );
             }
-        }
-
-        #[test]
-        fn with_fraction_returns_binary_mix_with_same_kind_and_other_fraction() {
-            let sut = BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap();
-            let other_fraction = Ratio::new::<percent>(20.0);
-            let sut_with_other_fraction = sut.with_fraction(other_fraction).unwrap();
-            assert_eq!(sut_with_other_fraction.kind, sut.kind);
-            assert_eq!(sut_with_other_fraction.fraction, other_fraction);
-            assert_eq!(
-                sut_with_other_fraction,
-                sut.with_fraction_si(other_fraction.value).unwrap()
-            );
         }
     }
 }
