@@ -64,9 +64,9 @@ impl<S: StateVariant> Fluid<S> {
         if let Substance::PredefinedMix(_) = self.substance {
             return None;
         }
-        Some(MassDensity::new::<kilogram_per_cubic_meter>(non_negative(
-            self.trivial_output(FluidTrivialParam::DMassCritical),
-        )?))
+        self.trivial_output(FluidTrivialParam::DMassCritical)
+            .and_then(non_negative)
+            .map(MassDensity::new::<kilogram_per_cubic_meter>)
     }
 
     /// Critical point molar density
@@ -94,9 +94,9 @@ impl<S: StateVariant> Fluid<S> {
         if let Substance::PredefinedMix(_) = self.substance {
             return None;
         }
-        Some(MolarConcentration::new::<mole_per_cubic_meter>(
-            non_negative(self.trivial_output(FluidTrivialParam::DMolarCritical))?,
-        ))
+        self.trivial_output(FluidTrivialParam::DMolarCritical)
+            .and_then(non_negative)
+            .map(MolarConcentration::new::<mole_per_cubic_meter>)
     }
 
     /// Critical point pressure
@@ -121,9 +121,9 @@ impl<S: StateVariant> Fluid<S> {
         if let Substance::PredefinedMix(_) = self.substance {
             return None;
         }
-        Some(Pressure::new::<pascal>(non_negative(
-            self.trivial_output(FluidTrivialParam::PCritical),
-        )?))
+        self.trivial_output(FluidTrivialParam::PCritical)
+            .and_then(non_negative)
+            .map(Pressure::new::<pascal>)
     }
 
     /// Critical point temperature
@@ -148,9 +148,9 @@ impl<S: StateVariant> Fluid<S> {
         if let Substance::PredefinedMix(_) = self.substance {
             return None;
         }
-        Some(ThermodynamicTemperature::new::<kelvin>(non_negative(
-            self.trivial_output(FluidTrivialParam::TCritical),
-        )?))
+        self.trivial_output(FluidTrivialParam::TCritical)
+            .and_then(non_negative)
+            .map(ThermodynamicTemperature::new::<kelvin>)
     }
 
     /// Flammability hazard index
@@ -176,7 +176,8 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(propylene_glycol.flammability_hazard().is_none());
     /// ```
     pub fn flammability_hazard(&mut self) -> Option<f64> {
-        non_negative(self.trivial_output(FluidTrivialParam::FH))
+        self.trivial_output(FluidTrivialParam::FH)
+            .and_then(non_negative)
     }
 
     /// Freezing temperature for incompressible mixtures
@@ -203,9 +204,9 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     /// ```
     pub fn freezing_temperature(&mut self) -> Option<ThermodynamicTemperature> {
-        Some(ThermodynamicTemperature::new::<kelvin>(non_negative(
-            self.trivial_output(FluidTrivialParam::TFreeze),
-        )?))
+        self.trivial_output(FluidTrivialParam::TFreeze)
+            .and_then(non_negative)
+            .map(ThermodynamicTemperature::new::<kelvin>)
     }
 
     /// 20-year global warming potential
@@ -225,7 +226,8 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_eq!(r32.gwp20().unwrap(), 2330.0);
     /// ```
     pub fn gwp20(&mut self) -> Option<f64> {
-        non_negative(self.trivial_output(FluidTrivialParam::GWP20))
+        self.trivial_output(FluidTrivialParam::GWP20)
+            .and_then(non_negative)
     }
 
     /// 100-year global warming potential
@@ -245,7 +247,8 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_eq!(r32.gwp100().unwrap(), 675.0);
     /// ```
     pub fn gwp100(&mut self) -> Option<f64> {
-        non_negative(self.trivial_output(FluidTrivialParam::GWP100))
+        self.trivial_output(FluidTrivialParam::GWP100)
+            .and_then(non_negative)
     }
 
     /// 500-year global warming potential
@@ -265,7 +268,8 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_eq!(r32.gwp500().unwrap(), 205.0);
     /// ```
     pub fn gwp500(&mut self) -> Option<f64> {
-        non_negative(self.trivial_output(FluidTrivialParam::GWP500))
+        self.trivial_output(FluidTrivialParam::GWP500)
+            .and_then(non_negative)
     }
 
     /// Health hazard index
@@ -291,7 +295,8 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(propylene_glycol.health_hazard().is_none());
     /// ```
     pub fn health_hazard(&mut self) -> Option<f64> {
-        non_negative(self.trivial_output(FluidTrivialParam::HH))
+        self.trivial_output(FluidTrivialParam::HH)
+            .and_then(non_negative)
     }
 
     /// Maximum pressure
@@ -314,9 +319,9 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(propylene_glycol.max_pressure().is_none());
     /// ```
     pub fn max_pressure(&mut self) -> Option<Pressure> {
-        Some(Pressure::new::<pascal>(non_negative(
-            self.trivial_output(FluidTrivialParam::PMax),
-        )?))
+        self.trivial_output(FluidTrivialParam::PMax)
+            .and_then(non_negative)
+            .map(Pressure::new::<pascal>)
     }
 
     /// Maximum temperature
@@ -332,7 +337,9 @@ impl<S: StateVariant> Fluid<S> {
     /// ```
     pub fn max_temperature(&mut self) -> ThermodynamicTemperature {
         ThermodynamicTemperature::new::<kelvin>(
-            non_negative(self.trivial_output(FluidTrivialParam::TMax)).unwrap(),
+            self.trivial_output(FluidTrivialParam::TMax)
+                .and_then(non_negative)
+                .unwrap(),
         )
     }
 
@@ -360,9 +367,9 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(propylene_glycol.min_pressure().is_none());
     /// ```
     pub fn min_pressure(&mut self) -> Option<Pressure> {
-        Some(Pressure::new::<pascal>(non_negative(
-            self.trivial_output(FluidTrivialParam::PMin),
-        )?))
+        self.trivial_output(FluidTrivialParam::PMin)
+            .and_then(non_negative)
+            .map(Pressure::new::<pascal>)
     }
 
     /// Minimum temperature
@@ -378,7 +385,9 @@ impl<S: StateVariant> Fluid<S> {
     /// ```
     pub fn min_temperature(&mut self) -> ThermodynamicTemperature {
         ThermodynamicTemperature::new::<kelvin>(
-            non_negative(self.trivial_output(FluidTrivialParam::TMin)).unwrap(),
+            self.trivial_output(FluidTrivialParam::TMin)
+                .and_then(non_negative)
+                .unwrap(),
         )
     }
 
@@ -403,9 +412,9 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(propylene_glycol.molar_mass().is_none());
     /// ```
     pub fn molar_mass(&mut self) -> Option<MolarMass> {
-        Some(MolarMass::new::<kilogram_per_mole>(non_negative(
-            self.trivial_output(FluidTrivialParam::MolarMass),
-        )?))
+        self.trivial_output(FluidTrivialParam::MolarMass)
+            .and_then(non_negative)
+            .map(MolarMass::new::<kilogram_per_mole>)
     }
 
     /// Ozone depletion potential
@@ -428,7 +437,8 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_eq!(r22.odp().unwrap(), 0.05);
     /// ```
     pub fn odp(&mut self) -> Option<f64> {
-        non_negative(self.trivial_output(FluidTrivialParam::ODP))
+        self.trivial_output(FluidTrivialParam::ODP)
+            .and_then(non_negative)
     }
 
     /// Physical hazard index
@@ -454,7 +464,8 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(propylene_glycol.physical_hazard().is_none());
     /// ```
     pub fn physical_hazard(&mut self) -> Option<f64> {
-        non_negative(self.trivial_output(FluidTrivialParam::PH))
+        self.trivial_output(FluidTrivialParam::PH)
+            .and_then(non_negative)
     }
 
     /// Reducing point mass density
@@ -506,9 +517,9 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(propylene_glycol.reducing_molar_density().is_none());
     /// ```
     pub fn reducing_molar_density(&mut self) -> Option<MolarConcentration> {
-        Some(MolarConcentration::new::<mole_per_cubic_meter>(
-            non_negative(self.trivial_output(FluidTrivialParam::DMolarReducing))?,
-        ))
+        self.trivial_output(FluidTrivialParam::DMolarReducing)
+            .and_then(non_negative)
+            .map(MolarConcentration::new::<mole_per_cubic_meter>)
     }
 
     /// Reducing point pressure
@@ -532,9 +543,9 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(propylene_glycol.reducing_pressure().is_none());
     /// ```
     pub fn reducing_pressure(&mut self) -> Option<Pressure> {
-        Some(Pressure::new::<pascal>(non_negative(
-            self.trivial_output(FluidTrivialParam::PReducing),
-        )?))
+        self.trivial_output(FluidTrivialParam::PReducing)
+            .and_then(non_negative)
+            .map(Pressure::new::<pascal>)
     }
 
     /// Reducing point temperature
@@ -558,9 +569,9 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(propylene_glycol.reducing_temperature().is_none());
     /// ```
     pub fn reducing_temperature(&mut self) -> Option<ThermodynamicTemperature> {
-        Some(ThermodynamicTemperature::new::<kelvin>(non_negative(
-            self.trivial_output(FluidTrivialParam::TReducing),
-        )?))
+        self.trivial_output(FluidTrivialParam::TReducing)
+            .and_then(non_negative)
+            .map(ThermodynamicTemperature::new::<kelvin>)
     }
 
     /// Triple point pressure
@@ -587,9 +598,9 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(propylene_glycol.triple_pressure().is_none());
     /// ```
     pub fn triple_pressure(&mut self) -> Option<Pressure> {
-        Some(Pressure::new::<pascal>(non_negative(
-            self.trivial_output(FluidTrivialParam::PTriple),
-        )?))
+        self.trivial_output(FluidTrivialParam::PTriple)
+            .and_then(non_negative)
+            .map(Pressure::new::<pascal>)
     }
 
     /// Triple point temperature
@@ -613,9 +624,9 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(propylene_glycol.triple_temperature().is_none());
     /// ```
     pub fn triple_temperature(&mut self) -> Option<ThermodynamicTemperature> {
-        Some(ThermodynamicTemperature::new::<kelvin>(non_negative(
-            self.trivial_output(FluidTrivialParam::TTriple),
-        )?))
+        self.trivial_output(FluidTrivialParam::TTriple)
+            .and_then(non_negative)
+            .map(ThermodynamicTemperature::new::<kelvin>)
     }
 
     pub(crate) fn inner_update(
@@ -640,8 +651,12 @@ impl<S: StateVariant> Fluid<S> {
     }
 }
 
-fn non_negative(value: Option<f64>) -> Option<f64> {
-    value.and_then(|v| if v >= 0.0 { Some(v) } else { None })
+fn non_negative(value: f64) -> Option<f64> {
+    if value >= 0.0 {
+        Some(value)
+    } else {
+        None
+    }
 }
 
 fn density_from_molar_density(
@@ -657,12 +672,11 @@ mod tests {
     use rstest::*;
 
     #[rstest]
-    #[case(None, None)]
-    #[case(Some(-1.0), None)]
-    #[case(Some(0.0), Some(0.0))]
-    #[case(Some(1.0), Some(1.0))]
+    #[case(-1.0, None)]
+    #[case(0.0, Some(0.0))]
+    #[case(1.0, Some(1.0))]
     fn non_negative_returns_none_for_negative_value(
-        #[case] value: Option<f64>,
+        #[case] value: f64,
         #[case] expected: Option<f64>,
     ) {
         assert_eq!(non_negative(value), expected);
