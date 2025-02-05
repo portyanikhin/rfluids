@@ -190,7 +190,7 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_eq!(water.flammability_hazard().unwrap(), 0.0);
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// assert!(propylene_glycol.flammability_hazard().is_none());
     /// ```
@@ -216,7 +216,7 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(water.freezing_temperature().is_none());
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// assert_relative_eq!(
     ///     propylene_glycol.freezing_temperature().unwrap().value,
@@ -314,7 +314,7 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_eq!(water.health_hazard().unwrap(), 0.0);
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// assert!(propylene_glycol.health_hazard().is_none());
     /// ```
@@ -344,7 +344,7 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// assert!(propylene_glycol.max_pressure().is_none());
     /// ```
@@ -403,7 +403,7 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// assert!(propylene_glycol.min_pressure().is_none());
     /// ```
@@ -460,7 +460,7 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// assert!(propylene_glycol.molar_mass().is_none());
     /// ```
@@ -512,7 +512,7 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_eq!(water.physical_hazard().unwrap(), 0.0);
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// assert!(propylene_glycol.physical_hazard().is_none());
     /// ```
@@ -542,7 +542,7 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// assert!(propylene_glycol.reducing_density().is_none());
     /// ```
@@ -575,7 +575,7 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// assert!(propylene_glycol.reducing_molar_density().is_none());
     /// ```
@@ -606,7 +606,7 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// assert!(propylene_glycol.reducing_pressure().is_none());
     /// ```
@@ -637,7 +637,7 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// assert!(propylene_glycol.reducing_temperature().is_none());
     /// ```
@@ -671,7 +671,7 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// assert!(propylene_glycol.triple_pressure().is_none());
     /// ```
@@ -703,7 +703,7 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// assert!(propylene_glycol.triple_temperature().is_none());
     /// ```

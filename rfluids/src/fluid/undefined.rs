@@ -150,7 +150,7 @@ mod tests {
 
     #[fixture]
     fn propylene_glycol() -> Fluid<Undefined> {
-        Fluid::from(BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap())
+        Fluid::from(BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap())
     }
 
     #[test]
