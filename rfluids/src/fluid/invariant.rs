@@ -13,7 +13,6 @@ use crate::uom::si::mass_density::kilogram_per_cubic_meter;
 use crate::uom::si::molar_concentration::mole_per_cubic_meter;
 use crate::uom::si::pressure::pascal;
 use crate::uom::si::thermodynamic_temperature::kelvin;
-use std::collections::hash_map::Entry;
 
 impl<S: StateVariant> Fluid<S> {
     /// Specified substance.
@@ -627,17 +626,17 @@ impl<S: StateVariant> Fluid<S> {
         let request: FluidUpdateRequest = (input1, input2).try_into()?;
         self.backend.update(request.0, request.1, request.2)?;
         self.outputs.clear();
-        self.outputs.insert(input1.key(), input1.si_value());
-        self.outputs.insert(input2.key(), input2.si_value());
+        self.outputs.insert(input1.key(), Ok(input1.si_value()));
+        self.outputs.insert(input2.key(), Ok(input2.si_value()));
         self.update_request = Some(request);
         Ok(())
     }
 
     fn trivial_output(&mut self, key: FluidTrivialParam) -> Option<f64> {
-        match self.trivial_outputs.entry(key) {
-            Entry::Occupied(entry) => *entry.get(),
-            Entry::Vacant(entry) => *entry.insert(self.backend.keyed_output(key).ok()),
-        }
+        *self
+            .trivial_outputs
+            .entry(key)
+            .or_insert_with(|| self.backend.keyed_output(key).ok())
     }
 }
 
