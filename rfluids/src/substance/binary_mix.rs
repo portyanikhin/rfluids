@@ -379,8 +379,8 @@ impl BinaryMix {
     ///
     /// let propylene_glycol =
     ///     BinaryMix::try_from_si(BinaryMixKind::MPG, 0.4).unwrap();
-    /// assert!(propylene_glycol.with_fraction_si(0.2)).is_ok());
-    /// assert!(propylene_glycol.with_fraction_si(1.0)).is_err());
+    /// assert!(propylene_glycol.with_fraction_si(0.2).is_ok());
+    /// assert!(propylene_glycol.with_fraction_si(1.0).is_err());
     /// ```
     ///
     /// # See also

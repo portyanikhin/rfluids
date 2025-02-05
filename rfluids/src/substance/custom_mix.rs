@@ -161,13 +161,13 @@ impl CustomMix {
     /// use rfluids::substance::{CustomMix, Pure};
     /// use std::collections::HashMap;
     ///
-    /// assert!(CustomMix::mass_based(HashMap::from([
+    /// assert!(CustomMix::mass_based_si(HashMap::from([
     ///     (Pure::Water, 0.6),
     ///     (Pure::Ethanol, 0.4),
     /// ]))
     /// .is_ok());
     ///
-    /// assert!(CustomMix::mass_based(HashMap::from([
+    /// assert!(CustomMix::mass_based_si(HashMap::from([
     ///     (Pure::R32, 0.5),
     ///     (Pure::R125, 0.5),
     /// ]))
