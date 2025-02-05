@@ -33,10 +33,15 @@ impl<T: Copy> Input<T> {
 ///
 /// let pressure =
 ///     FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
+/// assert_eq!(pressure, FluidInput::pressure_si(101325.0));
+///
 /// let temperature =
 ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
+/// assert_eq!(temperature, FluidInput::temperature_si(293.15));
+///
 /// let density =
 ///     FluidInput::density(MassDensity::new::<gram_per_cubic_centimeter>(1.0));
+/// assert_eq!(density, FluidInput::density_si(1000.0));
 /// ```
 pub type FluidInput = Input<FluidParam>;
 
@@ -47,10 +52,22 @@ impl FluidInput {
         Self(FluidParam::DMass, value.value)
     }
 
+    /// Mass density _(key: [`DMass`](FluidParam::DMass))_ in SI units _(kg/m³)_.
+    #[must_use]
+    pub fn density_si(value: f64) -> Self {
+        Self(FluidParam::DMass, value)
+    }
+
     /// Mass specific enthalpy _(key: [`HMass`](FluidParam::HMass), SI units: J/kg)_.
     #[must_use]
     pub fn enthalpy(value: AvailableEnergy) -> Self {
         Self(FluidParam::HMass, value.value)
+    }
+
+    /// Mass specific enthalpy _(key: [`HMass`](FluidParam::HMass))_ in SI units _(J/kg)_.
+    #[must_use]
+    pub fn enthalpy_si(value: f64) -> Self {
+        Self(FluidParam::HMass, value)
     }
 
     /// Mass specific entropy _(key: [`SMass`](FluidParam::SMass), SI units: J/kg/K)_.
@@ -59,10 +76,22 @@ impl FluidInput {
         Self(FluidParam::SMass, value.value)
     }
 
+    /// Mass specific entropy _(key: [`SMass`](FluidParam::SMass))_ in SI units _(J/kg/K)_.
+    #[must_use]
+    pub fn entropy_si(value: f64) -> Self {
+        Self(FluidParam::SMass, value)
+    }
+
     /// Mass specific internal energy _(key: [`UMass`](FluidParam::UMass), SI units: J/kg)_.
     #[must_use]
     pub fn internal_energy(value: AvailableEnergy) -> Self {
         Self(FluidParam::UMass, value.value)
+    }
+
+    /// Mass specific internal energy _(key: [`UMass`](FluidParam::UMass))_ in SI units _(J/kg)_.
+    #[must_use]
+    pub fn internal_energy_si(value: f64) -> Self {
+        Self(FluidParam::UMass, value)
     }
 
     /// Molar density _(key: [`DMolar`](FluidParam::DMolar), SI units: mol/m³)_.
@@ -71,10 +100,22 @@ impl FluidInput {
         Self(FluidParam::DMolar, value.value)
     }
 
+    /// Molar density _(key: [`DMolar`](FluidParam::DMolar))_ in SI units _(mol/m³)_.
+    #[must_use]
+    pub fn molar_density_si(value: f64) -> Self {
+        Self(FluidParam::DMolar, value)
+    }
+
     /// Molar specific enthalpy _(key: [`HMolar`](FluidParam::HMolar), SI units: J/mol)_.
     #[must_use]
     pub fn molar_enthalpy(value: MolarEnergy) -> Self {
         Self(FluidParam::HMolar, value.value)
+    }
+
+    /// Molar specific enthalpy _(key: [`HMolar`](FluidParam::HMolar))_ in SI units _(J/mol)_.
+    #[must_use]
+    pub fn molar_enthalpy_si(value: f64) -> Self {
+        Self(FluidParam::HMolar, value)
     }
 
     /// Molar specific entropy _(key: [`SMolar`](FluidParam::SMolar), SI units: J/mol/K)_.
@@ -83,10 +124,22 @@ impl FluidInput {
         Self(FluidParam::SMolar, value.value)
     }
 
+    /// Molar specific entropy _(key: [`SMolar`](FluidParam::SMolar))_ in SI units _(J/mol/K)_.
+    #[must_use]
+    pub fn molar_entropy_si(value: f64) -> Self {
+        Self(FluidParam::SMolar, value)
+    }
+
     /// Molar specific internal energy _(key: [`UMolar`](FluidParam::UMolar), SI units: J/mol)_.
     #[must_use]
     pub fn molar_internal_energy(value: MolarEnergy) -> Self {
         Self(FluidParam::UMolar, value.value)
+    }
+
+    /// Molar specific internal energy _(key: [`UMolar`](FluidParam::UMolar))_ in SI units _(J/mol)_.
+    #[must_use]
+    pub fn molar_internal_energy_si(value: f64) -> Self {
+        Self(FluidParam::UMolar, value)
     }
 
     /// Pressure _(key: [`P`](FluidParam::P), SI units: Pa)_.
@@ -95,16 +148,34 @@ impl FluidInput {
         Self(FluidParam::P, value.value)
     }
 
+    /// Pressure _(key: [`P`](FluidParam::P))_ in SI units _(Pa)_.
+    #[must_use]
+    pub fn pressure_si(value: f64) -> Self {
+        Self(FluidParam::P, value)
+    }
+
     /// Vapor quality _(key: [`Q`](FluidParam::Q), SI units: dimensionless, from 0 to 1)_.
     #[must_use]
     pub fn quality(value: Ratio) -> Self {
         Self(FluidParam::Q, value.value)
     }
 
+    /// Vapor quality _(key: [`Q`](FluidParam::Q))_ in SI units _(dimensionless, from 0 to 1)_.
+    #[must_use]
+    pub fn quality_si(value: f64) -> Self {
+        Self(FluidParam::Q, value)
+    }
+
     /// Temperature _(key: [`T`](FluidParam::T), SI units: K)_.
     #[must_use]
     pub fn temperature(value: ThermodynamicTemperature) -> Self {
         Self(FluidParam::T, value.value)
+    }
+
+    /// Temperature _(key: [`T`](FluidParam::T))_ in SI units _(K)_.
+    #[must_use]
+    pub fn temperature_si(value: f64) -> Self {
+        Self(FluidParam::T, value)
     }
 }
 
@@ -129,6 +200,7 @@ mod tests {
             let sut = FluidInput::density(MassDensity::new::<kilogram_per_cubic_meter>(1.0));
             assert_eq!(sut.key(), FluidParam::DMass);
             assert_eq!(sut.si_value(), 1.0);
+            assert_eq!(sut, FluidInput::density_si(1.0));
         }
 
         #[test]
@@ -136,6 +208,7 @@ mod tests {
             let sut = FluidInput::enthalpy(AvailableEnergy::new::<joule_per_kilogram>(1.0));
             assert_eq!(sut.key(), FluidParam::HMass);
             assert_eq!(sut.si_value(), 1.0);
+            assert_eq!(sut, FluidInput::enthalpy_si(1.0));
         }
 
         #[test]
@@ -144,6 +217,7 @@ mod tests {
                 FluidInput::entropy(SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>(1.0));
             assert_eq!(sut.key(), FluidParam::SMass);
             assert_eq!(sut.si_value(), 1.0);
+            assert_eq!(sut, FluidInput::entropy_si(1.0));
         }
 
         #[test]
@@ -151,6 +225,7 @@ mod tests {
             let sut = FluidInput::internal_energy(AvailableEnergy::new::<joule_per_kilogram>(1.0));
             assert_eq!(sut.key(), FluidParam::UMass);
             assert_eq!(sut.si_value(), 1.0);
+            assert_eq!(sut, FluidInput::internal_energy_si(1.0));
         }
 
         #[test]
@@ -159,6 +234,7 @@ mod tests {
                 FluidInput::molar_density(MolarConcentration::new::<mole_per_cubic_meter>(1.0));
             assert_eq!(sut.key(), FluidParam::DMolar);
             assert_eq!(sut.si_value(), 1.0);
+            assert_eq!(sut, FluidInput::molar_density_si(1.0));
         }
 
         #[test]
@@ -166,6 +242,7 @@ mod tests {
             let sut = FluidInput::molar_enthalpy(MolarEnergy::new::<joule_per_mole>(1.0));
             assert_eq!(sut.key(), FluidParam::HMolar);
             assert_eq!(sut.si_value(), 1.0);
+            assert_eq!(sut, FluidInput::molar_enthalpy_si(1.0));
         }
 
         #[test]
@@ -174,6 +251,7 @@ mod tests {
                 FluidInput::molar_entropy(MolarHeatCapacity::new::<joule_per_kelvin_mole>(1.0));
             assert_eq!(sut.key(), FluidParam::SMolar);
             assert_eq!(sut.si_value(), 1.0);
+            assert_eq!(sut, FluidInput::molar_entropy_si(1.0));
         }
 
         #[test]
@@ -181,6 +259,7 @@ mod tests {
             let sut = FluidInput::molar_internal_energy(MolarEnergy::new::<joule_per_mole>(1.0));
             assert_eq!(sut.key(), FluidParam::UMolar);
             assert_eq!(sut.si_value(), 1.0);
+            assert_eq!(sut, FluidInput::molar_internal_energy_si(1.0));
         }
 
         #[test]
@@ -188,6 +267,7 @@ mod tests {
             let sut = FluidInput::pressure(Pressure::new::<pascal>(1.0));
             assert_eq!(sut.key(), FluidParam::P);
             assert_eq!(sut.si_value(), 1.0);
+            assert_eq!(sut, FluidInput::pressure_si(1.0));
         }
 
         #[test]
@@ -195,6 +275,7 @@ mod tests {
             let sut = FluidInput::quality(Ratio::new::<ratio>(1.0));
             assert_eq!(sut.key(), FluidParam::Q);
             assert_eq!(sut.si_value(), 1.0);
+            assert_eq!(sut, FluidInput::quality_si(1.0));
         }
 
         #[test]
@@ -202,6 +283,7 @@ mod tests {
             let sut = FluidInput::temperature(ThermodynamicTemperature::new::<kelvin>(1.0));
             assert_eq!(sut.key(), FluidParam::T);
             assert_eq!(sut.si_value(), 1.0);
+            assert_eq!(sut, FluidInput::temperature_si(1.0));
         }
     }
 }
