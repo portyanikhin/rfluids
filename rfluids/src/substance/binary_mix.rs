@@ -376,8 +376,6 @@ impl BinaryMix {
     ///
     /// ```
     /// use rfluids::substance::{BinaryMix, BinaryMixKind};
-    /// use rfluids::uom::si::f64::Ratio;
-    /// use rfluids::uom::si::ratio::percent;
     ///
     /// let propylene_glycol =
     ///     BinaryMix::try_from_si(BinaryMixKind::MPG, 0.4).unwrap();
