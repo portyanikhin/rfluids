@@ -319,7 +319,7 @@ impl BinaryMix {
     /// assert!(BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).is_ok());
     /// assert!(BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(100.0)).is_err());
     /// ```
-    pub fn with(&self, other_fraction: Ratio) -> Result<Self, BinaryMixError> {
+    pub fn with_fraction(&self, other_fraction: Ratio) -> Result<Self, BinaryMixError> {
         Self::try_from(self.kind, other_fraction)
     }
 }
@@ -558,10 +558,10 @@ mod tests {
         }
 
         #[test]
-        fn with_other_fraction_returns_binary_mix_with_same_kind_and_other_fraction() {
+        fn with_fraction_returns_binary_mix_with_same_kind_and_other_fraction() {
             let sut = BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap();
             let other_fraction = Ratio::new::<percent>(20.0);
-            let sut_with_other_fraction = sut.with(other_fraction).unwrap();
+            let sut_with_other_fraction = sut.with_fraction(other_fraction).unwrap();
             assert_eq!(sut_with_other_fraction.kind, sut.kind);
             assert_eq!(sut_with_other_fraction.fraction, other_fraction);
         }
