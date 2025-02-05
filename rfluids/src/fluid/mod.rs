@@ -145,7 +145,7 @@ impl From<BinaryMix> for Fluid<Undefined> {
     /// use rfluids::uom::si::ratio::percent;
     ///
     /// let propylene_glycol = Fluid::from(
-    ///     BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
     /// );
     /// ```
     fn from(value: BinaryMix) -> Self {
@@ -222,7 +222,8 @@ mod tests {
     fn from_each_binary_mix_does_not_panic() {
         for kind in BinaryMixKind::iter() {
             let _fluid = Fluid::from(
-                BinaryMix::new(kind, 0.5 * (kind.min_fraction() + kind.max_fraction())).unwrap(),
+                BinaryMix::with_fraction(kind, 0.5 * (kind.min_fraction() + kind.max_fraction()))
+                    .unwrap(),
             );
         }
     }

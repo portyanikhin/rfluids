@@ -122,7 +122,7 @@ mod tests {
         #[test]
         fn from_binary_mix_substance_returns_expected_value() {
             let propylene_glycol =
-                BinaryMix::new(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap();
+                BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap();
             let substance = Substance::from(propylene_glycol);
             let request = FluidCreateRequest::from(&substance);
             assert_eq!(request.name, Cow::Borrowed(BinaryMixKind::MPG.as_ref()));
