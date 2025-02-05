@@ -1,5 +1,3 @@
-use uom::si::molar_mass::kilogram_per_mole;
-
 use super::requests::FluidUpdateRequest;
 use super::Fluid;
 use crate::error::FluidStateError;
@@ -11,6 +9,7 @@ use crate::uom::si::f64::{
 };
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
 use crate::uom::si::molar_concentration::mole_per_cubic_meter;
+use crate::uom::si::molar_mass::kilogram_per_mole;
 use crate::uom::si::pressure::pascal;
 use crate::uom::si::thermodynamic_temperature::kelvin;
 
@@ -52,9 +51,14 @@ impl<S: StateVariant> Fluid<S> {
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::mass_density::gram_per_cubic_centimeter;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert_relative_eq!(water.critical_density().unwrap().value, 322.0);
+    /// assert_relative_eq!(
+    ///     water.critical_density().unwrap().get::<gram_per_cubic_centimeter>(),
+    ///     0.322
+    /// );
     ///
     /// let mut r444a = Fluid::from(PredefinedMix::R444A);
     /// assert!(r444a.critical_density().is_none());
@@ -79,11 +83,16 @@ impl<S: StateVariant> Fluid<S> {
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::molar_concentration::mole_per_liter;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert_relative_eq!(
     ///     water.critical_molar_density().unwrap().value,
     ///     17873.72799560906
+    /// );
+    /// assert_relative_eq!(
+    ///     water.critical_molar_density().unwrap().get::<mole_per_liter>(),
+    ///     17.87372799560906
     /// );
     ///
     /// let mut r444a = Fluid::from(PredefinedMix::R444A);
@@ -109,9 +118,14 @@ impl<S: StateVariant> Fluid<S> {
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::pressure::megapascal;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert_relative_eq!(water.critical_pressure().unwrap().value, 22.064e6);
+    /// assert_relative_eq!(
+    ///     water.critical_pressure().unwrap().get::<megapascal>(),
+    ///     22.064
+    /// );
     ///
     /// let mut r444a = Fluid::from(PredefinedMix::R444A);
     /// assert!(r444a.critical_pressure().is_none());
@@ -136,9 +150,14 @@ impl<S: StateVariant> Fluid<S> {
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert_relative_eq!(water.critical_temperature().unwrap().value, 647.096);
+    /// assert_relative_eq!(
+    ///     water.critical_temperature().unwrap().get::<degree_celsius>(),
+    ///     373.946
+    /// );
     ///
     /// let mut r444a = Fluid::from(PredefinedMix::R444A);
     /// assert!(r444a.critical_temperature().is_none());
@@ -191,6 +210,7 @@ impl<S: StateVariant> Fluid<S> {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
     /// use rfluids::uom::si::ratio::percent;
+    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert!(water.freezing_temperature().is_none());
@@ -201,6 +221,10 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_relative_eq!(
     ///     propylene_glycol.freezing_temperature().unwrap().value,
     ///     252.58175495305838
+    /// );
+    /// assert_relative_eq!(
+    ///     propylene_glycol.freezing_temperature().unwrap().get::<degree_celsius>(),
+    ///     -20.5682450469416
     /// );
     /// ```
     pub fn freezing_temperature(&mut self) -> Option<ThermodynamicTemperature> {
@@ -307,11 +331,17 @@ impl<S: StateVariant> Fluid<S> {
     /// # Examples
     ///
     /// ```
+    /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
     /// use rfluids::uom::si::ratio::percent;
+    /// use rfluids::uom::si::pressure::megapascal;
     ///
     /// let mut water = Fluid::from(Pure::Water);
-    /// assert_eq!(water.max_pressure().unwrap().value, 1e9);
+    /// assert_relative_eq!(water.max_pressure().unwrap().value, 1e9);
+    /// assert_relative_eq!(
+    ///     water.max_pressure().unwrap().get::<megapascal>(),
+    ///     1000.0
+    /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
     ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
@@ -330,10 +360,16 @@ impl<S: StateVariant> Fluid<S> {
     /// # Examples
     ///
     /// ```
+    /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
     ///
     /// let mut water = Fluid::from(Pure::Water);
-    /// assert_eq!(water.max_temperature().value, 2e3);
+    /// assert_relative_eq!(water.max_temperature().value, 2e3);
+    /// assert_relative_eq!(
+    ///     water.max_temperature().get::<degree_celsius>(),
+    ///     1726.85
+    /// );
     /// ```
     pub fn max_temperature(&mut self) -> ThermodynamicTemperature {
         ThermodynamicTemperature::new::<kelvin>(
@@ -354,11 +390,16 @@ impl<S: StateVariant> Fluid<S> {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
     /// use rfluids::uom::si::ratio::percent;
+    /// use rfluids::uom::si::pressure::kilopascal;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert_relative_eq!(
     ///     water.min_pressure().unwrap().value,
     ///     611.6548008968684
+    /// );
+    /// assert_relative_eq!(
+    ///     water.min_pressure().unwrap().get::<kilopascal>(),
+    ///     0.6116548008968684
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
@@ -378,10 +419,17 @@ impl<S: StateVariant> Fluid<S> {
     /// # Examples
     ///
     /// ```
+    /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
     ///
     /// let mut water = Fluid::from(Pure::Water);
-    /// assert_eq!(water.min_temperature().value, 273.16);
+    /// assert_relative_eq!(water.min_temperature().value, 273.16);
+    /// assert_relative_eq!(
+    ///     water.min_temperature().get::<degree_celsius>(),
+    ///     0.01,
+    ///     epsilon = 1e-6
+    /// );
     /// ```
     pub fn min_temperature(&mut self) -> ThermodynamicTemperature {
         ThermodynamicTemperature::new::<kelvin>(
@@ -401,10 +449,15 @@ impl<S: StateVariant> Fluid<S> {
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::molar_mass::gram_per_mole;
     /// use rfluids::uom::si::ratio::percent;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert_relative_eq!(water.molar_mass().unwrap().value, 0.018015268);
+    /// assert_relative_eq!(
+    ///     water.molar_mass().unwrap().get::<gram_per_mole>(),
+    ///     18.015268
+    /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
     ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
@@ -478,10 +531,15 @@ impl<S: StateVariant> Fluid<S> {
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::mass_density::gram_per_cubic_centimeter;
     /// use rfluids::uom::si::ratio::percent;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert_relative_eq!(water.reducing_density().unwrap().value, 322.0);
+    /// assert_relative_eq!(
+    ///     water.reducing_density().unwrap().get::<gram_per_cubic_centimeter>(),
+    ///     0.322
+    /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
     ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
@@ -503,12 +561,17 @@ impl<S: StateVariant> Fluid<S> {
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::molar_concentration::mole_per_liter;
     /// use rfluids::uom::si::ratio::percent;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert_relative_eq!(
     ///     water.reducing_molar_density().unwrap().value,
     ///     17873.72799560906
+    /// );
+    /// assert_relative_eq!(
+    ///     water.reducing_molar_density().unwrap().get::<mole_per_liter>(),
+    ///     17.87372799560906
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
@@ -532,10 +595,15 @@ impl<S: StateVariant> Fluid<S> {
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::pressure::megapascal;
     /// use rfluids::uom::si::ratio::percent;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert_relative_eq!(water.reducing_pressure().unwrap().value, 22.064e6);
+    /// assert_relative_eq!(
+    ///     water.reducing_pressure().unwrap().get::<megapascal>(),
+    ///     22.064
+    /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
     ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
@@ -558,10 +626,15 @@ impl<S: StateVariant> Fluid<S> {
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
     /// use rfluids::uom::si::ratio::percent;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert_relative_eq!(water.reducing_temperature().unwrap().value, 647.096);
+    /// assert_relative_eq!(
+    ///     water.reducing_temperature().unwrap().get::<degree_celsius>(),
+    ///     373.946
+    /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
     ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
@@ -584,12 +657,17 @@ impl<S: StateVariant> Fluid<S> {
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::pressure::kilopascal;
     /// use rfluids::uom::si::ratio::percent;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert_relative_eq!(
     ///     water.triple_pressure().unwrap().value,
     ///     611.6548008968684
+    /// );
+    /// assert_relative_eq!(
+    ///     water.min_pressure().unwrap().get::<kilopascal>(),
+    ///     0.6116548008968684
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
@@ -613,10 +691,16 @@ impl<S: StateVariant> Fluid<S> {
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
     /// use rfluids::uom::si::ratio::percent;
     ///
     /// let mut water = Fluid::from(Pure::Water);
     /// assert_relative_eq!(water.triple_temperature().unwrap().value, 273.16);
+    /// assert_relative_eq!(
+    ///     water.triple_temperature().unwrap().get::<degree_celsius>(),
+    ///     0.01,
+    ///     epsilon = 1e-6
+    /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
     ///     BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
