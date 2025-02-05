@@ -5,7 +5,7 @@ mod invariant;
 mod requests;
 mod undefined;
 
-use crate::error::FluidFromCustomMixError;
+use crate::error::{FluidFromCustomMixError, FluidOutputError};
 use crate::io::{FluidParam, FluidTrivialParam};
 use crate::native::AbstractState;
 use crate::state_variant::{Defined, StateVariant, Undefined};
@@ -26,7 +26,7 @@ pub struct Fluid<S: StateVariant = Defined> {
     substance: Substance,
     backend: AbstractState,
     update_request: Option<FluidUpdateRequest>,
-    outputs: HashMap<FluidParam, f64>,
+    outputs: HashMap<FluidParam, Result<f64, FluidOutputError>>,
     trivial_outputs: HashMap<FluidTrivialParam, Option<f64>>,
     state: PhantomData<S>,
 }

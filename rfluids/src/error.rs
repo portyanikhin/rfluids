@@ -71,3 +71,11 @@ pub enum FluidStateError {
     #[error("Failed to update the fluid state! {0}")]
     UpdateFailed(#[from] CoolPropError),
 }
+
+/// Error during calculation of the [`Fluid`](crate::fluid::Fluid) output parameter value.
+#[derive(Error, Debug, Clone, Eq, PartialEq)]
+pub enum FluidOutputError {
+    /// Failed to calculate the output parameter value.
+    #[error("Failed to calculate the output value of `{0:?}`! {1}")]
+    CalculationFailed(FluidParam, CoolPropError),
+}
