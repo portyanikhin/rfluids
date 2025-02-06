@@ -1,6 +1,7 @@
 // cSpell:disable
 
 use super::common::{const_ptr_c_char, MessageBuffer, COOLPROP};
+use super::Result;
 use crate::error::CoolPropError;
 use core::ffi::c_char;
 use std::sync::MutexGuard;
@@ -38,8 +39,9 @@ impl CoolProp {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::native::*;
     ///
-    /// let result = CoolProp::props_si("C", "P", 101325.0, "Q", 1.0, "Water").unwrap();
+    /// let result = CoolProp::props_si("C", "P", 101325.0, "Q", 1.0, "Water")?;
     /// assert_relative_eq!(result, 2079.937085633241);
+    /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
     /// ## Incompressible binary mixtures
@@ -51,8 +53,9 @@ impl CoolProp {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::native::*;
     ///
-    /// let result = CoolProp::props_si("V", "P", 100e3, "T", 253.15, "INCOMP::MPG-60%").unwrap();
+    /// let result = CoolProp::props_si("V", "P", 100e3, "T", 253.15, "INCOMP::MPG-60%")?;
     /// assert_relative_eq!(result, 0.13907391053938847);
+    /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
     /// ## Mixtures
@@ -71,9 +74,9 @@ impl CoolProp {
     ///     "T",
     ///     277.15,
     ///     "HEOS::Water[0.6]&Ethanol[0.4]",
-    /// )
-    /// .unwrap();
+    /// )?;
     /// assert_relative_eq!(result, 859.5296602799147);
+    /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
     /// # See also
@@ -92,7 +95,7 @@ impl CoolProp {
         input2_key: impl AsRef<str>,
         input2_value: f64,
         fluid_name: impl AsRef<str>,
-    ) -> Result<f64, CoolPropError> {
+    ) -> Result<f64> {
         let lock = COOLPROP.lock().unwrap();
         let value = unsafe {
             lock.PropsSI(
@@ -136,8 +139,9 @@ impl CoolProp {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::native::*;
     ///
-    /// let result = CoolProp::ha_props_si("B", "P", 100e3, "T", 303.15, "R", 0.5).unwrap();
+    /// let result = CoolProp::ha_props_si("B", "P", 100e3, "T", 303.15, "R", 0.5)?;
     /// assert_relative_eq!(result, 295.1200365362656);
+    /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
     /// # See also
@@ -153,7 +157,7 @@ impl CoolProp {
         input2_value: f64,
         input3_key: impl AsRef<str>,
         input3_value: f64,
-    ) -> Result<f64, CoolPropError> {
+    ) -> Result<f64> {
         let lock = COOLPROP.lock().unwrap();
         let value = unsafe {
             lock.HAPropsSI(
@@ -191,8 +195,9 @@ impl CoolProp {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::native::*;
     ///
-    /// let result = CoolProp::props1_si("Tcrit", "Water").unwrap();
+    /// let result = CoolProp::props1_si("Tcrit", "Water")?;
     /// assert_relative_eq!(result, 647.096);
+    /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
     /// R32 100-year global warming potential _(dimensionless)_:
@@ -200,8 +205,9 @@ impl CoolProp {
     /// ```
     /// use rfluids::prelude::native::*;
     ///
-    /// let result = CoolProp::props1_si("GWP100", "R32").unwrap();
+    /// let result = CoolProp::props1_si("GWP100", "R32")?;
     /// assert_eq!(result, 675.0);
+    /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
     /// # See also
@@ -210,10 +216,7 @@ impl CoolProp {
     /// - [Props1SI outputs _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
     /// - [`FluidTrivialParam`](crate::io::FluidTrivialParam)
     /// - [`Substance`](crate::substance::Substance)
-    pub fn props1_si(
-        output_key: impl AsRef<str>,
-        fluid_name: impl AsRef<str>,
-    ) -> Result<f64, CoolPropError> {
+    pub fn props1_si(output_key: impl AsRef<str>, fluid_name: impl AsRef<str>) -> Result<f64> {
         let lock = COOLPROP.lock().unwrap();
         let value = unsafe {
             lock.Props1SI(
@@ -224,10 +227,7 @@ impl CoolProp {
         Self::result(value, &lock)
     }
 
-    fn result(
-        value: f64,
-        lock: &MutexGuard<coolprop_sys::bindings::CoolProp>,
-    ) -> Result<f64, CoolPropError> {
+    fn result(value: f64, lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> Result<f64> {
         if !value.is_finite() {
             let message = Self::get_error_message(lock);
             return Err(CoolPropError(message.unwrap_or("Unknown error".into())));
@@ -260,14 +260,15 @@ mod tests {
     use rayon::prelude::*;
 
     #[test]
-    fn props_si_water_density_in_standard_conditions_returns_ok() {
-        let result = CoolProp::props_si("D", "P", 101_325.0, "T", 293.15, "Water");
-        assert_relative_eq!(result.unwrap(), 998.207_150_467_928_4);
+    fn props_si_water_density_in_standard_conditions_returns_ok() -> Result<()> {
+        let result = CoolProp::props_si("D", "P", 101_325.0, "T", 293.15, "Water")?;
+        assert_relative_eq!(result, 998.207_150_467_928_4);
+        Ok(())
     }
 
     #[test]
     fn props_si_is_thread_safe() {
-        let result: Vec<Result<f64, CoolPropError>> = (101_000..101_500)
+        let result: Vec<Result<f64>> = (101_000..101_500)
             .into_par_iter()
             .map(move |p| CoolProp::props_si("T", "P", f64::from(p), "Q", 0.0, "Water"))
             .collect();
@@ -285,14 +286,15 @@ mod tests {
     }
 
     #[test]
-    fn ha_props_si_humid_air_humidity_in_standard_conditions_returns_ok() {
-        let result = CoolProp::ha_props_si("W", "P", 101_325.0, "T", 293.15, "R", 0.5);
-        assert_relative_eq!(result.unwrap(), 0.007_293_697_701_992_549);
+    fn ha_props_si_humid_air_humidity_in_standard_conditions_returns_ok() -> Result<()> {
+        let result = CoolProp::ha_props_si("W", "P", 101_325.0, "T", 293.15, "R", 0.5)?;
+        assert_relative_eq!(result, 0.007_293_697_701_992_549);
+        Ok(())
     }
 
     #[test]
     fn ha_props_si_is_thread_safe() {
-        let result: Vec<Result<f64, CoolPropError>> = (101_000..101_500)
+        let result: Vec<Result<f64>> = (101_000..101_500)
             .into_par_iter()
             .map(move |p| CoolProp::ha_props_si("W", "P", f64::from(p), "T", 293.15, "R", 0.5))
             .collect();
@@ -310,9 +312,10 @@ mod tests {
     }
 
     #[test]
-    fn props1_si_valid_input_returns_ok() {
-        let result = CoolProp::props1_si("Tcrit", "Water");
-        assert_relative_eq!(result.unwrap(), 647.096);
+    fn props1_si_valid_input_returns_ok() -> Result<()> {
+        let result = CoolProp::props1_si("Tcrit", "Water")?;
+        assert_relative_eq!(result, 647.096);
+        Ok(())
     }
 
     #[test]

@@ -1,4 +1,28 @@
 //! `CoolProp` substances.
+//!
+//! Provides types and functionality for working with `CoolProp` substances.
+//!
+//! This module defines various substance types that can be used with the `CoolProp` library,
+//! including pure substances and different types of mixtures.
+//!
+//! # Types
+//!
+//! The main types provided by this module are:
+//!
+//! - [`Substance`] -- an enum representing different types of substances:
+//!
+//!     - [`Pure`] -- pure or pseudo-pure substances.
+//!     - [`IncompPure`] -- incompressible pure substances.
+//!     - [`PredefinedMix`] -- predefined mixtures.
+//!     - [`BinaryMix`] -- binary mixtures with specified fraction
+//!       (mass-based or volume-based):
+//!
+//!         - [`BinaryMixKind`] -- binary mixture kinds.
+//!
+//!     - [`CustomMix`] -- custom mixtures.
+//!
+//! Each substance type can be converted into the [`Substance`] enum
+//! using the standard [`From`]/[`Into`] traits.
 
 #![allow(missing_docs, non_camel_case_types)]
 
@@ -18,13 +42,18 @@ mod pure;
 
 /// `CoolProp` substance.
 ///
-/// Superset of:
+/// This enum represents different types of substances
+/// that can be used in the `CoolProp` library.
+/// Each variant corresponds to a specific type of substance:
 ///
-/// - [`Pure`]
-/// - [`IncompPure`]
-/// - [`PredefinedMix`]
-/// - [`BinaryMix`]
-/// - [`CustomMix`]
+/// - [`Pure`] -- represents a pure or pseudo-pure substance.
+/// - [`IncompPure`] -- represents an incompressible pure substance.
+/// - [`PredefinedMix`] -- represents a predefined mixture.
+/// - [`BinaryMix`] -- represents an incompressible binary mixture (mass-based or volume-based).
+/// - [`CustomMix`] -- represents a custom mixture.
+///
+/// The `Substance` enum provides [`From`] implementations for each of its variants,
+/// allowing for easy conversion from the specific substance types to the `Substance` enum.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Substance {
     /// Pure or pseudo-pure substance.

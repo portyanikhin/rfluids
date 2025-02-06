@@ -1,4 +1,23 @@
 //! `CoolProp` inputs/outputs.
+//!
+//! This module provides functionality for handling `CoolProp`-related
+//! input/output operations. It includes types and utilities for working
+//! with fluid parameters, humid air parameters, and phase states.
+//!
+//! # Types
+//!
+//! The main types provided by this module are:
+//!
+//! - [`FluidParam`] -- non-trivial fluid parameters
+//!   (e.g., pressure, temperature, etc.).
+//! - [`FluidTrivialParam`] -- trivial fluid parameters
+//!   (e.g., molar mass, critical pressure, etc.).
+//! - [`FluidInputPair`] -- valid combinations of two fluid parameters
+//!   (e.g., pressure-temperature, pressure-enthalpy, etc.)
+//!   used to define a thermodynamic state.
+//! - [`FluidInput`] -- fluid input parameter with specified value.
+//! - [`HumidAirParam`] -- humid air parameters.
+//! - [`Phase`] -- phase state of the fluid.
 
 pub use fluid_param::*;
 pub use humid_air_param::*;

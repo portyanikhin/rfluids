@@ -1,4 +1,21 @@
-//! Thermophysical properties of substances.
+//! Thermophysical and transport properties of substances.
+//!
+//! This module provides a comprehensive interface for calculating
+//! thermophysical and transport properties of various substances,
+//! including pure fluids and different mixtures (i.e., [`Substance`] or any of its subset).
+//!
+//! # Types
+//!
+//! The core type for managing thermophysical and transport properties of substances is [`Fluid`].
+//! It encompasses various state management features and property calculations.
+//! The [`Fluid`] struct is generic over the state variant ([`Defined`] or [`Undefined`]).
+//! Depending on the state variant, the [`Fluid`] instance has different functionality
+//! (e.g., with [`Undefined`] state variant it has only trivial properties available,
+//! but with [`Defined`] state variant it supports a full set of property calculations).
+//! The [`Fluid`] struct can be created from any [`Pure`], [`IncompPure`], [`PredefinedMix`]
+//! or [`BinaryMix`] using the [`From`]/[`Into`] traits; and from any [`Substance`]
+//! or [`CustomMix`] using the [`TryFrom`]/[`TryInto`] traits. This is due to the fact that
+//! [`CustomMix`] potentially can be unsupported by the `CoolProp`.
 
 mod defined;
 mod invariant;
@@ -15,12 +32,14 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 use std::marker::PhantomData;
 
-/// Provider of thermophysical properties of substances.
+/// Provider of thermophysical and transport properties of substances.
 ///
 /// It implements the [typestate pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
 /// and has one generic type parameter: `S` -- state variant _([`Defined`] or [`Undefined`])_.
 ///
-/// Depending on `S`, the `Fluid` instance has different functionality.
+/// Depending on `S`, the `Fluid` instance has different functionality
+/// (e.g., with [`Undefined`] state variant it has only trivial properties available,
+/// but with [`Defined`] state variant it supports a full set of property calculations).
 #[derive(Debug)]
 pub struct Fluid<S: StateVariant = Defined> {
     substance: Substance,
