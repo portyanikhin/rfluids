@@ -190,9 +190,10 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_eq!(water.flammability_hazard().unwrap(), 0.0);
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
     /// assert!(propylene_glycol.flammability_hazard().is_none());
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     pub fn flammability_hazard(&mut self) -> Option<f64> {
         self.trivial_output(FluidTrivialParam::FH)
@@ -216,7 +217,7 @@ impl<S: StateVariant> Fluid<S> {
     /// assert!(water.freezing_temperature().is_none());
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
     /// assert_relative_eq!(
     ///     propylene_glycol.freezing_temperature().unwrap().value,
@@ -226,6 +227,7 @@ impl<S: StateVariant> Fluid<S> {
     ///     propylene_glycol.freezing_temperature().unwrap().get::<degree_celsius>(),
     ///     -20.5682450469416
     /// );
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     pub fn freezing_temperature(&mut self) -> Option<ThermodynamicTemperature> {
         self.trivial_output(FluidTrivialParam::TFreeze)
@@ -314,10 +316,10 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_eq!(water.health_hazard().unwrap(), 0.0);
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
     /// assert!(propylene_glycol.health_hazard().is_none());
-    /// ```
+    /// # Ok::<(), rfluids::error::Error>(())
     pub fn health_hazard(&mut self) -> Option<f64> {
         self.trivial_output(FluidTrivialParam::HH)
             .and_then(non_negative)
@@ -344,9 +346,10 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
     /// assert!(propylene_glycol.max_pressure().is_none());
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     pub fn max_pressure(&mut self) -> Option<Pressure> {
         self.trivial_output(FluidTrivialParam::PMax)
@@ -403,9 +406,10 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
     /// assert!(propylene_glycol.min_pressure().is_none());
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     pub fn min_pressure(&mut self) -> Option<Pressure> {
         self.trivial_output(FluidTrivialParam::PMin)
@@ -460,9 +464,10 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
     /// assert!(propylene_glycol.molar_mass().is_none());
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     pub fn molar_mass(&mut self) -> Option<MolarMass> {
         self.trivial_output(FluidTrivialParam::MolarMass)
@@ -512,10 +517,10 @@ impl<S: StateVariant> Fluid<S> {
     /// assert_eq!(water.physical_hazard().unwrap(), 0.0);
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
     /// assert!(propylene_glycol.physical_hazard().is_none());
-    /// ```
+    /// # Ok::<(), rfluids::error::Error>(())
     pub fn physical_hazard(&mut self) -> Option<f64> {
         self.trivial_output(FluidTrivialParam::PH)
             .and_then(non_negative)
@@ -542,9 +547,10 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
     /// assert!(propylene_glycol.reducing_density().is_none());
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     pub fn reducing_density(&mut self) -> Option<MassDensity> {
         // Due to CoolProp bug
@@ -575,9 +581,10 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
     /// assert!(propylene_glycol.reducing_molar_density().is_none());
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     pub fn reducing_molar_density(&mut self) -> Option<MolarConcentration> {
         self.trivial_output(FluidTrivialParam::DMolarReducing)
@@ -606,10 +613,10 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
     /// assert!(propylene_glycol.reducing_pressure().is_none());
-    /// ```
+    /// # Ok::<(), rfluids::error::Error>(())
     pub fn reducing_pressure(&mut self) -> Option<Pressure> {
         self.trivial_output(FluidTrivialParam::PReducing)
             .and_then(non_negative)
@@ -637,9 +644,10 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
     /// assert!(propylene_glycol.reducing_temperature().is_none());
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     pub fn reducing_temperature(&mut self) -> Option<ThermodynamicTemperature> {
         self.trivial_output(FluidTrivialParam::TReducing)
@@ -671,9 +679,10 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
     /// assert!(propylene_glycol.triple_pressure().is_none());
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     pub fn triple_pressure(&mut self) -> Option<Pressure> {
         self.trivial_output(FluidTrivialParam::PTriple)
@@ -703,9 +712,10 @@ impl<S: StateVariant> Fluid<S> {
     /// );
     ///
     /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
     /// assert!(propylene_glycol.triple_temperature().is_none());
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     pub fn triple_temperature(&mut self) -> Option<ThermodynamicTemperature> {
         self.trivial_output(FluidTrivialParam::TTriple)

@@ -383,9 +383,9 @@ mod tests {
         let result: Vec<Result<f64>> = (101_000..101_500)
             .into_par_iter()
             .map(move |p| {
-                let mut sut = AbstractState::new("HEOS", "Water")?;
-                sut.specify_phase(Phase::TwoPhase)?;
-                sut.update(FluidInputPair::PQ, f64::from(p), 0.0)?;
+                let mut sut = AbstractState::new("HEOS", "Water").unwrap();
+                sut.specify_phase(Phase::TwoPhase).unwrap();
+                sut.update(FluidInputPair::PQ, f64::from(p), 0.0).unwrap();
                 sut.keyed_output(FluidParam::T)
             })
             .collect();
@@ -429,108 +429,98 @@ mod tests {
     }
 
     #[test]
-    fn set_fractions_valid_inputs_returns_ok() -> Result<()> {
-        let mut sut = AbstractState::new("HEOS", "Water&Ethanol")?;
+    fn set_fractions_valid_inputs_returns_ok() {
+        let mut sut = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
         let result = sut.set_fractions(&[0.6, 0.4]);
         assert!(result.is_ok());
-        Ok(())
     }
 
     #[test]
-    fn set_fractions_invalid_inputs_returns_err() -> Result<()> {
-        let mut sut = AbstractState::new("HEOS", "Water&Ethanol")?;
+    fn set_fractions_invalid_inputs_returns_err() {
+        let mut sut = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
         let result = sut.set_fractions(&[0.6, 0.4, 0.6]);
         assert_eq!(
             result.unwrap_err().to_string(),
             "Error: size of mole fraction vector [3] \
             does not equal that of component vector [2]",
         );
-        Ok(())
     }
 
     #[test]
-    fn update_valid_inputs_returns_ok() -> Result<()> {
-        let mut sut = AbstractState::new("HEOS", "Water")?;
+    fn update_valid_inputs_returns_ok() {
+        let mut sut = AbstractState::new("HEOS", "Water").unwrap();
         let result = sut.update(FluidInputPair::PT, 101_325.0, 293.15);
         assert!(result.is_ok());
-        Ok(())
     }
 
     #[test]
-    fn update_invalid_inputs_returns_err() -> Result<()> {
-        let mut sut = AbstractState::new("HEOS", "Water")?;
+    fn update_invalid_inputs_returns_err() {
+        let mut sut = AbstractState::new("HEOS", "Water").unwrap();
         let result = sut.update(FluidInputPair::PQ, 101_325.0, -1.0);
         assert_eq!(
             result.unwrap_err().to_string(),
             "Error: Input vapor quality [Q] must be between 0 and 1"
         );
-        Ok(())
     }
 
     #[test]
-    fn keyed_output_valid_state_returns_ok() -> Result<()> {
-        let mut sut = AbstractState::new("HEOS", "Water")?;
-        sut.update(FluidInputPair::PQ, 101_325.0, 1.0)?;
-        let result = sut.keyed_output(FluidParam::CpMass)?;
+    fn keyed_output_valid_state_returns_ok() {
+        let mut sut = AbstractState::new("HEOS", "Water").unwrap();
+        sut.update(FluidInputPair::PQ, 101_325.0, 1.0).unwrap();
+        let result = sut.keyed_output(FluidParam::CpMass).unwrap();
         assert_relative_eq!(result, 2_079.937_085_633_241);
-        Ok(())
     }
 
     #[test]
-    fn keyed_output_invalid_input_returns_err() -> Result<()> {
-        let sut = AbstractState::new("HEOS", "Water")?;
+    fn keyed_output_invalid_input_returns_err() {
+        let sut = AbstractState::new("HEOS", "Water").unwrap();
         let result = sut.keyed_output(255);
         assert_eq!(
             result.unwrap_err().to_string(),
             "Error: Unable to match the key [255] in get_parameter_information for info [short]"
         );
-        Ok(())
     }
 
     #[test]
-    fn keyed_output_non_trivial_with_not_defined_state_returns_err() -> Result<()> {
-        let sut = AbstractState::new("HEOS", "Water")?;
+    fn keyed_output_non_trivial_with_not_defined_state_returns_err() {
+        let sut = AbstractState::new("HEOS", "Water").unwrap();
         let result = sut.keyed_output(FluidParam::DMass);
         assert_eq!(
             result.unwrap_err().to_string(),
             "Unable to get the output with key '36' due to invalid or undefined state!"
         );
-        Ok(())
     }
 
     #[test]
-    fn specify_phase_valid_input_specifies_phase_for_all_further_calculations() -> Result<()> {
-        let mut sut = AbstractState::new("HEOS", "Water")?;
-        sut.specify_phase(Phase::Liquid)?;
+    fn specify_phase_valid_input_specifies_phase_for_all_further_calculations() {
+        let mut sut = AbstractState::new("HEOS", "Water").unwrap();
+        sut.specify_phase(Phase::Liquid).unwrap();
         let mut result = sut.update(FluidInputPair::PT, 101_325.0, 293.15);
         assert!(result.is_ok());
-        sut.specify_phase(Phase::Gas)?;
+        sut.specify_phase(Phase::Gas).unwrap();
         result = sut.update(FluidInputPair::PT, 101_325.0, 293.15);
         assert!(result.is_err());
-        Ok(())
     }
 
     #[test]
-    fn specify_phase_invalid_input_returns_err() -> Result<()> {
-        let mut sut = AbstractState::new("HEOS", "Water")?;
+    fn specify_phase_invalid_input_returns_err() {
+        let mut sut = AbstractState::new("HEOS", "Water").unwrap();
         let result = sut.specify_phase("Hello, World!");
         assert_eq!(
             result.unwrap_err().to_string(),
             "Error: Your input name [Hello, World!] is not valid \
             in get_phase_index (names are case sensitive)"
         );
-        Ok(())
     }
 
     #[test]
-    fn unspecify_phase_unspecifies_phase_for_all_further_calculations() -> Result<()> {
-        let mut sut = AbstractState::new("HEOS", "Water")?;
-        sut.specify_phase(Phase::Gas)?;
+    fn unspecify_phase_unspecifies_phase_for_all_further_calculations() {
+        let mut sut = AbstractState::new("HEOS", "Water").unwrap();
+        sut.specify_phase(Phase::Gas).unwrap();
         let mut result = sut.update(FluidInputPair::PT, 101_325.0, 293.15);
         assert!(result.is_err());
         sut.unspecify_phase();
         result = sut.update(FluidInputPair::PT, 101_325.0, 293.15);
         assert!(result.is_ok());
-        Ok(())
     }
 }

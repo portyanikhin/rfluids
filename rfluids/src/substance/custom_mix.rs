@@ -208,7 +208,7 @@ impl CustomMix {
     ///     (Pure::R125, Ratio::new::<percent>(50.0)),
     /// ]))?;
     /// assert_ne!(mass_based_mix.to_mole_based(), mass_based_mix);
-    /// # Ok::<(), rfluids::error::CustomMixError>(())
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     #[must_use]
     pub fn to_mole_based(&self) -> Self {
@@ -323,24 +323,24 @@ mod tests {
     }
 
     #[test]
-    fn to_mole_based_from_mole_based_returns_same() -> Result<(), CustomMixError> {
+    fn to_mole_based_from_mole_based_returns_same() {
         let sut = CustomMix::mole_based(HashMap::from([
             (Pure::Water, Ratio::new::<percent>(80.0)),
             (Pure::Ethanol, Ratio::new::<percent>(20.0)),
-        ]))?;
+        ]))
+        .unwrap();
         let result = sut.to_mole_based();
         assert_eq!(result, sut);
         assert!(matches(&result, [("Water", 0.8), ("Ethanol", 0.2)]));
-        Ok(())
     }
 
     #[test]
-    fn to_mole_based_from_mass_based_returns_other_with_converted_fractions(
-    ) -> Result<(), CustomMixError> {
+    fn to_mole_based_from_mass_based_returns_other_with_converted_fractions() {
         let sut = CustomMix::mass_based(HashMap::from([
             (Pure::R32, Ratio::new::<percent>(50.0)),
             (Pure::R125, Ratio::new::<percent>(50.0)),
-        ]))?;
+        ]))
+        .unwrap();
         let result = sut.to_mole_based();
         assert_ne!(result, sut);
         assert!(matches(&sut, [("R32", 0.5), ("R125", 0.5)]));
@@ -351,7 +351,6 @@ mod tests {
                 ("R125", 0.302_385_300_624_137_54)
             ]
         ));
-        Ok(())
     }
 
     fn matches(mix: &CustomMix, expected: [(&str, f64); 2]) -> bool {

@@ -260,10 +260,9 @@ mod tests {
     use rayon::prelude::*;
 
     #[test]
-    fn props_si_water_density_in_standard_conditions_returns_ok() -> Result<()> {
-        let result = CoolProp::props_si("D", "P", 101_325.0, "T", 293.15, "Water")?;
+    fn props_si_water_density_in_standard_conditions_returns_ok() {
+        let result = CoolProp::props_si("D", "P", 101_325.0, "T", 293.15, "Water").unwrap();
         assert_relative_eq!(result, 998.207_150_467_928_4);
-        Ok(())
     }
 
     #[test]
@@ -286,10 +285,9 @@ mod tests {
     }
 
     #[test]
-    fn ha_props_si_humid_air_humidity_in_standard_conditions_returns_ok() -> Result<()> {
-        let result = CoolProp::ha_props_si("W", "P", 101_325.0, "T", 293.15, "R", 0.5)?;
+    fn ha_props_si_humid_air_humidity_in_standard_conditions_returns_ok() {
+        let result = CoolProp::ha_props_si("W", "P", 101_325.0, "T", 293.15, "R", 0.5).unwrap();
         assert_relative_eq!(result, 0.007_293_697_701_992_549);
-        Ok(())
     }
 
     #[test]
@@ -312,10 +310,9 @@ mod tests {
     }
 
     #[test]
-    fn props1_si_valid_input_returns_ok() -> Result<()> {
-        let result = CoolProp::props1_si("Tcrit", "Water")?;
+    fn props1_si_valid_input_returns_ok() {
+        let result = CoolProp::props1_si("Tcrit", "Water").unwrap();
         assert_relative_eq!(result, 647.096);
-        Ok(())
     }
 
     #[test]

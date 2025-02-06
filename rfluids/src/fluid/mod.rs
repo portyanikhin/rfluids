@@ -74,8 +74,7 @@ impl TryFrom<Substance> for Fluid<Undefined> {
     ///     CustomMix::mass_based(HashMap::from([
     ///         (Pure::Water, Ratio::new::<percent>(60.0)),
     ///         (Pure::Ethanol, Ratio::new::<percent>(40.0)),
-    ///     ]))
-    ///     .unwrap(),
+    ///     ]))?,
     /// );
     /// assert!(Fluid::try_from(supported_mix).is_ok());
     ///
@@ -83,10 +82,10 @@ impl TryFrom<Substance> for Fluid<Undefined> {
     ///     CustomMix::mass_based(HashMap::from([
     ///         (Pure::Orthohydrogen, Ratio::new::<percent>(60.0)),
     ///         (Pure::R32, Ratio::new::<percent>(40.0)),
-    ///     ]))
-    ///     .unwrap(),
+    ///     ]))?,
     /// );
     /// assert!(Fluid::try_from(unsupported_mix).is_err());
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     fn try_from(value: Substance) -> Result<Self, Self::Error> {
         let request = FluidCreateRequest::from(&value);
@@ -164,8 +163,9 @@ impl From<BinaryMix> for Fluid<Undefined> {
     /// use rfluids::uom::si::ratio::percent;
     ///
     /// let propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
     /// );
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     fn from(value: BinaryMix) -> Self {
         Substance::from(value).try_into().unwrap()
@@ -192,16 +192,15 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
     /// let supported_mix = CustomMix::mass_based(HashMap::from([
     ///     (Pure::Water, Ratio::new::<percent>(60.0)),
     ///     (Pure::Ethanol, Ratio::new::<percent>(40.0)),
-    /// ]))
-    /// .unwrap();
+    /// ]))?;
     /// assert!(Fluid::try_from(supported_mix).is_ok());
     ///
     /// let unsupported_mix = CustomMix::mass_based(HashMap::from([
     ///     (Pure::Orthohydrogen, Ratio::new::<percent>(60.0)),
     ///     (Pure::R32, Ratio::new::<percent>(40.0)),
-    /// ]))
-    /// .unwrap();
+    /// ]))?;
     /// assert!(Fluid::try_from(unsupported_mix).is_err());
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     fn try_from(value: CustomMix) -> Result<Self, Self::Error> {
         Substance::from(value).try_into()
