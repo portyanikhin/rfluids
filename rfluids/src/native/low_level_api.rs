@@ -177,7 +177,7 @@ impl AbstractState {
         Self::result((), error)
     }
 
-    /// Get an output parameter value _(in SI units)_.
+    /// Returns an output parameter value _(in SI units)_.
     ///
     /// # Args
     ///

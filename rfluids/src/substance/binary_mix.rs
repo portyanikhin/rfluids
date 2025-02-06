@@ -227,11 +227,11 @@ impl BinaryMixKind {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::substance;
+    /// use rfluids::substance::BinaryMixKind;
     /// use rfluids::uom::si::f64::Ratio;
     /// use rfluids::uom::si::ratio::percent;
     ///
-    /// assert_eq!(substance::BinaryMixKind::MPG.min_fraction(), Ratio::new::<percent>(0.0));
+    /// assert_eq!(BinaryMixKind::MPG.min_fraction(), Ratio::new::<percent>(0.0));
     /// ```
     #[must_use]
     pub fn min_fraction(&self) -> Ratio {
@@ -243,11 +243,11 @@ impl BinaryMixKind {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::substance;
+    /// use rfluids::substance::BinaryMixKind;
     /// use rfluids::uom::si::f64::Ratio;
     /// use rfluids::uom::si::ratio::percent;
     ///
-    /// assert_eq!(substance::BinaryMixKind::MPG.max_fraction(), Ratio::new::<percent>(60.0));
+    /// assert_eq!(BinaryMixKind::MPG.max_fraction(), Ratio::new::<percent>(60.0));
     /// ```
     #[must_use]
     pub fn max_fraction(&self) -> Ratio {
@@ -287,8 +287,16 @@ impl BinaryMix {
     /// use rfluids::uom::si::f64::Ratio;
     /// use rfluids::uom::si::ratio::percent;
     ///
-    /// assert!(BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).is_ok());
-    /// assert!(BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(100.0)).is_err());
+    /// assert!(
+    ///     BinaryMix::with_fraction(
+    ///         BinaryMixKind::MPG, Ratio::new::<percent>(40.0)
+    ///     ).is_ok()
+    /// );
+    /// assert!(
+    ///     BinaryMix::with_fraction(
+    ///         BinaryMixKind::MPG, Ratio::new::<percent>(100.0)
+    ///     ).is_err()
+    /// );
     /// ```
     ///
     /// # See also

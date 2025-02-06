@@ -23,11 +23,11 @@ pub trait BackendName {
     ///     CustomMix::mass_based(HashMap::from([
     ///         (Pure::Water, Ratio::new::<percent>(60.0)),
     ///         (Pure::Ethanol, Ratio::new::<percent>(40.0)),
-    ///     ]))
-    ///     .unwrap()
+    ///     ]))?
     ///     .backend_name(),
     ///     "HEOS"
     /// );
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     fn backend_name(&self) -> &'static str;
 }
