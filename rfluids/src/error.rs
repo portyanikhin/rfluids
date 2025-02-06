@@ -75,6 +75,10 @@ pub enum FluidStateError {
 /// Error during calculation of the [`Fluid`](crate::fluid::Fluid) output parameter value.
 #[derive(Error, Debug, Clone, Eq, PartialEq)]
 pub enum FluidOutputError {
+    /// Specified output parameter is not available.
+    #[error("Specified output parameter `{0:?}` is not available!")]
+    Unavailable(FluidParam),
+
     /// Failed to calculate the output parameter value.
     #[error("Failed to calculate the output value of `{0:?}`! {1}")]
     CalculationFailed(FluidParam, CoolPropError),
