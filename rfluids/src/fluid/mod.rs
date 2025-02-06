@@ -22,7 +22,7 @@ mod invariant;
 mod requests;
 mod undefined;
 
-use crate::error::{FluidFromCustomMixError, FluidOutputError};
+use crate::error::{FluidFromCustomMixError, FluidOutputError, FluidStateError};
 use crate::io::{FluidParam, FluidTrivialParam};
 use crate::native::AbstractState;
 use crate::state_variant::{Defined, StateVariant, Undefined};
@@ -31,6 +31,12 @@ use requests::{FluidCreateRequest, FluidUpdateRequest};
 use std::collections::HashMap;
 use std::fmt::Debug;
 use std::marker::PhantomData;
+
+/// Result type for operations that could fail while updating fluid state.
+pub type StateResult<T> = Result<T, FluidStateError>;
+
+/// Result type for operations that could fail while retrieving fluid properties.
+pub type OutputResult<T> = Result<T, FluidOutputError>;
 
 /// Provider of thermophysical and transport properties of substances.
 ///

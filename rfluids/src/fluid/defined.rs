@@ -1,5 +1,4 @@
-use super::Fluid;
-use crate::error::FluidStateError;
+use super::{Fluid, StateResult};
 use crate::io::FluidInput;
 
 impl Fluid {
@@ -13,7 +12,7 @@ impl Fluid {
     /// # Errors
     ///
     /// For invalid/unsupported inputs or invalid state,
-    /// a [`FluidStateError`] is returned.
+    /// a [`FluidStateError`](crate::error::FluidStateError) is returned.
     ///
     /// # Examples
     ///
@@ -37,7 +36,7 @@ impl Fluid {
     /// // The `Fluid` instance now has `Defined` state variant
     /// // and it's thermodynamic state can be updated in place by calling `update` method
     /// // (which returns a mutable reference to the instance)
-    /// let same_water_in_new_state: Result<&mut Fluid, FluidStateError> = water.update(
+    /// let same_water_in_new_state: StateResult<&mut Fluid> = water.update(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(2.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(40.0)),
     /// );
@@ -45,7 +44,7 @@ impl Fluid {
     ///
     /// // Calling `in_state` method on `Fluid<Defined>` will return
     /// // a new instance in the specified thermodynamic state
-    /// let new_water: Result<Fluid, FluidStateError> = water.in_state(
+    /// let new_water: StateResult<Fluid> = water.in_state(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(4.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(80.0)),
     /// );
@@ -56,11 +55,7 @@ impl Fluid {
     /// # See also
     ///
     /// - [`Fluid::in_state`](crate::fluid::Fluid::in_state)
-    pub fn update(
-        &mut self,
-        input1: FluidInput,
-        input2: FluidInput,
-    ) -> Result<&mut Self, FluidStateError> {
+    pub fn update(&mut self, input1: FluidInput, input2: FluidInput) -> StateResult<&mut Self> {
         self.inner_update(input1, input2)?;
         Ok(self)
     }
@@ -75,7 +70,7 @@ impl Fluid {
     /// # Errors
     ///
     /// For invalid/unsupported inputs or invalid state,
-    /// a [`FluidStateError`] is returned.
+    /// a [`FluidStateError`](crate::error::FluidStateError) is returned.
     ///
     /// # Examples
     ///
@@ -99,7 +94,7 @@ impl Fluid {
     /// // The `Fluid` instance now has `Defined` state variant
     /// // and it's thermodynamic state can be updated in place by calling `update` method
     /// // (which returns a mutable reference to the instance)
-    /// let same_water_in_new_state: Result<&mut Fluid, FluidStateError> = water.update(
+    /// let same_water_in_new_state: StateResult<&mut Fluid> = water.update(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(2.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(40.0)),
     /// );
@@ -107,7 +102,7 @@ impl Fluid {
     ///
     /// // Calling `in_state` method on `Fluid<Defined>` will return
     /// // a new instance in the specified thermodynamic state
-    /// let new_water: Result<Fluid, FluidStateError> = water.in_state(
+    /// let new_water: StateResult<Fluid> = water.in_state(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(4.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(80.0)),
     /// );
@@ -118,11 +113,7 @@ impl Fluid {
     /// # See also
     ///
     /// - [`Fluid::update`](crate::fluid::Fluid::update)
-    pub fn in_state(
-        &self,
-        input1: FluidInput,
-        input2: FluidInput,
-    ) -> Result<Self, FluidStateError> {
+    pub fn in_state(&self, input1: FluidInput, input2: FluidInput) -> StateResult<Self> {
         let mut fluid = Fluid::try_from(self.substance.clone())
             .unwrap()
             .in_state(input1, input2)?;

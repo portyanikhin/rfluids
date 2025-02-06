@@ -1,6 +1,5 @@
 use super::requests::FluidUpdateRequest;
-use super::Fluid;
-use crate::error::FluidStateError;
+use super::{Fluid, StateResult};
 use crate::io::{FluidInput, FluidTrivialParam};
 use crate::state_variant::StateVariant;
 use crate::substance::Substance;
@@ -727,7 +726,7 @@ impl<S: StateVariant> Fluid<S> {
         &mut self,
         input1: FluidInput,
         input2: FluidInput,
-    ) -> Result<(), FluidStateError> {
+    ) -> StateResult<()> {
         let request: FluidUpdateRequest = (input1, input2).try_into()?;
         self.backend.update(request.0, request.1, request.2)?;
         self.outputs.clear();

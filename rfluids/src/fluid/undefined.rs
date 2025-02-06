@@ -1,5 +1,4 @@
-use super::Fluid;
-use crate::error::FluidStateError;
+use super::{Fluid, StateResult};
 use crate::io::FluidInput;
 use crate::state_variant::Undefined;
 use std::collections::HashMap;
@@ -17,7 +16,7 @@ impl Fluid<Undefined> {
     /// # Errors
     ///
     /// For invalid/unsupported inputs or invalid state,
-    /// a [`FluidStateError`] is returned.
+    /// a [`FluidStateError`](crate::error::FluidStateError) is returned.
     ///
     /// # Examples
     ///
@@ -41,7 +40,7 @@ impl Fluid<Undefined> {
     /// // The `Fluid` instance now has `Defined` state variant
     /// // and it's thermodynamic state can be updated in place by calling `update` method
     /// // (which returns a mutable reference to the instance)
-    /// let same_water_in_new_state: Result<&mut Fluid, FluidStateError> = water.update(
+    /// let same_water_in_new_state: StateResult<&mut Fluid> = water.update(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(2.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(40.0)),
     /// );
@@ -49,7 +48,7 @@ impl Fluid<Undefined> {
     ///
     /// // Calling `in_state` method on `Fluid<Defined>` will return
     /// // a new instance in the specified thermodynamic state
-    /// let new_water: Result<Fluid, FluidStateError> = water.in_state(
+    /// let new_water: StateResult<Fluid> = water.in_state(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(4.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(80.0)),
     /// );
@@ -61,11 +60,7 @@ impl Fluid<Undefined> {
     ///
     /// - [`Fluid::update`](crate::fluid::Fluid::update)
     /// - [`Fluid::in_state`](crate::fluid::Fluid::in_state)
-    pub fn in_state(
-        mut self,
-        input1: FluidInput,
-        input2: FluidInput,
-    ) -> Result<Fluid, FluidStateError> {
+    pub fn in_state(mut self, input1: FluidInput, input2: FluidInput) -> StateResult<Fluid> {
         self.inner_update(input1, input2)?;
         Ok(Fluid {
             substance: self.substance,
