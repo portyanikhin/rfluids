@@ -5,6 +5,38 @@ use crate::uom::si::f64::Ratio;
 use crate::uom::si::ratio::percent;
 use thiserror::Error;
 
+/// Superset of all possible errors that can occur in the library.
+#[derive(Error, Debug, Clone, PartialEq)]
+#[non_exhaustive]
+pub enum Error {
+    /// `CoolProp` internal error.
+    #[error(transparent)]
+    CoolProp(#[from] CoolPropError),
+
+    /// Error during creation of [`BinaryMix`](crate::substance::BinaryMix).
+    #[error(transparent)]
+    BinaryMix(#[from] BinaryMixError),
+
+    /// Error during creation of [`CustomMix`](crate::substance::CustomMix).
+    #[error(transparent)]
+    CustomMix(#[from] CustomMixError),
+
+    /// Error during creation of [`Fluid`](crate::fluid::Fluid)
+    /// from [`CustomMix`](crate::substance::CustomMix).
+    #[error(transparent)]
+    FluidFromCustomMix(#[from] FluidFromCustomMixError),
+
+    /// Error during [`Fluid::update`](crate::fluid::Fluid::update)
+    /// or [`Fluid::in_state`](crate::fluid::Fluid::in_state).
+    #[error(transparent)]
+    FluidState(#[from] FluidStateError),
+
+    /// Error during calculation of the
+    /// [`Fluid`](crate::fluid::Fluid) output parameter value.
+    #[error(transparent)]
+    FluidOutput(#[from] FluidOutputError),
+}
+
 /// `CoolProp` internal error.
 #[derive(Error, Debug, Clone, Eq, PartialEq)]
 #[error("{0}")]
@@ -48,7 +80,7 @@ pub enum CustomMixError {
 
 /// Error during creation of [`Fluid`](crate::fluid::Fluid)
 /// from [`CustomMix`](crate::substance::CustomMix).
-#[derive(Error, Debug, Clone)]
+#[derive(Error, Debug, Clone, Eq, PartialEq)]
 pub enum FluidFromCustomMixError {
     /// Specified custom mixture is not supported.
     #[error("Specified custom mixture is not supported! {0}")]
@@ -72,7 +104,8 @@ pub enum FluidStateError {
     UpdateFailed(#[from] CoolPropError),
 }
 
-/// Error during calculation of the [`Fluid`](crate::fluid::Fluid) output parameter value.
+/// Error during calculation of the
+/// [`Fluid`](crate::fluid::Fluid) output parameter value.
 #[derive(Error, Debug, Clone, Eq, PartialEq)]
 pub enum FluidOutputError {
     /// Specified output parameter is not available.
