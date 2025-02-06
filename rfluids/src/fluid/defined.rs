@@ -217,9 +217,11 @@ mod tests {
 
     #[fixture]
     fn propylene_glycol(temperature: FluidInput, pressure: FluidInput) -> Fluid {
-        Fluid::from(BinaryMix::try_from(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap())
-            .in_state(temperature, pressure)
-            .unwrap()
+        Fluid::from(
+            BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
+        )
+        .in_state(temperature, pressure)
+        .unwrap()
     }
 
     #[rstest]
