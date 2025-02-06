@@ -36,7 +36,7 @@ impl Fluid<Undefined> {
     /// let mut water: Fluid = water.in_state(
     ///     FluidInput::pressure(Pressure::new::<atmosphere>(1.0)),
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0)),
-    /// ).unwrap();
+    /// )?;
     ///
     /// // The `Fluid` instance now has `Defined` state variant
     /// // and it's thermodynamic state can be updated in place by calling `update` method
@@ -54,6 +54,7 @@ impl Fluid<Undefined> {
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(80.0)),
     /// );
     /// assert!(new_water.is_ok());
+    /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     ///
     /// # See also
