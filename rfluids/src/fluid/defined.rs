@@ -1,3 +1,5 @@
+// cSpell:disable
+
 use super::common::cached_output;
 use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
@@ -37,6 +39,39 @@ impl Fluid {
     /// ```
     pub fn alpha0(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::Alpha0)
+    }
+
+    /// Residual Helmholtz energy contribution
+    /// _(key: [`AlphaR`](FluidParam::AlphaR), dimensionless)_.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available (calculation is failed),
+    /// a [`FluidOutputError`] is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::pressure::atmosphere;
+    /// use rfluids::uom::si::ratio::percent;
+    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
+    ///
+    /// let pressure = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
+    /// let temperature =
+    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
+    /// let mut water = Fluid::from(Pure::Water).in_state(pressure, temperature)?;
+    /// assert_relative_eq!(water.alphar()?, -9.964888981266709);
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
+    /// ).in_state(pressure, temperature)?;
+    /// assert!(propylene_glycol.alphar().is_err());
+    /// # Ok::<(), rfluids::error::Error>(())
+    /// ```
+    pub fn alphar(&mut self) -> OutputResult<f64> {
+        self.output(FluidParam::AlphaR)
     }
 
     /// Mass specific enthalpy
@@ -399,6 +434,15 @@ mod tests {
         alpha0,
         water,
         9.942_698_150_834_108,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        f64,
+        alphar,
+        water,
+        -9.964_888_981_266_709,
         propylene_glycol
     );
 
