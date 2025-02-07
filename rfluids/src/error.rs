@@ -1,6 +1,6 @@
 //! Error handling.
 
-use crate::io::FluidParam;
+use crate::io::{FluidParam, FluidTrivialParam};
 use crate::uom::si::f64::Ratio;
 use crate::uom::si::ratio::percent;
 use thiserror::Error;
@@ -92,7 +92,7 @@ pub enum FluidFromCustomMixError {
 #[derive(Error, Debug, Clone, Eq, PartialEq)]
 pub enum FluidStateError {
     /// Specified inputs are invalid.
-    #[error("Specified inputs ({0:?}, {1:?}) are invalid!")]
+    #[error("Specified inputs (`{0:?}`, `{1:?}`) are invalid!")]
     InvalidInputPair(FluidParam, FluidParam),
 
     /// Some of the specified input value is infinite or NaN.
@@ -108,9 +108,13 @@ pub enum FluidStateError {
 /// [`Fluid`](crate::fluid::Fluid) output parameter value.
 #[derive(Error, Debug, Clone, Eq, PartialEq)]
 pub enum FluidOutputError {
+    /// Specified trivial output parameter is not available.
+    #[error("Specified trivial output parameter `{0:?}` is not available!")]
+    UnavailableTrivialOutput(FluidTrivialParam),
+
     /// Specified output parameter is not available.
     #[error("Specified output parameter `{0:?}` is not available!")]
-    Unavailable(FluidParam),
+    UnavailableOutput(FluidParam),
 
     /// Failed to calculate the output parameter value.
     #[error("Failed to calculate the output value of `{0:?}`! {1}")]

@@ -161,9 +161,9 @@ mod tests {
 
     #[rstest]
     fn acentric_factor_returns_option(mut water: Fluid<Undefined>, mut r444a: Fluid<Undefined>) {
-        assert!(water.acentric_factor().is_some());
+        assert!(water.acentric_factor().is_ok());
         assert_relative_eq!(water.acentric_factor().unwrap(), 0.344_292_084_3);
-        assert!(r444a.acentric_factor().is_none());
+        assert!(r444a.acentric_factor().is_err());
     }
 
     #[rstest]
@@ -172,10 +172,10 @@ mod tests {
         mut r444a: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.critical_density().is_some());
+        assert!(water.critical_density().is_ok());
         assert_relative_eq!(water.critical_density().unwrap().value, 322.0);
-        assert!(r444a.critical_density().is_none());
-        assert!(incomp_water.critical_density().is_none());
+        assert!(r444a.critical_density().is_err());
+        assert!(incomp_water.critical_density().is_err());
     }
 
     #[rstest]
@@ -184,13 +184,13 @@ mod tests {
         mut r444a: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.critical_molar_density().is_some());
+        assert!(water.critical_molar_density().is_ok());
         assert_relative_eq!(
             water.critical_molar_density().unwrap().value,
             17_873.727_995_609_06
         );
-        assert!(r444a.critical_molar_density().is_none());
-        assert!(incomp_water.critical_molar_density().is_none());
+        assert!(r444a.critical_molar_density().is_err());
+        assert!(incomp_water.critical_molar_density().is_err());
     }
 
     #[rstest]
@@ -199,10 +199,10 @@ mod tests {
         mut r444a: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.critical_pressure().is_some());
+        assert!(water.critical_pressure().is_ok());
         assert_relative_eq!(water.critical_pressure().unwrap().value, 22.064e6);
-        assert!(r444a.critical_pressure().is_none());
-        assert!(incomp_water.critical_pressure().is_none());
+        assert!(r444a.critical_pressure().is_err());
+        assert!(incomp_water.critical_pressure().is_err());
     }
 
     #[rstest]
@@ -211,10 +211,10 @@ mod tests {
         mut r444a: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.critical_temperature().is_some());
+        assert!(water.critical_temperature().is_ok());
         assert_relative_eq!(water.critical_temperature().unwrap().value, 647.096);
-        assert!(r444a.critical_temperature().is_none());
-        assert!(incomp_water.critical_temperature().is_none());
+        assert!(r444a.critical_temperature().is_err());
+        assert!(incomp_water.critical_temperature().is_err());
     }
 
     #[rstest]
@@ -222,9 +222,9 @@ mod tests {
         mut water: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.flammability_hazard().is_some());
+        assert!(water.flammability_hazard().is_ok());
         assert_eq!(water.flammability_hazard().unwrap(), 0.0);
-        assert!(incomp_water.flammability_hazard().is_none());
+        assert!(incomp_water.flammability_hazard().is_err());
     }
 
     #[rstest]
@@ -232,8 +232,8 @@ mod tests {
         mut water: Fluid<Undefined>,
         mut propylene_glycol: Fluid<Undefined>,
     ) {
-        assert!(water.freezing_temperature().is_none());
-        assert!(propylene_glycol.freezing_temperature().is_some());
+        assert!(water.freezing_temperature().is_err());
+        assert!(propylene_glycol.freezing_temperature().is_ok());
         assert_relative_eq!(
             propylene_glycol.freezing_temperature().unwrap().value,
             252.581_754_953_058_38
@@ -242,22 +242,22 @@ mod tests {
 
     #[rstest]
     fn gwp20_returns_option(mut water: Fluid<Undefined>, mut r32: Fluid<Undefined>) {
-        assert!(water.gwp20().is_none());
-        assert!(r32.gwp20().is_some());
+        assert!(water.gwp20().is_err());
+        assert!(r32.gwp20().is_ok());
         assert_eq!(r32.gwp20().unwrap(), 2330.0);
     }
 
     #[rstest]
     fn gwp100_returns_option(mut water: Fluid<Undefined>, mut r32: Fluid<Undefined>) {
-        assert!(water.gwp100().is_none());
-        assert!(r32.gwp100().is_some());
+        assert!(water.gwp100().is_err());
+        assert!(r32.gwp100().is_ok());
         assert_eq!(r32.gwp100().unwrap(), 675.0);
     }
 
     #[rstest]
     fn gwp500_returns_option(mut water: Fluid<Undefined>, mut r32: Fluid<Undefined>) {
-        assert!(water.gwp500().is_none());
-        assert!(r32.gwp500().is_some());
+        assert!(water.gwp500().is_err());
+        assert!(r32.gwp500().is_ok());
         assert_eq!(r32.gwp500().unwrap(), 205.0);
     }
 
@@ -266,9 +266,9 @@ mod tests {
         mut water: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.health_hazard().is_some());
+        assert!(water.health_hazard().is_ok());
         assert_eq!(water.health_hazard().unwrap(), 0.0);
-        assert!(incomp_water.health_hazard().is_none());
+        assert!(incomp_water.health_hazard().is_err());
     }
 
     #[rstest]
@@ -276,9 +276,9 @@ mod tests {
         mut water: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.max_pressure().is_some());
+        assert!(water.max_pressure().is_ok());
         assert_eq!(water.max_pressure().unwrap().value, 1e9);
-        assert!(incomp_water.max_pressure().is_none());
+        assert!(incomp_water.max_pressure().is_err());
     }
 
     #[rstest]
@@ -291,9 +291,9 @@ mod tests {
         mut water: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.min_pressure().is_some());
+        assert!(water.min_pressure().is_ok());
         assert_relative_eq!(water.min_pressure().unwrap().value, 611.654_800_896_868_4);
-        assert!(incomp_water.min_pressure().is_none());
+        assert!(incomp_water.min_pressure().is_err());
     }
 
     #[rstest]
@@ -303,9 +303,9 @@ mod tests {
 
     #[rstest]
     fn molar_mass_returns_option(mut water: Fluid<Undefined>, mut incomp_water: Fluid<Undefined>) {
-        assert!(water.molar_mass().is_some());
+        assert!(water.molar_mass().is_ok());
         assert_relative_eq!(water.molar_mass().unwrap().value, 0.018_015_268);
-        assert!(incomp_water.molar_mass().is_none());
+        assert!(incomp_water.molar_mass().is_err());
     }
 
     #[rstest]
@@ -314,9 +314,9 @@ mod tests {
         mut r32: Fluid<Undefined>,
         mut r22: Fluid<Undefined>,
     ) {
-        assert!(water.odp().is_none());
-        assert!(r32.odp().is_none());
-        assert!(r22.odp().is_some());
+        assert!(water.odp().is_err());
+        assert!(r32.odp().is_err());
+        assert!(r22.odp().is_ok());
         assert_eq!(r22.odp().unwrap(), 0.05);
     }
 
@@ -325,9 +325,9 @@ mod tests {
         mut water: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.physical_hazard().is_some());
+        assert!(water.physical_hazard().is_ok());
         assert_eq!(water.physical_hazard().unwrap(), 0.0);
-        assert!(incomp_water.physical_hazard().is_none());
+        assert!(incomp_water.physical_hazard().is_err());
     }
 
     #[rstest]
@@ -335,9 +335,9 @@ mod tests {
         mut water: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.reducing_density().is_some());
+        assert!(water.reducing_density().is_ok());
         assert_relative_eq!(water.reducing_density().unwrap().value, 322.0);
-        assert!(incomp_water.reducing_density().is_none());
+        assert!(incomp_water.reducing_density().is_err());
     }
 
     #[rstest]
@@ -345,12 +345,12 @@ mod tests {
         mut water: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.reducing_molar_density().is_some());
+        assert!(water.reducing_molar_density().is_ok());
         assert_relative_eq!(
             water.reducing_molar_density().unwrap().value,
             17_873.727_995_609_06
         );
-        assert!(incomp_water.reducing_molar_density().is_none());
+        assert!(incomp_water.reducing_molar_density().is_err());
     }
 
     #[rstest]
@@ -358,9 +358,9 @@ mod tests {
         mut water: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.reducing_pressure().is_some());
+        assert!(water.reducing_pressure().is_ok());
         assert_relative_eq!(water.reducing_pressure().unwrap().value, 22.064e6);
-        assert!(incomp_water.reducing_pressure().is_none());
+        assert!(incomp_water.reducing_pressure().is_err());
     }
 
     #[rstest]
@@ -368,9 +368,9 @@ mod tests {
         mut water: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.reducing_temperature().is_some());
+        assert!(water.reducing_temperature().is_ok());
         assert_relative_eq!(water.reducing_temperature().unwrap().value, 647.096);
-        assert!(incomp_water.reducing_temperature().is_none());
+        assert!(incomp_water.reducing_temperature().is_err());
     }
 
     #[rstest]
@@ -378,12 +378,12 @@ mod tests {
         mut water: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.triple_pressure().is_some());
+        assert!(water.triple_pressure().is_ok());
         assert_relative_eq!(
             water.triple_pressure().unwrap().value,
             611.654_800_896_868_4
         );
-        assert!(incomp_water.triple_pressure().is_none());
+        assert!(incomp_water.triple_pressure().is_err());
     }
 
     #[rstest]
@@ -391,9 +391,9 @@ mod tests {
         mut water: Fluid<Undefined>,
         mut incomp_water: Fluid<Undefined>,
     ) {
-        assert!(water.triple_temperature().is_some());
+        assert!(water.triple_temperature().is_ok());
         assert_relative_eq!(water.triple_temperature().unwrap().value, 273.16);
-        assert!(incomp_water.triple_temperature().is_none());
+        assert!(incomp_water.triple_temperature().is_err());
     }
 
     #[rstest]

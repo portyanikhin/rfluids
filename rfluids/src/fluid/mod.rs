@@ -17,6 +17,7 @@
 //! or [`CustomMix`] using the [`TryFrom`]/[`TryInto`] traits. This is due to the fact that
 //! [`CustomMix`] potentially can be unsupported by the `CoolProp`.
 
+mod common;
 mod defined;
 mod invariant;
 mod requests;
@@ -51,8 +52,8 @@ pub struct Fluid<S: StateVariant = Defined> {
     substance: Substance,
     backend: AbstractState,
     update_request: Option<FluidUpdateRequest>,
-    outputs: HashMap<FluidParam, Result<f64, FluidOutputError>>,
-    trivial_outputs: HashMap<FluidTrivialParam, Option<f64>>,
+    outputs: HashMap<FluidParam, OutputResult<f64>>,
+    trivial_outputs: HashMap<FluidTrivialParam, OutputResult<f64>>,
     state: PhantomData<S>,
 }
 
