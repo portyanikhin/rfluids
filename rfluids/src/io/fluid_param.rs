@@ -203,40 +203,40 @@ pub enum FluidParam {
     #[strum(to_string = "fundamental_derivative_of_gas_dynamics")]
     FundamentalDerivativeOfGasDynamics = 53,
 
-    /// Residual Helmholtz energy _(dimensionless)_.
+    /// Residual Helmholtz energy contribution _(dimensionless)_.
     #[strum(to_string = "alphar")]
     AlphaR = 54,
 
-    /// Derivative of residual Helmholtz energy
+    /// Derivative of residual Helmholtz energy contribution
     /// with _[`Tau`](FluidParam::Tau) (dimensionless)_.
     #[strum(to_string = "dalphar_dtau_constdelta")]
     DAlphaRDTauConstDelta = 55,
 
-    /// Derivative of residual Helmholtz energy
+    /// Derivative of residual Helmholtz energy contribution
     /// with _[`Delta`](FluidParam::Delta) (dimensionless)_.
     #[strum(to_string = "dalphar_ddelta_consttau")]
     DAlphaRDDeltaConstTau = 56,
 
-    /// Ideal Helmholtz energy _(dimensionless)_.
+    /// Ideal gas Helmholtz energy contribution _(dimensionless)_.
     #[strum(to_string = "alpha0")]
     Alpha0 = 57,
 
-    /// Derivative of ideal Helmholtz energy
+    /// Derivative of ideal gas Helmholtz energy contribution
     /// with _[`Tau`](FluidParam::Tau) (dimensionless)_.
     #[strum(to_string = "dalpha0_dtau_constdelta")]
     DAlpha0DTauConstDelta = 58,
 
-    /// Derivative of ideal Helmholtz energy
+    /// Derivative of ideal gas Helmholtz energy contribution
     /// with _[`Delta`](FluidParam::Delta) (dimensionless)_.
     #[strum(to_string = "dalpha0_ddelta_consttau")]
     DAlpha0DDeltaConstTau = 59,
 
-    /// Second derivative of ideal Helmholtz energy
+    /// Second derivative of ideal gas Helmholtz energy contribution
     /// with _[`Delta`](FluidParam::Delta) (dimensionless)_.
     #[strum(to_string = "d2alpha0_ddelta2_consttau")]
     D2Alpha0DDelta2ConstTau = 60,
 
-    /// Third derivative of ideal Helmholtz energy
+    /// Third derivative of ideal gas Helmholtz energy contribution
     /// with _[`Delta`](FluidParam::Delta) (dimensionless)_.
     #[strum(to_string = "d3alpha0_ddelta3_consttau")]
     D3Alpha0DDelta3ConstTau = 61,
