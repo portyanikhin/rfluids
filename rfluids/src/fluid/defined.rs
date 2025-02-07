@@ -1,7 +1,44 @@
-use super::{Fluid, StateResult};
-use crate::io::FluidInput;
+use super::common::cached_output;
+use super::{Fluid, OutputResult, StateResult};
+use crate::error::FluidOutputError;
+use crate::io::{FluidInput, FluidParam};
+use crate::uom::si::available_energy::joule_per_kilogram;
+use crate::uom::si::f64::AvailableEnergy;
 
 impl Fluid {
+    /// Mass specific enthalpy
+    /// _(key: [`HMass`](FluidParam::HMass), SI units: J/kg)_.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`FluidOutputError`] is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::available_energy::kilojoule_per_kilogram;
+    /// use rfluids::uom::si::pressure::atmosphere;
+    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
+    ///
+    /// let mut water = Fluid::from(Pure::Water).in_state(
+    ///     FluidInput::pressure(Pressure::new::<atmosphere>(1.0)),
+    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0)),
+    /// )?;
+    /// assert_relative_eq!(water.enthalpy()?.value, 84007.3008506628);
+    /// assert_relative_eq!(
+    ///     water.enthalpy()?.get::<kilojoule_per_kilogram>(),
+    ///     84.0073008506628
+    /// );
+    /// # Ok::<(), rfluids::error::Error>(())
+    /// ```
+    pub fn enthalpy(&mut self) -> Result<AvailableEnergy, FluidOutputError> {
+        self.output(FluidParam::HMass)
+            .map(AvailableEnergy::new::<joule_per_kilogram>)
+    }
+
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -119,6 +156,12 @@ impl Fluid {
             .in_state(input1, input2)?;
         fluid.trivial_outputs.clone_from(&self.trivial_outputs);
         Ok(fluid)
+    }
+
+    fn output(&mut self, key: FluidParam) -> OutputResult<f64> {
+        cached_output(&mut self.outputs, &mut self.backend, key, |e| {
+            FluidOutputError::CalculationFailed(key, e)
+        })
     }
 }
 
@@ -420,6 +463,11 @@ mod tests {
         assert!(water.triple_temperature().is_ok());
         assert_relative_eq!(water.triple_temperature().unwrap().value, 273.16);
         assert!(incomp_water.triple_temperature().is_err());
+    }
+
+    #[rstest]
+    fn enthalpy_returns_expected_value(mut water: Fluid) {
+        assert_relative_eq!(water.enthalpy().unwrap().value, 84_007.300_850_662_8);
     }
 
     #[rstest]
