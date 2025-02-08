@@ -14,6 +14,83 @@ use crate::uom::si::molar_mass::kilogram_per_mole;
 use crate::uom::si::pressure::pascal;
 use crate::uom::si::thermodynamic_temperature::kelvin;
 
+macro_rules! trivial_output_doc {
+    (always_ok, $key:ident, $description:literal, $units_description:literal) => {
+        concat!(
+            $description,
+            "\n_(key: [`",
+            stringify!($key),
+            "`](FluidTrivialParam::",
+            stringify!($key),
+            "), ",
+            $units_description,
+            ")_.",
+        )
+    };
+    ($key:ident, $description:literal, $units_description:literal) => {
+        concat!(
+            trivial_output_doc!(always_ok, $key, $description, $units_description),
+            "\n\n# Errors\n\n",
+            "If it's not available for the specified substance,\n",
+            "a [`FluidOutputError`] is returned.",
+        )
+    };
+}
+
+macro_rules! define_trivial_output {
+    (
+        $method:ident,
+        $name:ident,
+        $key:ident,
+        $type:ty,
+        $description:literal,
+        $units_description:literal
+        $(, $map:expr)?
+    ) => {
+        #[doc = trivial_output_doc!($key, $description, $units_description)]
+        pub fn $name(&mut self) -> OutputResult<$type> {
+            self.$method(FluidTrivialParam::$key)
+                $(.map($map))?
+        }
+    };
+    (
+        not_available_for_predefined_mix,
+        $method:ident,
+        $name:ident,
+        $key:ident,
+        $type:ty,
+        $description:literal,
+        $units_description:literal
+        $(, $map:expr)?
+    ) => {
+        #[doc = trivial_output_doc!($key, $description, $units_description)]
+        pub fn $name(&mut self) -> OutputResult<$type> {
+            let key = FluidTrivialParam::$key;
+            // Due to CoolProp freeze
+            if let Substance::PredefinedMix(_) = self.substance {
+                return Err(FluidOutputError::UnavailableTrivialOutput(key));
+            }
+            self.$method(key)
+                $(.map($map))?
+        }
+    };
+    (
+        always_ok,
+        $method:ident,
+        $name:ident,
+        $key:ident,
+        $type:ty,
+        $description:literal,
+        $units_description:literal,
+        $map:expr
+    ) => {
+        #[doc = trivial_output_doc!(always_ok, $key, $description, $units_description)]
+        pub fn $name(&mut self) -> $type {
+            $map(self.$method(FluidTrivialParam::$key).unwrap())
+        }
+    };
+}
+
 impl<S: StateVariant> Fluid<S> {
     /// Specified substance.
     #[must_use]
@@ -21,767 +98,239 @@ impl<S: StateVariant> Fluid<S> {
         &self.substance
     }
 
-    /// Acentric factor
-    /// _(key: [`AcentricFactor`](FluidTrivialParam::AcentricFactor), dimensionless)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(water.acentric_factor()?, 0.3442920843);
-    ///
-    /// let mut r444a = Fluid::from(PredefinedMix::R444A);
-    /// assert!(r444a.acentric_factor().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn acentric_factor(&mut self) -> OutputResult<f64> {
-        self.trivial_output(FluidTrivialParam::AcentricFactor)
-    }
+    define_trivial_output!(
+        trivial_output,
+        acentric_factor,
+        AcentricFactor,
+        f64,
+        "Acentric factor",
+        "dimensionless"
+    );
 
-    /// Critical point mass density
-    /// _(key: [`DMassCritical`](FluidTrivialParam::DMassCritical), SI units: kg/m³)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::mass_density::gram_per_cubic_centimeter;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(water.critical_density()?.value, 322.0);
-    /// assert_relative_eq!(
-    ///     water.critical_density()?.get::<gram_per_cubic_centimeter>(),
-    ///     0.322
-    /// );
-    ///
-    /// let mut r444a = Fluid::from(PredefinedMix::R444A);
-    /// assert!(r444a.critical_density().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn critical_density(&mut self) -> OutputResult<MassDensity> {
-        let key = FluidTrivialParam::DMassCritical;
-        // Due to CoolProp freeze
-        if let Substance::PredefinedMix(_) = self.substance {
-            return Err(FluidOutputError::UnavailableTrivialOutput(key));
-        }
-        self.non_negative_trivial_output(key)
-            .map(MassDensity::new::<kilogram_per_cubic_meter>)
-    }
+    define_trivial_output!(
+        not_available_for_predefined_mix,
+        non_negative_trivial_output,
+        critical_density,
+        DMassCritical,
+        MassDensity,
+        "Critical point mass density",
+        "SI units: kg/m³",
+        MassDensity::new::<kilogram_per_cubic_meter>
+    );
 
-    /// Critical point molar density
-    /// _(key: [`DMolarCritical`](FluidTrivialParam::DMolarCritical), SI units: mol/m³)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::molar_concentration::mole_per_liter;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(
-    ///     water.critical_molar_density()?.value,
-    ///     17873.72799560906
-    /// );
-    /// assert_relative_eq!(
-    ///     water.critical_molar_density()?.get::<mole_per_liter>(),
-    ///     17.87372799560906
-    /// );
-    ///
-    /// let mut r444a = Fluid::from(PredefinedMix::R444A);
-    /// assert!(r444a.critical_molar_density().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn critical_molar_density(&mut self) -> OutputResult<MolarConcentration> {
-        let key = FluidTrivialParam::DMolarCritical;
-        // Due to CoolProp freeze
-        if let Substance::PredefinedMix(_) = self.substance {
-            return Err(FluidOutputError::UnavailableTrivialOutput(key));
-        }
-        self.non_negative_trivial_output(key)
-            .map(MolarConcentration::new::<mole_per_cubic_meter>)
-    }
+    define_trivial_output!(
+        not_available_for_predefined_mix,
+        non_negative_trivial_output,
+        critical_molar_density,
+        DMolarCritical,
+        MolarConcentration,
+        "Critical point molar density",
+        "SI units: mol/m³",
+        MolarConcentration::new::<mole_per_cubic_meter>
+    );
 
-    /// Critical point pressure
-    /// _(key: [`PCritical`](FluidTrivialParam::PCritical), SI units: Pa)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::pressure::megapascal;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(water.critical_pressure()?.value, 22.064e6);
-    /// assert_relative_eq!(
-    ///     water.critical_pressure()?.get::<megapascal>(),
-    ///     22.064
-    /// );
-    ///
-    /// let mut r444a = Fluid::from(PredefinedMix::R444A);
-    /// assert!(r444a.critical_pressure().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn critical_pressure(&mut self) -> OutputResult<Pressure> {
-        let key = FluidTrivialParam::PCritical;
-        // Due to CoolProp freeze
-        if let Substance::PredefinedMix(_) = self.substance {
-            return Err(FluidOutputError::UnavailableTrivialOutput(key));
-        }
-        self.non_negative_trivial_output(key)
-            .map(Pressure::new::<pascal>)
-    }
+    define_trivial_output!(
+        not_available_for_predefined_mix,
+        non_negative_trivial_output,
+        critical_pressure,
+        PCritical,
+        Pressure,
+        "Critical point pressure",
+        "SI units: Pa",
+        Pressure::new::<pascal>
+    );
 
-    /// Critical point temperature
-    /// _(key: [`TCritical`](FluidTrivialParam::TCritical), SI units: K)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(water.critical_temperature()?.value, 647.096);
-    /// assert_relative_eq!(
-    ///     water.critical_temperature()?.get::<degree_celsius>(),
-    ///     373.946
-    /// );
-    ///
-    /// let mut r444a = Fluid::from(PredefinedMix::R444A);
-    /// assert!(r444a.critical_temperature().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn critical_temperature(&mut self) -> OutputResult<ThermodynamicTemperature> {
-        let key = FluidTrivialParam::TCritical;
-        // Due to CoolProp freeze
-        if let Substance::PredefinedMix(_) = self.substance {
-            return Err(FluidOutputError::UnavailableTrivialOutput(key));
-        }
-        self.non_negative_trivial_output(key)
-            .map(ThermodynamicTemperature::new::<kelvin>)
-    }
+    define_trivial_output!(
+        not_available_for_predefined_mix,
+        non_negative_trivial_output,
+        critical_temperature,
+        TCritical,
+        ThermodynamicTemperature,
+        "Critical point temperature",
+        "SI units: K",
+        ThermodynamicTemperature::new::<kelvin>
+    );
 
-    /// Flammability hazard index
-    /// _(key: [`FH`](FluidTrivialParam::FH), dimensionless)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::ratio::percent;
-    ///
-    /// let mut acetone = Fluid::from(Pure::Acetone);
-    /// assert_eq!(acetone.flammability_hazard()?, 3.0);
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_eq!(water.flammability_hazard()?, 0.0);
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// );
-    /// assert!(propylene_glycol.flammability_hazard().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn flammability_hazard(&mut self) -> OutputResult<f64> {
-        self.non_negative_trivial_output(FluidTrivialParam::FH)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        flammability_hazard,
+        FH,
+        f64,
+        "Flammability hazard index",
+        "dimensionless"
+    );
 
-    /// Freezing temperature for incompressible mixtures
-    /// _(key: [`TFreeze`](FluidTrivialParam::TFreeze), SI units: K)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::ratio::percent;
-    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert!(water.freezing_temperature().is_err());
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// );
-    /// assert_relative_eq!(
-    ///     propylene_glycol.freezing_temperature()?.value,
-    ///     252.58175495305838
-    /// );
-    /// assert_relative_eq!(
-    ///     propylene_glycol.freezing_temperature()?.get::<degree_celsius>(),
-    ///     -20.5682450469416
-    /// );
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn freezing_temperature(&mut self) -> OutputResult<ThermodynamicTemperature> {
-        self.non_negative_trivial_output(FluidTrivialParam::TFreeze)
-            .map(ThermodynamicTemperature::new::<kelvin>)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        freezing_temperature,
+        TFreeze,
+        ThermodynamicTemperature,
+        "Freezing temperature for incompressible mixtures",
+        "SI units: K",
+        ThermodynamicTemperature::new::<kelvin>
+    );
 
-    /// 20-year global warming potential
-    /// _(key: [`GWP20`](FluidTrivialParam::GWP20), dimensionless)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::prelude::fluid::*;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert!(water.gwp20().is_err());
-    ///
-    /// let mut r32 = Fluid::from(Pure::R32);
-    /// assert_eq!(r32.gwp20()?, 2330.0);
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn gwp20(&mut self) -> OutputResult<f64> {
-        self.non_negative_trivial_output(FluidTrivialParam::GWP20)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        gwp20,
+        GWP20,
+        f64,
+        "20-year global warming potential",
+        "dimensionless"
+    );
 
-    /// 100-year global warming potential
-    /// _(key: [`GWP100`](FluidTrivialParam::GWP100), dimensionless)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::prelude::fluid::*;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert!(water.gwp100().is_err());
-    ///
-    /// let mut r32 = Fluid::from(Pure::R32);
-    /// assert_eq!(r32.gwp100()?, 675.0);
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn gwp100(&mut self) -> OutputResult<f64> {
-        self.non_negative_trivial_output(FluidTrivialParam::GWP100)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        gwp100,
+        GWP100,
+        f64,
+        "100-year global warming potential",
+        "dimensionless"
+    );
 
-    /// 500-year global warming potential
-    /// _(key: [`GWP500`](FluidTrivialParam::GWP500), dimensionless)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::prelude::fluid::*;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert!(water.gwp500().is_err());
-    ///
-    /// let mut r32 = Fluid::from(Pure::R32);
-    /// assert_eq!(r32.gwp500()?, 205.0);
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn gwp500(&mut self) -> OutputResult<f64> {
-        self.non_negative_trivial_output(FluidTrivialParam::GWP500)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        gwp500,
+        GWP500,
+        f64,
+        "500-year global warming potential",
+        "dimensionless"
+    );
 
-    /// Health hazard index
-    /// _(key: [`HH`](FluidTrivialParam::HH), dimensionless)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::ratio::percent;
-    ///
-    /// let mut acetone = Fluid::from(Pure::Acetone);
-    /// assert_eq!(acetone.health_hazard()?, 2.0);
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_eq!(water.health_hazard()?, 0.0);
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// );
-    /// assert!(propylene_glycol.health_hazard().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    pub fn health_hazard(&mut self) -> OutputResult<f64> {
-        self.non_negative_trivial_output(FluidTrivialParam::HH)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        health_hazard,
+        HH,
+        f64,
+        "Health hazard index",
+        "dimensionless"
+    );
 
-    /// Maximum pressure
-    /// _(key: [`PMax`](FluidTrivialParam::PMax), SI units: Pa)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::ratio::percent;
-    /// use rfluids::uom::si::pressure::megapascal;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(water.max_pressure()?.value, 1e9);
-    /// assert_relative_eq!(
-    ///     water.max_pressure()?.get::<megapascal>(),
-    ///     1000.0
-    /// );
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// );
-    /// assert!(propylene_glycol.max_pressure().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn max_pressure(&mut self) -> OutputResult<Pressure> {
-        self.non_negative_trivial_output(FluidTrivialParam::PMax)
-            .map(Pressure::new::<pascal>)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        max_pressure,
+        PMax,
+        Pressure,
+        "Maximum pressure",
+        "SI units: Pa",
+        Pressure::new::<pascal>
+    );
 
-    /// Maximum temperature
-    /// _(key: [`TMax`](FluidTrivialParam::TMax), SI units: K)_.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(water.max_temperature().value, 2e3);
-    /// assert_relative_eq!(
-    ///     water.max_temperature().get::<degree_celsius>(),
-    ///     1726.85
-    /// );
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn max_temperature(&mut self) -> ThermodynamicTemperature {
-        ThermodynamicTemperature::new::<kelvin>(
-            self.non_negative_trivial_output(FluidTrivialParam::TMax)
-                .unwrap(),
-        )
-    }
+    define_trivial_output!(
+        always_ok,
+        non_negative_trivial_output,
+        max_temperature,
+        TMax,
+        ThermodynamicTemperature,
+        "Maximum temperature",
+        "SI units: K",
+        ThermodynamicTemperature::new::<kelvin>
+    );
 
-    /// Minimum pressure
-    /// _(key: [`PMin`](FluidTrivialParam::PMin), SI units: Pa)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::ratio::percent;
-    /// use rfluids::uom::si::pressure::kilopascal;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(
-    ///     water.min_pressure()?.value,
-    ///     611.6548008968684
-    /// );
-    /// assert_relative_eq!(
-    ///     water.min_pressure()?.get::<kilopascal>(),
-    ///     0.6116548008968684
-    /// );
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// );
-    /// assert!(propylene_glycol.min_pressure().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn min_pressure(&mut self) -> OutputResult<Pressure> {
-        self.non_negative_trivial_output(FluidTrivialParam::PMin)
-            .map(Pressure::new::<pascal>)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        min_pressure,
+        PMin,
+        Pressure,
+        "Minimum pressure",
+        "SI units: Pa",
+        Pressure::new::<pascal>
+    );
 
-    /// Minimum temperature
-    /// _(key: [`TMin`](FluidTrivialParam::TMin), SI units: K)_.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(water.min_temperature().value, 273.16);
-    /// assert_relative_eq!(
-    ///     water.min_temperature().get::<degree_celsius>(),
-    ///     0.01,
-    ///     epsilon = 1e-6
-    /// );
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn min_temperature(&mut self) -> ThermodynamicTemperature {
-        ThermodynamicTemperature::new::<kelvin>(
-            self.non_negative_trivial_output(FluidTrivialParam::TMin)
-                .unwrap(),
-        )
-    }
+    define_trivial_output!(
+        always_ok,
+        non_negative_trivial_output,
+        min_temperature,
+        TMin,
+        ThermodynamicTemperature,
+        "Minimum temperature",
+        "SI units: K",
+        ThermodynamicTemperature::new::<kelvin>
+    );
 
-    /// Molar mass
-    /// _(key: [`MolarMass`](FluidTrivialParam::MolarMass), SI units: kg/mol)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::molar_mass::gram_per_mole;
-    /// use rfluids::uom::si::ratio::percent;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(water.molar_mass()?.value, 0.018015268);
-    /// assert_relative_eq!(
-    ///     water.molar_mass()?.get::<gram_per_mole>(),
-    ///     18.015268
-    /// );
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// );
-    /// assert!(propylene_glycol.molar_mass().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn molar_mass(&mut self) -> OutputResult<MolarMass> {
-        self.non_negative_trivial_output(FluidTrivialParam::MolarMass)
-            .map(MolarMass::new::<kilogram_per_mole>)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        molar_mass,
+        MolarMass,
+        MolarMass,
+        "Molar mass",
+        "SI units: kg/mol",
+        MolarMass::new::<kilogram_per_mole>
+    );
 
-    /// Ozone depletion potential
-    /// _(key: [`ODP`](FluidTrivialParam::ODP), dimensionless)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::prelude::fluid::*;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert!(water.odp().is_err());
-    ///
-    /// let mut r32 = Fluid::from(Pure::R32);
-    /// assert!(r32.odp().is_err());
-    ///
-    /// let mut r22 = Fluid::from(Pure::R22);
-    /// assert_eq!(r22.odp()?, 0.05);
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn odp(&mut self) -> OutputResult<f64> {
-        self.non_negative_trivial_output(FluidTrivialParam::ODP)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        odp,
+        ODP,
+        f64,
+        "Ozone depletion potential",
+        "dimensionless"
+    );
 
-    /// Physical hazard index
-    /// _(key: [`PH`](FluidTrivialParam::PH), dimensionless)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::ratio::percent;
-    ///
-    /// let mut carbon_monoxide = Fluid::from(Pure::CarbonMonoxide);
-    /// assert_eq!(carbon_monoxide.physical_hazard()?, 3.0);
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_eq!(water.physical_hazard()?, 0.0);
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// );
-    /// assert!(propylene_glycol.physical_hazard().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    pub fn physical_hazard(&mut self) -> OutputResult<f64> {
-        self.non_negative_trivial_output(FluidTrivialParam::PH)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        physical_hazard,
+        PH,
+        f64,
+        "Physical hazard index",
+        "dimensionless"
+    );
 
-    /// Reducing point mass density
-    /// _(key: [`DMassReducing`](FluidTrivialParam::DMassReducing), SI units: kg/m³)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::mass_density::gram_per_cubic_centimeter;
-    /// use rfluids::uom::si::ratio::percent;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(water.reducing_density()?.value, 322.0);
-    /// assert_relative_eq!(
-    ///     water.reducing_density()?.get::<gram_per_cubic_centimeter>(),
-    ///     0.322
-    /// );
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// );
-    /// assert!(propylene_glycol.reducing_density().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
+    #[doc = trivial_output_doc!(DMassReducing, "Reducing point mass density", "SI units: kg/m³")]
     pub fn reducing_density(&mut self) -> OutputResult<MassDensity> {
         // Due to CoolProp bug
         density_from_molar_density(self.reducing_molar_density(), self.molar_mass())
     }
 
-    /// Reducing point molar density
-    /// _(key: [`DMolarReducing`](FluidTrivialParam::DMolarReducing), SI units: mol/m³)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::molar_concentration::mole_per_liter;
-    /// use rfluids::uom::si::ratio::percent;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(
-    ///     water.reducing_molar_density()?.value,
-    ///     17873.72799560906
-    /// );
-    /// assert_relative_eq!(
-    ///     water.reducing_molar_density()?.get::<mole_per_liter>(),
-    ///     17.87372799560906
-    /// );
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// );
-    /// assert!(propylene_glycol.reducing_molar_density().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn reducing_molar_density(&mut self) -> OutputResult<MolarConcentration> {
-        self.non_negative_trivial_output(FluidTrivialParam::DMolarReducing)
-            .map(MolarConcentration::new::<mole_per_cubic_meter>)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        reducing_molar_density,
+        DMolarReducing,
+        MolarConcentration,
+        "Reducing point molar density",
+        "SI units: mol/m³",
+        MolarConcentration::new::<mole_per_cubic_meter>
+    );
 
-    /// Reducing point pressure
-    /// _(key: [`PReducing`](FluidTrivialParam::PReducing), SI units: Pa)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::pressure::megapascal;
-    /// use rfluids::uom::si::ratio::percent;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(water.reducing_pressure()?.value, 22.064e6);
-    /// assert_relative_eq!(
-    ///     water.reducing_pressure()?.get::<megapascal>(),
-    ///     22.064
-    /// );
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// );
-    /// assert!(propylene_glycol.reducing_pressure().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    pub fn reducing_pressure(&mut self) -> OutputResult<Pressure> {
-        self.non_negative_trivial_output(FluidTrivialParam::PReducing)
-            .map(Pressure::new::<pascal>)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        reducing_pressure,
+        PReducing,
+        Pressure,
+        "Reducing point pressure",
+        "SI units: Pa",
+        Pressure::new::<pascal>
+    );
 
-    /// Reducing point temperature
-    /// _(key: [`TReducing`](FluidTrivialParam::TReducing), SI units: K)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
-    /// use rfluids::uom::si::ratio::percent;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(water.reducing_temperature()?.value, 647.096);
-    /// assert_relative_eq!(
-    ///     water.reducing_temperature()?.get::<degree_celsius>(),
-    ///     373.946
-    /// );
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// );
-    /// assert!(propylene_glycol.reducing_temperature().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn reducing_temperature(&mut self) -> OutputResult<ThermodynamicTemperature> {
-        self.non_negative_trivial_output(FluidTrivialParam::TReducing)
-            .map(ThermodynamicTemperature::new::<kelvin>)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        reducing_temperature,
+        TReducing,
+        ThermodynamicTemperature,
+        "Reducing point temperature",
+        "SI units: K",
+        ThermodynamicTemperature::new::<kelvin>
+    );
 
-    /// Triple point pressure
-    /// _(key: [`PTriple`](FluidTrivialParam::PTriple), SI units: Pa)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::pressure::kilopascal;
-    /// use rfluids::uom::si::ratio::percent;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(
-    ///     water.triple_pressure()?.value,
-    ///     611.6548008968684
-    /// );
-    /// assert_relative_eq!(
-    ///     water.min_pressure()?.get::<kilopascal>(),
-    ///     0.6116548008968684
-    /// );
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// );
-    /// assert!(propylene_glycol.triple_pressure().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn triple_pressure(&mut self) -> OutputResult<Pressure> {
-        self.non_negative_trivial_output(FluidTrivialParam::PTriple)
-            .map(Pressure::new::<pascal>)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        triple_pressure,
+        PTriple,
+        Pressure,
+        "Triple point pressure",
+        "SI units: Pa",
+        Pressure::new::<pascal>
+    );
 
-    /// Triple point temperature
-    /// _(key: [`TTriple`](FluidTrivialParam::TTriple), SI units: K)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
-    /// use rfluids::uom::si::ratio::percent;
-    ///
-    /// let mut water = Fluid::from(Pure::Water);
-    /// assert_relative_eq!(water.triple_temperature()?.value, 273.16);
-    /// assert_relative_eq!(
-    ///     water.triple_temperature()?.get::<degree_celsius>(),
-    ///     0.01,
-    ///     epsilon = 1e-6
-    /// );
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// );
-    /// assert!(propylene_glycol.triple_temperature().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn triple_temperature(&mut self) -> OutputResult<ThermodynamicTemperature> {
-        self.non_negative_trivial_output(FluidTrivialParam::TTriple)
-            .map(ThermodynamicTemperature::new::<kelvin>)
-    }
+    define_trivial_output!(
+        non_negative_trivial_output,
+        triple_temperature,
+        TTriple,
+        ThermodynamicTemperature,
+        "Triple point temperature",
+        "SI units: K",
+        ThermodynamicTemperature::new::<kelvin>
+    );
 
     pub(crate) fn inner_update(
         &mut self,

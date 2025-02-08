@@ -7,175 +7,88 @@ use crate::io::{FluidInput, FluidParam};
 use crate::uom::si::available_energy::joule_per_kilogram;
 use crate::uom::si::f64::AvailableEnergy;
 
+macro_rules! output_doc {
+    ($key:ident, $description:literal, $units_description:literal) => {
+        concat!(
+            $description,
+            "\n_(key: [`",
+            stringify!($key),
+            "`](FluidParam::",
+            stringify!($key),
+            "), ",
+            $units_description,
+            ")_.\n\n",
+            "# Errors\n\n",
+            "If it's not available or calculation is failed,\n",
+            "a [`FluidOutputError`] is returned.",
+        )
+    };
+}
+
+macro_rules! define_output {
+    (
+        $method:ident,
+        $name:ident,
+        $key:ident,
+        $type:ty,
+        $description:literal,
+        $units_description:literal
+        $(, $map:expr)?
+    ) => {
+        #[doc = output_doc!($key, $description, $units_description)]
+        pub fn $name(&mut self) -> OutputResult<$type> {
+            self.$method(FluidParam::$key)
+                $(.map($map))?
+        }
+    };
+}
+
 impl Fluid {
-    /// Ideal gas Helmholtz energy contribution
-    /// _(key: [`Alpha0`](FluidParam::Alpha0), dimensionless)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available (calculation is failed),
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::pressure::atmosphere;
-    /// use rfluids::uom::si::ratio::percent;
-    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
-    ///
-    /// let pressure = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
-    /// let temperature =
-    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
-    ///
-    /// let mut water = Fluid::from(Pure::Water).in_state(pressure, temperature)?;
-    /// assert_relative_eq!(water.alpha0()?, 9.942698150834108);
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// ).in_state(pressure, temperature)?;
-    /// assert!(propylene_glycol.alpha0().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn alpha0(&mut self) -> OutputResult<f64> {
-        self.output(FluidParam::Alpha0)
-    }
+    define_output!(
+        output,
+        alpha0,
+        Alpha0,
+        f64,
+        "Ideal gas Helmholtz energy contribution",
+        "dimensionless"
+    );
 
-    /// Residual Helmholtz energy contribution
-    /// _(key: [`AlphaR`](FluidParam::AlphaR), dimensionless)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available (calculation is failed),
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::pressure::atmosphere;
-    /// use rfluids::uom::si::ratio::percent;
-    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
-    ///
-    /// let pressure = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
-    /// let temperature =
-    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
-    ///
-    /// let mut water = Fluid::from(Pure::Water).in_state(pressure, temperature)?;
-    /// assert_relative_eq!(water.alphar()?, -9.964888981266709);
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// ).in_state(pressure, temperature)?;
-    /// assert!(propylene_glycol.alphar().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn alphar(&mut self) -> OutputResult<f64> {
-        self.output(FluidParam::AlphaR)
-    }
+    define_output!(
+        output,
+        alphar,
+        AlphaR,
+        f64,
+        "Residual Helmholtz energy contribution",
+        "dimensionless"
+    );
 
-    /// Second virial coefficient
-    /// _(key: [`BVirial`](FluidParam::BVirial), dimensionless)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available (calculation is failed),
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::pressure::atmosphere;
-    /// use rfluids::uom::si::ratio::percent;
-    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
-    ///
-    /// let pressure = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
-    /// let temperature =
-    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
-    ///
-    /// let mut water = Fluid::from(Pure::Water).in_state(pressure, temperature)?;
-    /// assert_relative_eq!(water.bvirial()?, -0.0013578320706149536);
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// ).in_state(pressure, temperature)?;
-    /// assert!(propylene_glycol.bvirial().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn bvirial(&mut self) -> OutputResult<f64> {
-        self.output(FluidParam::BVirial)
-    }
+    define_output!(
+        output,
+        bvirial,
+        BVirial,
+        f64,
+        "Second virial coefficient",
+        "dimensionless"
+    );
 
-    /// Compressibility factor
-    /// _(key: [`Z`](FluidParam::Z), dimensionless)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available (calculation is failed),
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::pressure::atmosphere;
-    /// use rfluids::uom::si::ratio::percent;
-    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
-    ///
-    /// let pressure = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
-    /// let temperature =
-    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
-    ///
-    /// let mut water = Fluid::from(Pure::Water).in_state(pressure, temperature)?;
-    /// assert_relative_eq!(water.compressibility()?, 0.0007502695944637816);
-    ///
-    /// let mut propylene_glycol = Fluid::from(
-    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
-    /// ).in_state(pressure, temperature)?;
-    /// assert!(propylene_glycol.compressibility().is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn compressibility(&mut self) -> OutputResult<f64> {
-        self.non_negative_output(FluidParam::Z)
-    }
+    define_output!(
+        non_negative_output,
+        compressibility,
+        Z,
+        f64,
+        "Compressibility factor",
+        "dimensionless"
+    );
 
-    /// Mass specific enthalpy
-    /// _(key: [`HMass`](FluidParam::HMass), SI units: J/kg)_.
-    ///
-    /// # Errors
-    ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::available_energy::kilojoule_per_kilogram;
-    /// use rfluids::uom::si::pressure::atmosphere;
-    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
-    ///
-    /// let mut water = Fluid::from(Pure::Water).in_state(
-    ///     FluidInput::pressure(Pressure::new::<atmosphere>(1.0)),
-    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0)),
-    /// )?;
-    /// assert_relative_eq!(water.enthalpy()?.value, 84007.3008506628);
-    /// assert_relative_eq!(
-    ///     water.enthalpy()?.get::<kilojoule_per_kilogram>(),
-    ///     84.0073008506628
-    /// );
-    /// # Ok::<(), rfluids::error::Error>(())
-    /// ```
-    pub fn enthalpy(&mut self) -> Result<AvailableEnergy, FluidOutputError> {
-        self.output(FluidParam::HMass)
-            .map(AvailableEnergy::new::<joule_per_kilogram>)
-    }
+    define_output!(
+        output,
+        enthalpy,
+        HMass,
+        AvailableEnergy,
+        "Mass specific enthalpy",
+        "SI units: J/kg",
+        AvailableEnergy::new::<joule_per_kilogram>
+    );
 
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
@@ -492,16 +405,6 @@ mod tests {
     );
 
     test_output!(Fluid, triple_temperature, water, 273.16, incomp_water);
-    test_output!(Fluid, enthalpy, water, 84_007.300_850_662_8);
-
-    test_output!(
-        Fluid,
-        f64,
-        bvirial,
-        water,
-        -0.001_357_832_070_614_953_6,
-        propylene_glycol
-    );
 
     test_output!(
         Fluid,
@@ -524,11 +427,22 @@ mod tests {
     test_output!(
         Fluid,
         f64,
+        bvirial,
+        water,
+        -0.001_357_832_070_614_953_6,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        f64,
         compressibility,
         water,
         0.000_750_269_594_463_781_6,
         propylene_glycol
     );
+
+    test_output!(Fluid, enthalpy, water, 84_007.300_850_662_8);
 
     #[rstest]
     fn update_valid_inputs_returns_ok(
