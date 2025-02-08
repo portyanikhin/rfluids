@@ -74,6 +74,39 @@ impl Fluid {
         self.output(FluidParam::AlphaR)
     }
 
+    /// Second virial coefficient
+    /// _(key: [`BVirial`](FluidParam::BVirial), dimensionless)_.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available (calculation is failed),
+    /// a [`FluidOutputError`] is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::pressure::atmosphere;
+    /// use rfluids::uom::si::ratio::percent;
+    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
+    ///
+    /// let pressure = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
+    /// let temperature =
+    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
+    /// let mut water = Fluid::from(Pure::Water).in_state(pressure, temperature)?;
+    /// assert_relative_eq!(water.bvirial()?, -0.0013578320706149536);
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
+    /// ).in_state(pressure, temperature)?;
+    /// assert!(propylene_glycol.bvirial().is_err());
+    /// # Ok::<(), rfluids::error::Error>(())
+    /// ```
+    pub fn bvirial(&mut self) -> OutputResult<f64> {
+        self.output(FluidParam::BVirial)
+    }
+
     /// Mass specific enthalpy
     /// _(key: [`HMass`](FluidParam::HMass), SI units: J/kg)_.
     ///
@@ -418,6 +451,15 @@ mod tests {
 
     test_output!(Fluid, triple_temperature, water, 273.16, incomp_water);
     test_output!(Fluid, enthalpy, water, 84_007.300_850_662_8);
+
+    test_output!(
+        Fluid,
+        f64,
+        bvirial,
+        water,
+        -0.001_357_832_070_614_953_6,
+        propylene_glycol
+    );
 
     test_output!(
         Fluid,
