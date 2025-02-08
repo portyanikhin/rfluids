@@ -381,6 +381,7 @@ mod tests {
     test_output!(Fluid, f64, gwp500, r32, 205.0, water);
     test_output!(Fluid, f64, health_hazard, water, 0.0, incomp_water);
     test_output!(Fluid, max_pressure, water, 1e9, incomp_water);
+    test_output!(Fluid, always_ok, max_temperature, water, 2e3);
 
     test_output!(
         Fluid,
@@ -390,6 +391,7 @@ mod tests {
         incomp_water
     );
 
+    test_output!(Fluid, always_ok, min_temperature, water, 273.16);
     test_output!(Fluid, molar_mass, water, 0.018_015_268, incomp_water);
     test_output!(Fluid, f64, odp, r22, 0.05, water, incomp_water);
     test_output!(Fluid, f64, physical_hazard, water, 0.0, incomp_water);
@@ -415,17 +417,6 @@ mod tests {
     );
 
     test_output!(Fluid, triple_temperature, water, 273.16, incomp_water);
-
-    #[rstest]
-    fn max_temperature_returns_expected_value(mut water: Fluid) {
-        assert_eq!(water.max_temperature().value, 2e3);
-    }
-
-    #[rstest]
-    fn min_temperature_returns_expected_value(mut water: Fluid) {
-        assert_eq!(water.min_temperature().value, 273.16);
-    }
-
     test_output!(Fluid, enthalpy, water, 84_007.300_850_662_8);
 
     test_output!(

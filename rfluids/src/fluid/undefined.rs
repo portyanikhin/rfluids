@@ -235,6 +235,7 @@ mod tests {
     );
 
     test_output!(Fluid<Undefined>, max_pressure, water, 1e9, incomp_water);
+    test_output!(Fluid<Undefined>, always_ok, max_temperature, water, 2e3);
 
     test_output!(
         Fluid<Undefined>,
@@ -243,6 +244,8 @@ mod tests {
         611.654_800_896_868_4,
         incomp_water
     );
+
+    test_output!(Fluid<Undefined>, always_ok, min_temperature, water, 273.16);
 
     test_output!(
         Fluid<Undefined>,
@@ -310,16 +313,6 @@ mod tests {
         273.16,
         incomp_water
     );
-
-    #[rstest]
-    fn max_temperature_returns_expected_value(mut water: Fluid<Undefined>) {
-        assert_eq!(water.max_temperature().value, 2e3);
-    }
-
-    #[rstest]
-    fn min_temperature_returns_expected_value(mut water: Fluid<Undefined>) {
-        assert_eq!(water.min_temperature().value, 273.16);
-    }
 
     #[rstest]
     fn in_state_valid_inputs_returns_ok(

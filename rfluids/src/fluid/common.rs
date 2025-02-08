@@ -94,6 +94,14 @@ pub(crate) mod tests {
                 }
             }
         };
+        ($fluid_type:ty, always_ok, $name:ident, $fluid:ident, $value:expr) => {
+            paste::paste! {
+                #[rstest]
+                fn [<$name _returns_expected_value>](mut $fluid: $fluid_type) {
+                    approx::assert_relative_eq!($fluid.$name().value, $value);
+                }
+            }
+        };
     }
 
     pub(crate) use test_output;
