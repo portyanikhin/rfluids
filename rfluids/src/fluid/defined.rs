@@ -5,7 +5,8 @@ use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
 use crate::io::{FluidInput, FluidParam};
 use crate::uom::si::available_energy::joule_per_kilogram;
-use crate::uom::si::f64::AvailableEnergy;
+use crate::uom::si::f64::{AvailableEnergy, ThermalConductivity};
+use crate::uom::si::thermal_conductivity::watt_per_meter_kelvin;
 
 macro_rules! output_doc {
     ($key:ident, $description:literal, $units_description:literal) => {
@@ -88,6 +89,16 @@ impl Fluid {
         "Mass specific enthalpy",
         "SI units: J/kg",
         AvailableEnergy::new::<joule_per_kilogram>
+    );
+
+    define_output!(
+        non_negative_output,
+        conductivity,
+        Conductivity,
+        ThermalConductivity,
+        "Thermal conductivity",
+        "SI units: W/m/K",
+        ThermalConductivity::new::<watt_per_meter_kelvin>
     );
 
     /// Updates the thermodynamic state and returns a mutable reference to itself.
@@ -443,6 +454,7 @@ mod tests {
     );
 
     test_output!(Fluid, enthalpy, water, 84_007.300_850_662_8);
+    test_output!(Fluid, conductivity, water, 0.598_012_355_523_438);
 
     #[rstest]
     fn update_valid_inputs_returns_ok(
