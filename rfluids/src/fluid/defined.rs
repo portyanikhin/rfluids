@@ -1,6 +1,6 @@
 // cSpell:disable
 
-use super::common::{cached_output, non_negative};
+use super::common::{cached_output, guard};
 use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
 use crate::io::{FluidInput, FluidParam};
@@ -73,7 +73,7 @@ impl Fluid {
     );
 
     define_output!(
-        non_negative_output,
+        positive_output,
         compressibility,
         Z,
         f64,
@@ -92,7 +92,7 @@ impl Fluid {
     );
 
     define_output!(
-        non_negative_output,
+        positive_output,
         conductivity,
         Conductivity,
         ThermalConductivity,
@@ -220,9 +220,9 @@ impl Fluid {
         Ok(fluid)
     }
 
-    fn non_negative_output(&mut self, key: FluidParam) -> OutputResult<f64> {
+    fn positive_output(&mut self, key: FluidParam) -> OutputResult<f64> {
         self.output(key)
-            .and_then(|value| non_negative(key.into(), value))
+            .and_then(|value| guard(key.into(), value, |x| x > 0.0))
     }
 
     fn output(&mut self, key: FluidParam) -> OutputResult<f64> {

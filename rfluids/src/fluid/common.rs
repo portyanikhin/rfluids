@@ -43,8 +43,8 @@ impl From<FluidParam> for Param {
     }
 }
 
-pub(crate) fn non_negative(key: Param, value: f64) -> OutputResult<f64> {
-    if value >= 0.0 {
+pub(crate) fn guard(key: Param, value: f64, ok: fn(f64) -> bool) -> OutputResult<f64> {
+    if ok(value) {
         return Ok(value);
     }
     match key {
@@ -122,12 +122,12 @@ pub(crate) mod tests {
     )]
     #[case(FluidParam::T, 0.0, Ok(0.0))]
     #[case(FluidParam::T, 1.0, Ok(1.0))]
-    fn non_negative_returns_expected_value(
+    fn guard_returns_expected_value(
         #[case] key: impl Into<Param>,
         #[case] value: f64,
         #[case] expected: OutputResult<f64>,
     ) {
-        assert_eq!(non_negative(key.into(), value), expected);
+        assert_eq!(guard(key.into(), value, |x| x >= 0.0), expected);
     }
 
     #[rstest]

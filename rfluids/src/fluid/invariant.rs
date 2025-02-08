@@ -1,4 +1,4 @@
-use super::common::{cached_output, density_from_molar_density, non_negative};
+use super::common::{cached_output, density_from_molar_density, guard};
 use super::requests::FluidUpdateRequest;
 use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
@@ -109,7 +109,7 @@ impl<S: StateVariant> Fluid<S> {
 
     define_trivial_output!(
         not_available_for_predefined_mix,
-        non_negative_trivial_output,
+        positive_trivial_output,
         critical_density,
         DMassCritical,
         MassDensity,
@@ -120,7 +120,7 @@ impl<S: StateVariant> Fluid<S> {
 
     define_trivial_output!(
         not_available_for_predefined_mix,
-        non_negative_trivial_output,
+        positive_trivial_output,
         critical_molar_density,
         DMolarCritical,
         MolarConcentration,
@@ -131,7 +131,7 @@ impl<S: StateVariant> Fluid<S> {
 
     define_trivial_output!(
         not_available_for_predefined_mix,
-        non_negative_trivial_output,
+        positive_trivial_output,
         critical_pressure,
         PCritical,
         Pressure,
@@ -142,7 +142,7 @@ impl<S: StateVariant> Fluid<S> {
 
     define_trivial_output!(
         not_available_for_predefined_mix,
-        non_negative_trivial_output,
+        positive_trivial_output,
         critical_temperature,
         TCritical,
         ThermodynamicTemperature,
@@ -161,7 +161,7 @@ impl<S: StateVariant> Fluid<S> {
     );
 
     define_trivial_output!(
-        non_negative_trivial_output,
+        positive_trivial_output,
         freezing_temperature,
         TFreeze,
         ThermodynamicTemperature,
@@ -207,7 +207,7 @@ impl<S: StateVariant> Fluid<S> {
     );
 
     define_trivial_output!(
-        non_negative_trivial_output,
+        positive_trivial_output,
         max_pressure,
         PMax,
         Pressure,
@@ -218,7 +218,7 @@ impl<S: StateVariant> Fluid<S> {
 
     define_trivial_output!(
         always_ok,
-        non_negative_trivial_output,
+        positive_trivial_output,
         max_temperature,
         TMax,
         ThermodynamicTemperature,
@@ -228,7 +228,7 @@ impl<S: StateVariant> Fluid<S> {
     );
 
     define_trivial_output!(
-        non_negative_trivial_output,
+        positive_trivial_output,
         min_pressure,
         PMin,
         Pressure,
@@ -239,7 +239,7 @@ impl<S: StateVariant> Fluid<S> {
 
     define_trivial_output!(
         always_ok,
-        non_negative_trivial_output,
+        positive_trivial_output,
         min_temperature,
         TMin,
         ThermodynamicTemperature,
@@ -249,7 +249,7 @@ impl<S: StateVariant> Fluid<S> {
     );
 
     define_trivial_output!(
-        non_negative_trivial_output,
+        positive_trivial_output,
         molar_mass,
         MolarMass,
         MolarMass,
@@ -283,7 +283,7 @@ impl<S: StateVariant> Fluid<S> {
     }
 
     define_trivial_output!(
-        non_negative_trivial_output,
+        positive_trivial_output,
         reducing_molar_density,
         DMolarReducing,
         MolarConcentration,
@@ -293,7 +293,7 @@ impl<S: StateVariant> Fluid<S> {
     );
 
     define_trivial_output!(
-        non_negative_trivial_output,
+        positive_trivial_output,
         reducing_pressure,
         PReducing,
         Pressure,
@@ -303,7 +303,7 @@ impl<S: StateVariant> Fluid<S> {
     );
 
     define_trivial_output!(
-        non_negative_trivial_output,
+        positive_trivial_output,
         reducing_temperature,
         TReducing,
         ThermodynamicTemperature,
@@ -313,7 +313,7 @@ impl<S: StateVariant> Fluid<S> {
     );
 
     define_trivial_output!(
-        non_negative_trivial_output,
+        positive_trivial_output,
         triple_pressure,
         PTriple,
         Pressure,
@@ -323,7 +323,7 @@ impl<S: StateVariant> Fluid<S> {
     );
 
     define_trivial_output!(
-        non_negative_trivial_output,
+        positive_trivial_output,
         triple_temperature,
         TTriple,
         ThermodynamicTemperature,
@@ -346,9 +346,14 @@ impl<S: StateVariant> Fluid<S> {
         Ok(())
     }
 
+    fn positive_trivial_output(&mut self, key: FluidTrivialParam) -> OutputResult<f64> {
+        self.trivial_output(key)
+            .and_then(|value| guard(key.into(), value, |x| x > 0.0))
+    }
+
     fn non_negative_trivial_output(&mut self, key: FluidTrivialParam) -> OutputResult<f64> {
         self.trivial_output(key)
-            .and_then(|value| non_negative(key.into(), value))
+            .and_then(|value| guard(key.into(), value, |x| x >= 0.0))
     }
 
     fn trivial_output(&mut self, key: FluidTrivialParam) -> OutputResult<f64> {
