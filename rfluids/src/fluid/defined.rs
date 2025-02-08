@@ -1,6 +1,6 @@
 // cSpell:disable
 
-use super::common::cached_output;
+use super::common::{cached_output, non_negative};
 use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
 use crate::io::{FluidInput, FluidParam};
@@ -28,6 +28,7 @@ impl Fluid {
     /// let pressure = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
     /// let temperature =
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
+    ///
     /// let mut water = Fluid::from(Pure::Water).in_state(pressure, temperature)?;
     /// assert_relative_eq!(water.alpha0()?, 9.942698150834108);
     ///
@@ -61,6 +62,7 @@ impl Fluid {
     /// let pressure = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
     /// let temperature =
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
+    ///
     /// let mut water = Fluid::from(Pure::Water).in_state(pressure, temperature)?;
     /// assert_relative_eq!(water.alphar()?, -9.964888981266709);
     ///
@@ -94,6 +96,7 @@ impl Fluid {
     /// let pressure = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
     /// let temperature =
     ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
+    ///
     /// let mut water = Fluid::from(Pure::Water).in_state(pressure, temperature)?;
     /// assert_relative_eq!(water.bvirial()?, -0.0013578320706149536);
     ///
@@ -105,6 +108,40 @@ impl Fluid {
     /// ```
     pub fn bvirial(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::BVirial)
+    }
+
+    /// Compressibility factor
+    /// _(key: [`Z`](FluidParam::Z), dimensionless)_.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available (calculation is failed),
+    /// a [`FluidOutputError`] is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use approx::assert_relative_eq;
+    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::uom::si::pressure::atmosphere;
+    /// use rfluids::uom::si::ratio::percent;
+    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
+    ///
+    /// let pressure = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
+    /// let temperature =
+    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
+    ///
+    /// let mut water = Fluid::from(Pure::Water).in_state(pressure, temperature)?;
+    /// assert_relative_eq!(water.compressibility()?, 0.0007502695944637816);
+    ///
+    /// let mut propylene_glycol = Fluid::from(
+    ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
+    /// ).in_state(pressure, temperature)?;
+    /// assert!(propylene_glycol.compressibility().is_err());
+    /// # Ok::<(), rfluids::error::Error>(())
+    /// ```
+    pub fn compressibility(&mut self) -> OutputResult<f64> {
+        self.non_negative_output(FluidParam::Z)
     }
 
     /// Mass specific enthalpy
@@ -257,6 +294,11 @@ impl Fluid {
             .in_state(input1, input2)?;
         fluid.trivial_outputs.clone_from(&self.trivial_outputs);
         Ok(fluid)
+    }
+
+    fn non_negative_output(&mut self, key: FluidParam) -> OutputResult<f64> {
+        self.output(key)
+            .and_then(|value| non_negative(key.into(), value))
     }
 
     fn output(&mut self, key: FluidParam) -> OutputResult<f64> {
@@ -476,6 +518,15 @@ mod tests {
         alphar,
         water,
         -9.964_888_981_266_709,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        f64,
+        compressibility,
+        water,
+        0.000_750_269_594_463_781_6,
         propylene_glycol
     );
 
