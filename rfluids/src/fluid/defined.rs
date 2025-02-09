@@ -147,6 +147,15 @@ impl Fluid {
 
     define_output!(
         output,
+        dalphar_dtau_const_delta,
+        DAlphaRDTauConstDelta,
+        f64,
+        "Derivative of residual Helmholtz energy contribution with [`Tau`](FluidParam::Tau)",
+        "dimensionless"
+    );
+
+    define_output!(
+        output,
         enthalpy,
         HMass,
         AvailableEnergy,
@@ -560,6 +569,15 @@ mod tests {
         dalphar_ddelta_const_tau,
         water,
         -0.322_336_313_699_769_06,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        f64,
+        dalphar_dtau_const_delta,
+        water,
+        -7.766_583_487_846_833,
         propylene_glycol
     );
 
