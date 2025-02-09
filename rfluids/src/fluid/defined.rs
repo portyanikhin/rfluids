@@ -102,6 +102,15 @@ impl Fluid {
 
     define_output!(
         output,
+        d2alpha0_ddelta2_const_tau,
+        D2Alpha0DDelta2ConstTau,
+        f64,
+        "Second derivative of ideal gas Helmholtz energy contribution with [`Delta`](FluidParam::Delta)",
+        "dimensionless"
+    );
+
+    define_output!(
+        output,
         enthalpy,
         HMass,
         AvailableEnergy,
@@ -470,6 +479,15 @@ mod tests {
         cvirial,
         water,
         -5.326_204_726_542_83e-6,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        f64,
+        d2alpha0_ddelta2_const_tau,
+        water,
+        -0.104_056_781_834_545_31,
         propylene_glycol
     );
 
