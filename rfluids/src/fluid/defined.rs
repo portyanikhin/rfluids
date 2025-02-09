@@ -229,6 +229,15 @@ impl Fluid {
         SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
     );
 
+    define_output!(
+        output,
+        fundamental_derivative_of_gas_dynamics,
+        FundamentalDerivativeOfGasDynamics,
+        f64,
+        "Fundamental derivative of gas dynamics",
+        "dimensionless"
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -697,6 +706,16 @@ mod tests {
     test_output!(Fluid, dynamic_viscosity, water, 0.001_001_596_143_120_594_6);
     test_output!(Fluid, enthalpy, water, 84_007.300_850_662_8);
     test_output!(Fluid, entropy, water, 296.462_836_225_179_9);
+
+    test_output!(
+        Fluid,
+        f64,
+        fundamental_derivative_of_gas_dynamics,
+        water,
+        3.515_654_313_772_814_5,
+        propylene_glycol
+    );
+
     test_output!(Fluid, f64, tau, water, 2.207_388_708_852_123_6);
     test_output!(Fluid, temperature, water, 293.15);
 
