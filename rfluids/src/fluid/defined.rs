@@ -5,7 +5,8 @@ use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
 use crate::io::{FluidInput, FluidParam};
 use crate::uom::si::available_energy::joule_per_kilogram;
-use crate::uom::si::f64::{AvailableEnergy, ThermalConductivity};
+use crate::uom::si::f64::{AvailableEnergy, MassDensity, ThermalConductivity};
+use crate::uom::si::mass_density::kilogram_per_cubic_meter;
 use crate::uom::si::thermal_conductivity::watt_per_meter_kelvin;
 
 macro_rules! output_doc {
@@ -170,6 +171,16 @@ impl Fluid {
         f64,
         "Derivative of third virial coefficient with [`T`](FluidParam::T)",
         "dimensionless"
+    );
+
+    define_output!(
+        positive_output,
+        density,
+        DMass,
+        MassDensity,
+        "Mass density",
+        "SI units: kg/m³",
+        MassDensity::new::<kilogram_per_cubic_meter>
     );
 
     define_output!(
@@ -617,6 +628,7 @@ mod tests {
         propylene_glycol
     );
 
+    test_output!(Fluid, density, water, 998.207_150_467_928_4);
     test_output!(Fluid, enthalpy, water, 84_007.300_850_662_8);
 
     #[rstest]
