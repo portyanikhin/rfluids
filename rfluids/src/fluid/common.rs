@@ -60,9 +60,17 @@ pub(crate) fn density_from_molar_density(
     Ok(molar_density? * molar_mass?)
 }
 
+pub(crate) fn delta(
+    density: OutputResult<MassDensity>,
+    critical_density: OutputResult<MassDensity>,
+) -> OutputResult<f64> {
+    Ok((density? / critical_density?).value)
+}
+
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
+    use crate::uom::si::mass_density::kilogram_per_cubic_meter;
     use crate::uom::si::molar_concentration::mole_per_cubic_meter;
     use crate::uom::si::molar_mass::kilogram_per_mole;
     use rstest::*;
@@ -158,6 +166,37 @@ pub(crate) mod tests {
                 molar_mass.map(MolarMass::new::<kilogram_per_mole>)
             )
             .map(|v| v.value),
+            expected
+        );
+    }
+
+    #[rstest]
+    #[case(
+        Err(FluidOutputError::UnavailableOutput(FluidParam::DMass)),
+        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::DMassCritical)),
+        Err(FluidOutputError::UnavailableOutput(FluidParam::DMass))
+    )]
+    #[case(
+        Err(FluidOutputError::UnavailableOutput(FluidParam::DMass)),
+        Ok(250.0),
+        Err(FluidOutputError::UnavailableOutput(FluidParam::DMass))
+    )]
+    #[case(
+        Ok(1000.0),
+        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::DMassCritical)),
+        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::DMassCritical))
+    )]
+    #[case(Ok(1000.0), Ok(250.0), Ok(4.0))]
+    fn delta_returns_expected_value(
+        #[case] density: OutputResult<f64>,
+        #[case] critical_density: OutputResult<f64>,
+        #[case] expected: OutputResult<f64>,
+    ) {
+        assert_eq!(
+            delta(
+                density.map(MassDensity::new::<kilogram_per_cubic_meter>),
+                critical_density.map(MassDensity::new::<kilogram_per_cubic_meter>)
+            ),
             expected
         );
     }

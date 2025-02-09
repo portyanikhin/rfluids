@@ -1,6 +1,6 @@
 // cSpell:disable
 
-use super::common::{cached_output, guard};
+use super::common::{cached_output, delta, guard};
 use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
 use crate::io::{FluidInput, FluidParam};
@@ -172,6 +172,16 @@ impl Fluid {
         "Derivative of third virial coefficient with [`T`](FluidParam::T)",
         "dimensionless"
     );
+
+    #[doc = output_doc!(
+        Delta,
+        "Reduced density = [`density`](crate::fluid::Fluid::density) / [`critical_density`](crate::fluid::Fluid::critical_density)",
+        "dimensionless"
+    )]
+    pub fn delta(&mut self) -> OutputResult<f64> {
+        // Due to CoolProp bug
+        delta(self.density(), self.critical_density())
+    }
 
     define_output!(
         positive_output,
@@ -625,6 +635,15 @@ mod tests {
         dcvirial_dt,
         water,
         1.860_361_534_926_561e-7,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        f64,
+        delta,
+        water,
+        3.100_022_206_422_137,
         propylene_glycol
     );
 
