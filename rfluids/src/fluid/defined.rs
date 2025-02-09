@@ -82,16 +82,6 @@ impl Fluid {
     );
 
     define_output!(
-        output,
-        enthalpy,
-        HMass,
-        AvailableEnergy,
-        "Mass specific enthalpy",
-        "SI units: J/kg",
-        AvailableEnergy::new::<joule_per_kilogram>
-    );
-
-    define_output!(
         positive_output,
         conductivity,
         Conductivity,
@@ -99,6 +89,25 @@ impl Fluid {
         "Thermal conductivity",
         "SI units: W/m/K",
         ThermalConductivity::new::<watt_per_meter_kelvin>
+    );
+
+    define_output!(
+        output,
+        cvirial,
+        CVirial,
+        f64,
+        "Third virial coefficient",
+        "dimensionless"
+    );
+
+    define_output!(
+        output,
+        enthalpy,
+        HMass,
+        AvailableEnergy,
+        "Mass specific enthalpy",
+        "SI units: J/kg",
+        AvailableEnergy::new::<joule_per_kilogram>
     );
 
     /// Updates the thermodynamic state and returns a mutable reference to itself.
@@ -453,8 +462,18 @@ mod tests {
         propylene_glycol
     );
 
-    test_output!(Fluid, enthalpy, water, 84_007.300_850_662_8);
     test_output!(Fluid, conductivity, water, 0.598_012_355_523_438);
+
+    test_output!(
+        Fluid,
+        f64,
+        cvirial,
+        water,
+        -5.326_204_726_542_83e-6,
+        propylene_glycol
+    );
+
+    test_output!(Fluid, enthalpy, water, 84_007.300_850_662_8);
 
     #[rstest]
     fn update_valid_inputs_returns_ok(
