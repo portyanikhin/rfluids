@@ -7,9 +7,11 @@ use crate::io::{FluidInput, FluidParam};
 use crate::uom::si::available_energy::joule_per_kilogram;
 use crate::uom::si::dynamic_viscosity::pascal_second;
 use crate::uom::si::f64::{
-    AvailableEnergy, DynamicViscosity, MassDensity, ThermalConductivity, ThermodynamicTemperature,
+    AvailableEnergy, DynamicViscosity, MassDensity, SpecificHeatCapacity, ThermalConductivity,
+    ThermodynamicTemperature,
 };
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
+use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
 use crate::uom::si::thermal_conductivity::watt_per_meter_kelvin;
 use crate::uom::si::thermodynamic_temperature::kelvin;
 
@@ -215,6 +217,16 @@ impl Fluid {
         "Mass specific enthalpy",
         "SI units: J/kg",
         AvailableEnergy::new::<joule_per_kilogram>
+    );
+
+    define_output!(
+        output,
+        entropy,
+        SMass,
+        SpecificHeatCapacity,
+        "Mass specific entropy",
+        "SI units: J/kg/K",
+        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
     );
 
     #[doc = output_doc!(
@@ -684,6 +696,7 @@ mod tests {
     test_output!(Fluid, density, water, 998.207_150_467_928_4);
     test_output!(Fluid, dynamic_viscosity, water, 0.001_001_596_143_120_594_6);
     test_output!(Fluid, enthalpy, water, 84_007.300_850_662_8);
+    test_output!(Fluid, entropy, water, 296.462_836_225_179_9);
     test_output!(Fluid, f64, tau, water, 2.207_388_708_852_123_6);
     test_output!(Fluid, temperature, water, 293.15);
 
