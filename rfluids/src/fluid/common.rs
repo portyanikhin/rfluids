@@ -2,7 +2,7 @@ use super::OutputResult;
 use crate::error::{CoolPropError, FluidOutputError};
 use crate::io::{FluidParam, FluidTrivialParam};
 use crate::native::AbstractState;
-use crate::uom::si::f64::{MassDensity, MolarConcentration, MolarMass};
+use crate::uom::si::f64::{MassDensity, MolarConcentration, MolarMass, ThermodynamicTemperature};
 use std::collections::HashMap;
 use std::hash::Hash;
 
@@ -67,12 +67,20 @@ pub(crate) fn delta(
     Ok((density? / critical_density?).value)
 }
 
+pub(crate) fn tau(
+    critical_temperature: OutputResult<ThermodynamicTemperature>,
+    temperature: OutputResult<ThermodynamicTemperature>,
+) -> OutputResult<f64> {
+    Ok((critical_temperature? / temperature?).value)
+}
+
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
     use crate::uom::si::mass_density::kilogram_per_cubic_meter;
     use crate::uom::si::molar_concentration::mole_per_cubic_meter;
     use crate::uom::si::molar_mass::kilogram_per_mole;
+    use crate::uom::si::thermodynamic_temperature::kelvin;
     use rstest::*;
 
     macro_rules! test_output {
@@ -196,6 +204,37 @@ pub(crate) mod tests {
             delta(
                 density.map(MassDensity::new::<kilogram_per_cubic_meter>),
                 critical_density.map(MassDensity::new::<kilogram_per_cubic_meter>)
+            ),
+            expected
+        );
+    }
+
+    #[rstest]
+    #[case(
+        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::TCritical)),
+        Err(FluidOutputError::UnavailableOutput(FluidParam::T)),
+        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::TCritical))
+    )]
+    #[case(
+        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::TCritical)),
+        Ok(300.0),
+        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::TCritical))
+    )]
+    #[case(
+        Ok(600.0),
+        Err(FluidOutputError::UnavailableOutput(FluidParam::T)),
+        Err(FluidOutputError::UnavailableOutput(FluidParam::T))
+    )]
+    #[case(Ok(600.0), Ok(300.0), Ok(2.0))]
+    fn tau_returns_expected_value(
+        #[case] critical_temperature: OutputResult<f64>,
+        #[case] temperature: OutputResult<f64>,
+        #[case] expected: OutputResult<f64>,
+    ) {
+        assert_eq!(
+            tau(
+                critical_temperature.map(ThermodynamicTemperature::new::<kelvin>),
+                temperature.map(ThermodynamicTemperature::new::<kelvin>)
             ),
             expected
         );

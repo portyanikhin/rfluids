@@ -1,6 +1,6 @@
 // cSpell:disable
 
-use super::common::{cached_output, delta, guard};
+use super::common::{cached_output, delta, guard, tau};
 use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
 use crate::io::{FluidInput, FluidParam};
@@ -205,6 +205,16 @@ impl Fluid {
         "SI units: J/kg",
         AvailableEnergy::new::<joule_per_kilogram>
     );
+
+    #[doc = output_doc!(
+        Tau,
+        "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
+        "dimensionless"
+    )]
+    pub fn tau(&mut self) -> OutputResult<f64> {
+        // Due to CoolProp bug
+        tau(self.critical_temperature(), self.temperature())
+    }
 
     define_output!(
         positive_output,
@@ -662,6 +672,7 @@ mod tests {
 
     test_output!(Fluid, density, water, 998.207_150_467_928_4);
     test_output!(Fluid, enthalpy, water, 84_007.300_850_662_8);
+    test_output!(Fluid, f64, tau, water, 2.207_388_708_852_123_6);
     test_output!(Fluid, temperature, water, 293.15);
 
     #[rstest]
