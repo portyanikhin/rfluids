@@ -69,13 +69,15 @@ pub enum FluidParam {
     #[strum(to_string = "Q")]
     Q = 21,
 
-    /// Reciprocal reduced temperature _(dimensionless,
-    /// [`TCritical`](FluidTrivialParam::TCritical)/[`T`](FluidParam::T))_.
+    /// Reciprocal reduced temperature =
+    /// [`TCritical`](FluidTrivialParam::TCritical)/[`T`](FluidParam::T)
+    /// _(dimensionless)_.
     #[strum(to_string = "Tau")]
     Tau = 22,
 
-    /// Reduced density _(dimensionless,
-    /// [`DMass`](FluidParam::DMass)/[`DMassCritical`](FluidTrivialParam::DMassCritical))_.
+    /// Reduced density =
+    /// [`DMass`](FluidParam::DMass)/[`DMassCritical`](FluidTrivialParam::DMassCritical)
+    /// _(dimensionless)_.
     #[strum(to_string = "Delta")]
     Delta = 23,
 
