@@ -156,6 +156,15 @@ impl Fluid {
 
     define_output!(
         output,
+        dbvirial_dt,
+        DBVirialDT,
+        f64,
+        "Derivative of second virial coefficient with [`T`](FluidParam::T)",
+        "dimensionless"
+    );
+
+    define_output!(
+        output,
         enthalpy,
         HMass,
         AvailableEnergy,
@@ -578,6 +587,15 @@ mod tests {
         dalphar_dtau_const_delta,
         water,
         -7.766_583_487_846_833,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        f64,
+        dbvirial_dt,
+        water,
+        2.496_398_488_386_135_7e-5,
         propylene_glycol
     );
 
