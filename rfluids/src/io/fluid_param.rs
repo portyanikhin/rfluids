@@ -91,15 +91,15 @@ pub enum FluidParam {
     #[strum(to_string = "Smolar")]
     SMolar = 26,
 
-    /// Molar specific constant pressure specific heat _(J/mol/K)_.
+    /// Molar specific heat at constant pressure _(J/mol/K)_.
     #[strum(to_string = "Cpmolar")]
     CpMolar = 27,
 
-    /// Ideal gas molar specific constant pressure specific heat _(J/mol/K)_.
+    /// Ideal gas molar specific heat at constant pressure _(J/mol/K)_.
     #[strum(to_string = "Cp0molar")]
     Cp0Molar = 28,
 
-    /// Molar specific constant volume specific heat _(J/mol/K)_.
+    /// Molar specific heat at constant volume _(J/mol/K)_.
     #[strum(to_string = "Cvmolar")]
     CvMolar = 29,
 
@@ -115,15 +115,15 @@ pub enum FluidParam {
     #[strum(to_string = "Helmholtzmolar")]
     HelmholtzMolar = 32,
 
-    /// Residual molar enthalpy _(J/mol/K)_.
+    /// Residual molar specific enthalpy _(J/mol/K)_.
     #[strum(to_string = "Hmolar_residual")]
     HMolarResidual = 33,
 
-    /// Residual molar entropy _(J/mol/K)_.
+    /// Residual molar specific entropy _(J/mol/K)_.
     #[strum(to_string = "Smolar_residual")]
     SMolarResidual = 34,
 
-    /// Residual molar Gibbs energy _(J/mol/K)_.
+    /// Residual molar specific Gibbs energy _(J/mol/K)_.
     #[strum(to_string = "Gmolar_residual")]
     GMolarResidual = 35,
 
@@ -139,15 +139,15 @@ pub enum FluidParam {
     #[strum(to_string = "Smass", serialize = "S")]
     SMass = 38,
 
-    /// Mass specific constant pressure specific heat _(J/kg/K)_.
+    /// Mass specific heat at constant pressure _(J/kg/K)_.
     #[strum(to_string = "Cpmass", serialize = "C")]
     CpMass = 39,
 
-    /// Ideal gas mass specific constant pressure specific heat _(J/kg/K)_.
+    /// Ideal gas mass specific heat at constant pressure _(J/kg/K)_.
     #[strum(to_string = "Cp0mass")]
     Cp0Mass = 40,
 
-    /// Mass specific constant volume specific heat _(J/kg/K)_.
+    /// Mass specific heat at constant volume _(J/kg/K)_.
     #[strum(to_string = "Cvmass", serialize = "O")]
     CvMass = 41,
 
