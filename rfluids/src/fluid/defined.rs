@@ -165,6 +165,15 @@ impl Fluid {
 
     define_output!(
         output,
+        dcvirial_dt,
+        DCVirialDT,
+        f64,
+        "Derivative of third virial coefficient with [`T`](FluidParam::T)",
+        "dimensionless"
+    );
+
+    define_output!(
+        output,
         enthalpy,
         HMass,
         AvailableEnergy,
@@ -596,6 +605,15 @@ mod tests {
         dbvirial_dt,
         water,
         2.496_398_488_386_135_7e-5,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        f64,
+        dcvirial_dt,
+        water,
+        1.860_361_534_926_561e-7,
         propylene_glycol
     );
 
