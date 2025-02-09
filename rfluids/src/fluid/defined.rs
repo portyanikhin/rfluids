@@ -5,9 +5,12 @@ use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
 use crate::io::{FluidInput, FluidParam};
 use crate::uom::si::available_energy::joule_per_kilogram;
-use crate::uom::si::f64::{AvailableEnergy, MassDensity, ThermalConductivity};
+use crate::uom::si::f64::{
+    AvailableEnergy, MassDensity, ThermalConductivity, ThermodynamicTemperature,
+};
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
 use crate::uom::si::thermal_conductivity::watt_per_meter_kelvin;
+use crate::uom::si::thermodynamic_temperature::kelvin;
 
 macro_rules! output_doc {
     ($key:ident, $description:literal, $units_description:literal) => {
@@ -106,7 +109,7 @@ impl Fluid {
         dalpha0_ddelta_const_tau,
         DAlpha0DDeltaConstTau,
         f64,
-        "Derivative of ideal gas Helmholtz energy contribution with [`Delta`](FluidParam::Delta)",
+        "Derivative of ideal gas Helmholtz energy contribution with [`delta`](crate::fluid::Fluid::delta)",
         "dimensionless"
     );
 
@@ -115,7 +118,7 @@ impl Fluid {
         d2alpha0_ddelta2_const_tau,
         D2Alpha0DDelta2ConstTau,
         f64,
-        "Second derivative of ideal gas Helmholtz energy contribution with [`Delta`](FluidParam::Delta)",
+        "Second derivative of ideal gas Helmholtz energy contribution with [`delta`](crate::fluid::Fluid::delta)",
         "dimensionless"
     );
 
@@ -124,7 +127,7 @@ impl Fluid {
         d3alpha0_ddelta3_const_tau,
         D3Alpha0DDelta3ConstTau,
         f64,
-        "Third derivative of ideal gas Helmholtz energy contribution with [`Delta`](FluidParam::Delta)",
+        "Third derivative of ideal gas Helmholtz energy contribution with [`delta`](crate::fluid::Fluid::delta)",
         "dimensionless"
     );
 
@@ -133,7 +136,7 @@ impl Fluid {
         dalpha0_dtau_const_delta,
         DAlpha0DTauConstDelta,
         f64,
-        "Derivative of ideal gas Helmholtz energy contribution with [`Tau`](FluidParam::Tau)",
+        "Derivative of ideal gas Helmholtz energy contribution with [`tau`](crate::fluid::Fluid::tau)",
         "dimensionless"
     );
 
@@ -142,7 +145,7 @@ impl Fluid {
         dalphar_ddelta_const_tau,
         DAlphaRDDeltaConstTau,
         f64,
-        "Derivative of residual Helmholtz energy contribution with [`Delta`](FluidParam::Delta)",
+        "Derivative of residual Helmholtz energy contribution with [`delta`](crate::fluid::Fluid::delta)",
         "dimensionless"
     );
 
@@ -151,7 +154,7 @@ impl Fluid {
         dalphar_dtau_const_delta,
         DAlphaRDTauConstDelta,
         f64,
-        "Derivative of residual Helmholtz energy contribution with [`Tau`](FluidParam::Tau)",
+        "Derivative of residual Helmholtz energy contribution with [`tau`](crate::fluid::Fluid::tau)",
         "dimensionless"
     );
 
@@ -160,7 +163,7 @@ impl Fluid {
         dbvirial_dt,
         DBVirialDT,
         f64,
-        "Derivative of second virial coefficient with [`T`](FluidParam::T)",
+        "Derivative of second virial coefficient with [`temperature`](crate::fluid::Fluid::temperature)",
         "dimensionless"
     );
 
@@ -169,7 +172,7 @@ impl Fluid {
         dcvirial_dt,
         DCVirialDT,
         f64,
-        "Derivative of third virial coefficient with [`T`](FluidParam::T)",
+        "Derivative of third virial coefficient with [`temperature`](crate::fluid::Fluid::temperature)",
         "dimensionless"
     );
 
@@ -201,6 +204,16 @@ impl Fluid {
         "Mass specific enthalpy",
         "SI units: J/kg",
         AvailableEnergy::new::<joule_per_kilogram>
+    );
+
+    define_output!(
+        positive_output,
+        temperature,
+        T,
+        ThermodynamicTemperature,
+        "Temperature",
+        "SI units: K",
+        ThermodynamicTemperature::new::<kelvin>
     );
 
     /// Updates the thermodynamic state and returns a mutable reference to itself.
@@ -649,6 +662,7 @@ mod tests {
 
     test_output!(Fluid, density, water, 998.207_150_467_928_4);
     test_output!(Fluid, enthalpy, water, 84_007.300_850_662_8);
+    test_output!(Fluid, temperature, water, 293.15);
 
     #[rstest]
     fn update_valid_inputs_returns_ok(
