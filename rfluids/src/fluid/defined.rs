@@ -248,6 +248,16 @@ impl Fluid {
         AvailableEnergy::new::<joule_per_kilogram>
     );
 
+    define_output!(
+        output,
+        helmholtz_energy,
+        HelmholtzMass,
+        AvailableEnergy,
+        "Mass specific Helmholtz energy",
+        "SI units: J/kg",
+        AvailableEnergy::new::<joule_per_kilogram>
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -731,6 +741,14 @@ mod tests {
         gibbs_energy,
         water,
         -2_900.779_588_748_779,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        helmholtz_energy,
+        water,
+        -3_002.286_575_534_692,
         propylene_glycol
     );
 
