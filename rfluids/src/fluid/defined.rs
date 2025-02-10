@@ -238,6 +238,16 @@ impl Fluid {
         "dimensionless"
     );
 
+    define_output!(
+        output,
+        gibbs_energy,
+        GMass,
+        AvailableEnergy,
+        "Mass specific Gibbs energy",
+        "SI units: J/kg",
+        AvailableEnergy::new::<joule_per_kilogram>
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -713,6 +723,14 @@ mod tests {
         fundamental_derivative_of_gas_dynamics,
         water,
         3.515_654_313_772_814_5,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        gibbs_energy,
+        water,
+        -2_900.779_588_748_779,
         propylene_glycol
     );
 
