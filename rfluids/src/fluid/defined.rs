@@ -7,10 +7,11 @@ use crate::io::{FluidInput, FluidParam};
 use crate::uom::si::available_energy::joule_per_kilogram;
 use crate::uom::si::dynamic_viscosity::pascal_second;
 use crate::uom::si::f64::{
-    AvailableEnergy, DynamicViscosity, MassDensity, SpecificHeatCapacity, ThermalConductivity,
-    ThermodynamicTemperature,
+    AvailableEnergy, DynamicViscosity, MassDensity, MolarHeatCapacity, SpecificHeatCapacity,
+    ThermalConductivity, ThermodynamicTemperature,
 };
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
+use crate::uom::si::molar_heat_capacity::joule_per_kelvin_mole;
 use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
 use crate::uom::si::thermal_conductivity::watt_per_meter_kelvin;
 use crate::uom::si::thermodynamic_temperature::kelvin;
@@ -256,6 +257,16 @@ impl Fluid {
         "Mass specific Helmholtz energy",
         "SI units: J/kg",
         AvailableEnergy::new::<joule_per_kilogram>
+    );
+
+    define_output!(
+        positive_output,
+        ideal_gas_molar_specific_heat,
+        Cp0Molar,
+        MolarHeatCapacity,
+        "Ideal gas molar specific heat at constant pressure",
+        "SI units: J/mol/K",
+        MolarHeatCapacity::new::<joule_per_kelvin_mole>
     );
 
     #[doc = output_doc!(
@@ -749,6 +760,14 @@ mod tests {
         helmholtz_energy,
         water,
         -3_002.286_575_534_692,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        ideal_gas_molar_specific_heat,
+        water,
+        33.565_699_649_260_64,
         propylene_glycol
     );
 
