@@ -269,6 +269,16 @@ impl Fluid {
         MolarHeatCapacity::new::<joule_per_kelvin_mole>
     );
 
+    define_output!(
+        positive_output,
+        ideal_gas_specific_heat,
+        Cp0Mass,
+        SpecificHeatCapacity,
+        "Ideal gas mass specific heat at constant pressure",
+        "SI units: J/kg/K",
+        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -768,6 +778,14 @@ mod tests {
         ideal_gas_molar_specific_heat,
         water,
         33.565_699_649_260_64,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        ideal_gas_specific_heat,
+        water,
+        1_863.180_700_351_537,
         propylene_glycol
     );
 
