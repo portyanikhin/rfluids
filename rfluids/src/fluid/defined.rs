@@ -289,6 +289,15 @@ impl Fluid {
         AvailableEnergy::new::<joule_per_kilogram>
     );
 
+    define_output!(
+        output,
+        isentropic_expansion_coefficient,
+        IsentropicExpansionCoefficient,
+        f64,
+        "Isentropic expansion coefficient",
+        "dimensionless"
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -800,6 +809,16 @@ mod tests {
     );
 
     test_output!(Fluid, internal_energy, water, 83_905.793_863_876_88);
+
+    test_output!(
+        Fluid,
+        f64,
+        isentropic_expansion_coefficient,
+        water,
+        21_647.280_169_592_654,
+        propylene_glycol
+    );
+
     test_output!(Fluid, f64, tau, water, 2.207_388_708_852_123_6);
     test_output!(Fluid, temperature, water, 293.15);
 
