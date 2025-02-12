@@ -8,11 +8,12 @@ use crate::uom::si::available_energy::joule_per_kilogram;
 use crate::uom::si::dynamic_viscosity::pascal_second;
 use crate::uom::si::f64::{
     AvailableEnergy, DynamicViscosity, MassDensity, MolarHeatCapacity, SpecificHeatCapacity,
-    ThermalConductivity, ThermodynamicTemperature,
+    TemperatureCoefficient, ThermalConductivity, ThermodynamicTemperature,
 };
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
 use crate::uom::si::molar_heat_capacity::joule_per_kelvin_mole;
 use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
+use crate::uom::si::temperature_coefficient::per_kelvin;
 use crate::uom::si::thermal_conductivity::watt_per_meter_kelvin;
 use crate::uom::si::thermodynamic_temperature::kelvin;
 
@@ -296,6 +297,16 @@ impl Fluid {
         f64,
         "Isentropic expansion coefficient",
         "dimensionless"
+    );
+
+    define_output!(
+        output,
+        isobaric_expansion_coefficient,
+        IsobaricExpansionCoefficient,
+        TemperatureCoefficient,
+        "Isobaric expansion coefficient",
+        "SI units: 1/K",
+        TemperatureCoefficient::new::<per_kelvin>
     );
 
     #[doc = output_doc!(
@@ -816,6 +827,14 @@ mod tests {
         isentropic_expansion_coefficient,
         water,
         21_647.280_169_592_654,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        isobaric_expansion_coefficient,
+        water,
+        2.068_062_073_013_346_5e-4,
         propylene_glycol
     );
 
