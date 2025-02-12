@@ -364,6 +364,16 @@ impl Fluid {
         MolarEnergy::new::<joule_per_mole>
     );
 
+    define_output!(
+        output,
+        molar_helmholtz_energy,
+        HelmholtzMolar,
+        MolarEnergy,
+        "Molar specific Helmholtz energy",
+        "SI units: J/mol",
+        MolarEnergy::new::<joule_per_mole>
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -930,6 +940,14 @@ mod tests {
         molar_gibbs_energy,
         water,
         -52.258_321_700_239_044,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        molar_helmholtz_energy,
+        water,
+        -54.086_997_271_059_72,
         propylene_glycol
     );
 
