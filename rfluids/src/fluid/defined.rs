@@ -7,15 +7,17 @@ use crate::io::{FluidInput, FluidParam};
 use crate::uom::si::available_energy::joule_per_kilogram;
 use crate::uom::si::dynamic_viscosity::pascal_second;
 use crate::uom::si::f64::{
-    AvailableEnergy, DynamicViscosity, MassDensity, MolarHeatCapacity, SpecificHeatCapacity,
-    TemperatureCoefficient, ThermalConductivity, ThermodynamicTemperature,
+    AvailableEnergy, DynamicViscosity, MassDensity, MolarHeatCapacity, Pressure,
+    SpecificHeatCapacity, TemperatureCoefficient, ThermalConductivity, ThermodynamicTemperature,
 };
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
 use crate::uom::si::molar_heat_capacity::joule_per_kelvin_mole;
+use crate::uom::si::pressure::pascal;
 use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
 use crate::uom::si::temperature_coefficient::per_kelvin;
 use crate::uom::si::thermal_conductivity::watt_per_meter_kelvin;
 use crate::uom::si::thermodynamic_temperature::kelvin;
+use crate::uom_ext::pressure_coefficient::PressureCoefficient;
 
 macro_rules! output_doc {
     ($key:ident, $description:literal, $units_description:literal) => {
@@ -307,6 +309,16 @@ impl Fluid {
         "Isobaric expansion coefficient",
         "SI units: 1/K",
         TemperatureCoefficient::new::<per_kelvin>
+    );
+
+    define_output!(
+        output,
+        isothermal_compressibility,
+        IsothermalCompressibility,
+        PressureCoefficient,
+        "Isothermal compressibility",
+        "SI units: 1/Pa",
+        |x| 1.0 / Pressure::new::<pascal>(1.0) * x
     );
 
     #[doc = output_doc!(
@@ -835,6 +847,14 @@ mod tests {
         isobaric_expansion_coefficient,
         water,
         2.068_062_073_013_346_5e-4,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        isothermal_compressibility,
+        water,
+        4.589_128_995_632_698_5e-10,
         propylene_glycol
     );
 
