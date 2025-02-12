@@ -7,10 +7,12 @@ use crate::io::{FluidInput, FluidParam, Phase};
 use crate::uom::si::available_energy::joule_per_kilogram;
 use crate::uom::si::dynamic_viscosity::pascal_second;
 use crate::uom::si::f64::{
-    AvailableEnergy, DynamicViscosity, MassDensity, MolarConcentration, MolarEnergy,
+    AvailableEnergy, DynamicViscosity, Force, Length, MassDensity, MolarConcentration, MolarEnergy,
     MolarHeatCapacity, Pressure, Ratio, SpecificHeatCapacity, TemperatureCoefficient,
     ThermalConductivity, ThermodynamicTemperature, Velocity,
 };
+use crate::uom::si::force::newton;
+use crate::uom::si::length::meter;
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
 use crate::uom::si::molar_concentration::mole_per_cubic_meter;
 use crate::uom::si::molar_energy::joule_per_mole;
@@ -23,6 +25,7 @@ use crate::uom::si::thermal_conductivity::watt_per_meter_kelvin;
 use crate::uom::si::thermodynamic_temperature::kelvin;
 use crate::uom::si::velocity::meter_per_second;
 use crate::uom_ext::pressure_coefficient::PressureCoefficient;
+use crate::uom_ext::surface_tension::SurfaceTension;
 
 macro_rules! output_doc {
     ($key:ident, $description:literal, $units_description:literal) => {
@@ -511,6 +514,16 @@ impl Fluid {
         SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
     );
 
+    define_output!(
+        positive_output,
+        surface_tension,
+        SurfaceTension,
+        SurfaceTension,
+        "Surface tension",
+        "SI units: N/m",
+        |x| Force::new::<newton>(1.0) / Length::new::<meter>(1.0) * x
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -691,6 +704,7 @@ mod tests {
     use crate::uom::si::pressure::atmosphere;
     use crate::uom::si::ratio::percent;
     use crate::uom::si::thermodynamic_temperature::degree_celsius;
+    use approx::assert_relative_eq;
     use rstest::*;
 
     #[fixture]
@@ -1144,7 +1158,7 @@ mod tests {
     fn quality_returns_expected_value(mut water: Fluid, mut propylene_glycol: Fluid) {
         assert!(water.quality().is_err());
         assert!(propylene_glycol.quality().is_err());
-        assert_eq!(
+        assert_relative_eq!(
             water
                 .in_state(
                     FluidInput::pressure(Pressure::new::<atmosphere>(1.0)),
@@ -1198,6 +1212,24 @@ mod tests {
         water,
         4_156.681_472_861_554_5
     );
+
+    #[rstest]
+    fn surface_tension_returns_expected_value(mut water: Fluid, mut propylene_glycol: Fluid) {
+        assert!(water.surface_tension().is_err());
+        assert!(propylene_glycol.surface_tension().is_err());
+        assert_relative_eq!(
+            water
+                .in_state(
+                    FluidInput::pressure(Pressure::new::<atmosphere>(1.0)),
+                    FluidInput::quality(Ratio::new::<ratio>(1.0)),
+                )
+                .unwrap()
+                .surface_tension()
+                .unwrap()
+                .value,
+            0.058_925_588_400_728_54
+        );
+    }
 
     test_output!(Fluid, f64, tau, water, 2.207_388_708_852_123_6);
     test_output!(Fluid, temperature, water, 293.15);
