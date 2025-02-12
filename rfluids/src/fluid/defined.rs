@@ -8,14 +8,15 @@ use crate::uom::si::available_energy::joule_per_kilogram;
 use crate::uom::si::dynamic_viscosity::pascal_second;
 use crate::uom::si::f64::{
     AvailableEnergy, DynamicViscosity, MassDensity, MolarConcentration, MolarEnergy,
-    MolarHeatCapacity, Pressure, SpecificHeatCapacity, TemperatureCoefficient, ThermalConductivity,
-    ThermodynamicTemperature,
+    MolarHeatCapacity, Pressure, Ratio, SpecificHeatCapacity, TemperatureCoefficient,
+    ThermalConductivity, ThermodynamicTemperature,
 };
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
 use crate::uom::si::molar_concentration::mole_per_cubic_meter;
 use crate::uom::si::molar_energy::joule_per_mole;
 use crate::uom::si::molar_heat_capacity::joule_per_kelvin_mole;
 use crate::uom::si::pressure::pascal;
+use crate::uom::si::ratio::ratio;
 use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
 use crate::uom::si::temperature_coefficient::per_kelvin;
 use crate::uom::si::thermal_conductivity::watt_per_meter_kelvin;
@@ -440,6 +441,14 @@ impl Fluid {
         "SI units: Pa",
         Pressure::new::<pascal>
     );
+
+    #[doc = output_doc!(Q, "Vapor quality", "dimensionless, from 0 to 1")]
+    pub fn quality(&mut self) -> OutputResult<Ratio> {
+        let key = FluidParam::Q;
+        self.output(key)
+            .and_then(|value| guard(key.into(), value, |x| (0.0..=1.0).contains(&x)))
+            .map(Ratio::new::<ratio>)
+    }
 
     #[doc = output_doc!(
         Tau,
@@ -1069,6 +1078,25 @@ mod tests {
 
     test_output!(Fluid, f64, prandtl, water, 7.007_763_685_676_371);
     test_output!(Fluid, pressure, water, 101_325.000_030_278_93);
+
+    #[rstest]
+    fn quality_returns_expected_value(mut water: Fluid, mut propylene_glycol: Fluid) {
+        assert!(water.quality().is_err());
+        assert!(propylene_glycol.quality().is_err());
+        assert_eq!(
+            water
+                .in_state(
+                    FluidInput::pressure(Pressure::new::<atmosphere>(1.0)),
+                    FluidInput::quality(Ratio::new::<ratio>(1.0)),
+                )
+                .unwrap()
+                .quality()
+                .unwrap()
+                .value,
+            1.0
+        );
+    }
+
     test_output!(Fluid, f64, tau, water, 2.207_388_708_852_123_6);
     test_output!(Fluid, temperature, water, 293.15);
 
