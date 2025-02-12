@@ -384,6 +384,16 @@ impl Fluid {
         MolarEnergy::new::<joule_per_mole>
     );
 
+    define_output!(
+        positive_output,
+        molar_specific_heat,
+        CpMolar,
+        MolarHeatCapacity,
+        "Molar specific heat at constant pressure",
+        "SI units: J/mol/K",
+        MolarHeatCapacity::new::<joule_per_kelvin_mole>
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -966,6 +976,14 @@ mod tests {
         molar_internal_energy,
         water,
         1_511.585_363_210_497_7,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        molar_specific_heat,
+        water,
+        75.376_798_730_939_36,
         propylene_glycol
     );
 
