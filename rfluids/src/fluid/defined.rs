@@ -279,6 +279,16 @@ impl Fluid {
         SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
     );
 
+    define_output!(
+        output,
+        internal_energy,
+        UMass,
+        AvailableEnergy,
+        "Mass specific internal energy",
+        "SI units: J/kg",
+        AvailableEnergy::new::<joule_per_kilogram>
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -789,6 +799,7 @@ mod tests {
         propylene_glycol
     );
 
+    test_output!(Fluid, internal_energy, water, 83_905.793_863_876_88);
     test_output!(Fluid, f64, tau, water, 2.207_388_708_852_123_6);
     test_output!(Fluid, temperature, water, 293.15);
 
