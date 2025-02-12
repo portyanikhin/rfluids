@@ -7,12 +7,13 @@ use crate::io::{FluidInput, FluidParam};
 use crate::uom::si::available_energy::joule_per_kilogram;
 use crate::uom::si::dynamic_viscosity::pascal_second;
 use crate::uom::si::f64::{
-    AvailableEnergy, DynamicViscosity, MassDensity, MolarConcentration, MolarHeatCapacity,
-    Pressure, SpecificHeatCapacity, TemperatureCoefficient, ThermalConductivity,
+    AvailableEnergy, DynamicViscosity, MassDensity, MolarConcentration, MolarEnergy,
+    MolarHeatCapacity, Pressure, SpecificHeatCapacity, TemperatureCoefficient, ThermalConductivity,
     ThermodynamicTemperature,
 };
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
 use crate::uom::si::molar_concentration::mole_per_cubic_meter;
+use crate::uom::si::molar_energy::joule_per_mole;
 use crate::uom::si::molar_heat_capacity::joule_per_kelvin_mole;
 use crate::uom::si::pressure::pascal;
 use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
@@ -331,6 +332,16 @@ impl Fluid {
         "Molar density",
         "SI units: mol/m³",
         MolarConcentration::new::<mole_per_cubic_meter>
+    );
+
+    define_output!(
+        output,
+        molar_enthalpy,
+        HMolar,
+        MolarEnergy,
+        "Molar specific enthalpy",
+        "SI units: J/mol",
+        MolarEnergy::new::<joule_per_mole>
     );
 
     #[doc = output_doc!(
@@ -875,6 +886,14 @@ mod tests {
         molar_density,
         water,
         55_408.953_697_937_126,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        molar_enthalpy,
+        water,
+        1_513.414_038_781_318_4,
         propylene_glycol
     );
 
