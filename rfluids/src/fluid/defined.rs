@@ -470,6 +470,16 @@ impl Fluid {
         MolarHeatCapacity::new::<joule_per_kelvin_mole>
     );
 
+    define_output!(
+        output,
+        residual_molar_gibbs_energy,
+        GMolarResidual,
+        MolarEnergy,
+        "Residual molar specific Gibbs energy",
+        "SI units: J/mol",
+        MolarEnergy::new::<joule_per_mole>
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -1130,6 +1140,14 @@ mod tests {
         residual_molar_entropy,
         water,
         -59.688_703_328_769_79,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        residual_molar_gibbs_energy,
+        water,
+        -26_723.530_801_556_73,
         propylene_glycol
     );
 
