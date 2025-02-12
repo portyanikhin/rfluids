@@ -454,10 +454,10 @@ impl Fluid {
         output,
         residual_molar_enthalpy,
         HMolarResidual,
-        MolarHeatCapacity,
+        MolarEnergy,
         "Residual molar specific enthalpy",
-        "SI units: J/mol/K",
-        MolarHeatCapacity::new::<joule_per_kelvin_mole>
+        "SI units: J/mol",
+        MolarEnergy::new::<joule_per_mole>
     );
 
     #[doc = output_doc!(

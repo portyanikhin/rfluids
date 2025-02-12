@@ -117,7 +117,7 @@ pub enum FluidParam {
     #[strum(to_string = "Helmholtzmolar")]
     HelmholtzMolar = 32,
 
-    /// Residual molar specific enthalpy _(J/mol/K)_.
+    /// Residual molar specific enthalpy _(J/mol)_.
     #[strum(to_string = "Hmolar_residual")]
     HMolarResidual = 33,
 
@@ -125,7 +125,7 @@ pub enum FluidParam {
     #[strum(to_string = "Smolar_residual")]
     SMolarResidual = 34,
 
-    /// Residual molar specific Gibbs energy _(J/mol/K)_.
+    /// Residual molar specific Gibbs energy _(J/mol)_.
     #[strum(to_string = "Gmolar_residual")]
     GMolarResidual = 35,
 
