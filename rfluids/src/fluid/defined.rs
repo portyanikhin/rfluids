@@ -9,7 +9,7 @@ use crate::uom::si::dynamic_viscosity::pascal_second;
 use crate::uom::si::f64::{
     AvailableEnergy, DynamicViscosity, MassDensity, MolarConcentration, MolarEnergy,
     MolarHeatCapacity, Pressure, Ratio, SpecificHeatCapacity, TemperatureCoefficient,
-    ThermalConductivity, ThermodynamicTemperature,
+    ThermalConductivity, ThermodynamicTemperature, Velocity,
 };
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
 use crate::uom::si::molar_concentration::mole_per_cubic_meter;
@@ -21,6 +21,7 @@ use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
 use crate::uom::si::temperature_coefficient::per_kelvin;
 use crate::uom::si::thermal_conductivity::watt_per_meter_kelvin;
 use crate::uom::si::thermodynamic_temperature::kelvin;
+use crate::uom::si::velocity::meter_per_second;
 use crate::uom_ext::pressure_coefficient::PressureCoefficient;
 
 macro_rules! output_doc {
@@ -478,6 +479,16 @@ impl Fluid {
         "Residual molar specific Gibbs energy",
         "SI units: J/mol",
         MolarEnergy::new::<joule_per_mole>
+    );
+
+    define_output!(
+        positive_output,
+        sound_speed,
+        SoundSpeed,
+        Velocity,
+        "Sound speed",
+        "SI units: m/s",
+        Velocity::new::<meter_per_second>
     );
 
     #[doc = output_doc!(
@@ -1148,6 +1159,14 @@ mod tests {
         residual_molar_gibbs_energy,
         water,
         -26_723.530_801_556_73,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        sound_speed,
+        water,
+        1_482.346_174_847_555_6,
         propylene_glycol
     );
 
