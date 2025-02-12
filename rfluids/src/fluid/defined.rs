@@ -491,6 +491,16 @@ impl Fluid {
         Velocity::new::<meter_per_second>
     );
 
+    define_output!(
+        positive_output,
+        specific_heat,
+        CpMass,
+        SpecificHeatCapacity,
+        "Mass specific heat at constant pressure",
+        "SI units: J/kg/K",
+        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -1170,6 +1180,7 @@ mod tests {
         propylene_glycol
     );
 
+    test_output!(Fluid, specific_heat, water, 4_184.050_924_523_541);
     test_output!(Fluid, f64, tau, water, 2.207_388_708_852_123_6);
     test_output!(Fluid, temperature, water, 293.15);
 
