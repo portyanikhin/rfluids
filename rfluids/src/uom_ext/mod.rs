@@ -3,3 +3,4 @@
 //! which are not included in the [`uom`](https://crates.io/crates/uom) crate.
 
 pub mod pressure_coefficient;
+pub mod surface_tension;
