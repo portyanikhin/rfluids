@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/github/license/portyanikhin/rfluids)](https://github.com/portyanikhin/rfluids/blob/main/LICENSE)
 
-FFI bindings to [CoolProp](https://coolprop.github.io/CoolProp/).
+Raw FFI bindings to [CoolProp](https://coolprop.github.io/CoolProp/).
 
 ## Supported platforms
 

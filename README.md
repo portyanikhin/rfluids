@@ -2,8 +2,7 @@
 
 [![License](https://img.shields.io/github/license/portyanikhin/rfluids)](https://github.com/portyanikhin/rfluids/blob/main/LICENSE)
 
-Simple, full-featured, lightweight, cross-platform
-[CoolProp](https://coolprop.github.io/CoolProp/) wrapper for Rust.
+Rusty [CoolProp](https://coolprop.github.io/CoolProp/) wrapper.
 
 ## Supported platforms
 

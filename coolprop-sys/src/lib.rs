@@ -1,4 +1,4 @@
-//! FFI bindings to [CoolProp](https://coolprop.github.io/CoolProp/).
+//! Raw FFI bindings to [CoolProp](https://coolprop.github.io/CoolProp/).
 //!
 //! ## Supported platforms
 //!

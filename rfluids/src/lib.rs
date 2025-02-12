@@ -1,5 +1,4 @@
-//! Simple, full-featured, lightweight, cross-platform
-//! [CoolProp](https://coolprop.github.io/CoolProp/) wrapper for Rust.
+//! Rusty [CoolProp](https://coolprop.github.io/CoolProp/) wrapper.
 //!
 //! ## Supported platforms
 //!
