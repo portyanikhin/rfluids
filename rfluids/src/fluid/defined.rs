@@ -3,7 +3,7 @@
 use super::common::{cached_output, delta, guard, tau};
 use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
-use crate::io::{FluidInput, FluidParam};
+use crate::io::{FluidInput, FluidParam, Phase};
 use crate::uom::si::available_energy::joule_per_kilogram;
 use crate::uom::si::dynamic_viscosity::pascal_second;
 use crate::uom::si::f64::{
@@ -403,6 +403,15 @@ impl Fluid {
         "SI units: J/mol/K",
         MolarHeatCapacity::new::<joule_per_kelvin_mole>
     );
+
+    /// Phase state.
+    pub fn phase(&mut self) -> Phase {
+        Phase::try_from(
+            self.positive_output(FluidParam::Phase)
+                .unwrap_or(f64::from(u8::from(Phase::Liquid))),
+        )
+        .unwrap()
+    }
 
     #[doc = output_doc!(
         Tau,
@@ -1004,6 +1013,22 @@ mod tests {
         74.883_730_724_235_63,
         propylene_glycol
     );
+
+    #[rstest]
+    fn phase_returns_expected_value(mut water: Fluid, mut propylene_glycol: Fluid) {
+        assert_eq!(water.phase(), Phase::Liquid);
+        assert_eq!(propylene_glycol.phase(), Phase::Liquid);
+        assert_eq!(
+            water
+                .in_state(
+                    FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(150.0)),
+                    FluidInput::pressure(Pressure::new::<atmosphere>(1.0))
+                )
+                .unwrap()
+                .phase(),
+            Phase::Gas
+        );
+    }
 
     test_output!(Fluid, f64, tau, water, 2.207_388_708_852_123_6);
     test_output!(Fluid, temperature, water, 293.15);
