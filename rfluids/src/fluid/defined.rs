@@ -450,6 +450,16 @@ impl Fluid {
             .map(Ratio::new::<ratio>)
     }
 
+    define_output!(
+        output,
+        residual_molar_enthalpy,
+        HMolarResidual,
+        MolarHeatCapacity,
+        "Residual molar specific enthalpy",
+        "SI units: J/mol/K",
+        MolarHeatCapacity::new::<joule_per_kelvin_mole>
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -1096,6 +1106,14 @@ mod tests {
             1.0
         );
     }
+
+    test_output!(
+        Fluid,
+        residual_molar_enthalpy,
+        water,
+        -44_221.274_182_385_6,
+        propylene_glycol
+    );
 
     test_output!(Fluid, f64, tau, water, 2.207_388_708_852_123_6);
     test_output!(Fluid, temperature, water, 293.15);
