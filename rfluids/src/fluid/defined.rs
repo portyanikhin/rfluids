@@ -501,6 +501,16 @@ impl Fluid {
         SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
     );
 
+    define_output!(
+        positive_output,
+        specific_heat_const_volume,
+        CvMass,
+        SpecificHeatCapacity,
+        "Mass specific heat at constant volume",
+        "SI units: J/kg/K",
+        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -1181,6 +1191,14 @@ mod tests {
     );
 
     test_output!(Fluid, specific_heat, water, 4_184.050_924_523_541);
+
+    test_output!(
+        Fluid,
+        specific_heat_const_volume,
+        water,
+        4_156.681_472_861_554_5
+    );
+
     test_output!(Fluid, f64, tau, water, 2.207_388_708_852_123_6);
     test_output!(Fluid, temperature, water, 293.15);
 
