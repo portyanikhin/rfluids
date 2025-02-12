@@ -422,6 +422,15 @@ impl Fluid {
         "dimensionless"
     );
 
+    define_output!(
+        positive_output,
+        prandtl,
+        Prandtl,
+        f64,
+        "Prandtl number",
+        "dimensionless"
+    );
+
     #[doc = output_doc!(
         Tau,
         "Reciprocal reduced temperature = [`critical_temperature`](crate::fluid::Fluid::critical_temperature) / [`temperature`](crate::fluid::Fluid::temperature)",
@@ -1048,6 +1057,7 @@ mod tests {
         propylene_glycol
     );
 
+    test_output!(Fluid, f64, prandtl, water, 7.007_763_685_676_371);
     test_output!(Fluid, f64, tau, water, 2.207_388_708_852_123_6);
     test_output!(Fluid, temperature, water, 293.15);
 
