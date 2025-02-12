@@ -7,10 +7,12 @@ use crate::io::{FluidInput, FluidParam};
 use crate::uom::si::available_energy::joule_per_kilogram;
 use crate::uom::si::dynamic_viscosity::pascal_second;
 use crate::uom::si::f64::{
-    AvailableEnergy, DynamicViscosity, MassDensity, MolarHeatCapacity, Pressure,
-    SpecificHeatCapacity, TemperatureCoefficient, ThermalConductivity, ThermodynamicTemperature,
+    AvailableEnergy, DynamicViscosity, MassDensity, MolarConcentration, MolarHeatCapacity,
+    Pressure, SpecificHeatCapacity, TemperatureCoefficient, ThermalConductivity,
+    ThermodynamicTemperature,
 };
 use crate::uom::si::mass_density::kilogram_per_cubic_meter;
+use crate::uom::si::molar_concentration::mole_per_cubic_meter;
 use crate::uom::si::molar_heat_capacity::joule_per_kelvin_mole;
 use crate::uom::si::pressure::pascal;
 use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
@@ -319,6 +321,16 @@ impl Fluid {
         "Isothermal compressibility",
         "SI units: 1/Pa",
         |x| 1.0 / Pressure::new::<pascal>(1.0) * x
+    );
+
+    define_output!(
+        positive_output,
+        molar_density,
+        DMolar,
+        MolarConcentration,
+        "Molar density",
+        "SI units: mol/m³",
+        MolarConcentration::new::<mole_per_cubic_meter>
     );
 
     #[doc = output_doc!(
@@ -855,6 +867,14 @@ mod tests {
         isothermal_compressibility,
         water,
         4.589_128_995_632_698_5e-10,
+        propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        molar_density,
+        water,
+        55_408.953_697_937_126,
         propylene_glycol
     );
 
