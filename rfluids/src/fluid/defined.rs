@@ -446,7 +446,7 @@ impl Fluid {
         Pressure::new::<pascal>
     );
 
-    #[doc = output_doc!(Q, "Vapor quality", "dimensionless, from 0 to 1")]
+    #[doc = output_doc!(Q, "Vapor quality", "SI units: dimensionless, from 0 to 1")]
     pub fn quality(&mut self) -> OutputResult<Ratio> {
         let key = FluidParam::Q;
         self.output(key)
