@@ -326,7 +326,7 @@ impl Fluid {
         PressureCoefficient,
         "Isothermal compressibility",
         "SI units: 1/Pa",
-        |x| 1.0 / Pressure::new::<pascal>(1.0) * x
+        |x| Pressure::new::<pascal>(1.0).recip() * x
     );
 
     define_output!(
@@ -412,8 +412,8 @@ impl Fluid {
     /// Phase state.
     pub fn phase(&mut self) -> Phase {
         Phase::try_from(
-            self.positive_output(FluidParam::Phase)
-                .unwrap_or(f64::from(u8::from(Phase::Liquid))),
+            self.non_negative_output(FluidParam::Phase)
+                .unwrap_or(f64::from(u8::from(Phase::Unknown))),
         )
         .unwrap()
     }
@@ -666,6 +666,11 @@ impl Fluid {
     fn positive_output(&mut self, key: FluidParam) -> OutputResult<f64> {
         self.output(key)
             .and_then(|value| guard(key.into(), value, |x| x > 0.0))
+    }
+
+    fn non_negative_output(&mut self, key: FluidParam) -> OutputResult<f64> {
+        self.output(key)
+            .and_then(|value| guard(key.into(), value, |x| x >= 0.0))
     }
 
     fn output(&mut self, key: FluidParam) -> OutputResult<f64> {
@@ -1127,7 +1132,7 @@ mod tests {
     #[rstest]
     fn phase_returns_expected_value(mut water: Fluid, mut propylene_glycol: Fluid) {
         assert_eq!(water.phase(), Phase::Liquid);
-        assert_eq!(propylene_glycol.phase(), Phase::Liquid);
+        assert_eq!(propylene_glycol.phase(), Phase::Unknown);
         assert_eq!(
             water
                 .in_state(
