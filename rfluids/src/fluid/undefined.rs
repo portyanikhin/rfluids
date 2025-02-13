@@ -33,24 +33,24 @@ impl Fluid<Undefined> {
     /// // perform conversion between `Undefined` and `Defined` state variants
     /// // (since `Defined` is the default state variant, it can be omitted)
     /// let mut water: Fluid = water.in_state(
-    ///     FluidInput::pressure(Pressure::new::<atmosphere>(1.0)),
-    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0)),
+    ///     fluid_input::pressure!(1.0, atmosphere),
+    ///     fluid_input::temperature!(20.0, degree_celsius),
     /// )?;
     ///
     /// // The `Fluid` instance now has `Defined` state variant
     /// // and it's thermodynamic state can be updated in place by calling `update` method
     /// // (which returns a mutable reference to the instance)
     /// let same_water_in_new_state: StateResult<&mut Fluid> = water.update(
-    ///     FluidInput::pressure(Pressure::new::<atmosphere>(2.0)),
-    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(40.0)),
+    ///     fluid_input::pressure!(2.0, atmosphere),
+    ///     fluid_input::temperature!(40.0, degree_celsius),
     /// );
     /// assert!(same_water_in_new_state.is_ok());
     ///
     /// // Calling `in_state` method on `Fluid<Defined>` will return
     /// // a new instance in the specified thermodynamic state
     /// let new_water: StateResult<Fluid> = water.in_state(
-    ///     FluidInput::pressure(Pressure::new::<atmosphere>(4.0)),
-    ///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(80.0)),
+    ///     fluid_input::pressure!(4.0, atmosphere),
+    ///     fluid_input::temperature!(80.0, degree_celsius),
     /// );
     /// assert!(new_water.is_ok());
     /// # Ok::<(), rfluids::error::Error>(())
@@ -92,21 +92,20 @@ mod tests {
     use super::*;
     use crate::error::FluidStateError;
     use crate::fluid::common::tests::test_output;
+    use crate::io::fluid_input;
     use crate::substance::*;
-    use crate::uom::si::f64::{Pressure, Ratio, ThermodynamicTemperature};
     use crate::uom::si::pressure::atmosphere;
-    use crate::uom::si::ratio::percent;
     use crate::uom::si::thermodynamic_temperature::degree_celsius;
     use rstest::*;
 
     #[fixture]
     fn temperature(#[default(20.0)] value: f64) -> FluidInput {
-        FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(value))
+        fluid_input::temperature!(value, degree_celsius)
     }
 
     #[fixture]
     fn pressure(#[default(1.0)] value: f64) -> FluidInput {
-        FluidInput::pressure(Pressure::new::<atmosphere>(value))
+        fluid_input::pressure!(value, atmosphere)
     }
 
     #[fixture]
@@ -146,9 +145,7 @@ mod tests {
 
     #[fixture]
     fn propylene_glycol() -> Fluid<Undefined> {
-        Fluid::from(
-            BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap(),
-        )
+        Fluid::from(BinaryMix::with_fraction_si(BinaryMixKind::MPG, 0.4).unwrap())
     }
 
     #[test]

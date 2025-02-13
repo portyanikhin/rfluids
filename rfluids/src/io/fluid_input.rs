@@ -208,11 +208,11 @@ macro_rules! define_input_macro {
         #[macro_export]
         macro_rules! $name {
             ($value:expr, $unit:ty) => {
-                FluidInput::$name($type::new::<$unit>($value))
+                $crate::io::FluidInput::$name($crate::uom::si::f64::$type::new::<$unit>($value))
             };
             ($value:expr) => {
                 paste::paste! {
-                    FluidInput::[<$name _si>]($value)
+                    $crate::io::FluidInput::[<$name _si>]($value)
                 }
             };
         }
