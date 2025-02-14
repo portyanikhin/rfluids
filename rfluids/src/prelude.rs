@@ -12,9 +12,10 @@ pub mod fluid {
     pub use crate::substance::*;
     pub use crate::uom::si::f64::{
         AvailableEnergy, DynamicViscosity, Force, Length, MassDensity, MolarConcentration,
-        MolarEnergy, MolarHeatCapacity, Pressure, Ratio, SpecificHeatCapacity,
+        MolarEnergy, MolarHeatCapacity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
         TemperatureCoefficient, ThermalConductivity, ThermodynamicTemperature, Velocity,
     };
+    pub use crate::uom_ext::kinematic_viscosity::KinematicViscosity;
     pub use crate::uom_ext::pressure_coefficient::PressureCoefficient;
     pub use crate::uom_ext::surface_tension::SurfaceTension;
 }
