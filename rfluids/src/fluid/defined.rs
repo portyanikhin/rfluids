@@ -9,8 +9,8 @@ use crate::uom::si::available_energy::joule_per_kilogram;
 use crate::uom::si::dynamic_viscosity::pascal_second;
 use crate::uom::si::f64::{
     AvailableEnergy, DynamicViscosity, Force, Length, MassDensity, MolarConcentration, MolarEnergy,
-    MolarHeatCapacity, Pressure, Ratio, SpecificHeatCapacity, TemperatureCoefficient,
-    ThermalConductivity, ThermodynamicTemperature, Velocity,
+    MolarHeatCapacity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
+    TemperatureCoefficient, ThermalConductivity, ThermodynamicTemperature, Velocity,
 };
 use crate::uom::si::force::newton;
 use crate::uom::si::length::meter;
@@ -534,6 +534,14 @@ impl Fluid {
         "SI units: J/kg/K",
         SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
     );
+
+    #[doc = output_doc!(
+        "Specific volume = `1` / [`density`](crate::fluid::Fluid::density)",
+        "SI units: m³/kg"
+    )]
+    pub fn specific_volume(&mut self) -> OutputResult<SpecificVolume> {
+        self.density().map(crate::uom::si::Quantity::recip)
+    }
 
     define_output!(
         positive_output,
@@ -1243,6 +1251,8 @@ mod tests {
         water,
         4_156.681_472_861_554_5
     );
+
+    test_output!(Fluid, specific_volume, water, 1.001_796_069_614_639_7e-3);
 
     #[rstest]
     fn surface_tension_returns_expected_value(mut water: Fluid, mut propylene_glycol: Fluid) {
