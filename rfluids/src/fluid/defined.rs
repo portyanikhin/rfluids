@@ -25,6 +25,7 @@ use crate::uom::si::temperature_coefficient::per_kelvin;
 use crate::uom::si::thermal_conductivity::watt_per_meter_kelvin;
 use crate::uom::si::thermodynamic_temperature::kelvin;
 use crate::uom::si::velocity::meter_per_second;
+use crate::uom_ext::kinematic_viscosity::KinematicViscosity;
 use crate::uom_ext::pressure_coefficient::PressureCoefficient;
 use crate::uom_ext::surface_tension::SurfaceTension;
 
@@ -37,6 +38,17 @@ macro_rules! output_doc {
             "`](FluidParam::",
             stringify!($key),
             "), ",
+            $units_description,
+            ")_.\n\n",
+            "# Errors\n\n",
+            "If it's not available or calculation is failed,\n",
+            "a [`FluidOutputError`] is returned.",
+        )
+    };
+    ($description:literal, $units_description:literal) => {
+        concat!(
+            $description,
+            "\n_(",
             $units_description,
             ")_.\n\n",
             "# Errors\n\n",
@@ -329,6 +341,14 @@ impl Fluid {
         "SI units: 1/Pa",
         |x| Pressure::new::<pascal>(1.0).recip() * x
     );
+
+    #[doc = output_doc!(
+        "Kinematic viscosity = [`dynamic_viscosity`](crate::fluid::Fluid::dynamic_viscosity) / [`density`](crate::fluid::Fluid::density)",
+        "SI units: m²/s"
+    )]
+    pub fn kinematic_viscosity(&mut self) -> OutputResult<KinematicViscosity> {
+        div(self.dynamic_viscosity(), self.density())
+    }
 
     define_output!(
         positive_output,
@@ -1064,6 +1084,13 @@ mod tests {
         water,
         4.589_128_995_632_698_5e-10,
         propylene_glycol
+    );
+
+    test_output!(
+        Fluid,
+        kinematic_viscosity,
+        water,
+        1.003_395_079_519_393_9e-6
     );
 
     test_output!(
