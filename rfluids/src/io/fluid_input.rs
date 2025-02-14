@@ -16,17 +16,11 @@ use crate::uom::si::f64::{
 /// use rfluids::uom::si::pressure::atmosphere;
 /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
 ///
-/// let pressure =
-///     FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
-/// assert_eq!(pressure, FluidInput::pressure_si(101325.0));
-///
-/// let temperature =
-///     FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
-/// assert_eq!(temperature, FluidInput::temperature_si(293.15));
-///
-/// let density =
-///     FluidInput::density(MassDensity::new::<gram_per_cubic_centimeter>(1.0));
-/// assert_eq!(density, FluidInput::density_si(1000.0));
+/// let pressure = fluid_input::pressure!(1.0, atmosphere);
+/// let pressure_si = fluid_input::pressure!(101325.0);
+/// assert_eq!(pressure, pressure_si);
+/// assert_eq!(pressure, FluidInput::pressure(Pressure::new::<atmosphere>(1.0)));
+/// assert_eq!(pressure_si, FluidInput::pressure_si(101325.0));
 /// ```
 pub type FluidInput = Input<FluidParam>;
 
