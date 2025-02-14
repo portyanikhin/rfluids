@@ -40,6 +40,7 @@ pub mod error;
 pub mod fluid;
 pub mod io;
 pub mod native;
+mod ops;
 pub mod prelude;
 pub mod state_variant;
 pub mod substance;

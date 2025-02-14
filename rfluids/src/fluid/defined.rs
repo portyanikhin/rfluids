@@ -1,9 +1,10 @@
 // cSpell:disable
 
-use super::common::{cached_output, delta, guard, tau};
+use super::common::{cached_output, guard};
 use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
 use crate::io::{FluidInput, FluidParam, Phase};
+use crate::ops::div;
 use crate::uom::si::available_energy::joule_per_kilogram;
 use crate::uom::si::dynamic_viscosity::pascal_second;
 use crate::uom::si::f64::{
@@ -198,7 +199,7 @@ impl Fluid {
     )]
     pub fn delta(&mut self) -> OutputResult<f64> {
         // Due to CoolProp bug
-        delta(self.density(), self.critical_density())
+        div(self.density(), self.critical_density()).map(|x| x.value)
     }
 
     define_output!(
@@ -531,7 +532,7 @@ impl Fluid {
     )]
     pub fn tau(&mut self) -> OutputResult<f64> {
         // Due to CoolProp bug
-        tau(self.critical_temperature(), self.temperature())
+        div(self.critical_temperature(), self.temperature()).map(|x| x.value)
     }
 
     define_output!(

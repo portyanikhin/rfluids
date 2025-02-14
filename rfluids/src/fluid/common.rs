@@ -2,7 +2,6 @@ use super::OutputResult;
 use crate::error::{CoolPropError, FluidOutputError};
 use crate::io::{FluidParam, FluidTrivialParam};
 use crate::native::AbstractState;
-use crate::uom::si::f64::{MassDensity, MolarConcentration, MolarMass, ThermodynamicTemperature};
 use std::collections::HashMap;
 use std::hash::Hash;
 
@@ -53,34 +52,9 @@ pub(crate) fn guard(key: Param, value: f64, ok: fn(f64) -> bool) -> OutputResult
     }
 }
 
-pub(crate) fn density_from_molar_density(
-    molar_density: OutputResult<MolarConcentration>,
-    molar_mass: OutputResult<MolarMass>,
-) -> OutputResult<MassDensity> {
-    Ok(molar_density? * molar_mass?)
-}
-
-pub(crate) fn delta(
-    density: OutputResult<MassDensity>,
-    critical_density: OutputResult<MassDensity>,
-) -> OutputResult<f64> {
-    Ok((density? / critical_density?).value)
-}
-
-pub(crate) fn tau(
-    critical_temperature: OutputResult<ThermodynamicTemperature>,
-    temperature: OutputResult<ThermodynamicTemperature>,
-) -> OutputResult<f64> {
-    Ok((critical_temperature? / temperature?).value)
-}
-
 #[cfg(test)]
 pub(crate) mod tests {
     use super::*;
-    use crate::uom::si::mass_density::kilogram_per_cubic_meter;
-    use crate::uom::si::molar_concentration::mole_per_cubic_meter;
-    use crate::uom::si::molar_mass::kilogram_per_mole;
-    use crate::uom::si::thermodynamic_temperature::kelvin;
     use rstest::*;
 
     macro_rules! test_output {
@@ -144,99 +118,5 @@ pub(crate) mod tests {
         #[case] expected: OutputResult<f64>,
     ) {
         assert_eq!(guard(key.into(), value, |x| x >= 0.0), expected);
-    }
-
-    #[rstest]
-    #[case(
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::DMolarReducing)),
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::MolarMass)),
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::DMolarReducing))
-    )]
-    #[case(
-        Ok(1.0),
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::MolarMass)),
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::MolarMass))
-    )]
-    #[case(
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::DMolarReducing)),
-        Ok(1.0),
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::DMolarReducing))
-    )]
-    #[case(Ok(21.0), Ok(2.0), Ok(42.0))]
-    fn density_from_molar_density_returns_expected_value(
-        #[case] molar_density: OutputResult<f64>,
-        #[case] molar_mass: OutputResult<f64>,
-        #[case] expected: OutputResult<f64>,
-    ) {
-        assert_eq!(
-            density_from_molar_density(
-                molar_density.map(MolarConcentration::new::<mole_per_cubic_meter>),
-                molar_mass.map(MolarMass::new::<kilogram_per_mole>)
-            )
-            .map(|v| v.value),
-            expected
-        );
-    }
-
-    #[rstest]
-    #[case(
-        Err(FluidOutputError::UnavailableOutput(FluidParam::DMass)),
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::DMassCritical)),
-        Err(FluidOutputError::UnavailableOutput(FluidParam::DMass))
-    )]
-    #[case(
-        Err(FluidOutputError::UnavailableOutput(FluidParam::DMass)),
-        Ok(250.0),
-        Err(FluidOutputError::UnavailableOutput(FluidParam::DMass))
-    )]
-    #[case(
-        Ok(1000.0),
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::DMassCritical)),
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::DMassCritical))
-    )]
-    #[case(Ok(1000.0), Ok(250.0), Ok(4.0))]
-    fn delta_returns_expected_value(
-        #[case] density: OutputResult<f64>,
-        #[case] critical_density: OutputResult<f64>,
-        #[case] expected: OutputResult<f64>,
-    ) {
-        assert_eq!(
-            delta(
-                density.map(MassDensity::new::<kilogram_per_cubic_meter>),
-                critical_density.map(MassDensity::new::<kilogram_per_cubic_meter>)
-            ),
-            expected
-        );
-    }
-
-    #[rstest]
-    #[case(
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::TCritical)),
-        Err(FluidOutputError::UnavailableOutput(FluidParam::T)),
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::TCritical))
-    )]
-    #[case(
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::TCritical)),
-        Ok(300.0),
-        Err(FluidOutputError::UnavailableTrivialOutput(FluidTrivialParam::TCritical))
-    )]
-    #[case(
-        Ok(600.0),
-        Err(FluidOutputError::UnavailableOutput(FluidParam::T)),
-        Err(FluidOutputError::UnavailableOutput(FluidParam::T))
-    )]
-    #[case(Ok(600.0), Ok(300.0), Ok(2.0))]
-    fn tau_returns_expected_value(
-        #[case] critical_temperature: OutputResult<f64>,
-        #[case] temperature: OutputResult<f64>,
-        #[case] expected: OutputResult<f64>,
-    ) {
-        assert_eq!(
-            tau(
-                critical_temperature.map(ThermodynamicTemperature::new::<kelvin>),
-                temperature.map(ThermodynamicTemperature::new::<kelvin>)
-            ),
-            expected
-        );
     }
 }

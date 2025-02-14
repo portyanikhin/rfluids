@@ -1,8 +1,9 @@
-use super::common::{cached_output, density_from_molar_density, guard};
+use super::common::{cached_output, guard};
 use super::requests::FluidUpdateRequest;
 use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
 use crate::io::{FluidInput, FluidTrivialParam};
+use crate::ops::mul;
 use crate::state_variant::StateVariant;
 use crate::substance::Substance;
 use crate::uom::si::f64::{
@@ -279,7 +280,7 @@ impl<S: StateVariant> Fluid<S> {
     #[doc = trivial_output_doc!(DMassReducing, "Reducing point mass density", "SI units: kg/m³")]
     pub fn reducing_density(&mut self) -> OutputResult<MassDensity> {
         // Due to CoolProp bug
-        density_from_molar_density(self.reducing_molar_density(), self.molar_mass())
+        mul(self.reducing_molar_density(), self.molar_mass())
     }
 
     define_trivial_output!(
