@@ -36,18 +36,18 @@ enum OS {
 }
 
 enum Arch {
-    X64,
-    ARM64,
+    X86_64,
+    AArch64,
 }
 
 fn get_target_os_and_arch() -> (OS, Arch) {
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
     match (target_os.as_str(), target_arch.as_str()) {
-        ("windows", "x86_64") => (OS::Windows, Arch::X64),
-        ("linux", "x86_64") => (OS::Linux, Arch::X64),
-        ("macos", "x86_64") => (OS::MacOS, Arch::X64),
-        ("macos", "aarch64") => (OS::MacOS, Arch::ARM64),
+        ("windows", "x86_64") => (OS::Windows, Arch::X86_64),
+        ("linux", "x86_64") => (OS::Linux, Arch::X86_64),
+        ("macos", "x86_64") => (OS::MacOS, Arch::X86_64),
+        ("macos", "aarch64") => (OS::MacOS, Arch::AArch64),
         _ => panic!(
             "Unsupported target platform: {} ({})",
             target_os, target_arch
@@ -71,10 +71,10 @@ fn get_lib_name_and_extension(target_os: &OS) -> (String, String) {
 
 fn setup_src_dir(target_os: &OS, target_arch: &Arch) -> PathBuf {
     let subfolder = match (target_os, target_arch) {
-        (OS::Windows, Arch::X64) => "win-x64",
-        (OS::Linux, Arch::X64) => "lin-x64",
-        (OS::MacOS, Arch::X64) => "mac-x64",
-        (OS::MacOS, Arch::ARM64) => "mac-arm64",
+        (OS::Windows, Arch::X86_64) => "win-x86-64",
+        (OS::Linux, Arch::X86_64) => "lin-x86-64",
+        (OS::MacOS, Arch::X86_64) => "mac-x86-64",
+        (OS::MacOS, Arch::AArch64) => "mac-aarch64",
         _ => "",
     };
     let src_dir = PathBuf::from(format!("native/lib/{}", subfolder))
