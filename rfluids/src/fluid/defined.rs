@@ -25,8 +25,8 @@ use crate::uom::si::temperature_coefficient::per_kelvin;
 use crate::uom::si::thermal_conductivity::watt_per_meter_kelvin;
 use crate::uom::si::thermodynamic_temperature::kelvin;
 use crate::uom::si::velocity::meter_per_second;
+use crate::uom_ext::compressibility_coefficient::CompressibilityCoefficient;
 use crate::uom_ext::kinematic_viscosity::KinematicViscosity;
-use crate::uom_ext::pressure_coefficient::PressureCoefficient;
 use crate::uom_ext::surface_tension::SurfaceTension;
 
 macro_rules! output_doc {
@@ -336,7 +336,7 @@ impl Fluid {
         output,
         isothermal_compressibility,
         IsothermalCompressibility,
-        PressureCoefficient,
+        CompressibilityCoefficient,
         "Isothermal compressibility",
         "SI units: 1/Pa",
         |x| Pressure::new::<pascal>(1.0).recip() * x

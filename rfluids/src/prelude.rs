@@ -15,8 +15,8 @@ pub mod fluid {
         MolarEnergy, MolarHeatCapacity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
         TemperatureCoefficient, ThermalConductivity, ThermodynamicTemperature, Velocity,
     };
+    pub use crate::uom_ext::compressibility_coefficient::CompressibilityCoefficient;
     pub use crate::uom_ext::kinematic_viscosity::KinematicViscosity;
-    pub use crate::uom_ext::pressure_coefficient::PressureCoefficient;
     pub use crate::uom_ext::surface_tension::SurfaceTension;
 }
 
