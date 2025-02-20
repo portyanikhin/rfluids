@@ -149,10 +149,10 @@ mod tests {
 
     mod update_request {
         use super::*;
+        use crate::test::assert_relative_eq;
         use crate::uom::si::f64::{Pressure, ThermodynamicTemperature};
         use crate::uom::si::pressure::atmosphere;
         use crate::uom::si::thermodynamic_temperature::degree_celsius;
-        use approx::assert_relative_eq;
         use rstest::*;
 
         #[test]

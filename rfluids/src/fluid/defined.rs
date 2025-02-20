@@ -732,13 +732,13 @@ impl PartialEq for Fluid {
 mod tests {
     use super::*;
     use crate::error::FluidStateError;
-    use crate::fluid::common::tests::test_output;
     use crate::io::fluid_input;
     use crate::substance::*;
+    use crate::test::assert_relative_eq;
+    use crate::test::fluid::test_output;
     use crate::uom::si::pressure::atmosphere;
     use crate::uom::si::ratio::percent;
     use crate::uom::si::thermodynamic_temperature::degree_celsius;
-    use approx::assert_relative_eq;
     use rstest::*;
 
     #[fixture]

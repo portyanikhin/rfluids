@@ -1,20 +1,21 @@
 use std::path::{Path, PathBuf};
 use std::{env, fs};
 
+const LIB_NAME: &str = "CoolProp";
+
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-changed=wrapper.h");
     let (target_os, target_arch) = get_target_os_and_arch();
-    let (lib_name, lib_extension) = get_lib_name_and_extension(&target_os);
     let src_dir = setup_src_dir(&target_os, &target_arch);
     let target_dir = setup_target_dir(&target_os);
-    setup_lib(&lib_name, &lib_extension, &src_dir, &target_dir);
+    setup_lib(&target_os, &src_dir, &target_dir);
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
         .clang_arg("-v")
         .derive_debug(true)
         .derive_default(true)
-        .dynamic_library_name(lib_name)
+        .dynamic_library_name(LIB_NAME)
         .dynamic_link_require_all(true)
         .use_core()
         .generate_cstr(true)
@@ -55,20 +56,6 @@ fn get_target_os_and_arch() -> (OS, Arch) {
     }
 }
 
-fn get_lib_name_and_extension(target_os: &OS) -> (String, String) {
-    let lib_name = if matches!(target_os, OS::Windows) {
-        "CoolProp"
-    } else {
-        "libCoolProp"
-    };
-    let lib_extension = match target_os {
-        OS::Windows => ".dll",
-        OS::Linux => ".so",
-        OS::MacOS => ".dylib",
-    };
-    (lib_name.into(), lib_extension.into())
-}
-
 fn setup_src_dir(target_os: &OS, target_arch: &Arch) -> PathBuf {
     let subfolder = match (target_os, target_arch) {
         (OS::Windows, Arch::X86_64) => "win-x86-64",
@@ -102,11 +89,21 @@ fn setup_target_dir(target_os: &OS) -> PathBuf {
     target_dir
 }
 
-fn setup_lib(lib_name: &str, lib_extension: &str, src_dir: &Path, target_dir: &Path) {
-    let file_name = format!("{}{}", lib_name, lib_extension);
+fn setup_lib(target_os: &OS, src_dir: &Path, target_dir: &Path) {
+    let prefix = if matches!(target_os, OS::Windows) {
+        ""
+    } else {
+        "lib"
+    };
+    let lib_extension = match target_os {
+        OS::Windows => ".dll",
+        OS::Linux => ".so",
+        OS::MacOS => ".dylib",
+    };
+    let file_name = format!("{}{}{}", prefix, LIB_NAME, lib_extension);
     let src_path = src_dir.join(&file_name);
     let target_path = target_dir.join(&file_name);
     fs::copy(&src_path, &target_path)
         .expect("Unable to copy CoolProp library to the target directory!");
-    println!("cargo:rustc-link-lib=dylib={}", lib_name);
+    println!("cargo:rustc-link-lib=dylib={}", LIB_NAME);
 }

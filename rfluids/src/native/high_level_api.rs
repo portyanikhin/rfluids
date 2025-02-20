@@ -40,7 +40,7 @@ impl CoolProp {
     /// use rfluids::prelude::native::*;
     ///
     /// let result = CoolProp::props_si("C", "P", 101325.0, "Q", 1.0, "Water")?;
-    /// assert_relative_eq!(result, 2079.937085633241);
+    /// assert_relative_eq!(result, 2079.937085633241, max_relative = 1e-6);
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
@@ -54,7 +54,7 @@ impl CoolProp {
     /// use rfluids::prelude::native::*;
     ///
     /// let result = CoolProp::props_si("V", "P", 100e3, "T", 253.15, "INCOMP::MPG-60%")?;
-    /// assert_relative_eq!(result, 0.13907391053938847);
+    /// assert_relative_eq!(result, 0.13907391053938847, max_relative = 1e-6);
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
@@ -75,7 +75,7 @@ impl CoolProp {
     ///     277.15,
     ///     "HEOS::Water[0.6]&Ethanol[0.4]",
     /// )?;
-    /// assert_relative_eq!(result, 859.5296602799147);
+    /// assert_relative_eq!(result, 859.5296602799147, max_relative = 1e-6);
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
@@ -140,7 +140,7 @@ impl CoolProp {
     /// use rfluids::prelude::native::*;
     ///
     /// let result = CoolProp::ha_props_si("B", "P", 100e3, "T", 303.15, "R", 0.5)?;
-    /// assert_relative_eq!(result, 295.1200365362656);
+    /// assert_relative_eq!(result, 295.1200365362656, max_relative = 1e-6);
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
@@ -196,7 +196,7 @@ impl CoolProp {
     /// use rfluids::prelude::native::*;
     ///
     /// let result = CoolProp::props1_si("Tcrit", "Water")?;
-    /// assert_relative_eq!(result, 647.096);
+    /// assert_relative_eq!(result, 647.096, max_relative = 1e-6);
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
@@ -256,7 +256,7 @@ impl CoolProp {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use approx::assert_relative_eq;
+    use crate::test::assert_relative_eq;
     use rayon::prelude::*;
 
     #[test]

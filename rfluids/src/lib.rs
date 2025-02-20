@@ -44,4 +44,6 @@ mod ops;
 pub mod prelude;
 pub mod state_variant;
 pub mod substance;
+#[cfg(test)]
+mod test;
 pub mod uom_ext;

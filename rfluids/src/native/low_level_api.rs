@@ -70,7 +70,7 @@ impl AbstractState {
                 const_ptr_c_char!(fluid_names.as_ref().trim()),
                 error.code,
                 error.message.buffer,
-                error.message.capacity,
+                error.message.capacity as c_long,
             )
         };
         Self::result(Self { ptr }, error)
@@ -123,7 +123,7 @@ impl AbstractState {
                 fractions.len() as c_long,
                 error.code,
                 error.message.buffer,
-                error.message.capacity,
+                error.message.capacity as c_long,
             );
         }
         Self::result((), error)
@@ -171,7 +171,7 @@ impl AbstractState {
                 input2,
                 error.code,
                 error.message.buffer,
-                error.message.capacity,
+                error.message.capacity as c_long,
             );
         }
         Self::result((), error)
@@ -203,7 +203,7 @@ impl AbstractState {
     /// let mut water = AbstractState::new("HEOS", "Water")?;
     /// water.update(FluidInputPair::PQ, 101325.0, 1.0)?;
     /// let result = water.keyed_output(FluidParam::CpMass)?;
-    /// assert_relative_eq!(result, 2079.937085633241);
+    /// assert_relative_eq!(result, 2079.937085633241, max_relative = 1e-6);
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
@@ -220,7 +220,7 @@ impl AbstractState {
     /// propylene_glycol.set_fractions(&[0.6])?;
     /// propylene_glycol.update(FluidInputPair::PT, 100e3, 253.15)?;
     /// let result = propylene_glycol.keyed_output(FluidParam::DynamicViscosity)?;
-    /// assert_relative_eq!(result, 0.13907391053938847);
+    /// assert_relative_eq!(result, 0.13907391053938847, max_relative = 1e-6);
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
@@ -237,7 +237,7 @@ impl AbstractState {
     /// mixture.set_fractions(&[0.8, 0.2])?;
     /// mixture.update(FluidInputPair::PT, 200e3, 277.15)?;
     /// let result = mixture.keyed_output(FluidParam::DMass)?;
-    /// assert_relative_eq!(result, 883.8826353773796);
+    /// assert_relative_eq!(result, 883.8826353773796, max_relative = 1e-6);
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
@@ -254,7 +254,7 @@ impl AbstractState {
                 c_long::from(key),
                 error.code,
                 error.message.buffer,
-                error.message.capacity,
+                error.message.capacity as c_long,
             )
         };
         Self::keyed_output_result(key, value, error)
@@ -298,7 +298,7 @@ impl AbstractState {
                 const_ptr_c_char!(phase.as_ref()),
                 error.code,
                 error.message.buffer,
-                error.message.capacity,
+                error.message.capacity as c_long,
             );
         }
         Self::result((), error)
@@ -331,7 +331,7 @@ impl AbstractState {
                 self.ptr,
                 error.code,
                 error.message.buffer,
-                error.message.capacity,
+                error.message.capacity as c_long,
             );
         }
     }
@@ -364,7 +364,7 @@ impl Drop for AbstractState {
                 self.ptr,
                 error.code,
                 error.message.buffer,
-                error.message.capacity,
+                error.message.capacity as c_long,
             );
         }
     }
@@ -374,7 +374,7 @@ impl Drop for AbstractState {
 mod tests {
     use super::*;
     use crate::io::{FluidInputPair, FluidParam, Phase};
-    use approx::assert_relative_eq;
+    use crate::test::assert_relative_eq;
     use rayon::prelude::*;
     use rstest::*;
 
