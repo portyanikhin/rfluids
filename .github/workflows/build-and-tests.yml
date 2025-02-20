@@ -1,0 +1,38 @@
+name: build & tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-and-tests:
+    name: ${{ matrix.os }} / rust-${{ matrix.toolchain }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macos-13, macos-latest ]
+        toolchain: [ stable, beta, nightly ]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Rust ${{ matrix.toolchain }} toolchain
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: ${{ matrix.toolchain }}
+    - name: Setup cargo-llvm-cov
+      uses: taiki-e/install-action@cargo-llvm-cov
+    - name: Build
+      run: cargo build --verbose
+    - name: Test with coverage
+      run: cargo llvm-cov --all-features --verbose --codecov --output-path codecov.json
+    - name: Upload coverage report to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: codecov.json
