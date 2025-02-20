@@ -1,6 +1,8 @@
 ﻿# rfluids
 
+[![build & tests](https://github.com/portyanikhin/rfluids/actions/workflows/build-and-tests.yml/badge.svg)](https://github.com/portyanikhin/rfluids/actions/workflows/build-and-tests.yml)
 [![License](https://img.shields.io/github/license/portyanikhin/rfluids)](https://github.com/portyanikhin/rfluids/blob/main/LICENSE)
+[![codecov](https://codecov.io/gh/portyanikhin/rfluids/graph/badge.svg?token=TWFV8mIkRX)](https://codecov.io/gh/portyanikhin/rfluids)
 
 🦀 Rusty [CoolProp](https://coolprop.github.io/CoolProp/) wrapper.
 
