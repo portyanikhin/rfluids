@@ -1,4 +1,19 @@
-//! Fluid keyed input.
+//! [`Fluid`](crate::fluid::Fluid) input.
+//!
+//! # Examples
+//!
+//! ```
+//! use rfluids::prelude::fluid::*;
+//! use rfluids::uom::si::mass_density::gram_per_cubic_centimeter;
+//! use rfluids::uom::si::pressure::atmosphere;
+//! use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
+//!
+//! let pressure = fluid_input::pressure!(1.0, atmosphere);
+//! let pressure_si = fluid_input::pressure!(101325.0);
+//! assert_eq!(pressure, pressure_si);
+//! assert_eq!(pressure, FluidInput::pressure(Pressure::new::<atmosphere>(1.0)));
+//! assert_eq!(pressure_si, FluidInput::pressure_si(101325.0));
+//! ```
 
 use super::{FluidParam, Input};
 use crate::uom::si::f64::{
@@ -6,7 +21,7 @@ use crate::uom::si::f64::{
     Ratio, SpecificHeatCapacity, ThermodynamicTemperature,
 };
 
-/// Fluid keyed input.
+/// [`Fluid`](crate::fluid::Fluid) input.
 ///
 /// # Examples
 ///
