@@ -15,7 +15,7 @@
 
 use super::{define_input, define_input_macro, HumidAirParam, Input};
 use crate::uom::si::f64::{
-    AvailableEnergy, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
+    AvailableEnergy, MassDensity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
     ThermodynamicTemperature,
 };
 
@@ -45,6 +45,34 @@ impl HumidAirInput {
         "Absolute humidity",
         "kg water/kg dry air"
     );
+
+    /// Mass density per unit of humid air _(SI units: kg humid air/m³)_.
+    ///
+    /// **NB.** It will be converted to the
+    /// [`specific_volume`](crate::io::humid_air_input::HumidAirInput::specific_volume),
+    /// since there is no specific [`HumidAirParam`] for this.
+    ///
+    /// # See also
+    ///
+    /// - [`humid_air_input::density!`](crate::io::humid_air_input::density) macro
+    #[must_use]
+    pub fn density(value: MassDensity) -> Self {
+        Self::density_si(value.value)
+    }
+
+    /// Mass density per unit of humid air in SI units _(kg humid air/m³)_.
+    ///
+    /// **NB.** It will be converted to the
+    /// [`specific_volume_si`](crate::io::humid_air_input::HumidAirInput::specific_volume_si),
+    /// since there is no specific [`HumidAirParam`] for this.
+    ///
+    /// # See also
+    ///
+    /// - [`humid_air_input::density!`](crate::io::humid_air_input::density) macro
+    #[must_use]
+    pub fn density_si(value: f64) -> Self {
+        Self::specific_volume_si(1.0 / value)
+    }
 
     define_input!(
         humid_air_input,
@@ -190,6 +218,16 @@ define_input_macro!(
 define_input_macro!(
     humid_air_input,
     HumidAirInput,
+    density,
+    MassDensity,
+    humid_air,
+    mass_density,
+    gram_per_cubic_centimeter
+);
+
+define_input_macro!(
+    humid_air_input,
+    HumidAirInput,
     dew_temperature,
     ThermodynamicTemperature,
     humid_air,
@@ -322,6 +360,7 @@ mod tests {
     use super::*;
     use crate::test::test_input;
     use crate::uom::si::available_energy::joule_per_kilogram;
+    use crate::uom::si::mass_density::kilogram_per_cubic_meter;
     use crate::uom::si::pressure::pascal;
     use crate::uom::si::ratio::ratio;
     use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
@@ -329,6 +368,16 @@ mod tests {
     use crate::uom::si::thermodynamic_temperature::kelvin;
 
     test_input!(abs_humidity, HumidAirInput, HumidAirParam::W, Ratio, ratio);
+
+    #[test]
+    fn density_returns_expected_key_and_si_value() {
+        let sut = HumidAirInput::density(MassDensity::new::<kilogram_per_cubic_meter>(2.0));
+        assert_eq!(sut.key(), HumidAirParam::Vha);
+        assert_eq!(sut.si_value(), 0.5);
+        assert_eq!(sut, HumidAirInput::density_si(2.0));
+        assert_eq!(sut, density!(2.0, kilogram_per_cubic_meter));
+        assert_eq!(sut, density!(2.0));
+    }
 
     test_input!(
         dew_temperature,
