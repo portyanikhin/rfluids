@@ -15,7 +15,7 @@
 //! assert_eq!(pressure_si, FluidInput::pressure_si(101325.0));
 //! ```
 
-use super::{FluidParam, Input};
+use super::{define_input, define_input_macro, FluidParam, Input};
 use crate::uom::si::f64::{
     AvailableEnergy, MassDensity, MolarConcentration, MolarEnergy, MolarHeatCapacity, Pressure,
     Ratio, SpecificHeatCapacity, ThermodynamicTemperature,
@@ -39,56 +39,19 @@ use crate::uom::si::f64::{
 /// ```
 pub type FluidInput = Input<FluidParam>;
 
-macro_rules! input_doc {
-    ($key:ident, $description:literal, $units:literal) => {
-        concat!(
-            $description,
-            " _(key: [`",
-            stringify!($key),
-            "`](FluidParam::",
-            stringify!($key),
-            "), SI units: ",
-            $units,
-            ")_."
-        )
-    };
-    (si, $key:ident, $description:literal, $units:literal) => {
-        concat!(
-            $description,
-            " _(key: [`",
-            stringify!($key),
-            "`](FluidParam::",
-            stringify!($key),
-            "))_ in SI units _(",
-            $units,
-            ")_."
-        )
-    };
-}
-
-macro_rules! define_input {
-    ($name:ident, $key:ident, $type:ty, $description:literal, $units:literal) => {
-        #[doc = input_doc!($key, $description, $units)]
-        #[must_use]
-        pub fn $name(value: $type) -> Self {
-            Self(FluidParam::$key, value.value)
-        }
-
-        paste::paste! {
-            #[doc = input_doc!(si, $key, $description, $units)]
-            #[must_use]
-            pub fn [<$name _si>](value: f64) -> Self {
-                Self(FluidParam::$key, value)
-            }
-        }
-    };
-}
-
 impl FluidInput {
-    define_input!(density, DMass, MassDensity, "Mass density", "kg/m³");
+    define_input!(
+        density,
+        FluidParam,
+        DMass,
+        MassDensity,
+        "Mass density",
+        "kg/m³"
+    );
 
     define_input!(
         enthalpy,
+        FluidParam,
         HMass,
         AvailableEnergy,
         "Mass specific enthalpy",
@@ -97,6 +60,7 @@ impl FluidInput {
 
     define_input!(
         entropy,
+        FluidParam,
         SMass,
         SpecificHeatCapacity,
         "Mass specific entropy",
@@ -105,6 +69,7 @@ impl FluidInput {
 
     define_input!(
         internal_energy,
+        FluidParam,
         UMass,
         AvailableEnergy,
         "Mass specific internal energy",
@@ -113,6 +78,7 @@ impl FluidInput {
 
     define_input!(
         molar_density,
+        FluidParam,
         DMolar,
         MolarConcentration,
         "Molar density",
@@ -121,6 +87,7 @@ impl FluidInput {
 
     define_input!(
         molar_enthalpy,
+        FluidParam,
         HMolar,
         MolarEnergy,
         "Molar specific enthalpy",
@@ -129,6 +96,7 @@ impl FluidInput {
 
     define_input!(
         molar_entropy,
+        FluidParam,
         SMolar,
         MolarHeatCapacity,
         "Molar specific entropy",
@@ -137,164 +105,142 @@ impl FluidInput {
 
     define_input!(
         molar_internal_energy,
+        FluidParam,
         UMolar,
         MolarEnergy,
         "Molar specific internal energy",
         "J/mol"
     );
 
-    define_input!(pressure, P, Pressure, "Pressure", "Pa");
+    define_input!(pressure, FluidParam, P, Pressure, "Pressure", "Pa");
 
     define_input!(
         quality,
+        FluidParam,
         Q,
         Ratio,
         "Vapor quality",
         "dimensionless, from 0 to 1"
     );
 
-    define_input!(temperature, T, ThermodynamicTemperature, "Temperature", "K");
-}
-
-macro_rules! input_macro_doc {
-    ($name:ident, $type:ident, $example_unit_path:literal, $example_unit:literal) => {
-        concat!(
-            "Shortcut for [`FluidInput::",
-            stringify!($name),
-            "`] and [`FluidInput::",
-            stringify!($name),
-            "_si`].",
-            "\n\n# Args\n\n",
-            "The first argument is the value of the input parameter _([`f64`])_, ",
-            "and the second argument _(optional)_ is the unit of measure _(e.g., [`",
-            $example_unit,
-            "`](",
-            $example_unit_path,
-            "::",
-            $example_unit,
-            "))_.\n\nIf the unit of measure is not provided, ",
-            "the value is assumed to be in SI units.",
-            "\n\n# Examples\n\n",
-            "```\n",
-            "use rfluids::prelude::fluid::*;\n",
-            "use rfluids::",
-            $example_unit_path,
-            "::",
-            $example_unit,
-            ";\n\n",
-            "assert_eq!(\n",
-            "    fluid_input::",
-            stringify!($name),
-            "!(42.0, ",
-            $example_unit,
-            "),\n",
-            "    FluidInput::",
-            stringify!($name),
-            "(",
-            stringify!($type),
-            "::new::<",
-            $example_unit,
-            ">(42.0))\n",
-            ");\n",
-            "```\n\n",
-            "```\n",
-            "use rfluids::prelude::fluid::*;\n\n",
-            "assert_eq!(\n",
-            "    fluid_input::",
-            stringify!($name),
-            "!(42.0),\n",
-            "    FluidInput::",
-            stringify!($name),
-            "_si(42.0)\n",
-            ");\n",
-        )
-    };
-}
-
-macro_rules! define_input_macro {
-    ($name:ident, $type:ident, $example_unit_path:literal, $example_unit:literal) => {
-        #[doc = input_macro_doc!($name, $type, $example_unit_path, $example_unit)]
-        #[macro_export]
-        macro_rules! $name {
-            ($value:expr, $unit:ty) => {
-                $crate::io::FluidInput::$name($crate::uom::si::f64::$type::new::<$unit>($value))
-            };
-            ($value:expr) => {
-                paste::paste! {
-                    $crate::io::FluidInput::[<$name _si>]($value)
-                }
-            };
-        }
-
-        pub use $name;
-    };
+    define_input!(
+        temperature,
+        FluidParam,
+        T,
+        ThermodynamicTemperature,
+        "Temperature",
+        "K"
+    );
 }
 
 define_input_macro!(
+    fluid_input,
+    FluidInput,
     density,
     MassDensity,
-    "uom::si::mass_density",
-    "gram_per_cubic_centimeter"
+    rfluids::prelude::fluid,
+    uom::si::mass_density,
+    gram_per_cubic_centimeter
 );
 
 define_input_macro!(
+    fluid_input,
+    FluidInput,
     enthalpy,
     AvailableEnergy,
-    "uom::si::available_energy",
-    "kilojoule_per_kilogram"
+    rfluids::prelude::fluid,
+    uom::si::available_energy,
+    kilojoule_per_kilogram
 );
 
 define_input_macro!(
+    fluid_input,
+    FluidInput,
     entropy,
     SpecificHeatCapacity,
-    "uom::si::specific_heat_capacity",
-    "joule_per_kilogram_kelvin"
+    rfluids::prelude::fluid,
+    uom::si::specific_heat_capacity,
+    joule_per_kilogram_kelvin
 );
 
 define_input_macro!(
+    fluid_input,
+    FluidInput,
     internal_energy,
     AvailableEnergy,
-    "uom::si::available_energy",
-    "kilojoule_per_kilogram"
+    rfluids::prelude::fluid,
+    uom::si::available_energy,
+    kilojoule_per_kilogram
 );
 
 define_input_macro!(
+    fluid_input,
+    FluidInput,
     molar_density,
     MolarConcentration,
-    "uom::si::molar_concentration",
-    "mole_per_cubic_meter"
+    rfluids::prelude::fluid,
+    uom::si::molar_concentration,
+    mole_per_cubic_meter
 );
 
 define_input_macro!(
+    fluid_input,
+    FluidInput,
     molar_enthalpy,
     MolarEnergy,
-    "uom::si::molar_energy",
-    "kilojoule_per_mole"
+    rfluids::prelude::fluid,
+    uom::si::molar_energy,
+    kilojoule_per_mole
 );
 
 define_input_macro!(
+    fluid_input,
+    FluidInput,
     molar_entropy,
     MolarHeatCapacity,
-    "uom::si::molar_heat_capacity",
-    "joule_per_kelvin_mole"
+    rfluids::prelude::fluid,
+    uom::si::molar_heat_capacity,
+    joule_per_kelvin_mole
 );
 
 define_input_macro!(
+    fluid_input,
+    FluidInput,
     molar_internal_energy,
     MolarEnergy,
-    "uom::si::molar_energy",
-    "kilojoule_per_mole"
+    rfluids::prelude::fluid,
+    uom::si::molar_energy,
+    kilojoule_per_mole
 );
 
-define_input_macro!(pressure, Pressure, "uom::si::pressure", "kilopascal");
-
-define_input_macro!(quality, Ratio, "uom::si::ratio", "percent");
+define_input_macro!(
+    fluid_input,
+    FluidInput,
+    pressure,
+    Pressure,
+    rfluids::prelude::fluid,
+    uom::si::pressure,
+    kilopascal
+);
 
 define_input_macro!(
+    fluid_input,
+    FluidInput,
+    quality,
+    Ratio,
+    rfluids::prelude::fluid,
+    uom::si::ratio,
+    percent
+);
+
+define_input_macro!(
+    fluid_input,
+    FluidInput,
     temperature,
     ThermodynamicTemperature,
-    "uom::si::thermodynamic_temperature",
-    "degree_celsius"
+    rfluids::prelude::fluid,
+    uom::si::thermodynamic_temperature,
+    degree_celsius
 );
 
 #[cfg(test)]
