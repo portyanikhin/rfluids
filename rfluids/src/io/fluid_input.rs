@@ -16,7 +16,7 @@
 use super::{define_input, define_input_macro, FluidParam, Input};
 use crate::uom::si::f64::{
     AvailableEnergy, MassDensity, MolarConcentration, MolarEnergy, MolarHeatCapacity, Pressure,
-    Ratio, SpecificHeatCapacity, ThermodynamicTemperature,
+    Ratio, SpecificHeatCapacity, SpecificVolume, ThermodynamicTemperature,
 };
 
 /// [`Fluid`](crate::fluid::Fluid) input.
@@ -136,6 +136,34 @@ impl FluidInput {
         "dimensionless, from 0 to 1"
     );
 
+    /// Specific volume _(SI units: m³/kg)_.
+    ///
+    /// **NB.** It will be converted to the
+    /// [`density`](crate::io::fluid_input::FluidInput::density),
+    /// since there is no specific [`FluidParam`] for this.
+    ///
+    /// # See also
+    ///
+    /// - [`fluid_input::specific_volume!`](crate::io::fluid_input::specific_volume) macro
+    #[must_use]
+    pub fn specific_volume(value: SpecificVolume) -> Self {
+        Self::specific_volume_si(value.value)
+    }
+
+    /// Specific volume in SI units _(m³/kg)_.
+    ///
+    /// **NB.** It will be converted to the
+    /// [`density_si`](crate::io::fluid_input::FluidInput::density_si),
+    /// since there is no specific [`FluidParam`] for this.
+    ///
+    /// # See also
+    ///
+    /// - [`fluid_input::specific_volume!`](crate::io::fluid_input::specific_volume) macro
+    #[must_use]
+    pub fn specific_volume_si(value: f64) -> Self {
+        Self::density_si(1.0 / value)
+    }
+
     define_input!(
         fluid_input,
         temperature,
@@ -250,6 +278,16 @@ define_input_macro!(
 define_input_macro!(
     fluid_input,
     FluidInput,
+    specific_volume,
+    SpecificVolume,
+    fluid,
+    specific_volume,
+    cubic_meter_per_kilogram
+);
+
+define_input_macro!(
+    fluid_input,
+    FluidInput,
     temperature,
     ThermodynamicTemperature,
     fluid,
@@ -269,6 +307,7 @@ mod tests {
     use crate::uom::si::pressure::pascal;
     use crate::uom::si::ratio::ratio;
     use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
+    use crate::uom::si::specific_volume::cubic_meter_per_kilogram;
     use crate::uom::si::thermodynamic_temperature::kelvin;
 
     test_input!(
@@ -337,6 +376,16 @@ mod tests {
 
     test_input!(pressure, FluidInput, FluidParam::P, Pressure, pascal);
     test_input!(quality, FluidInput, FluidParam::Q, Ratio, ratio);
+
+    #[test]
+    fn specific_volume_returns_expected_key_and_si_value() {
+        let sut = FluidInput::specific_volume(SpecificVolume::new::<cubic_meter_per_kilogram>(2.0));
+        assert_eq!(sut.key(), FluidParam::DMass);
+        assert_eq!(sut.si_value(), 0.5);
+        assert_eq!(sut, FluidInput::specific_volume_si(2.0));
+        assert_eq!(sut, specific_volume!(2.0, cubic_meter_per_kilogram));
+        assert_eq!(sut, specific_volume!(2.0));
+    }
 
     test_input!(
         temperature,
