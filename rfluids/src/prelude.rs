@@ -28,6 +28,10 @@ pub mod humid_air {
     pub use crate::io::humid_air_input;
     pub use crate::io::humid_air_input::HumidAirInput;
     pub use crate::state_variant::*;
+    pub use crate::uom::si::f64::{
+        AvailableEnergy, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
+        ThermodynamicTemperature,
+    };
 }
 
 pub mod native {
