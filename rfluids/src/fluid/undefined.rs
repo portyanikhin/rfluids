@@ -1,5 +1,5 @@
 use super::{Fluid, StateResult};
-use crate::io::FluidInput;
+use crate::io::fluid_input::FluidInput;
 use crate::state_variant::Undefined;
 use std::collections::HashMap;
 use std::marker::PhantomData;

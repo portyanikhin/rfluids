@@ -154,24 +154,24 @@ macro_rules! define_input_macro {
         $example_unit_path:path,
         $example_unit:ty
     ) => {
-        #[doc = $crate::io::input_macro_doc!(
-            $mod, $type, $name, $value_type, $prelude_path, $example_unit_path, $example_unit
-        )]
-        #[macro_export]
-        macro_rules! $name {
-            ($value:expr, $unit:ty) => {
-                $crate::io::$type::$name($crate::uom::si::f64::$value_type::new::<$unit>(
-                    $value,
-                ))
-            };
-            ($value:expr) => {
-                paste::paste! {
-                    $crate::io::$type::[<$name _si>]($value)
-                }
-            };
-        }
+        paste::paste! {
+            #[doc = $crate::io::input_macro_doc!(
+                $mod, $type, $name, $value_type, $prelude_path, $example_unit_path, $example_unit
+            )]
+            #[macro_export]
+            macro_rules! [<$mod _ $name>] {
+                ($value:expr, $unit:ty) => {
+                    $crate::io::$mod::$type::$name($crate::uom::si::f64::$value_type::new::<$unit>(
+                        $value,
+                    ))
+                };
+                ($value:expr) => {
+                        $crate::io::$mod::$type::[<$name _si>]($value)
+                };
+            }
 
-        pub use $name;
+            pub use [<$mod _ $name>] as $name;
+        }
     };
 }
 

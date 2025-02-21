@@ -3,7 +3,8 @@
 use super::common::{cached_output, guard};
 use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
-use crate::io::{FluidInput, FluidParam, Phase};
+use crate::io::fluid_input::FluidInput;
+use crate::io::{FluidParam, Phase};
 use crate::ops::div;
 use crate::uom::si::available_energy::joule_per_kilogram;
 use crate::uom::si::dynamic_viscosity::pascal_second;

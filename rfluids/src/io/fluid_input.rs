@@ -242,6 +242,7 @@ define_input_macro!(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::test::test_input;
     use crate::uom::si::available_energy::joule_per_kilogram;
     use crate::uom::si::mass_density::kilogram_per_cubic_meter;
     use crate::uom::si::molar_concentration::mole_per_cubic_meter;
@@ -252,113 +253,78 @@ mod tests {
     use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
     use crate::uom::si::thermodynamic_temperature::kelvin;
 
-    #[test]
-    fn density_returns_expected_key_and_si_value() {
-        let sut = FluidInput::density(MassDensity::new::<kilogram_per_cubic_meter>(1.0));
-        assert_eq!(sut.key(), FluidParam::DMass);
-        assert_eq!(sut.si_value(), 1.0);
-        assert_eq!(sut, FluidInput::density_si(1.0));
-        assert_eq!(sut, density!(1.0, kilogram_per_cubic_meter));
-        assert_eq!(sut, density!(1.0));
-    }
+    test_input!(
+        density,
+        FluidInput,
+        FluidParam::DMass,
+        MassDensity,
+        kilogram_per_cubic_meter
+    );
 
-    #[test]
-    fn enthalpy_returns_expected_key_and_si_value() {
-        let sut = FluidInput::enthalpy(AvailableEnergy::new::<joule_per_kilogram>(1.0));
-        assert_eq!(sut.key(), FluidParam::HMass);
-        assert_eq!(sut.si_value(), 1.0);
-        assert_eq!(sut, FluidInput::enthalpy_si(1.0));
-        assert_eq!(sut, enthalpy!(1.0, joule_per_kilogram));
-        assert_eq!(sut, enthalpy!(1.0));
-    }
+    test_input!(
+        enthalpy,
+        FluidInput,
+        FluidParam::HMass,
+        AvailableEnergy,
+        joule_per_kilogram
+    );
 
-    #[test]
-    fn entropy_returns_expected_key_and_si_value() {
-        let sut = FluidInput::entropy(SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>(1.0));
-        assert_eq!(sut.key(), FluidParam::SMass);
-        assert_eq!(sut.si_value(), 1.0);
-        assert_eq!(sut, FluidInput::entropy_si(1.0));
-        assert_eq!(sut, entropy!(1.0, joule_per_kilogram_kelvin));
-        assert_eq!(sut, entropy!(1.0));
-    }
+    test_input!(
+        entropy,
+        FluidInput,
+        FluidParam::SMass,
+        SpecificHeatCapacity,
+        joule_per_kilogram_kelvin
+    );
 
-    #[test]
-    fn internal_energy_returns_expected_key_and_si_value() {
-        let sut = FluidInput::internal_energy(AvailableEnergy::new::<joule_per_kilogram>(1.0));
-        assert_eq!(sut.key(), FluidParam::UMass);
-        assert_eq!(sut.si_value(), 1.0);
-        assert_eq!(sut, FluidInput::internal_energy_si(1.0));
-        assert_eq!(sut, internal_energy!(1.0, joule_per_kilogram));
-        assert_eq!(sut, internal_energy!(1.0));
-    }
+    test_input!(
+        internal_energy,
+        FluidInput,
+        FluidParam::UMass,
+        AvailableEnergy,
+        joule_per_kilogram
+    );
 
-    #[test]
-    fn molar_density_returns_expected_key_and_si_value() {
-        let sut = FluidInput::molar_density(MolarConcentration::new::<mole_per_cubic_meter>(1.0));
-        assert_eq!(sut.key(), FluidParam::DMolar);
-        assert_eq!(sut.si_value(), 1.0);
-        assert_eq!(sut, FluidInput::molar_density_si(1.0));
-        assert_eq!(sut, molar_density!(1.0, mole_per_cubic_meter));
-        assert_eq!(sut, molar_density!(1.0));
-    }
+    test_input!(
+        molar_density,
+        FluidInput,
+        FluidParam::DMolar,
+        MolarConcentration,
+        mole_per_cubic_meter
+    );
 
-    #[test]
-    fn molar_enthalpy_returns_expected_key_and_si_value() {
-        let sut = FluidInput::molar_enthalpy(MolarEnergy::new::<joule_per_mole>(1.0));
-        assert_eq!(sut.key(), FluidParam::HMolar);
-        assert_eq!(sut.si_value(), 1.0);
-        assert_eq!(sut, FluidInput::molar_enthalpy_si(1.0));
-        assert_eq!(sut, molar_enthalpy!(1.0, joule_per_mole));
-        assert_eq!(sut, molar_enthalpy!(1.0));
-    }
+    test_input!(
+        molar_enthalpy,
+        FluidInput,
+        FluidParam::HMolar,
+        MolarEnergy,
+        joule_per_mole
+    );
 
-    #[test]
-    fn molar_entropy_returns_expected_key_and_si_value() {
-        let sut = FluidInput::molar_entropy(MolarHeatCapacity::new::<joule_per_kelvin_mole>(1.0));
-        assert_eq!(sut.key(), FluidParam::SMolar);
-        assert_eq!(sut.si_value(), 1.0);
-        assert_eq!(sut, FluidInput::molar_entropy_si(1.0));
-        assert_eq!(sut, molar_entropy!(1.0, joule_per_kelvin_mole));
-        assert_eq!(sut, molar_entropy!(1.0));
-    }
+    test_input!(
+        molar_entropy,
+        FluidInput,
+        FluidParam::SMolar,
+        MolarHeatCapacity,
+        joule_per_kelvin_mole
+    );
 
-    #[test]
-    fn molar_internal_energy_returns_expected_key_and_si_value() {
-        let sut = FluidInput::molar_internal_energy(MolarEnergy::new::<joule_per_mole>(1.0));
-        assert_eq!(sut.key(), FluidParam::UMolar);
-        assert_eq!(sut.si_value(), 1.0);
-        assert_eq!(sut, FluidInput::molar_internal_energy_si(1.0));
-        assert_eq!(sut, molar_internal_energy!(1.0, joule_per_mole));
-        assert_eq!(sut, molar_internal_energy!(1.0));
-    }
+    test_input!(
+        molar_internal_energy,
+        FluidInput,
+        FluidParam::UMolar,
+        MolarEnergy,
+        joule_per_mole
+    );
 
-    #[test]
-    fn pressure_returns_expected_key_and_si_value() {
-        let sut = FluidInput::pressure(Pressure::new::<pascal>(1.0));
-        assert_eq!(sut.key(), FluidParam::P);
-        assert_eq!(sut.si_value(), 1.0);
-        assert_eq!(sut, FluidInput::pressure_si(1.0));
-        assert_eq!(sut, pressure!(1.0, pascal));
-        assert_eq!(sut, pressure!(1.0));
-    }
+    test_input!(pressure, FluidInput, FluidParam::P, Pressure, pascal);
+    test_input!(quality, FluidInput, FluidParam::Q, Ratio, ratio);
 
-    #[test]
-    fn quality_returns_expected_key_and_si_value() {
-        let sut = FluidInput::quality(Ratio::new::<ratio>(1.0));
-        assert_eq!(sut.key(), FluidParam::Q);
-        assert_eq!(sut.si_value(), 1.0);
-        assert_eq!(sut, FluidInput::quality_si(1.0));
-        assert_eq!(sut, quality!(1.0, ratio));
-        assert_eq!(sut, quality!(1.0));
-    }
-
-    #[test]
-    fn temperature_returns_expected_key_and_si_value() {
-        let sut = FluidInput::temperature(ThermodynamicTemperature::new::<kelvin>(1.0));
-        assert_eq!(sut.key(), FluidParam::T);
-        assert_eq!(sut.si_value(), 1.0);
-        assert_eq!(sut, FluidInput::temperature_si(1.0));
-        assert_eq!(sut, temperature!(1.0, kelvin));
-        assert_eq!(sut, temperature!(1.0));
-    }
+    test_input!(
+        temperature,
+        FluidInput,
+        FluidParam::T,
+        ThermodynamicTemperature,
+        kelvin
+    );
 }

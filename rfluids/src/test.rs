@@ -6,6 +6,24 @@ macro_rules! assert_relative_eq {
 
 pub(crate) use assert_relative_eq;
 
+macro_rules! test_input {
+    ($name:ident, $type:ident, $key:expr, $value_type:ident, $unit:ty) => {
+        paste::paste! {
+            #[test]
+            fn [<$name _returns_expected_key_and_si_value>]() {
+                let sut = $type::$name($value_type::new::<$unit>(1.0));
+                assert_eq!(sut.key(), $key);
+                assert_eq!(sut.si_value(), 1.0);
+                assert_eq!(sut, $type::[<$name _si>](1.0));
+                assert_eq!(sut, $name!(1.0, $unit));
+                assert_eq!(sut, $name!(1.0));
+            }
+        }
+    };
+}
+
+pub(crate) use test_input;
+
 pub(crate) mod fluid {
     macro_rules! test_output {
         ($fluid_type:ty, $name:ident, $ok_fluid:ident, $ok_value:expr $(, $err_fluid:ident)*) => {

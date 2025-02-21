@@ -15,11 +15,10 @@
 //! - [`FluidInputPair`] -- valid combinations of two fluid parameters
 //!   (e.g., pressure-temperature, pressure-enthalpy, etc.)
 //!   used to define a thermodynamic state.
-//! - [`FluidInput`] -- fluid input parameter with specified value.
+//! - [`FluidInput`](fluid_input::FluidInput) -- fluid input parameter with specified value.
 //! - [`HumidAirParam`] -- humid air parameters.
 //! - [`Phase`] -- phase state of the fluid.
 
-pub use fluid_input::FluidInput;
 pub use fluid_input_pair::*;
 pub use fluid_param::*;
 pub use humid_air_param::*;

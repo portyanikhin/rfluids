@@ -1,5 +1,6 @@
 use crate::error::FluidStateError;
-use crate::io::{FluidInput, FluidInputPair, FluidParam, Input};
+use crate::io::fluid_input::FluidInput;
+use crate::io::{FluidInputPair, FluidParam, Input};
 use crate::substance::{BackendName, Substance};
 use std::borrow::Cow;
 
