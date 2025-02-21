@@ -17,6 +17,8 @@
 //!   used to define a thermodynamic state.
 //! - [`FluidInput`](fluid_input::FluidInput) -- fluid input parameter with specified value.
 //! - [`HumidAirParam`] -- humid air parameters.
+//! - [`HumidAirInput`](humid_air_input::HumidAirInput) -- humid air input parameter
+//!   with specified value.
 //! - [`Phase`] -- phase state of the fluid.
 
 pub use fluid_input_pair::*;
@@ -28,6 +30,7 @@ pub use phase::*;
 pub mod fluid_input;
 mod fluid_input_pair;
 mod fluid_param;
+pub mod humid_air_input;
 mod humid_air_param;
 mod input;
 mod phase;
