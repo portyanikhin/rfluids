@@ -70,7 +70,7 @@ impl AbstractState {
                 const_ptr_c_char!(fluid_names.as_ref().trim()),
                 error.code,
                 error.message.buffer,
-                error.message.capacity as c_long,
+                c_long::from(error.message.capacity),
             )
         };
         Self::result(Self { ptr }, error)
@@ -123,7 +123,7 @@ impl AbstractState {
                 fractions.len() as c_long,
                 error.code,
                 error.message.buffer,
-                error.message.capacity as c_long,
+                c_long::from(error.message.capacity),
             );
         }
         Self::result((), error)
@@ -171,7 +171,7 @@ impl AbstractState {
                 input2,
                 error.code,
                 error.message.buffer,
-                error.message.capacity as c_long,
+                c_long::from(error.message.capacity),
             );
         }
         Self::result((), error)
@@ -254,7 +254,7 @@ impl AbstractState {
                 c_long::from(key),
                 error.code,
                 error.message.buffer,
-                error.message.capacity as c_long,
+                c_long::from(error.message.capacity),
             )
         };
         Self::keyed_output_result(key, value, error)
@@ -298,7 +298,7 @@ impl AbstractState {
                 const_ptr_c_char!(phase.as_ref()),
                 error.code,
                 error.message.buffer,
-                error.message.capacity as c_long,
+                c_long::from(error.message.capacity),
             );
         }
         Self::result((), error)
@@ -331,7 +331,7 @@ impl AbstractState {
                 self.ptr,
                 error.code,
                 error.message.buffer,
-                error.message.capacity as c_long,
+                c_long::from(error.message.capacity),
             );
         }
     }
@@ -364,7 +364,7 @@ impl Drop for AbstractState {
                 self.ptr,
                 error.code,
                 error.message.buffer,
-                error.message.capacity as c_long,
+                c_long::from(error.message.capacity),
             );
         }
     }
