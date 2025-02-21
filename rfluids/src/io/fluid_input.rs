@@ -4,9 +4,7 @@
 //!
 //! ```
 //! use rfluids::prelude::fluid::*;
-//! use rfluids::uom::si::mass_density::gram_per_cubic_centimeter;
 //! use rfluids::uom::si::pressure::atmosphere;
-//! use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
 //!
 //! let pressure = fluid_input::pressure!(1.0, atmosphere);
 //! let pressure_si = fluid_input::pressure!(101325.0);
@@ -27,9 +25,7 @@ use crate::uom::si::f64::{
 ///
 /// ```
 /// use rfluids::prelude::fluid::*;
-/// use rfluids::uom::si::mass_density::gram_per_cubic_centimeter;
 /// use rfluids::uom::si::pressure::atmosphere;
-/// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
 ///
 /// let pressure = fluid_input::pressure!(1.0, atmosphere);
 /// let pressure_si = fluid_input::pressure!(101325.0);
