@@ -74,6 +74,34 @@ impl HumidAirInput {
         Self::specific_volume_si(1.0 / value)
     }
 
+    /// Mass density per unit of dry air _(SI units: kg dry air/m³)_.
+    ///
+    /// **NB.** It will be converted to the
+    /// [`specific_volume_da`](crate::io::humid_air_input::HumidAirInput::specific_volume_da),
+    /// since there is no specific [`HumidAirParam`] for this.
+    ///
+    /// # See also
+    ///
+    /// - [`humid_air_input::density_da!`](crate::io::humid_air_input::density_da) macro
+    #[must_use]
+    pub fn density_da(value: MassDensity) -> Self {
+        Self::density_da_si(value.value)
+    }
+
+    /// Mass density per unit of dry air in SI units _(kg dry air/m³)_.
+    ///
+    /// **NB.** It will be converted to the
+    /// [`specific_volume_da_si`](crate::io::humid_air_input::HumidAirInput::specific_volume_da_si),
+    /// since there is no specific [`HumidAirParam`] for this.
+    ///
+    /// # See also
+    ///
+    /// - [`humid_air_input::density_da!`](crate::io::humid_air_input::density_da) macro
+    #[must_use]
+    pub fn density_da_si(value: f64) -> Self {
+        Self::specific_volume_da_si(1.0 / value)
+    }
+
     define_input!(
         humid_air_input,
         dew_temperature,
@@ -219,6 +247,16 @@ define_input_macro!(
     humid_air_input,
     HumidAirInput,
     density,
+    MassDensity,
+    humid_air,
+    mass_density,
+    gram_per_cubic_centimeter
+);
+
+define_input_macro!(
+    humid_air_input,
+    HumidAirInput,
+    density_da,
     MassDensity,
     humid_air,
     mass_density,
@@ -377,6 +415,16 @@ mod tests {
         assert_eq!(sut, HumidAirInput::density_si(2.0));
         assert_eq!(sut, density!(2.0, kilogram_per_cubic_meter));
         assert_eq!(sut, density!(2.0));
+    }
+
+    #[test]
+    fn density_da_returns_expected_key_and_si_value() {
+        let sut = HumidAirInput::density_da(MassDensity::new::<kilogram_per_cubic_meter>(2.0));
+        assert_eq!(sut.key(), HumidAirParam::Vda);
+        assert_eq!(sut.si_value(), 0.5);
+        assert_eq!(sut, HumidAirInput::density_da_si(2.0));
+        assert_eq!(sut, density_da!(2.0, kilogram_per_cubic_meter));
+        assert_eq!(sut, density_da!(2.0));
     }
 
     test_input!(
