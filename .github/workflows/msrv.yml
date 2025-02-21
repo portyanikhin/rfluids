@@ -1,0 +1,29 @@
+name: MSRV
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        type: choice
+        required: true
+        description: 'Action to perform via cargo-msrv'
+        options:
+          - find
+          - verify
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  msrv:
+    name: Run cargo msrv ${{ github.event.inputs.command }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+    - name: Setup cargo-msrv
+      run: cargo install cargo-msrv
+    - run: cargo msrv ${{ github.event.inputs.command }}
