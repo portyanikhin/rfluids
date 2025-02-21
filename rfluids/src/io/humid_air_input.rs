@@ -37,6 +37,7 @@ pub type HumidAirInput = Input<HumidAirParam>;
 
 impl HumidAirInput {
     define_input!(
+        humid_air_input,
         abs_humidity,
         HumidAirParam,
         W,
@@ -46,6 +47,7 @@ impl HumidAirInput {
     );
 
     define_input!(
+        humid_air_input,
         dew_temperature,
         HumidAirParam,
         TDew,
@@ -55,6 +57,7 @@ impl HumidAirInput {
     );
 
     define_input!(
+        humid_air_input,
         enthalpy,
         HumidAirParam,
         Hha,
@@ -64,6 +67,7 @@ impl HumidAirInput {
     );
 
     define_input!(
+        humid_air_input,
         enthalpy_da,
         HumidAirParam,
         Hda,
@@ -73,6 +77,7 @@ impl HumidAirInput {
     );
 
     define_input!(
+        humid_air_input,
         entropy,
         HumidAirParam,
         Sha,
@@ -82,6 +87,7 @@ impl HumidAirInput {
     );
 
     define_input!(
+        humid_air_input,
         entropy_da,
         HumidAirParam,
         Sda,
@@ -90,9 +96,18 @@ impl HumidAirInput {
         "J/kg dry air/K"
     );
 
-    define_input!(pressure, HumidAirParam, P, Pressure, "Pressure", "Pa");
+    define_input!(
+        humid_air_input,
+        pressure,
+        HumidAirParam,
+        P,
+        Pressure,
+        "Pressure",
+        "Pa"
+    );
 
     define_input!(
+        humid_air_input,
         rel_humidity,
         HumidAirParam,
         R,
@@ -102,6 +117,7 @@ impl HumidAirInput {
     );
 
     define_input!(
+        humid_air_input,
         specific_volume,
         HumidAirParam,
         Vha,
@@ -111,6 +127,7 @@ impl HumidAirInput {
     );
 
     define_input!(
+        humid_air_input,
         specific_volume_da,
         HumidAirParam,
         Vda,
@@ -120,6 +137,7 @@ impl HumidAirInput {
     );
 
     define_input!(
+        humid_air_input,
         temperature,
         HumidAirParam,
         T,
@@ -129,6 +147,7 @@ impl HumidAirInput {
     );
 
     define_input!(
+        humid_air_input,
         water_mole_fraction,
         HumidAirParam,
         PsiW,
@@ -138,6 +157,7 @@ impl HumidAirInput {
     );
 
     define_input!(
+        humid_air_input,
         water_partial_pressure,
         HumidAirParam,
         Pw,
@@ -147,6 +167,7 @@ impl HumidAirInput {
     );
 
     define_input!(
+        humid_air_input,
         wet_bulb_temperature,
         HumidAirParam,
         TWetBulb,
@@ -161,8 +182,8 @@ define_input_macro!(
     HumidAirInput,
     abs_humidity,
     Ratio,
-    rfluids::prelude::humid_air,
-    uom::si::ratio,
+    humid_air,
+    ratio,
     part_per_thousand
 );
 
@@ -171,8 +192,8 @@ define_input_macro!(
     HumidAirInput,
     dew_temperature,
     ThermodynamicTemperature,
-    rfluids::prelude::humid_air,
-    uom::si::thermodynamic_temperature,
+    humid_air,
+    thermodynamic_temperature,
     degree_celsius
 );
 
@@ -181,8 +202,8 @@ define_input_macro!(
     HumidAirInput,
     enthalpy,
     AvailableEnergy,
-    rfluids::prelude::humid_air,
-    uom::si::available_energy,
+    humid_air,
+    available_energy,
     kilojoule_per_kilogram
 );
 
@@ -191,8 +212,8 @@ define_input_macro!(
     HumidAirInput,
     enthalpy_da,
     AvailableEnergy,
-    rfluids::prelude::humid_air,
-    uom::si::available_energy,
+    humid_air,
+    available_energy,
     kilojoule_per_kilogram
 );
 
@@ -201,8 +222,8 @@ define_input_macro!(
     HumidAirInput,
     entropy,
     SpecificHeatCapacity,
-    rfluids::prelude::humid_air,
-    uom::si::specific_heat_capacity,
+    humid_air,
+    specific_heat_capacity,
     kilojoule_per_kilogram_kelvin
 );
 
@@ -211,8 +232,8 @@ define_input_macro!(
     HumidAirInput,
     entropy_da,
     SpecificHeatCapacity,
-    rfluids::prelude::humid_air,
-    uom::si::specific_heat_capacity,
+    humid_air,
+    specific_heat_capacity,
     kilojoule_per_kilogram_kelvin
 );
 
@@ -221,8 +242,8 @@ define_input_macro!(
     HumidAirInput,
     pressure,
     Pressure,
-    rfluids::prelude::humid_air,
-    uom::si::pressure,
+    humid_air,
+    pressure,
     kilopascal
 );
 
@@ -231,8 +252,8 @@ define_input_macro!(
     HumidAirInput,
     rel_humidity,
     Ratio,
-    rfluids::prelude::humid_air,
-    uom::si::ratio,
+    humid_air,
+    ratio,
     percent
 );
 
@@ -241,8 +262,8 @@ define_input_macro!(
     HumidAirInput,
     specific_volume,
     SpecificVolume,
-    rfluids::prelude::humid_air,
-    uom::si::specific_volume,
+    humid_air,
+    specific_volume,
     cubic_meter_per_kilogram
 );
 
@@ -251,8 +272,8 @@ define_input_macro!(
     HumidAirInput,
     specific_volume_da,
     SpecificVolume,
-    rfluids::prelude::humid_air,
-    uom::si::specific_volume,
+    humid_air,
+    specific_volume,
     cubic_meter_per_kilogram
 );
 
@@ -261,8 +282,8 @@ define_input_macro!(
     HumidAirInput,
     temperature,
     ThermodynamicTemperature,
-    rfluids::prelude::humid_air,
-    uom::si::thermodynamic_temperature,
+    humid_air,
+    thermodynamic_temperature,
     degree_celsius
 );
 
@@ -271,8 +292,8 @@ define_input_macro!(
     HumidAirInput,
     water_mole_fraction,
     Ratio,
-    rfluids::prelude::humid_air,
-    uom::si::ratio,
+    humid_air,
+    ratio,
     part_per_thousand
 );
 
@@ -281,8 +302,8 @@ define_input_macro!(
     HumidAirInput,
     water_partial_pressure,
     Pressure,
-    rfluids::prelude::humid_air,
-    uom::si::pressure,
+    humid_air,
+    pressure,
     kilopascal
 );
 
@@ -291,8 +312,8 @@ define_input_macro!(
     HumidAirInput,
     wet_bulb_temperature,
     ThermodynamicTemperature,
-    rfluids::prelude::humid_air,
-    uom::si::thermodynamic_temperature,
+    humid_air,
+    thermodynamic_temperature,
     degree_celsius
 );
 

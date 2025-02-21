@@ -37,6 +37,7 @@ pub type FluidInput = Input<FluidParam>;
 
 impl FluidInput {
     define_input!(
+        fluid_input,
         density,
         FluidParam,
         DMass,
@@ -46,6 +47,7 @@ impl FluidInput {
     );
 
     define_input!(
+        fluid_input,
         enthalpy,
         FluidParam,
         HMass,
@@ -55,6 +57,7 @@ impl FluidInput {
     );
 
     define_input!(
+        fluid_input,
         entropy,
         FluidParam,
         SMass,
@@ -64,6 +67,7 @@ impl FluidInput {
     );
 
     define_input!(
+        fluid_input,
         internal_energy,
         FluidParam,
         UMass,
@@ -73,6 +77,7 @@ impl FluidInput {
     );
 
     define_input!(
+        fluid_input,
         molar_density,
         FluidParam,
         DMolar,
@@ -82,6 +87,7 @@ impl FluidInput {
     );
 
     define_input!(
+        fluid_input,
         molar_enthalpy,
         FluidParam,
         HMolar,
@@ -91,6 +97,7 @@ impl FluidInput {
     );
 
     define_input!(
+        fluid_input,
         molar_entropy,
         FluidParam,
         SMolar,
@@ -100,6 +107,7 @@ impl FluidInput {
     );
 
     define_input!(
+        fluid_input,
         molar_internal_energy,
         FluidParam,
         UMolar,
@@ -108,9 +116,18 @@ impl FluidInput {
         "J/mol"
     );
 
-    define_input!(pressure, FluidParam, P, Pressure, "Pressure", "Pa");
+    define_input!(
+        fluid_input,
+        pressure,
+        FluidParam,
+        P,
+        Pressure,
+        "Pressure",
+        "Pa"
+    );
 
     define_input!(
+        fluid_input,
         quality,
         FluidParam,
         Q,
@@ -120,6 +137,7 @@ impl FluidInput {
     );
 
     define_input!(
+        fluid_input,
         temperature,
         FluidParam,
         T,
@@ -134,8 +152,8 @@ define_input_macro!(
     FluidInput,
     density,
     MassDensity,
-    rfluids::prelude::fluid,
-    uom::si::mass_density,
+    fluid,
+    mass_density,
     gram_per_cubic_centimeter
 );
 
@@ -144,8 +162,8 @@ define_input_macro!(
     FluidInput,
     enthalpy,
     AvailableEnergy,
-    rfluids::prelude::fluid,
-    uom::si::available_energy,
+    fluid,
+    available_energy,
     kilojoule_per_kilogram
 );
 
@@ -154,8 +172,8 @@ define_input_macro!(
     FluidInput,
     entropy,
     SpecificHeatCapacity,
-    rfluids::prelude::fluid,
-    uom::si::specific_heat_capacity,
+    fluid,
+    specific_heat_capacity,
     joule_per_kilogram_kelvin
 );
 
@@ -164,8 +182,8 @@ define_input_macro!(
     FluidInput,
     internal_energy,
     AvailableEnergy,
-    rfluids::prelude::fluid,
-    uom::si::available_energy,
+    fluid,
+    available_energy,
     kilojoule_per_kilogram
 );
 
@@ -174,8 +192,8 @@ define_input_macro!(
     FluidInput,
     molar_density,
     MolarConcentration,
-    rfluids::prelude::fluid,
-    uom::si::molar_concentration,
+    fluid,
+    molar_concentration,
     mole_per_cubic_meter
 );
 
@@ -184,8 +202,8 @@ define_input_macro!(
     FluidInput,
     molar_enthalpy,
     MolarEnergy,
-    rfluids::prelude::fluid,
-    uom::si::molar_energy,
+    fluid,
+    molar_energy,
     kilojoule_per_mole
 );
 
@@ -194,8 +212,8 @@ define_input_macro!(
     FluidInput,
     molar_entropy,
     MolarHeatCapacity,
-    rfluids::prelude::fluid,
-    uom::si::molar_heat_capacity,
+    fluid,
+    molar_heat_capacity,
     joule_per_kelvin_mole
 );
 
@@ -204,8 +222,8 @@ define_input_macro!(
     FluidInput,
     molar_internal_energy,
     MolarEnergy,
-    rfluids::prelude::fluid,
-    uom::si::molar_energy,
+    fluid,
+    molar_energy,
     kilojoule_per_mole
 );
 
@@ -214,8 +232,8 @@ define_input_macro!(
     FluidInput,
     pressure,
     Pressure,
-    rfluids::prelude::fluid,
-    uom::si::pressure,
+    fluid,
+    pressure,
     kilopascal
 );
 
@@ -224,8 +242,8 @@ define_input_macro!(
     FluidInput,
     quality,
     Ratio,
-    rfluids::prelude::fluid,
-    uom::si::ratio,
+    fluid,
+    ratio,
     percent
 );
 
@@ -234,8 +252,8 @@ define_input_macro!(
     FluidInput,
     temperature,
     ThermodynamicTemperature,
-    rfluids::prelude::fluid,
-    uom::si::thermodynamic_temperature,
+    fluid,
+    thermodynamic_temperature,
     degree_celsius
 );
 
