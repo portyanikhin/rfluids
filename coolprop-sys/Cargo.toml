@@ -12,7 +12,7 @@ keywords = ["CoolProp", "ffi", "bindings"]
 categories = ["api-bindings", "science"]
 
 [dependencies]
-libloading = "0.8"
+libloading = "0.8.6"
 
 [build-dependencies]
-bindgen = "0.71"
+bindgen = "0.71.1"

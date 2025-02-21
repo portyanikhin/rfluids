@@ -13,13 +13,13 @@ categories = ["api-bindings", "science"]
 
 [dependencies]
 coolprop-sys = { path = "../coolprop-sys", version = "0.1.0-alpha" }
-paste = "1.0"
-strum = "0.27"
-strum_macros = "0.27"
-thiserror = "2.0"
-uom = "0.36"
+paste = "1.0.15"
+strum = "0.27.1"
+strum_macros = "0.27.1"
+thiserror = "2.0.11"
+uom = "0.36.0"
 
 [dev-dependencies]
-approx = "0.5"
-rayon = "1.10"
-rstest = "0.24"
+approx = "0.5.1"
+rayon = "1.10.0"
+rstest = "0.24.0"
