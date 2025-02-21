@@ -1,6 +1,7 @@
 //! Prelude imports.
 
 pub use fluid::*;
+pub use humid_air::*;
 pub use native::*;
 
 pub mod fluid {
@@ -18,6 +19,13 @@ pub mod fluid {
     pub use crate::uom_ext::compressibility_coefficient::CompressibilityCoefficient;
     pub use crate::uom_ext::kinematic_viscosity::KinematicViscosity;
     pub use crate::uom_ext::surface_tension::SurfaceTension;
+}
+
+pub mod humid_air {
+    //! Prelude imports of `humid_air` module.
+
+    pub use crate::io::{humid_air_input, HumidAirInput};
+    pub use crate::state_variant::*;
 }
 
 pub mod native {
