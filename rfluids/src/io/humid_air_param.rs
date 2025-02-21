@@ -137,7 +137,7 @@ pub enum HumidAirParam {
     #[strum(to_string = "Vha", serialize = "V_ha")]
     Vha,
 
-    /// Humidity ratio _(kg water/kg dry air)_.
+    /// Absolute humidity _(kg water/kg dry air)_.
     #[strum(to_string = "W", serialize = "Omega", serialize = "HumRat")]
     W,
 
