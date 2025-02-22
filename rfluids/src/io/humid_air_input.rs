@@ -58,6 +58,7 @@ impl HumidAirInput {
     /// # See also
     ///
     /// - [`humid_air_input::density!`](crate::io::humid_air_input::density) macro
+    /// - [`density_si`](Self::density_si)
     #[must_use]
     pub fn density(value: MassDensity) -> Self {
         Self::density_si(value.value)
@@ -72,6 +73,7 @@ impl HumidAirInput {
     /// # See also
     ///
     /// - [`humid_air_input::density!`](crate::io::humid_air_input::density) macro
+    /// - [`density`](Self::density)
     #[must_use]
     pub fn density_si(value: f64) -> Self {
         Self::specific_volume_si(1.0 / value)
@@ -86,6 +88,7 @@ impl HumidAirInput {
     /// # See also
     ///
     /// - [`humid_air_input::density_da!`](crate::io::humid_air_input::density_da) macro
+    /// - [`density_da_si`](Self::density_da_si)
     #[must_use]
     pub fn density_da(value: MassDensity) -> Self {
         Self::density_da_si(value.value)
@@ -100,6 +103,7 @@ impl HumidAirInput {
     /// # See also
     ///
     /// - [`humid_air_input::density_da!`](crate::io::humid_air_input::density_da) macro
+    /// - [`density_da`](Self::density_da)
     #[must_use]
     pub fn density_da_si(value: f64) -> Self {
         Self::specific_volume_da_si(1.0 / value)

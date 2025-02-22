@@ -147,6 +147,7 @@ impl FluidInput {
     /// # See also
     ///
     /// - [`fluid_input::specific_volume!`](crate::io::fluid_input::specific_volume) macro
+    /// - [`specific_volume_si`](Self::specific_volume_si)
     #[must_use]
     pub fn specific_volume(value: SpecificVolume) -> Self {
         Self::specific_volume_si(value.value)
@@ -160,6 +161,7 @@ impl FluidInput {
     /// # See also
     ///
     /// - [`fluid_input::specific_volume!`](crate::io::fluid_input::specific_volume) macro
+    /// - [`specific_volume`](Self::specific_volume)
     #[must_use]
     pub fn specific_volume_si(value: f64) -> Self {
         Self::density_si(1.0 / value)
