@@ -13,7 +13,7 @@
 //! assert_eq!(pressure_si, FluidInput::pressure_si(101325.0));
 //! ```
 
-use super::{define_input, define_input_macro, FluidParam, Input};
+use super::{define_input, define_input_macro, impl_input, FluidParam};
 use crate::uom::si::f64::{
     AvailableEnergy, MassDensity, MolarConcentration, MolarEnergy, MolarHeatCapacity, Pressure,
     Ratio, SpecificHeatCapacity, SpecificVolume, ThermodynamicTemperature,
@@ -33,7 +33,10 @@ use crate::uom::si::f64::{
 /// assert_eq!(pressure, FluidInput::pressure(Pressure::new::<atmosphere>(1.0)));
 /// assert_eq!(pressure_si, FluidInput::pressure_si(101325.0));
 /// ```
-pub type FluidInput = Input<FluidParam>;
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct FluidInput(pub(crate) FluidParam, pub(crate) f64);
+
+impl_input!(FluidInput, FluidParam);
 
 impl FluidInput {
     define_input!(
@@ -138,8 +141,7 @@ impl FluidInput {
 
     /// Specific volume _(SI units: m³/kg)_.
     ///
-    /// **NB.** It will be converted to the
-    /// [`density`](crate::io::fluid_input::FluidInput::density),
+    /// **NB.** It will be converted to the [`density`](Self::density),
     /// since there is no specific [`FluidParam`] for this.
     ///
     /// # See also
@@ -152,8 +154,7 @@ impl FluidInput {
 
     /// Specific volume in SI units _(m³/kg)_.
     ///
-    /// **NB.** It will be converted to the
-    /// [`density_si`](crate::io::fluid_input::FluidInput::density_si),
+    /// **NB.** It will be converted to the [`density_si`](Self::density_si),
     /// since there is no specific [`FluidParam`] for this.
     ///
     /// # See also
@@ -298,6 +299,7 @@ define_input_macro!(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::io::Input;
     use crate::test::test_input;
     use crate::uom::si::available_energy::joule_per_kilogram;
     use crate::uom::si::mass_density::kilogram_per_cubic_meter;

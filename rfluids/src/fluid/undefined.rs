@@ -91,7 +91,7 @@ impl PartialEq for Fluid<Undefined> {
 mod tests {
     use super::*;
     use crate::error::FluidStateError;
-    use crate::io::fluid_input;
+    use crate::io::{fluid_input, Input};
     use crate::substance::*;
     use crate::test::fluid::test_output;
     use crate::uom::si::pressure::atmosphere;

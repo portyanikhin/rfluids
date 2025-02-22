@@ -13,7 +13,7 @@
 //! assert_eq!(pressure_si, HumidAirInput::pressure_si(101325.0));
 //! ```
 
-use super::{define_input, define_input_macro, HumidAirParam, Input};
+use super::{define_input, define_input_macro, impl_input, HumidAirParam};
 use crate::uom::si::f64::{
     AvailableEnergy, MassDensity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
     ThermodynamicTemperature,
@@ -33,7 +33,10 @@ use crate::uom::si::f64::{
 /// assert_eq!(pressure, HumidAirInput::pressure(Pressure::new::<atmosphere>(1.0)));
 /// assert_eq!(pressure_si, HumidAirInput::pressure_si(101325.0));
 /// ```
-pub type HumidAirInput = Input<HumidAirParam>;
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct HumidAirInput(pub(crate) HumidAirParam, pub(crate) f64);
+
+impl_input!(HumidAirInput, HumidAirParam);
 
 impl HumidAirInput {
     define_input!(
@@ -49,7 +52,7 @@ impl HumidAirInput {
     /// Mass density per unit of humid air _(SI units: kg humid air/m³)_.
     ///
     /// **NB.** It will be converted to the
-    /// [`specific_volume`](crate::io::humid_air_input::HumidAirInput::specific_volume),
+    /// [`specific_volume`](Self::specific_volume),
     /// since there is no specific [`HumidAirParam`] for this.
     ///
     /// # See also
@@ -63,7 +66,7 @@ impl HumidAirInput {
     /// Mass density per unit of humid air in SI units _(kg humid air/m³)_.
     ///
     /// **NB.** It will be converted to the
-    /// [`specific_volume_si`](crate::io::humid_air_input::HumidAirInput::specific_volume_si),
+    /// [`specific_volume_si`](Self::specific_volume_si),
     /// since there is no specific [`HumidAirParam`] for this.
     ///
     /// # See also
@@ -77,7 +80,7 @@ impl HumidAirInput {
     /// Mass density per unit of dry air _(SI units: kg dry air/m³)_.
     ///
     /// **NB.** It will be converted to the
-    /// [`specific_volume_da`](crate::io::humid_air_input::HumidAirInput::specific_volume_da),
+    /// [`specific_volume_da`](Self::specific_volume_da),
     /// since there is no specific [`HumidAirParam`] for this.
     ///
     /// # See also
@@ -91,7 +94,7 @@ impl HumidAirInput {
     /// Mass density per unit of dry air in SI units _(kg dry air/m³)_.
     ///
     /// **NB.** It will be converted to the
-    /// [`specific_volume_da_si`](crate::io::humid_air_input::HumidAirInput::specific_volume_da_si),
+    /// [`specific_volume_da_si`](Self::specific_volume_da_si),
     /// since there is no specific [`HumidAirParam`] for this.
     ///
     /// # See also
@@ -396,6 +399,7 @@ define_input_macro!(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::io::Input;
     use crate::test::test_input;
     use crate::uom::si::available_energy::joule_per_kilogram;
     use crate::uom::si::mass_density::kilogram_per_cubic_meter;

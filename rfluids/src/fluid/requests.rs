@@ -56,7 +56,7 @@ pub(crate) struct FluidUpdateRequest(pub(crate) FluidInputPair, pub(crate) f64, 
 impl From<FluidUpdateRequest> for (FluidInput, FluidInput) {
     fn from(value: FluidUpdateRequest) -> Self {
         let keys: (FluidParam, FluidParam) = value.0.into();
-        (Input(keys.0, value.1), Input(keys.1, value.2))
+        (FluidInput(keys.0, value.1), FluidInput(keys.1, value.2))
     }
 }
 

@@ -1,18 +1,27 @@
 /// Keyed input.
-#[derive(Debug, Copy, Clone, PartialEq)]
-pub struct Input<T: Copy>(pub(crate) T, pub(crate) f64);
-
-impl<T: Copy> Input<T> {
+pub trait Input<T: Copy> {
     /// Specified key.
-    pub fn key(&self) -> T {
-        self.0
-    }
+    fn key(&self) -> T;
 
     /// Specified value _(in SI units)_.
-    pub fn si_value(&self) -> f64 {
-        self.1
-    }
+    fn si_value(&self) -> f64;
 }
+
+macro_rules! impl_input {
+    ($type:ty, $key_type:ty) => {
+        impl $crate::io::Input<$key_type> for $type {
+            fn key(&self) -> $key_type {
+                self.0
+            }
+
+            fn si_value(&self) -> f64 {
+                self.1
+            }
+        }
+    };
+}
+
+pub(crate) use impl_input;
 
 macro_rules! define_input {
     (
@@ -28,7 +37,8 @@ macro_rules! define_input {
             #[doc = $description " _(key: [`" $key "`](" $key_type "::" $key "), "]
             #[doc = "SI units: " $units ")_."]
             #[doc = "\n\n# See also\n\n"]
-            #[doc = "- [`" $mod "::" $name "!`](crate::io::" $mod "::" $name ") macro"]
+            #[doc = "- [`" $mod "::" $name "!`](crate::io::" $mod "::" $name ") macro\n"]
+            #[doc = "- [`" $name "_si`](Self::" $name "_si)"]
             #[must_use]
             pub fn $name(value: $type) -> Self {
                 Self::[<$name _si>](value.value)
@@ -37,7 +47,8 @@ macro_rules! define_input {
             #[doc = $description " _(key: [`" $key "`](" $key_type "::" $key "))_ "]
             #[doc = "in SI units _(" $units ")_."]
             #[doc = "\n\n# See also\n\n"]
-            #[doc = "- [`" $mod "::" $name "!`](crate::io::" $mod "::" $name ") macro"]
+            #[doc = "- [`" $mod "::" $name "!`](crate::io::" $mod "::" $name ") macro\n"]
+            #[doc = "- [`" $name "`](Self::" $name ")"]
             #[must_use]
             pub fn [<$name _si>](value: f64) -> Self {
                 Self($key_type::$key, value)

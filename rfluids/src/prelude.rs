@@ -9,7 +9,7 @@ pub mod fluid {
 
     pub use crate::fluid::*;
     pub use crate::io::fluid_input::FluidInput;
-    pub use crate::io::{fluid_input, Phase};
+    pub use crate::io::{fluid_input, Input, Phase};
     pub use crate::state_variant::*;
     pub use crate::substance::*;
     pub use crate::uom::si::f64::{
@@ -25,8 +25,8 @@ pub mod fluid {
 pub mod humid_air {
     //! Prelude imports of `humid_air` module.
 
-    pub use crate::io::humid_air_input;
     pub use crate::io::humid_air_input::HumidAirInput;
+    pub use crate::io::{humid_air_input, Input};
     pub use crate::state_variant::*;
     pub use crate::uom::si::f64::{
         AvailableEnergy, MassDensity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,

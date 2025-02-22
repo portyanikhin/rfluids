@@ -3,7 +3,7 @@ use super::requests::FluidUpdateRequest;
 use super::{Fluid, OutputResult, StateResult};
 use crate::error::FluidOutputError;
 use crate::io::fluid_input::FluidInput;
-use crate::io::FluidTrivialParam;
+use crate::io::{FluidTrivialParam, Input};
 use crate::ops::mul;
 use crate::state_variant::StateVariant;
 use crate::substance::Substance;
