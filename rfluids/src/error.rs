@@ -35,6 +35,11 @@ pub enum Error {
     /// [`Fluid`](crate::fluid::Fluid) output parameter value.
     #[error(transparent)]
     FluidOutput(#[from] FluidOutputError),
+
+    /// Error during [`HumidAirInput::altitude`](crate::io::humid_air_input::HumidAirInput::altitude)
+    /// or [`HumidAirInput::altitude_si`](crate::io::humid_air_input::HumidAirInput::altitude_si).
+    #[error(transparent)]
+    Altitude(#[from] AltitudeError),
 }
 
 /// `CoolProp` internal error.
@@ -119,4 +124,13 @@ pub enum FluidOutputError {
     /// Failed to calculate the output parameter value.
     #[error("Failed to calculate the output value of `{0:?}`! {1}")]
     CalculationFailed(FluidParam, CoolPropError),
+}
+
+/// Error during [`HumidAirInput::altitude`](crate::io::humid_air_input::HumidAirInput::altitude)
+/// or [`HumidAirInput::altitude_si`](crate::io::humid_air_input::HumidAirInput::altitude_si).
+#[derive(Error, Debug, Clone, PartialEq)]
+pub enum AltitudeError {
+    /// Altitude value is out of possible range.
+    #[error("Altitude value ({0:?} m) is out of possible range [-5 000; 10 000] m!")]
+    OutOfRange(f64),
 }
