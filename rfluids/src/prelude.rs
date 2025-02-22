@@ -29,8 +29,8 @@ pub mod humid_air {
     pub use crate::io::{humid_air_input, Input};
     pub use crate::state_variant::*;
     pub use crate::uom::si::f64::{
-        AvailableEnergy, MassDensity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
-        ThermodynamicTemperature,
+        AvailableEnergy, Length, MassDensity, Pressure, Ratio, SpecificHeatCapacity,
+        SpecificVolume, ThermodynamicTemperature,
     };
 }
 
