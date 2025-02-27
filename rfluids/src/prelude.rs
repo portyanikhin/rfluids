@@ -7,7 +7,7 @@ pub use native::*;
 pub mod fluid {
     //! Prelude imports of [`fluid`](crate::fluid) module.
 
-    pub use crate::fluid::*;
+    pub use crate::fluid::Fluid;
     pub use crate::io::fluid_input::FluidInput;
     pub use crate::io::{fluid_input, Input, Phase};
     pub use crate::state_variant::*;

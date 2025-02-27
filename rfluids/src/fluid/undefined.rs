@@ -21,7 +21,7 @@ impl Fluid<Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::error::FluidStateError;
+    /// use rfluids::fluid::StateResult;
     /// use rfluids::prelude::fluid::*;
     /// use rfluids::uom::si::pressure::atmosphere;
     /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
