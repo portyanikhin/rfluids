@@ -1,4 +1,4 @@
-//! `HumidAir` input.
+//! [`HumidAir`](crate::humid_air::HumidAir) input.
 //!
 //! # Examples
 //!
@@ -20,7 +20,7 @@ use crate::uom::si::f64::{
     ThermodynamicTemperature,
 };
 
-/// `HumidAir` input.
+/// [`HumidAir`](crate::humid_air::HumidAir) input.
 ///
 /// # Examples
 ///
