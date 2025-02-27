@@ -23,8 +23,9 @@ pub mod fluid {
 }
 
 pub mod humid_air {
-    //! Prelude imports of `humid_air` module.
+    //! Prelude imports of [`humid_air`](crate::humid_air) module.
 
+    pub use crate::humid_air::HumidAir;
     pub use crate::io::humid_air_input::HumidAirInput;
     pub use crate::io::{humid_air_input, Input};
     pub use crate::state_variant::*;

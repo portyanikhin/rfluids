@@ -38,6 +38,7 @@ pub extern crate uom;
 
 pub mod error;
 pub mod fluid;
+pub mod humid_air;
 pub mod io;
 pub mod native;
 mod ops;
