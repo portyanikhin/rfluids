@@ -1,6 +1,6 @@
 //! Error handling.
 
-use crate::io::{FluidParam, FluidTrivialParam};
+use crate::io::{FluidParam, FluidTrivialParam, HumidAirParam};
 use crate::uom::si::f64::Ratio;
 use crate::uom::si::ratio::percent;
 use thiserror::Error;
@@ -40,6 +40,16 @@ pub enum Error {
     /// or [`HumidAirInput::altitude_si`](crate::io::humid_air_input::HumidAirInput::altitude_si).
     #[error(transparent)]
     Altitude(#[from] AltitudeError),
+
+    /// Error during [`HumidAir::update`](crate::humid_air::HumidAir::update)
+    /// or [`HumidAir::in_state`](crate::humid_air::HumidAir::in_state).
+    #[error(transparent)]
+    HumidAirState(#[from] HumidAirStateError),
+
+    /// Error during calculation of the
+    /// [`HumidAir`](crate::humid_air::HumidAir) output parameter value.
+    #[error(transparent)]
+    HumidAirOutput(#[from] HumidAirOutputError),
 }
 
 /// `CoolProp` internal error.
@@ -133,4 +143,26 @@ pub enum AltitudeError {
     /// Altitude value is out of possible range.
     #[error("Altitude value ({0:?} m) is out of possible range [-5 000; 10 000] m!")]
     OutOfRange(f64),
+}
+
+/// Error during [`HumidAir::update`](crate::humid_air::HumidAir::update)
+/// or [`HumidAir::in_state`](crate::humid_air::HumidAir::in_state).
+#[derive(Error, Debug, Clone, Eq, PartialEq)]
+pub enum HumidAirStateError {
+    /// Specified inputs are invalid.
+    #[error("Specified inputs (`{0:?}`, `{1:?}`, `{2:?}`) are invalid!")]
+    InvalidInputs(HumidAirParam, HumidAirParam, HumidAirParam),
+
+    /// Some of the specified input value is infinite or NaN.
+    #[error("Input values must be finite!")]
+    InvalidInputValue,
+}
+
+/// Error during calculation of the
+/// [`HumidAir`](crate::humid_air::HumidAir) output parameter value.
+#[derive(Error, Debug, Clone, Eq, PartialEq)]
+pub enum HumidAirOutputError {
+    /// Failed to calculate the output parameter value.
+    #[error("Failed to calculate the output value of `{0:?}`! {1}")]
+    CalculationFailed(HumidAirParam, CoolPropError),
 }
