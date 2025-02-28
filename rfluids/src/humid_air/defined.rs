@@ -251,6 +251,16 @@ impl HumidAir {
         Ratio::new::<ratio>
     );
 
+    define_output!(
+        non_negative_output,
+        water_partial_pressure,
+        Pw,
+        Pressure,
+        "Partial pressure of water vapor",
+        "SI units: Pa",
+        Pressure::new::<pascal>
+    );
+
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -589,6 +599,13 @@ mod tests {
         water_mole_fraction,
         humid_air,
         1.159_130_506_217_982_9e-2,
+        invalid_humid_air
+    );
+
+    test_output!(
+        water_partial_pressure,
+        humid_air,
+        1_174.488_985_425_371,
         invalid_humid_air
     );
 
