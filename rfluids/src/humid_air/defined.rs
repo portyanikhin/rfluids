@@ -3,8 +3,9 @@ use super::{HumidAir, OutputResult, StateResult};
 use crate::io::HumidAirParam;
 use crate::io::humid_air_input::HumidAirInput;
 use std::marker::PhantomData;
-use uom::si::f64::Ratio;
+use uom::si::f64::{Ratio, ThermalConductivity};
 use uom::si::ratio::ratio;
+use uom::si::thermal_conductivity::watt_per_meter_kelvin;
 
 macro_rules! output_doc {
     ($key:ident, $description:literal, $units_description:literal) => {
@@ -71,6 +72,16 @@ impl HumidAir {
         f64,
         "Compressibility factor",
         "dimensionless"
+    );
+
+    define_output!(
+        positive_output,
+        conductivity,
+        Conductivity,
+        ThermalConductivity,
+        "Thermal conductivity",
+        "SI units: W/m/K",
+        ThermalConductivity::new::<watt_per_meter_kelvin>
     );
 
     /// Updates the thermodynamic state and returns a mutable reference to itself.
@@ -313,6 +324,13 @@ mod tests {
         compressibility,
         humid_air,
         0.999_594_693_604_325_6,
+        invalid_humid_air
+    );
+
+    test_output!(
+        conductivity,
+        humid_air,
+        2.586_613_250_369_777_4e-2,
         invalid_humid_air
     );
 
