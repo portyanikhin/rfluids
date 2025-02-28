@@ -170,6 +170,16 @@ impl HumidAir {
             .map(Ratio::new::<ratio>)
     }
 
+    define_output!(
+        positive_output,
+        specific_heat,
+        Cpha,
+        SpecificHeatCapacity,
+        "Specific heat at constant pressure per unit of humid air",
+        "SI units: J/kg humid air/K",
+        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
+    );
+
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -459,6 +469,13 @@ mod tests {
 
     test_output!(pressure, humid_air, 101_325.0, invalid_humid_air);
     test_output!(rel_humidity, humid_air, 0.5, invalid_humid_air);
+
+    test_output!(
+        specific_heat,
+        humid_air,
+        1_012.467_815_774_874_7,
+        invalid_humid_air
+    );
 
     #[rstest]
     fn update_valid_inputs_returns_ok(
