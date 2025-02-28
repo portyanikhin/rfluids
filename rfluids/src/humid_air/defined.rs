@@ -6,9 +6,11 @@ use std::marker::PhantomData;
 use uom::si::available_energy::joule_per_kilogram;
 use uom::si::dynamic_viscosity::pascal_second;
 use uom::si::f64::{
-    AvailableEnergy, DynamicViscosity, Ratio, ThermalConductivity, ThermodynamicTemperature,
+    AvailableEnergy, DynamicViscosity, Ratio, SpecificHeatCapacity, ThermalConductivity,
+    ThermodynamicTemperature,
 };
 use uom::si::ratio::ratio;
+use uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
 use uom::si::thermal_conductivity::watt_per_meter_kelvin;
 use uom::si::thermodynamic_temperature::kelvin;
 
@@ -127,6 +129,16 @@ impl HumidAir {
         "Specific enthalpy per unit of dry air",
         "SI units: J/kg dry air",
         AvailableEnergy::new::<joule_per_kilogram>
+    );
+
+    define_output!(
+        output,
+        entropy,
+        Sha,
+        SpecificHeatCapacity,
+        "Specific entropy per unit of humid air",
+        "SI units: J/kg humid air/K",
+        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
     );
 
     /// Updates the thermodynamic state and returns a mutable reference to itself.
@@ -406,6 +418,8 @@ mod tests {
         38_622.838_923_912_93,
         invalid_humid_air
     );
+
+    test_output!(entropy, humid_air, 138.956_660_316_574_3, invalid_humid_air);
 
     #[rstest]
     fn update_valid_inputs_returns_ok(
