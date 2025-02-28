@@ -6,12 +6,13 @@ use std::marker::PhantomData;
 use uom::si::available_energy::joule_per_kilogram;
 use uom::si::dynamic_viscosity::pascal_second;
 use uom::si::f64::{
-    AvailableEnergy, DynamicViscosity, Pressure, Ratio, SpecificHeatCapacity, ThermalConductivity,
-    ThermodynamicTemperature,
+    AvailableEnergy, DynamicViscosity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
+    ThermalConductivity, ThermodynamicTemperature,
 };
 use uom::si::pressure::pascal;
 use uom::si::ratio::ratio;
 use uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
+use uom::si::specific_volume::cubic_meter_per_kilogram;
 use uom::si::thermal_conductivity::watt_per_meter_kelvin;
 use uom::si::thermodynamic_temperature::kelvin;
 
@@ -208,6 +209,16 @@ impl HumidAir {
         "Specific heat at constant volume per unit of dry air",
         "SI units: J/kg dry air/K",
         SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
+    );
+
+    define_output!(
+        positive_output,
+        specific_volume,
+        Vha,
+        SpecificVolume,
+        "Specific volume per unit of humid air",
+        "SI units: m³/kg humid air",
+        SpecificVolume::new::<cubic_meter_per_kilogram>
     );
 
     /// Updates the thermodynamic state and returns a mutable reference to itself.
@@ -525,6 +536,13 @@ mod tests {
         specific_heat_const_volume_da,
         humid_air,
         727.958_251_601_145_5,
+        invalid_humid_air
+    );
+
+    test_output!(
+        specific_volume,
+        humid_air,
+        0.833_778_517_719_182_3,
         invalid_humid_air
     );
 
