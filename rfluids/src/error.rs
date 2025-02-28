@@ -162,6 +162,10 @@ pub enum HumidAirStateError {
 /// [`HumidAir`](crate::humid_air::HumidAir) output parameter value.
 #[derive(Error, Debug, Clone, Eq, PartialEq)]
 pub enum HumidAirOutputError {
+    /// Specified output parameter is not available.
+    #[error("Specified output parameter `{0:?}` is not available!")]
+    UnavailableOutput(HumidAirParam),
+
     /// Failed to calculate the output parameter value.
     #[error("Failed to calculate the output value of `{0:?}`! {1}")]
     CalculationFailed(HumidAirParam, CoolPropError),
