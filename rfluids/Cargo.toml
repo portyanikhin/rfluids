@@ -2,7 +2,7 @@
 name = "rfluids"
 version = "0.1.0-alpha"
 authors = ["Vladimir Portyanikhin <v.portyanikhin@ya.ru>"]
-edition = "2021"
+edition = "2024"
 description = "🦀 Rusty CoolProp wrapper"
 readme = "../README.md"
 homepage = "https://github.com/portyanikhin/rfluids"
