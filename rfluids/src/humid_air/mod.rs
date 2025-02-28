@@ -3,7 +3,10 @@
 //! This module provides a comprehensive interface for calculating
 //! thermophysical and transport properties of humid air.
 
+mod defined;
+mod invariant;
 mod requests;
+mod undefined;
 
 use crate::error::{HumidAirOutputError, HumidAirStateError};
 use crate::io::HumidAirParam;
