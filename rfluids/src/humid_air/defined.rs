@@ -200,6 +200,16 @@ impl HumidAir {
         SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
     );
 
+    define_output!(
+        positive_output,
+        specific_heat_const_volume_da,
+        Cvda,
+        SpecificHeatCapacity,
+        "Specific heat at constant volume per unit of dry air",
+        "SI units: J/kg dry air/K",
+        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
+    );
+
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -508,6 +518,13 @@ mod tests {
         specific_heat_const_volume,
         humid_air,
         722.687_189_706_325_1,
+        invalid_humid_air
+    );
+
+    test_output!(
+        specific_heat_const_volume_da,
+        humid_air,
+        727.958_251_601_145_5,
         invalid_humid_air
     );
 
