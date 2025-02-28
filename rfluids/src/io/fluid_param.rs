@@ -165,7 +165,7 @@ pub enum FluidParam {
     #[strum(to_string = "Helmholtzmass")]
     HelmholtzMass = 44,
 
-    /// Dynamic viscosity _(Pa*s)_.
+    /// Dynamic viscosity _(Pa·s)_.
     #[strum(to_string = "viscosity", serialize = "V")]
     DynamicViscosity = 45,
 

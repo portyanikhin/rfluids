@@ -81,7 +81,7 @@ pub enum HumidAirParam {
     #[strum(to_string = "K", serialize = "Conductivity")]
     Conductivity,
 
-    /// Dynamic viscosity _(Pa*s)_.
+    /// Dynamic viscosity _(Pa·s)_.
     #[strum(
         to_string = "M",
         serialize = "Visc",

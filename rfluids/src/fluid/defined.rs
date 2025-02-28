@@ -231,7 +231,7 @@ impl Fluid {
         DynamicViscosity,
         DynamicViscosity,
         "Dynamic viscosity",
-        "SI units: Pa*s",
+        "SI units: Pa·s",
         DynamicViscosity::new::<pascal_second>
     );
 
