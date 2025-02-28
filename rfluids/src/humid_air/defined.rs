@@ -3,9 +3,10 @@ use super::{HumidAir, OutputResult, StateResult};
 use crate::io::HumidAirParam;
 use crate::io::humid_air_input::HumidAirInput;
 use std::marker::PhantomData;
-use uom::si::f64::{Ratio, ThermalConductivity};
+use uom::si::f64::{Ratio, ThermalConductivity, ThermodynamicTemperature};
 use uom::si::ratio::ratio;
 use uom::si::thermal_conductivity::watt_per_meter_kelvin;
+use uom::si::thermodynamic_temperature::kelvin;
 
 macro_rules! output_doc {
     ($key:ident, $description:literal, $units_description:literal) => {
@@ -82,6 +83,16 @@ impl HumidAir {
         "Thermal conductivity",
         "SI units: W/m/K",
         ThermalConductivity::new::<watt_per_meter_kelvin>
+    );
+
+    define_output!(
+        positive_output,
+        dew_temperature,
+        TDew,
+        ThermodynamicTemperature,
+        "Dew-point temperature",
+        "SI units: K",
+        ThermodynamicTemperature::new::<kelvin>
     );
 
     /// Updates the thermodynamic state and returns a mutable reference to itself.
@@ -331,6 +342,13 @@ mod tests {
         conductivity,
         humid_air,
         2.586_613_250_369_777_4e-2,
+        invalid_humid_air
+    );
+
+    test_output!(
+        dew_temperature,
+        humid_air,
+        282.424_425_814_578_2,
         invalid_humid_air
     );
 
