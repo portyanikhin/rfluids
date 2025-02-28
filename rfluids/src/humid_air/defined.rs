@@ -241,6 +241,16 @@ impl HumidAir {
         ThermodynamicTemperature::new::<kelvin>
     );
 
+    define_output!(
+        non_negative_output,
+        water_mole_fraction,
+        PsiW,
+        Ratio,
+        "Water mole fraction",
+        "SI units: mol water/mol humid air",
+        Ratio::new::<ratio>
+    );
+
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -574,6 +584,13 @@ mod tests {
     );
 
     test_output!(temperature, humid_air, 293.15, invalid_humid_air);
+
+    test_output!(
+        water_mole_fraction,
+        humid_air,
+        1.159_130_506_217_982_9e-2,
+        invalid_humid_air
+    );
 
     #[rstest]
     fn update_valid_inputs_returns_ok(
