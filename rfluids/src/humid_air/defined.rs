@@ -64,6 +64,15 @@ impl HumidAir {
         Ratio::new::<ratio>
     );
 
+    define_output!(
+        positive_output,
+        compressibility,
+        Z,
+        f64,
+        "Compressibility factor",
+        "dimensionless"
+    );
+
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -296,6 +305,14 @@ mod tests {
         abs_humidity,
         humid_air,
         7.293_697_701_992_549e-3,
+        invalid_humid_air
+    );
+
+    test_output!(
+        f64,
+        compressibility,
+        humid_air,
+        0.999_594_693_604_325_6,
         invalid_humid_air
     );
 
