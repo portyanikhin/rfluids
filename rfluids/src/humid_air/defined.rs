@@ -1,9 +1,10 @@
-use std::marker::PhantomData;
-
 use super::common::{cached_output, guard};
 use super::{HumidAir, OutputResult, StateResult};
 use crate::io::HumidAirParam;
 use crate::io::humid_air_input::HumidAirInput;
+use std::marker::PhantomData;
+use uom::si::f64::Ratio;
+use uom::si::ratio::ratio;
 
 macro_rules! output_doc {
     ($key:ident, $description:literal, $units_description:literal) => {
@@ -53,6 +54,16 @@ macro_rules! define_output {
 }
 
 impl HumidAir {
+    define_output!(
+        non_negative_output,
+        abs_humidity,
+        W,
+        Ratio,
+        "Absolute humidity",
+        "SI units: kg water/kg dry air",
+        Ratio::new::<ratio>
+    );
+
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -227,6 +238,7 @@ mod tests {
     use super::*;
     use crate::error::HumidAirStateError;
     use crate::io::humid_air_input;
+    use crate::test::humid_air::test_output;
     use rstest::*;
     use uom::si::length::meter;
     use uom::si::pressure::atmosphere;
@@ -268,6 +280,24 @@ mod tests {
             .in_state(altitude, temperature, relative_humidity)
             .unwrap()
     }
+
+    #[fixture]
+    fn invalid_humid_air(
+        #[with(-1.0)] pressure: HumidAirInput,
+        #[with(-300.0)] temperature: HumidAirInput,
+        #[with(150.0)] relative_humidity: HumidAirInput,
+    ) -> HumidAir {
+        HumidAir::new()
+            .in_state(pressure, temperature, relative_humidity)
+            .unwrap()
+    }
+
+    test_output!(
+        abs_humidity,
+        humid_air,
+        7.293_697_701_992_549e-3,
+        invalid_humid_air
+    );
 
     #[rstest]
     fn update_valid_inputs_returns_ok(
