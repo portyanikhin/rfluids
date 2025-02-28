@@ -4,7 +4,7 @@
 //!
 //! ```
 //! use rfluids::prelude::fluid::*;
-//! use rfluids::uom::si::pressure::atmosphere;
+//! use uom::si::pressure::atmosphere;
 //!
 //! let pressure = fluid_input::pressure!(1.0, atmosphere);
 //! let pressure_si = fluid_input::pressure!(101325.0);
@@ -14,7 +14,7 @@
 //! ```
 
 use super::{FluidParam, define_input, define_input_macro, impl_input};
-use crate::uom::si::f64::{
+use uom::si::f64::{
     AvailableEnergy, MassDensity, MolarConcentration, MolarEnergy, MolarHeatCapacity, Pressure,
     Ratio, SpecificHeatCapacity, SpecificVolume, ThermodynamicTemperature,
 };
@@ -25,7 +25,7 @@ use crate::uom::si::f64::{
 ///
 /// ```
 /// use rfluids::prelude::fluid::*;
-/// use rfluids::uom::si::pressure::atmosphere;
+/// use uom::si::pressure::atmosphere;
 ///
 /// let pressure = fluid_input::pressure!(1.0, atmosphere);
 /// let pressure_si = fluid_input::pressure!(101325.0);
@@ -303,16 +303,16 @@ mod tests {
     use super::*;
     use crate::io::Input;
     use crate::test::test_input;
-    use crate::uom::si::available_energy::joule_per_kilogram;
-    use crate::uom::si::mass_density::kilogram_per_cubic_meter;
-    use crate::uom::si::molar_concentration::mole_per_cubic_meter;
-    use crate::uom::si::molar_energy::joule_per_mole;
-    use crate::uom::si::molar_heat_capacity::joule_per_kelvin_mole;
-    use crate::uom::si::pressure::pascal;
-    use crate::uom::si::ratio::ratio;
-    use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
-    use crate::uom::si::specific_volume::cubic_meter_per_kilogram;
-    use crate::uom::si::thermodynamic_temperature::kelvin;
+    use uom::si::available_energy::joule_per_kilogram;
+    use uom::si::mass_density::kilogram_per_cubic_meter;
+    use uom::si::molar_concentration::mole_per_cubic_meter;
+    use uom::si::molar_energy::joule_per_mole;
+    use uom::si::molar_heat_capacity::joule_per_kelvin_mole;
+    use uom::si::pressure::pascal;
+    use uom::si::ratio::ratio;
+    use uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
+    use uom::si::specific_volume::cubic_meter_per_kilogram;
+    use uom::si::thermodynamic_temperature::kelvin;
 
     test_input!(
         density,

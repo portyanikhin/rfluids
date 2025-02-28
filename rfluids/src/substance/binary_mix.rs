@@ -1,13 +1,13 @@
 // cSpell:disable
 
 use crate::error::BinaryMixError;
-use crate::uom::si::f64::Ratio;
-use crate::uom::si::ratio::ratio;
 use std::str::FromStr;
 use strum::EnumProperty;
 #[cfg(test)]
 use strum_macros::EnumIter;
 use strum_macros::{AsRefStr, EnumProperty, EnumString};
+use uom::si::f64::Ratio;
+use uom::si::ratio::ratio;
 
 /// `CoolProp` incompressible binary mixtures _(mass-based or volume-based)_.
 ///
@@ -228,8 +228,8 @@ impl BinaryMixKind {
     ///
     /// ```
     /// use rfluids::substance::BinaryMixKind;
-    /// use rfluids::uom::si::f64::Ratio;
-    /// use rfluids::uom::si::ratio::percent;
+    /// use uom::si::f64::Ratio;
+    /// use uom::si::ratio::percent;
     ///
     /// assert_eq!(BinaryMixKind::MPG.min_fraction(), Ratio::new::<percent>(0.0));
     /// ```
@@ -244,8 +244,8 @@ impl BinaryMixKind {
     ///
     /// ```
     /// use rfluids::substance::BinaryMixKind;
-    /// use rfluids::uom::si::f64::Ratio;
-    /// use rfluids::uom::si::ratio::percent;
+    /// use uom::si::f64::Ratio;
+    /// use uom::si::ratio::percent;
     ///
     /// assert_eq!(BinaryMixKind::MPG.max_fraction(), Ratio::new::<percent>(60.0));
     /// ```
@@ -284,8 +284,8 @@ impl BinaryMix {
     ///
     /// ```
     /// use rfluids::substance::{BinaryMix, BinaryMixKind};
-    /// use rfluids::uom::si::f64::Ratio;
-    /// use rfluids::uom::si::ratio::percent;
+    /// use uom::si::f64::Ratio;
+    /// use uom::si::ratio::percent;
     ///
     /// assert!(
     ///     BinaryMix::with_fraction(
@@ -351,9 +351,9 @@ mod tests {
         use super::BinaryMixKind::*;
         use super::*;
         use crate::substance::BinaryMixKind;
-        use crate::uom::si::f64::Ratio;
-        use crate::uom::si::ratio::ratio;
         use rstest::*;
+        use uom::si::f64::Ratio;
+        use uom::si::ratio::ratio;
 
         #[rstest]
         #[case(FRE, 0.19, 0.5)]
@@ -537,8 +537,8 @@ mod tests {
 
     mod binary_mix {
         use super::*;
-        use crate::uom::si::ratio::part_per_billion;
         use strum::IntoEnumIterator;
+        use uom::si::ratio::part_per_billion;
 
         #[test]
         fn new_with_valid_fraction_returns_ok() {

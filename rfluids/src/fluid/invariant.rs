@@ -7,14 +7,14 @@ use crate::io::{FluidTrivialParam, Input};
 use crate::ops::mul;
 use crate::state_variant::StateVariant;
 use crate::substance::Substance;
-use crate::uom::si::f64::{
+use uom::si::f64::{
     MassDensity, MolarConcentration, MolarMass, Pressure, ThermodynamicTemperature,
 };
-use crate::uom::si::mass_density::kilogram_per_cubic_meter;
-use crate::uom::si::molar_concentration::mole_per_cubic_meter;
-use crate::uom::si::molar_mass::kilogram_per_mole;
-use crate::uom::si::pressure::pascal;
-use crate::uom::si::thermodynamic_temperature::kelvin;
+use uom::si::mass_density::kilogram_per_cubic_meter;
+use uom::si::molar_concentration::mole_per_cubic_meter;
+use uom::si::molar_mass::kilogram_per_mole;
+use uom::si::pressure::pascal;
+use uom::si::thermodynamic_temperature::kelvin;
 
 macro_rules! trivial_output_doc {
     (always_ok, $key:ident, $description:literal, $units_description:literal) => {

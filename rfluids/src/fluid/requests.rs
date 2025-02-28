@@ -86,9 +86,9 @@ mod tests {
     mod create_request {
         use super::*;
         use crate::substance::*;
-        use crate::uom::si::f64::Ratio;
-        use crate::uom::si::ratio::percent;
         use std::collections::HashMap;
+        use uom::si::f64::Ratio;
+        use uom::si::ratio::percent;
 
         #[test]
         fn from_pure_substance_returns_expected_value() {
@@ -153,10 +153,10 @@ mod tests {
     mod update_request {
         use super::*;
         use crate::test::assert_relative_eq;
-        use crate::uom::si::f64::{Pressure, ThermodynamicTemperature};
-        use crate::uom::si::pressure::atmosphere;
-        use crate::uom::si::thermodynamic_temperature::degree_celsius;
         use rstest::*;
+        use uom::si::f64::{Pressure, ThermodynamicTemperature};
+        use uom::si::pressure::atmosphere;
+        use uom::si::thermodynamic_temperature::degree_celsius;
 
         #[test]
         fn two_fluid_inputs_from_fluid_update_request_returns_expected_value() {

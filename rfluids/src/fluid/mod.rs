@@ -71,7 +71,7 @@ impl TryFrom<Substance> for Fluid<Undefined> {
     ///
     /// ```
     /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::ratio::percent;
+    /// use uom::si::ratio::percent;
     /// use std::collections::HashMap;
     ///
     /// let water = Substance::from(Pure::Water);
@@ -167,7 +167,7 @@ impl From<BinaryMix> for Fluid<Undefined> {
     ///
     /// ```
     /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::ratio::percent;
+    /// use uom::si::ratio::percent;
     ///
     /// let propylene_glycol = Fluid::from(
     ///     BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0))?,
@@ -193,7 +193,7 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
     ///
     /// ```
     /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::ratio::percent;
+    /// use uom::si::ratio::percent;
     /// use std::collections::HashMap;
     ///
     /// let supported_mix = CustomMix::mass_based(HashMap::from([

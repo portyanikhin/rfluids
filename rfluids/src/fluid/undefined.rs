@@ -1,7 +1,6 @@
 use super::{Fluid, StateResult};
 use crate::io::fluid_input::FluidInput;
 use crate::state_variant::Undefined;
-use std::collections::HashMap;
 use std::marker::PhantomData;
 
 impl Fluid<Undefined> {
@@ -23,8 +22,8 @@ impl Fluid<Undefined> {
     /// ```
     /// use rfluids::fluid::StateResult;
     /// use rfluids::prelude::fluid::*;
-    /// use rfluids::uom::si::pressure::atmosphere;
-    /// use rfluids::uom::si::thermodynamic_temperature::degree_celsius;
+    /// use uom::si::pressure::atmosphere;
+    /// use uom::si::thermodynamic_temperature::degree_celsius;
     ///
     /// // After creation the `Fluid` instance has `Undefined` state variant
     /// let mut water: Fluid<Undefined> = Fluid::from(Pure::Water);
@@ -66,7 +65,7 @@ impl Fluid<Undefined> {
             substance: self.substance,
             backend: self.backend,
             update_request: self.update_request,
-            outputs: HashMap::new(),
+            outputs: self.outputs,
             trivial_outputs: self.trivial_outputs,
             state: PhantomData,
         })
@@ -94,9 +93,9 @@ mod tests {
     use crate::io::{Input, fluid_input};
     use crate::substance::*;
     use crate::test::fluid::test_output;
-    use crate::uom::si::pressure::atmosphere;
-    use crate::uom::si::thermodynamic_temperature::degree_celsius;
     use rstest::*;
+    use uom::si::pressure::atmosphere;
+    use uom::si::thermodynamic_temperature::degree_celsius;
 
     #[fixture]
     fn temperature(#[default(20.0)] value: f64) -> FluidInput {

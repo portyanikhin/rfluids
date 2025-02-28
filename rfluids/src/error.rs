@@ -1,9 +1,9 @@
 //! Error handling.
 
 use crate::io::{FluidParam, FluidTrivialParam, HumidAirParam};
-use crate::uom::si::f64::Ratio;
-use crate::uom::si::ratio::percent;
 use thiserror::Error;
+use uom::si::f64::Ratio;
+use uom::si::ratio::percent;
 
 /// Superset of all possible errors that can occur in the library.
 #[derive(Error, Debug, Clone, PartialEq)]

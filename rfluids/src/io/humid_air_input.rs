@@ -4,7 +4,7 @@
 //!
 //! ```
 //! use rfluids::prelude::humid_air::*;
-//! use rfluids::uom::si::pressure::atmosphere;
+//! use uom::si::pressure::atmosphere;
 //!
 //! let pressure = humid_air_input::pressure!(1.0, atmosphere);
 //! let pressure_si = humid_air_input::pressure!(101325.0);
@@ -15,7 +15,7 @@
 
 use super::{HumidAirParam, define_input, define_input_macro, impl_input};
 use crate::error::AltitudeError;
-use crate::uom::si::f64::{
+use uom::si::f64::{
     AvailableEnergy, Length, MassDensity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
     ThermodynamicTemperature,
 };
@@ -26,7 +26,7 @@ use crate::uom::si::f64::{
 ///
 /// ```
 /// use rfluids::prelude::humid_air::*;
-/// use rfluids::uom::si::pressure::atmosphere;
+/// use uom::si::pressure::atmosphere;
 ///
 /// let pressure = humid_air_input::pressure!(1.0, atmosphere);
 /// let pressure_si = humid_air_input::pressure!(101325.0);
@@ -461,15 +461,15 @@ mod tests {
     use super::*;
     use crate::io::Input;
     use crate::test::{assert_relative_eq, test_input};
-    use crate::uom::si::available_energy::joule_per_kilogram;
-    use crate::uom::si::length::meter;
-    use crate::uom::si::mass_density::kilogram_per_cubic_meter;
-    use crate::uom::si::pressure::pascal;
-    use crate::uom::si::ratio::ratio;
-    use crate::uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
-    use crate::uom::si::specific_volume::cubic_meter_per_kilogram;
-    use crate::uom::si::thermodynamic_temperature::kelvin;
     use rstest::*;
+    use uom::si::available_energy::joule_per_kilogram;
+    use uom::si::length::meter;
+    use uom::si::mass_density::kilogram_per_cubic_meter;
+    use uom::si::pressure::pascal;
+    use uom::si::ratio::ratio;
+    use uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
+    use uom::si::specific_volume::cubic_meter_per_kilogram;
+    use uom::si::thermodynamic_temperature::kelvin;
 
     test_input!(abs_humidity, HumidAirInput, HumidAirParam::W, Ratio, ratio);
 

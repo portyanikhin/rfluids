@@ -27,11 +27,11 @@ impl TryFrom<(HumidAirInput, HumidAirInput, HumidAirInput)> for HumidAirUpdateRe
 mod tests {
     use super::*;
     use crate::io::{HumidAirParam, humid_air_input};
-    use crate::uom::si::length::meter;
-    use crate::uom::si::pressure::atmosphere;
-    use crate::uom::si::ratio::percent;
-    use crate::uom::si::thermodynamic_temperature::degree_celsius;
     use rstest::*;
+    use uom::si::length::meter;
+    use uom::si::pressure::atmosphere;
+    use uom::si::ratio::percent;
+    use uom::si::thermodynamic_temperature::degree_celsius;
 
     #[test]
     fn try_from_valid_inputs_returns_ok() {

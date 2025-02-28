@@ -81,7 +81,7 @@ macro_rules! define_input_macro {
             #[doc = "\n\n# Examples\n\n"]
             #[doc = "```\n"]
             #[doc = "use rfluids::prelude::" $prelude_mod "::*;\n"]
-            #[doc = "use rfluids::uom::si::" $example_unit_mod "::" $example_unit ";\n\n"]
+            #[doc = "use uom::si::" $example_unit_mod "::" $example_unit ";\n\n"]
             #[doc = "assert_eq!(\n"]
             #[doc = "    " $mod "::" $name "!(42.0, " $example_unit "),\n"]
             #[doc = "    " $type "::" $name "(" $value_type "::new::<" $example_unit ">(42.0))\n"]

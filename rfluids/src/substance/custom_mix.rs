@@ -2,10 +2,10 @@ use super::{BackendName, Pure};
 use crate::error::CustomMixError;
 use crate::io::FluidTrivialParam::MolarMass;
 use crate::native::AbstractState;
-use crate::uom::ConstZero;
-use crate::uom::si::f64::Ratio;
-use crate::uom::si::ratio::ratio;
 use std::collections::HashMap;
+use uom::ConstZero;
+use uom::si::f64::Ratio;
+use uom::si::ratio::ratio;
 
 /// `CoolProp` custom mixture.
 ///
@@ -38,8 +38,8 @@ impl CustomMix {
     ///
     /// ```
     /// use rfluids::substance::{CustomMix, Pure};
-    /// use rfluids::uom::si::f64::Ratio;
-    /// use rfluids::uom::si::ratio::percent;
+    /// use uom::si::f64::Ratio;
+    /// use uom::si::ratio::percent;
     /// use std::collections::HashMap;
     ///
     /// assert!(CustomMix::mole_based(HashMap::from([
@@ -119,8 +119,8 @@ impl CustomMix {
     ///
     /// ```
     /// use rfluids::substance::{CustomMix, Pure};
-    /// use rfluids::uom::si::f64::Ratio;
-    /// use rfluids::uom::si::ratio::percent;
+    /// use uom::si::f64::Ratio;
+    /// use uom::si::ratio::percent;
     /// use std::collections::HashMap;
     ///
     /// assert!(CustomMix::mass_based(HashMap::from([
@@ -193,8 +193,8 @@ impl CustomMix {
     ///
     /// ```
     /// use rfluids::substance::{CustomMix, Pure};
-    /// use rfluids::uom::si::f64::Ratio;
-    /// use rfluids::uom::si::ratio::percent;
+    /// use uom::si::f64::Ratio;
+    /// use uom::si::ratio::percent;
     /// use std::collections::HashMap;
     ///
     /// let mole_based_mix = CustomMix::mole_based(HashMap::from([
@@ -265,9 +265,9 @@ impl CustomMix {
 mod tests {
     use super::*;
 
-    use crate::uom::si::ratio::percent;
     use approx::relative_eq;
     use rstest::*;
+    use uom::si::ratio::percent;
 
     #[rstest]
     #[case(HashMap::from([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]))]

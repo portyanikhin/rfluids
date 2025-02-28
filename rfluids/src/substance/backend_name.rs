@@ -11,8 +11,8 @@ pub trait BackendName {
     ///
     /// ```
     /// use rfluids::substance::*;
-    /// use rfluids::uom::si::f64::Ratio;
-    /// use rfluids::uom::si::ratio::percent;
+    /// use uom::si::f64::Ratio;
+    /// use uom::si::ratio::percent;
     /// use std::collections::HashMap;
     ///
     /// assert_eq!(Pure::Water.backend_name(), "HEOS");
