@@ -221,6 +221,16 @@ impl HumidAir {
         SpecificVolume::new::<cubic_meter_per_kilogram>
     );
 
+    define_output!(
+        positive_output,
+        specific_volume_da,
+        Vda,
+        SpecificVolume,
+        "Specific volume per unit of dry air",
+        "SI units: m³/kg dry air",
+        SpecificVolume::new::<cubic_meter_per_kilogram>
+    );
+
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -543,6 +553,13 @@ mod tests {
         specific_volume,
         humid_air,
         0.833_778_517_719_182_3,
+        invalid_humid_air
+    );
+
+    test_output!(
+        specific_volume_da,
+        humid_air,
+        0.839_859_846_177_841_6,
         invalid_humid_air
     );
 
