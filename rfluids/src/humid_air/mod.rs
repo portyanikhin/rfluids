@@ -3,6 +3,7 @@
 //! This module provides a comprehensive interface for calculating
 //! thermophysical and transport properties of humid air.
 
+mod common;
 mod defined;
 mod invariant;
 mod requests;

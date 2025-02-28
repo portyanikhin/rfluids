@@ -1,7 +1,56 @@
 use std::marker::PhantomData;
 
-use super::{HumidAir, StateResult};
+use super::common::{cached_output, guard};
+use super::{HumidAir, OutputResult, StateResult};
+use crate::io::HumidAirParam;
 use crate::io::humid_air_input::HumidAirInput;
+
+macro_rules! output_doc {
+    ($key:ident, $description:literal, $units_description:literal) => {
+        concat!(
+            $description,
+            "\n_(key: [`",
+            stringify!($key),
+            "`](HumidAirParam::",
+            stringify!($key),
+            "), ",
+            $units_description,
+            ")_.\n\n",
+            "# Errors\n\n",
+            "If it's not available or calculation is failed,\n",
+            "a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.",
+        )
+    };
+    ($description:literal, $units_description:literal) => {
+        concat!(
+            $description,
+            "\n_(",
+            $units_description,
+            ")_.\n\n",
+            "# Errors\n\n",
+            "If it's not available or calculation is failed,\n",
+            "a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.",
+        )
+    };
+}
+
+macro_rules! define_output {
+    (
+        $method:ident,
+        $name:ident,
+        $key:ident,
+        $type:ty,
+        $description:literal,
+        $units_description:literal
+        $(, $map:expr)?
+    ) => {
+        #[doc = output_doc!($key, $description, $units_description)]
+        pub fn $name(&mut self) -> OutputResult<$type> {
+            self.$method(HumidAirParam::$key)
+                $(.map($map))?
+        }
+    };
+}
 
 impl HumidAir {
     /// Updates the thermodynamic state and returns a mutable reference to itself.
@@ -139,6 +188,21 @@ impl HumidAir {
         input3: HumidAirInput,
     ) -> StateResult<Self> {
         HumidAir::new().in_state(input1, input2, input3)
+    }
+
+    fn positive_output(&mut self, key: HumidAirParam) -> OutputResult<f64> {
+        self.output(key)
+            .and_then(|value| guard(key, value, |x| x > 0.0))
+    }
+
+    fn non_negative_output(&mut self, key: HumidAirParam) -> OutputResult<f64> {
+        self.output(key)
+            .and_then(|value| guard(key, value, |x| x >= 0.0))
+    }
+
+    fn output(&mut self, key: HumidAirParam) -> OutputResult<f64> {
+        cached_output(&mut self.outputs, key, self.update_request.unwrap())
+            .and_then(|value| guard(key, value, f64::is_finite))
     }
 }
 

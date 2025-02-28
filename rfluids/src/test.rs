@@ -64,3 +64,36 @@ pub(crate) mod fluid {
 
     pub(crate) use test_output;
 }
+
+pub(crate) mod humid_air {
+    macro_rules! test_output {
+        ($name:ident, $valid:ident, $ok_value:expr $(, $invalid:ident)?) => {
+            paste::paste! {
+                #[rstest::rstest]
+                fn [<$name _returns_expected_value>](
+                    mut $valid: HumidAir,
+                    $(mut $invalid: HumidAir,)?
+                ) {
+                    assert!($valid.$name().is_ok());
+                    $crate::test::assert_relative_eq!($valid.$name().unwrap().value, $ok_value);
+                    $(assert!($invalid.$name().is_err());)?
+                }
+            }
+        };
+        (f64, $name:ident, $valid:ident, $ok_value:expr $(, $invalid:ident)?) => {
+            paste::paste! {
+                #[rstest::rstest]
+                fn [<$name _returns_expected_value>](
+                    mut $valid: HumidAir,
+                    $(mut $invalid: HumidAir,)?
+                ) {
+                    assert!($valid.$name().is_ok());
+                    $crate::test::assert_relative_eq!($valid.$name().unwrap(), $ok_value);
+                    $(assert!($invalid.$name().is_err());)?
+                }
+            }
+        };
+    }
+
+    pub(crate) use test_output;
+}
