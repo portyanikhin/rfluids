@@ -362,5 +362,6 @@ impl<S: StateVariant> Fluid<S> {
         cached_output(&mut self.trivial_outputs, &mut self.backend, key, |_| {
             FluidOutputError::UnavailableTrivialOutput(key)
         })
+        .and_then(|value| guard(key.into(), value, f64::is_finite))
     }
 }

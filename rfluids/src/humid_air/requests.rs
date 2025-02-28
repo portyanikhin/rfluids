@@ -5,7 +5,11 @@ use crate::io::Input;
 use crate::io::humid_air_input::HumidAirInput;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub(crate) struct HumidAirUpdateRequest(HumidAirInput, HumidAirInput, HumidAirInput);
+pub(crate) struct HumidAirUpdateRequest(
+    pub(crate) HumidAirInput,
+    pub(crate) HumidAirInput,
+    pub(crate) HumidAirInput,
+);
 
 impl TryFrom<(HumidAirInput, HumidAirInput, HumidAirInput)> for HumidAirUpdateRequest {
     type Error = HumidAirStateError;

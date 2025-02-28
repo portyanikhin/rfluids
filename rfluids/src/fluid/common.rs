@@ -65,7 +65,6 @@ pub(crate) mod tests {
     )]
     #[case(FluidTrivialParam::TCritical, 0.0, Ok(0.0))]
     #[case(FluidTrivialParam::TCritical, 1.0, Ok(1.0))]
-    #[rstest]
     #[case(
         FluidParam::T,
         -1.0,

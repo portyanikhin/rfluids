@@ -707,6 +707,7 @@ impl Fluid {
         cached_output(&mut self.outputs, &mut self.backend, key, |e| {
             FluidOutputError::CalculationFailed(key, e)
         })
+        .and_then(|value| guard(key.into(), value, f64::is_finite))
     }
 }
 
