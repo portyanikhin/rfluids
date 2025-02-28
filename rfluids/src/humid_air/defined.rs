@@ -162,6 +162,14 @@ impl HumidAir {
         Pressure::new::<pascal>
     );
 
+    #[doc = output_doc!(R, "Relative humidity", "SI units: dimensionless, from 0 to 1")]
+    pub fn rel_humidity(&mut self) -> OutputResult<Ratio> {
+        let key = HumidAirParam::R;
+        self.output(key)
+            .and_then(|value| guard(key, value, |x| (0.0..=1.0).contains(&x)))
+            .map(Ratio::new::<ratio>)
+    }
+
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -450,6 +458,7 @@ mod tests {
     );
 
     test_output!(pressure, humid_air, 101_325.0, invalid_humid_air);
+    test_output!(rel_humidity, humid_air, 0.5, invalid_humid_air);
 
     #[rstest]
     fn update_valid_inputs_returns_ok(
