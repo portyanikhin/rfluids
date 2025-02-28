@@ -119,6 +119,16 @@ impl HumidAir {
         AvailableEnergy::new::<joule_per_kilogram>
     );
 
+    define_output!(
+        output,
+        enthalpy_da,
+        Hda,
+        AvailableEnergy,
+        "Specific enthalpy per unit of dry air",
+        "SI units: J/kg dry air",
+        AvailableEnergy::new::<joule_per_kilogram>
+    );
+
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -387,6 +397,13 @@ mod tests {
         enthalpy,
         humid_air,
         38_343.175_393_657_12,
+        invalid_humid_air
+    );
+
+    test_output!(
+        enthalpy_da,
+        humid_air,
+        38_622.838_923_912_93,
         invalid_humid_air
     );
 
