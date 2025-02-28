@@ -1,3 +1,5 @@
+// cSpell:disable
+
 use super::common::{cached_output, guard};
 use super::{HumidAir, OutputResult, StateResult};
 use crate::io::HumidAirParam;
@@ -259,6 +261,16 @@ impl HumidAir {
         "Partial pressure of water vapor",
         "SI units: Pa",
         Pressure::new::<pascal>
+    );
+
+    define_output!(
+        positive_output,
+        wet_bulb_temperature,
+        TWetBulb,
+        ThermodynamicTemperature,
+        "Wet-bulb temperature",
+        "SI units: K",
+        ThermodynamicTemperature::new::<kelvin>
     );
 
     /// Updates the thermodynamic state and returns a mutable reference to itself.
@@ -606,6 +618,13 @@ mod tests {
         water_partial_pressure,
         humid_air,
         1_174.488_985_425_371,
+        invalid_humid_air
+    );
+
+    test_output!(
+        wet_bulb_temperature,
+        humid_air,
+        286.926_468_858_340_74,
         invalid_humid_air
     );
 
