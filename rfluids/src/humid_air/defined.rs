@@ -3,8 +3,11 @@ use super::{HumidAir, OutputResult, StateResult};
 use crate::io::HumidAirParam;
 use crate::io::humid_air_input::HumidAirInput;
 use std::marker::PhantomData;
+use uom::si::available_energy::joule_per_kilogram;
 use uom::si::dynamic_viscosity::pascal_second;
-use uom::si::f64::{DynamicViscosity, Ratio, ThermalConductivity, ThermodynamicTemperature};
+use uom::si::f64::{
+    AvailableEnergy, DynamicViscosity, Ratio, ThermalConductivity, ThermodynamicTemperature,
+};
 use uom::si::ratio::ratio;
 use uom::si::thermal_conductivity::watt_per_meter_kelvin;
 use uom::si::thermodynamic_temperature::kelvin;
@@ -104,6 +107,16 @@ impl HumidAir {
         "Dynamic viscosity",
         "SI units: Pa·s",
         DynamicViscosity::new::<pascal_second>
+    );
+
+    define_output!(
+        output,
+        enthalpy,
+        Hha,
+        AvailableEnergy,
+        "Specific enthalpy per unit of humid air",
+        "SI units: J/kg humid air",
+        AvailableEnergy::new::<joule_per_kilogram>
     );
 
     /// Updates the thermodynamic state and returns a mutable reference to itself.
@@ -367,6 +380,13 @@ mod tests {
         dynamic_viscosity,
         humid_air,
         1.814_316_044_123_345e-5,
+        invalid_humid_air
+    );
+
+    test_output!(
+        enthalpy,
+        humid_air,
+        38_343.175_393_657_12,
         invalid_humid_air
     );
 
