@@ -1,5 +1,5 @@
-use super::common::{const_ptr_c_char, ErrorBuffer, COOLPROP};
 use super::Result;
+use super::common::{COOLPROP, ErrorBuffer, const_ptr_c_char};
 use crate::error::CoolPropError;
 use core::ffi::{c_char, c_long};
 

@@ -13,7 +13,7 @@
 //! assert_eq!(pressure_si, HumidAirInput::pressure_si(101325.0));
 //! ```
 
-use super::{define_input, define_input_macro, impl_input, HumidAirParam};
+use super::{HumidAirParam, define_input, define_input_macro, impl_input};
 use crate::error::AltitudeError;
 use crate::uom::si::f64::{
     AvailableEnergy, Length, MassDensity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,

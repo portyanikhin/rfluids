@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 
 use crate::error::HumidAirStateError;
-use crate::io::humid_air_input::HumidAirInput;
 use crate::io::Input;
+use crate::io::humid_air_input::HumidAirInput;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub(crate) struct HumidAirUpdateRequest(HumidAirInput, HumidAirInput, HumidAirInput);
@@ -26,7 +26,7 @@ impl TryFrom<(HumidAirInput, HumidAirInput, HumidAirInput)> for HumidAirUpdateRe
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::io::{humid_air_input, HumidAirParam};
+    use crate::io::{HumidAirParam, humid_air_input};
     use crate::uom::si::length::meter;
     use crate::uom::si::pressure::atmosphere;
     use crate::uom::si::ratio::percent;

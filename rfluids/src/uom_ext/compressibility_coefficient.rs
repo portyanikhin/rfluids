@@ -1,6 +1,6 @@
 //! Compressibility coefficient (base unit 1 / pascal, m · s² · kg⁻¹).
 
-use crate::uom::si::{Quantity, ISQ, SI};
+use crate::uom::si::{ISQ, Quantity, SI};
 use crate::uom::typenum::{N1, P1, P2, Z0};
 
 /// Compressibility coefficient (base unit 1 / pascal, m · s² · kg⁻¹).

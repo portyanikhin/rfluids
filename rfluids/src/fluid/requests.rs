@@ -140,9 +140,11 @@ mod tests {
             .unwrap();
             let substance = Substance::from(mix.clone());
             let request = FluidCreateRequest::from(&substance);
-            assert!([(Pure::Water, Pure::Ethanol), (Pure::Ethanol, Pure::Water)]
-                .map(|x| Cow::Owned(format!("{}&{}", x.0.as_ref(), x.1.as_ref())))
-                .contains(&request.name));
+            assert!(
+                [(Pure::Water, Pure::Ethanol), (Pure::Ethanol, Pure::Water)]
+                    .map(|x| Cow::Owned(format!("{}&{}", x.0.as_ref(), x.1.as_ref())))
+                    .contains(&request.name)
+            );
             assert_eq!(request.backend_name, mix.backend_name());
             assert!([Some(vec![0.8, 0.2]), Some(vec![0.2, 0.8])].contains(&request.fractions));
         }

@@ -13,7 +13,7 @@
 //! assert_eq!(pressure_si, FluidInput::pressure_si(101325.0));
 //! ```
 
-use super::{define_input, define_input_macro, impl_input, FluidParam};
+use super::{FluidParam, define_input, define_input_macro, impl_input};
 use crate::uom::si::f64::{
     AvailableEnergy, MassDensity, MolarConcentration, MolarEnergy, MolarHeatCapacity, Pressure,
     Ratio, SpecificHeatCapacity, SpecificVolume, ThermodynamicTemperature,
