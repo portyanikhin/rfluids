@@ -141,6 +141,16 @@ impl HumidAir {
         SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
     );
 
+    define_output!(
+        output,
+        entropy_da,
+        Sda,
+        SpecificHeatCapacity,
+        "Specific entropy per unit of dry air",
+        "SI units: J/kg dry air/K",
+        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
+    );
+
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -420,6 +430,13 @@ mod tests {
     );
 
     test_output!(entropy, humid_air, 138.956_660_316_574_3, invalid_humid_air);
+
+    test_output!(
+        entropy_da,
+        humid_air,
+        139.970_168_190_601_87,
+        invalid_humid_air
+    );
 
     #[rstest]
     fn update_valid_inputs_returns_ok(
