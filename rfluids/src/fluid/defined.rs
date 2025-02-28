@@ -578,8 +578,8 @@ impl Fluid {
     ///
     /// # Args
     ///
-    /// - input1 -- first input property.
-    /// - input2 -- second input property.
+    /// - `input1` -- first input property.
+    /// - `input2` -- second input property.
     ///
     /// # Errors
     ///
@@ -636,8 +636,8 @@ impl Fluid {
     ///
     /// # Args
     ///
-    /// - input1 -- first input property.
-    /// - input2 -- second input property.
+    /// - `input1` -- first input property.
+    /// - `input2` -- second input property.
     ///
     /// # Errors
     ///

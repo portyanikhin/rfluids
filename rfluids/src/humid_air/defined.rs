@@ -77,9 +77,9 @@ impl HumidAir {
     ///
     /// # Args
     ///
-    /// - input1 -- first input property.
-    /// - input2 -- second input property.
-    /// - input3 -- third input property.
+    /// - `input1` -- first input property.
+    /// - `input2` -- second input property.
+    /// - `input3` -- third input property.
     ///
     /// # Errors
     ///
@@ -146,9 +146,9 @@ impl HumidAir {
     ///
     /// # Args
     ///
-    /// - input1 -- first input property.
-    /// - input2 -- second input property.
-    /// - input3 -- third input property.
+    /// - `input1` -- first input property.
+    /// - `input2` -- second input property.
+    /// - `input3` -- third input property.
     ///
     /// # Errors
     ///
