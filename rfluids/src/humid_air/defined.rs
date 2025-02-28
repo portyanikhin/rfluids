@@ -231,6 +231,16 @@ impl HumidAir {
         SpecificVolume::new::<cubic_meter_per_kilogram>
     );
 
+    define_output!(
+        positive_output,
+        temperature,
+        T,
+        ThermodynamicTemperature,
+        "Dry-bulb temperature",
+        "SI units: K",
+        ThermodynamicTemperature::new::<kelvin>
+    );
+
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
     /// # Args
@@ -562,6 +572,8 @@ mod tests {
         0.839_859_846_177_841_6,
         invalid_humid_air
     );
+
+    test_output!(temperature, humid_air, 293.15, invalid_humid_air);
 
     #[rstest]
     fn update_valid_inputs_returns_ok(
