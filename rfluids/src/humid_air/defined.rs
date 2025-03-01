@@ -84,6 +84,14 @@ impl HumidAir {
         self.specific_volume().map(uom::si::Quantity::recip)
     }
 
+    #[doc = output_doc!(
+        "Mass density per unit of dry air = `1` / [`specific_volume_da`](crate::humid_air::HumidAir::specific_volume_da)",
+        "SI units: kg dry air/m³"
+    )]
+    pub fn density_da(&mut self) -> OutputResult<MassDensity> {
+        self.specific_volume_da().map(uom::si::Quantity::recip)
+    }
+
     define_output!(
         positive_output,
         compressibility,
@@ -520,6 +528,13 @@ mod tests {
         density,
         humid_air,
         1.199_359_276_772_349_3,
+        invalid_humid_air
+    );
+
+    test_output!(
+        density_da,
+        humid_air,
+        1.190_674_854_323_549_2,
         invalid_humid_air
     );
 
