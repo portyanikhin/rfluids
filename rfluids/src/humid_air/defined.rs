@@ -8,8 +8,8 @@ use std::marker::PhantomData;
 use uom::si::available_energy::joule_per_kilogram;
 use uom::si::dynamic_viscosity::pascal_second;
 use uom::si::f64::{
-    AvailableEnergy, DynamicViscosity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
-    ThermalConductivity, ThermodynamicTemperature,
+    AvailableEnergy, DynamicViscosity, MassDensity, Pressure, Ratio, SpecificHeatCapacity,
+    SpecificVolume, ThermalConductivity, ThermodynamicTemperature,
 };
 use uom::si::pressure::pascal;
 use uom::si::ratio::ratio;
@@ -75,6 +75,14 @@ impl HumidAir {
         "SI units: kg water/kg dry air",
         Ratio::new::<ratio>
     );
+
+    #[doc = output_doc!(
+        "Mass density per unit of humid air = `1` / [`specific_volume`](crate::humid_air::HumidAir::specific_volume)",
+        "SI units: kg humid air/m³"
+    )]
+    pub fn density(&mut self) -> OutputResult<MassDensity> {
+        self.specific_volume().map(uom::si::Quantity::recip)
+    }
 
     define_output!(
         positive_output,
@@ -505,6 +513,13 @@ mod tests {
         abs_humidity,
         humid_air,
         7.293_697_701_992_549e-3,
+        invalid_humid_air
+    );
+
+    test_output!(
+        density,
+        humid_air,
+        1.199_359_276_772_349_3,
         invalid_humid_air
     );
 
