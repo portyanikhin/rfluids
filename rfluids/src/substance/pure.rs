@@ -504,6 +504,9 @@ pub enum Pure {
     #[strum(to_string = "R1270")]
     R1270,
 
+    #[strum(to_string = "R1336mzz(E)", serialize = "R1336mzzE")]
+    R1336mzzE,
+
     #[strum(to_string = "SulfurDioxide", serialize = "SO2")]
     SulfurDioxide,
 
@@ -669,6 +672,7 @@ mod tests {
     #[case(R1234zeZ, "R1234ze(Z)")]
     #[case(R1243zf, "R1243zf")]
     #[case(R1270, "R1270")]
+    #[case(R1336mzzE, "R1336mzz(E)")]
     #[case(SES36, "SES36")]
     #[case(SulfurDioxide, "SulfurDioxide")]
     #[case(SulfurHexafluoride, "SulfurHexafluoride")]
@@ -819,6 +823,7 @@ mod tests {
     #[case(vec!["R1234ze(Z)", "R1234zeZ"], R1234zeZ)]
     #[case(vec!["R1243zf"], R1243zf)]
     #[case(vec!["R1270"], R1270)]
+    #[case(vec!["R1336mzz(E)", "R1336mzzE"], R1336mzzE)]
     #[case(vec!["SES36"], SES36)]
     #[case(vec!["SO2"], SulfurDioxide)]
     #[case(vec!["SF6"], SulfurHexafluoride)]
