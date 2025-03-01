@@ -44,6 +44,7 @@ fn get_target_os_and_arch() -> (OS, Arch) {
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
     match (target_os.as_str(), target_arch.as_str()) {
         ("windows", "x86_64") => (OS::Windows, Arch::X86_64),
+        ("windows", "aarch64") => (OS::Windows, Arch::AArch64),
         ("linux", "x86_64") => (OS::Linux, Arch::X86_64),
         ("macos", "x86_64") => (OS::MacOS, Arch::X86_64),
         ("macos", "aarch64") => (OS::MacOS, Arch::AArch64),
@@ -57,6 +58,7 @@ fn get_target_os_and_arch() -> (OS, Arch) {
 fn setup_src_dir(target_os: &OS, target_arch: &Arch) -> PathBuf {
     let subfolder = match (target_os, target_arch) {
         (OS::Windows, Arch::X86_64) => "win-x86-64",
+        (OS::Windows, Arch::AArch64) => "win-aarch64",
         (OS::Linux, Arch::X86_64) => "lin-x86-64",
         (OS::MacOS, Arch::X86_64) => "mac-x86-64",
         (OS::MacOS, Arch::AArch64) => "mac-aarch64",
