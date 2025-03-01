@@ -1,4 +1,8 @@
 ﻿//! Raw FFI bindings to `CoolProp`.
+//!
+//! # See also
+//!
+//! - [`CoolPropLib.h` reference](https://coolprop.github.io/CoolProp/_static/doxygen/html/_cool_prop_lib_8h.html)
 
 #![allow(
     dead_code,

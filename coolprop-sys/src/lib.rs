@@ -2,18 +2,18 @@
 //!
 //! ## Supported platforms
 //!
-//! - `Windows X86-64`
-//! - `Linux X86-64`
-//! - `macOS X86-64`
+//! - `Windows x86-64`
+//! - `Windows AArch64`
+//! - `Linux x86-64`
+//! - `macOS x86-64`
 //! - `macOS AArch64`
 //!
 //! ## How to install
 //!
-//! Add the following to your `Cargo.toml`:
+//! Run the following command in your project directory:
 //!
-//! ```toml
-//! [dependencies]
-//! coolprop-sys = "0.1.0-alpha"
+//! ```shell
+//! cargo add coolprop-sys
 //! ```
 //!
 //! **NB.** It comes with native `CoolProp` dynamic libraries for supported platforms.
