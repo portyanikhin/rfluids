@@ -97,7 +97,7 @@ macro_rules! define_input_macro {
             #[macro_export]
             macro_rules! [<$mod _ $name>] {
                 ($value:expr, $unit:ty) => {
-                    $crate::io::$mod::$type::$name($crate::uom::si::f64::$value_type::new::<$unit>(
+                    $crate::io::$mod::$type::$name(uom::si::f64::$value_type::new::<$unit>(
                         $value,
                     ))
                 };

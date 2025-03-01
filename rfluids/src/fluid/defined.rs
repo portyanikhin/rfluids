@@ -541,7 +541,7 @@ impl Fluid {
         "SI units: m³/kg"
     )]
     pub fn specific_volume(&mut self) -> OutputResult<SpecificVolume> {
-        self.density().map(crate::uom::si::Quantity::recip)
+        self.density().map(uom::si::Quantity::recip)
     }
 
     define_output!(
