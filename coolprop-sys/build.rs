@@ -12,7 +12,6 @@ fn main() {
     setup_lib(&target_os, &src_dir, &target_dir);
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
-        .clang_arg("-v")
         .derive_debug(true)
         .derive_default(true)
         .dynamic_library_name(LIB_NAME)
@@ -20,7 +19,6 @@ fn main() {
         .use_core()
         .generate_cstr(true)
         .generate_comments(false)
-        .rust_edition(bindgen::RustEdition::Edition2021)
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .generate()
         .expect("Unable to generate bindings!");
