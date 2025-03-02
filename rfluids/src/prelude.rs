@@ -15,6 +15,7 @@ pub mod fluid {
     pub use crate::uom_ext::compressibility_coefficient::CompressibilityCoefficient;
     pub use crate::uom_ext::kinematic_viscosity::KinematicViscosity;
     pub use crate::uom_ext::surface_tension::SurfaceTension;
+    pub use uom;
     pub use uom::si::f64::{
         AvailableEnergy, DynamicViscosity, Force, Length, MassDensity, MolarConcentration,
         MolarEnergy, MolarHeatCapacity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
@@ -29,6 +30,7 @@ pub mod humid_air {
     pub use crate::io::humid_air_input::HumidAirInput;
     pub use crate::io::{Input, humid_air_input};
     pub use crate::state_variant::*;
+    pub use uom;
     pub use uom::si::f64::{
         AvailableEnergy, DynamicViscosity, Length, MassDensity, Pressure, Ratio,
         SpecificHeatCapacity, SpecificVolume, ThermalConductivity, ThermodynamicTemperature,
