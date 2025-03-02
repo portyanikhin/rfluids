@@ -1,25 +1,26 @@
 [package]
 name = "rfluids"
 version = "0.1.0-alpha"
-authors = ["Vladimir Portyanikhin <v.portyanikhin@ya.ru>"]
-edition = "2024"
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
 description = "🦀 Rusty CoolProp wrapper"
 readme = "../README.md"
-homepage = "https://github.com/portyanikhin/rfluids"
-repository = "https://github.com/portyanikhin/rfluids"
-license = "MIT"
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
 keywords = ["CoolProp", "fluids", "mixtures", "humid-air", "thermodynamics"]
 categories = ["api-bindings", "science"]
 
 [dependencies]
 coolprop-sys = { path = "../coolprop-sys", version = "0.1.0-alpha" }
-paste = "1.0.15"
-strum = "0.27.1"
-strum_macros = "0.27.1"
-thiserror = "2.0.11"
-uom = "0.36.0"
+paste.workspace = true
+strum.workspace = true
+strum_macros.workspace = true
+thiserror.workspace = true
+uom.workspace = true
 
 [dev-dependencies]
-approx = "0.5.1"
-rayon = "1.10.0"
-rstest = "0.24.0"
+approx.workspace = true
+rayon.workspace = true
+rstest.workspace = true
