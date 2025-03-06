@@ -70,7 +70,7 @@ impl TryFrom<Substance> for Fluid<Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::prelude::*;
     /// use uom::si::ratio::percent;
     /// use std::collections::HashMap;
     ///
@@ -118,7 +118,7 @@ impl From<Pure> for Fluid<Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::prelude::*;
     ///
     /// let water = Fluid::from(Pure::Water);
     /// ```
@@ -134,7 +134,7 @@ impl From<IncompPure> for Fluid<Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::prelude::*;
     ///
     /// let incomp_water = Fluid::from(IncompPure::Water);
     /// ```
@@ -150,7 +150,7 @@ impl From<PredefinedMix> for Fluid<Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::prelude::*;
     ///
     /// let r444a = Fluid::from(PredefinedMix::R444A);
     /// ```
@@ -166,7 +166,7 @@ impl From<BinaryMix> for Fluid<Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::prelude::*;
     /// use uom::si::ratio::percent;
     ///
     /// let propylene_glycol = Fluid::from(
@@ -192,7 +192,7 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::prelude::*;
     /// use uom::si::ratio::percent;
     /// use std::collections::HashMap;
     ///

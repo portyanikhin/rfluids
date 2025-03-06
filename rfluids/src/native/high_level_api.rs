@@ -37,7 +37,7 @@ impl CoolProp {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::native::*;
+    /// use rfluids::prelude::*;
     ///
     /// let result = CoolProp::props_si("C", "P", 101325.0, "Q", 1.0, "Water")?;
     /// assert_relative_eq!(result, 2079.937085633241, max_relative = 1e-6);
@@ -51,7 +51,7 @@ impl CoolProp {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::native::*;
+    /// use rfluids::prelude::*;
     ///
     /// let result = CoolProp::props_si("V", "P", 100e3, "T", 253.15, "INCOMP::MPG-60%")?;
     /// assert_relative_eq!(result, 0.13907391053938847, max_relative = 1e-6);
@@ -65,7 +65,7 @@ impl CoolProp {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::native::*;
+    /// use rfluids::prelude::*;
     ///
     /// let result = CoolProp::props_si(
     ///     "D",
@@ -137,7 +137,7 @@ impl CoolProp {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::native::*;
+    /// use rfluids::prelude::*;
     ///
     /// let result = CoolProp::ha_props_si("B", "P", 100e3, "T", 303.15, "R", 0.5)?;
     /// assert_relative_eq!(result, 295.1200365362656, max_relative = 1e-6);
@@ -193,7 +193,7 @@ impl CoolProp {
     ///
     /// ```
     /// use approx::assert_relative_eq;
-    /// use rfluids::prelude::native::*;
+    /// use rfluids::prelude::*;
     ///
     /// let result = CoolProp::props1_si("Tcrit", "Water")?;
     /// assert_relative_eq!(result, 647.096, max_relative = 1e-6);
@@ -203,7 +203,7 @@ impl CoolProp {
     /// R32 100-year global warming potential _(dimensionless)_:
     ///
     /// ```
-    /// use rfluids::prelude::native::*;
+    /// use rfluids::prelude::*;
     ///
     /// let result = CoolProp::props1_si("GWP100", "R32")?;
     /// assert_eq!(result, 675.0);

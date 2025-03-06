@@ -590,7 +590,7 @@ impl Fluid {
     ///
     /// ```
     /// use rfluids::fluid::StateResult;
-    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::prelude::*;
     /// use uom::si::pressure::atmosphere;
     /// use uom::si::thermodynamic_temperature::degree_celsius;
     ///
@@ -648,7 +648,7 @@ impl Fluid {
     ///
     /// ```
     /// use rfluids::fluid::StateResult;
-    /// use rfluids::prelude::fluid::*;
+    /// use rfluids::prelude::*;
     /// use uom::si::pressure::atmosphere;
     /// use uom::si::thermodynamic_temperature::degree_celsius;
     ///

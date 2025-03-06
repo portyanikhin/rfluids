@@ -3,7 +3,7 @@
 //! # Examples
 //!
 //! ```
-//! use rfluids::prelude::fluid::*;
+//! use rfluids::prelude::*;
 //! use uom::si::pressure::atmosphere;
 //!
 //! let pressure = fluid_input::pressure!(1.0, atmosphere);
@@ -24,7 +24,7 @@ use uom::si::f64::{
 /// # Examples
 ///
 /// ```
-/// use rfluids::prelude::fluid::*;
+/// use rfluids::prelude::*;
 /// use uom::si::pressure::atmosphere;
 ///
 /// let pressure = fluid_input::pressure!(1.0, atmosphere);
@@ -183,7 +183,6 @@ define_input_macro!(
     FluidInput,
     density,
     MassDensity,
-    fluid,
     mass_density,
     gram_per_cubic_centimeter
 );
@@ -193,7 +192,6 @@ define_input_macro!(
     FluidInput,
     enthalpy,
     AvailableEnergy,
-    fluid,
     available_energy,
     kilojoule_per_kilogram
 );
@@ -203,7 +201,6 @@ define_input_macro!(
     FluidInput,
     entropy,
     SpecificHeatCapacity,
-    fluid,
     specific_heat_capacity,
     joule_per_kilogram_kelvin
 );
@@ -213,7 +210,6 @@ define_input_macro!(
     FluidInput,
     internal_energy,
     AvailableEnergy,
-    fluid,
     available_energy,
     kilojoule_per_kilogram
 );
@@ -223,7 +219,6 @@ define_input_macro!(
     FluidInput,
     molar_density,
     MolarConcentration,
-    fluid,
     molar_concentration,
     mole_per_cubic_meter
 );
@@ -233,7 +228,6 @@ define_input_macro!(
     FluidInput,
     molar_enthalpy,
     MolarEnergy,
-    fluid,
     molar_energy,
     kilojoule_per_mole
 );
@@ -243,7 +237,6 @@ define_input_macro!(
     FluidInput,
     molar_entropy,
     MolarHeatCapacity,
-    fluid,
     molar_heat_capacity,
     joule_per_kelvin_mole
 );
@@ -253,7 +246,6 @@ define_input_macro!(
     FluidInput,
     molar_internal_energy,
     MolarEnergy,
-    fluid,
     molar_energy,
     kilojoule_per_mole
 );
@@ -263,27 +255,17 @@ define_input_macro!(
     FluidInput,
     pressure,
     Pressure,
-    fluid,
     pressure,
     kilopascal
 );
 
-define_input_macro!(
-    fluid_input,
-    FluidInput,
-    quality,
-    Ratio,
-    fluid,
-    ratio,
-    percent
-);
+define_input_macro!(fluid_input, FluidInput, quality, Ratio, ratio, percent);
 
 define_input_macro!(
     fluid_input,
     FluidInput,
     specific_volume,
     SpecificVolume,
-    fluid,
     specific_volume,
     cubic_meter_per_kilogram
 );
@@ -293,7 +275,6 @@ define_input_macro!(
     FluidInput,
     temperature,
     ThermodynamicTemperature,
-    fluid,
     thermodynamic_temperature,
     degree_celsius
 );

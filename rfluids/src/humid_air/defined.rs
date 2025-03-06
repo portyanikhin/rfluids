@@ -306,7 +306,7 @@ impl HumidAir {
     ///
     /// ```
     /// use rfluids::humid_air::StateResult;
-    /// use rfluids::prelude::humid_air::*;
+    /// use rfluids::prelude::*;
     /// use uom::si::length::meter;
     /// use uom::si::pressure::atmosphere;
     /// use uom::si::ratio::percent;
@@ -375,7 +375,7 @@ impl HumidAir {
     ///
     /// ```
     /// use rfluids::humid_air::StateResult;
-    /// use rfluids::prelude::humid_air::*;
+    /// use rfluids::prelude::*;
     /// use uom::si::length::meter;
     /// use uom::si::pressure::atmosphere;
     /// use uom::si::ratio::percent;

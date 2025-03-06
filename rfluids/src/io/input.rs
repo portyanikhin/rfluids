@@ -65,7 +65,6 @@ macro_rules! define_input_macro {
         $type:ident,
         $name:ident,
         $value_type:ident,
-        $prelude_mod:ident,
         $example_unit_mod:ident,
         $example_unit:ident
     ) => {
@@ -80,7 +79,7 @@ macro_rules! define_input_macro {
             #[doc = "the value is assumed to be in SI units."]
             #[doc = "\n\n# Examples\n\n"]
             #[doc = "```\n"]
-            #[doc = "use rfluids::prelude::" $prelude_mod "::*;\n"]
+            #[doc = "use rfluids::prelude::*;\n"]
             #[doc = "use uom::si::" $example_unit_mod "::" $example_unit ";\n\n"]
             #[doc = "assert_eq!(\n"]
             #[doc = "    " $mod "::" $name "!(42.0, " $example_unit "),\n"]
@@ -88,7 +87,7 @@ macro_rules! define_input_macro {
             #[doc = ");\n"]
             #[doc = "```\n\n"]
             #[doc = "```\n"]
-            #[doc = "use rfluids::prelude::" $prelude_mod "::*;\n\n"]
+            #[doc = "use rfluids::prelude::*;\n\n"]
             #[doc = "assert_eq!(\n"]
             #[doc = "    " $mod "::" $name "!(42.0),\n"]
             #[doc = "    " $type "::" $name "_si(42.0)\n"]
