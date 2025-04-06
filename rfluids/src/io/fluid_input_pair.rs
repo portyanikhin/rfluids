@@ -299,9 +299,7 @@ impl TryFrom<(FluidParam, FluidParam)> for FluidInputPair {
 
 #[cfg(test)]
 mod tests {
-    use super::FluidInputPair::*;
-    use super::FluidParam::*;
-    use super::*;
+    use super::{FluidInputPair::*, FluidParam::*, *};
     use rstest::*;
 
     #[rstest]

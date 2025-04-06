@@ -23,15 +23,15 @@ mod invariant;
 mod requests;
 mod undefined;
 
-use crate::error::{FluidFromCustomMixError, FluidOutputError, FluidStateError};
-use crate::io::{FluidParam, FluidTrivialParam};
-use crate::native::AbstractState;
-use crate::state_variant::{Defined, StateVariant, Undefined};
-use crate::substance::{BinaryMix, CustomMix, IncompPure, PredefinedMix, Pure, Substance};
+use crate::{
+    error::{FluidFromCustomMixError, FluidOutputError, FluidStateError},
+    io::{FluidParam, FluidTrivialParam},
+    native::AbstractState,
+    state_variant::{Defined, StateVariant, Undefined},
+    substance::{BinaryMix, CustomMix, IncompPure, PredefinedMix, Pure, Substance},
+};
 use requests::{FluidCreateRequest, FluidUpdateRequest};
-use std::collections::HashMap;
-use std::fmt::Debug;
-use std::marker::PhantomData;
+use std::{collections::HashMap, fmt::Debug, marker::PhantomData};
 
 /// Result type for operations that could fail while updating fluid state.
 pub type StateResult<T> = Result<T, FluidStateError>;
@@ -219,8 +219,7 @@ mod tests {
     use super::*;
     use crate::substance::*;
     use strum::IntoEnumIterator;
-    use uom::si::f64::Ratio;
-    use uom::si::ratio::percent;
+    use uom::si::{f64::Ratio, ratio::percent};
 
     #[test]
     fn from_each_pure_does_not_panic() {

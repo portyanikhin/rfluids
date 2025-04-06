@@ -1,6 +1,8 @@
 use core::ffi::{c_char, c_int, c_long};
-use std::ffi::CString;
-use std::sync::{LazyLock, Mutex};
+use std::{
+    ffi::CString,
+    sync::{LazyLock, Mutex},
+};
 
 pub(crate) static COOLPROP: LazyLock<Mutex<coolprop_sys::bindings::CoolProp>> =
     LazyLock::new(|| {

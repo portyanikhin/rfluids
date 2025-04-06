@@ -209,8 +209,7 @@ pub enum IncompPure {
 
 #[cfg(test)]
 mod tests {
-    use super::IncompPure::*;
-    use super::*;
+    use super::{IncompPure::*, *};
     use rstest::*;
     use std::str::FromStr;
 

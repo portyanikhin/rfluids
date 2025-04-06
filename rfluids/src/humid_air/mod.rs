@@ -9,12 +9,13 @@ mod invariant;
 mod requests;
 mod undefined;
 
-use crate::error::{HumidAirOutputError, HumidAirStateError};
-use crate::io::HumidAirParam;
-use crate::state_variant::{Defined, StateVariant};
+use crate::{
+    error::{HumidAirOutputError, HumidAirStateError},
+    io::HumidAirParam,
+    state_variant::{Defined, StateVariant},
+};
 use requests::HumidAirUpdateRequest;
-use std::collections::HashMap;
-use std::marker::PhantomData;
+use std::{collections::HashMap, marker::PhantomData};
 
 /// Result type for operations that could fail while updating humid air state.
 pub type StateResult<T> = Result<T, HumidAirStateError>;

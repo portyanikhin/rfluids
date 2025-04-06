@@ -1,34 +1,40 @@
 // cSpell:disable
 
-use super::common::{cached_output, guard};
-use super::{Fluid, OutputResult, StateResult};
-use crate::error::FluidOutputError;
-use crate::io::fluid_input::FluidInput;
-use crate::io::{FluidParam, Phase};
-use crate::ops::div;
-use crate::uom_ext::compressibility_coefficient::CompressibilityCoefficient;
-use crate::uom_ext::kinematic_viscosity::KinematicViscosity;
-use crate::uom_ext::surface_tension::SurfaceTension;
-use uom::si::available_energy::joule_per_kilogram;
-use uom::si::dynamic_viscosity::pascal_second;
-use uom::si::f64::{
-    AvailableEnergy, DynamicViscosity, Force, Length, MassDensity, MolarConcentration, MolarEnergy,
-    MolarHeatCapacity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
-    TemperatureCoefficient, ThermalConductivity, ThermodynamicTemperature, Velocity,
+use super::{
+    Fluid, OutputResult, StateResult,
+    common::{cached_output, guard},
 };
-use uom::si::force::newton;
-use uom::si::length::meter;
-use uom::si::mass_density::kilogram_per_cubic_meter;
-use uom::si::molar_concentration::mole_per_cubic_meter;
-use uom::si::molar_energy::joule_per_mole;
-use uom::si::molar_heat_capacity::joule_per_kelvin_mole;
-use uom::si::pressure::pascal;
-use uom::si::ratio::ratio;
-use uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
-use uom::si::temperature_coefficient::per_kelvin;
-use uom::si::thermal_conductivity::watt_per_meter_kelvin;
-use uom::si::thermodynamic_temperature::kelvin;
-use uom::si::velocity::meter_per_second;
+use crate::{
+    error::FluidOutputError,
+    io::{FluidParam, Phase, fluid_input::FluidInput},
+    ops::div,
+    uom_ext::{
+        compressibility_coefficient::CompressibilityCoefficient,
+        kinematic_viscosity::KinematicViscosity, surface_tension::SurfaceTension,
+    },
+};
+use uom::si::{
+    available_energy::joule_per_kilogram,
+    dynamic_viscosity::pascal_second,
+    f64::{
+        AvailableEnergy, DynamicViscosity, Force, Length, MassDensity, MolarConcentration,
+        MolarEnergy, MolarHeatCapacity, Pressure, Ratio, SpecificHeatCapacity, SpecificVolume,
+        TemperatureCoefficient, ThermalConductivity, ThermodynamicTemperature, Velocity,
+    },
+    force::newton,
+    length::meter,
+    mass_density::kilogram_per_cubic_meter,
+    molar_concentration::mole_per_cubic_meter,
+    molar_energy::joule_per_mole,
+    molar_heat_capacity::joule_per_kelvin_mole,
+    pressure::pascal,
+    ratio::ratio,
+    specific_heat_capacity::joule_per_kilogram_kelvin,
+    temperature_coefficient::per_kelvin,
+    thermal_conductivity::watt_per_meter_kelvin,
+    thermodynamic_temperature::kelvin,
+    velocity::meter_per_second,
+};
 
 macro_rules! output_doc {
     ($key:ident, $description:literal, $units_description:literal) => {
@@ -733,15 +739,16 @@ impl PartialEq for Fluid {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::error::FluidStateError;
-    use crate::io::{Input, fluid_input};
-    use crate::substance::*;
-    use crate::test::assert_relative_eq;
-    use crate::test::fluid::test_output;
+    use crate::{
+        error::FluidStateError,
+        io::{Input, fluid_input},
+        substance::*,
+        test::{assert_relative_eq, fluid::test_output},
+    };
     use rstest::*;
-    use uom::si::pressure::atmosphere;
-    use uom::si::ratio::percent;
-    use uom::si::thermodynamic_temperature::degree_celsius;
+    use uom::si::{
+        pressure::atmosphere, ratio::percent, thermodynamic_temperature::degree_celsius,
+    };
 
     #[fixture]
     fn temperature(#[default(20.0)] value: f64) -> FluidInput {

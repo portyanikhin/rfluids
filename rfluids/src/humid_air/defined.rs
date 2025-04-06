@@ -1,22 +1,25 @@
 // cSpell:disable
 
-use super::common::{cached_output, guard};
-use super::{HumidAir, OutputResult, StateResult};
-use crate::io::HumidAirParam;
-use crate::io::humid_air_input::HumidAirInput;
-use std::marker::PhantomData;
-use uom::si::available_energy::joule_per_kilogram;
-use uom::si::dynamic_viscosity::pascal_second;
-use uom::si::f64::{
-    AvailableEnergy, DynamicViscosity, MassDensity, Pressure, Ratio, SpecificHeatCapacity,
-    SpecificVolume, ThermalConductivity, ThermodynamicTemperature,
+use super::{
+    HumidAir, OutputResult, StateResult,
+    common::{cached_output, guard},
 };
-use uom::si::pressure::pascal;
-use uom::si::ratio::ratio;
-use uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
-use uom::si::specific_volume::cubic_meter_per_kilogram;
-use uom::si::thermal_conductivity::watt_per_meter_kelvin;
-use uom::si::thermodynamic_temperature::kelvin;
+use crate::io::{HumidAirParam, humid_air_input::HumidAirInput};
+use std::marker::PhantomData;
+use uom::si::{
+    available_energy::joule_per_kilogram,
+    dynamic_viscosity::pascal_second,
+    f64::{
+        AvailableEnergy, DynamicViscosity, MassDensity, Pressure, Ratio, SpecificHeatCapacity,
+        SpecificVolume, ThermalConductivity, ThermodynamicTemperature,
+    },
+    pressure::pascal,
+    ratio::ratio,
+    specific_heat_capacity::joule_per_kilogram_kelvin,
+    specific_volume::cubic_meter_per_kilogram,
+    thermal_conductivity::watt_per_meter_kelvin,
+    thermodynamic_temperature::kelvin,
+};
 
 macro_rules! output_doc {
     ($key:ident, $description:literal, $units_description:literal) => {
@@ -461,14 +464,12 @@ impl PartialEq for HumidAir {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::error::HumidAirStateError;
-    use crate::io::humid_air_input;
-    use crate::test::humid_air::test_output;
+    use crate::{error::HumidAirStateError, io::humid_air_input, test::humid_air::test_output};
     use rstest::*;
-    use uom::si::length::meter;
-    use uom::si::pressure::atmosphere;
-    use uom::si::ratio::percent;
-    use uom::si::thermodynamic_temperature::degree_celsius;
+    use uom::si::{
+        length::meter, pressure::atmosphere, ratio::percent,
+        thermodynamic_temperature::degree_celsius,
+    };
 
     #[fixture]
     fn altitude(#[default(0.0)] value: f64) -> HumidAirInput {

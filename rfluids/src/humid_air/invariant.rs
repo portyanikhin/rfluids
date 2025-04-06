@@ -1,8 +1,8 @@
-use super::requests::HumidAirUpdateRequest;
-use super::{HumidAir, StateResult};
-use crate::io::Input;
-use crate::io::humid_air_input::HumidAirInput;
-use crate::state_variant::StateVariant;
+use super::{HumidAir, StateResult, requests::HumidAirUpdateRequest};
+use crate::{
+    io::{Input, humid_air_input::HumidAirInput},
+    state_variant::StateVariant,
+};
 
 impl<S: StateVariant> HumidAir<S> {
     pub(crate) fn inner_update(

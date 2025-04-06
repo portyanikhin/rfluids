@@ -1,5 +1,7 @@
-use super::Result;
-use super::common::{COOLPROP, ErrorBuffer, const_ptr_c_char};
+use super::{
+    Result,
+    common::{COOLPROP, ErrorBuffer, const_ptr_c_char},
+};
 use crate::error::CoolPropError;
 use core::ffi::{c_char, c_long};
 
@@ -373,8 +375,10 @@ impl Drop for AbstractState {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::io::{FluidInputPair, FluidParam, Phase};
-    use crate::test::assert_relative_eq;
+    use crate::{
+        io::{FluidInputPair, FluidParam, Phase},
+        test::assert_relative_eq,
+    };
     use rayon::prelude::*;
     use rstest::*;
 

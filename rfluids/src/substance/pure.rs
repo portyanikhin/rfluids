@@ -528,8 +528,7 @@ pub enum Pure {
 
 #[cfg(test)]
 mod tests {
-    use super::Pure::*;
-    use super::*;
+    use super::{Pure::*, *};
     use rstest::*;
     use std::str::FromStr;
 

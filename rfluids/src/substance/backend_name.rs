@@ -63,8 +63,7 @@ mod tests {
     use super::*;
     use std::collections::HashMap;
     use strum::IntoEnumIterator;
-    use uom::si::f64::Ratio;
-    use uom::si::ratio::percent;
+    use uom::si::{f64::Ratio, ratio::percent};
 
     #[test]
     fn pure_returns_heos() {

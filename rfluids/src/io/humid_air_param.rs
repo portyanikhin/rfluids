@@ -148,8 +148,7 @@ pub enum HumidAirParam {
 
 #[cfg(test)]
 mod tests {
-    use super::HumidAirParam::*;
-    use super::*;
+    use super::{HumidAirParam::*, *};
     use rstest::*;
     use std::str::FromStr;
 

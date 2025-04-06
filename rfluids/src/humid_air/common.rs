@@ -1,8 +1,9 @@
-use super::OutputResult;
-use super::requests::HumidAirUpdateRequest;
-use crate::error::HumidAirOutputError;
-use crate::io::{HumidAirParam, Input};
-use crate::native::CoolProp;
+use super::{OutputResult, requests::HumidAirUpdateRequest};
+use crate::{
+    error::HumidAirOutputError,
+    io::{HumidAirParam, Input},
+    native::CoolProp,
+};
 use std::collections::HashMap;
 
 pub(crate) fn cached_output(

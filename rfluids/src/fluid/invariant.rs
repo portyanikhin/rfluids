@@ -1,20 +1,23 @@
-use super::common::{cached_output, guard};
-use super::requests::FluidUpdateRequest;
-use super::{Fluid, OutputResult, StateResult};
-use crate::error::FluidOutputError;
-use crate::io::fluid_input::FluidInput;
-use crate::io::{FluidTrivialParam, Input};
-use crate::ops::mul;
-use crate::state_variant::StateVariant;
-use crate::substance::Substance;
-use uom::si::f64::{
-    MassDensity, MolarConcentration, MolarMass, Pressure, ThermodynamicTemperature,
+use super::{
+    Fluid, OutputResult, StateResult,
+    common::{cached_output, guard},
+    requests::FluidUpdateRequest,
 };
-use uom::si::mass_density::kilogram_per_cubic_meter;
-use uom::si::molar_concentration::mole_per_cubic_meter;
-use uom::si::molar_mass::kilogram_per_mole;
-use uom::si::pressure::pascal;
-use uom::si::thermodynamic_temperature::kelvin;
+use crate::{
+    error::FluidOutputError,
+    io::{FluidTrivialParam, Input, fluid_input::FluidInput},
+    ops::mul,
+    state_variant::StateVariant,
+    substance::Substance,
+};
+use uom::si::{
+    f64::{MassDensity, MolarConcentration, MolarMass, Pressure, ThermodynamicTemperature},
+    mass_density::kilogram_per_cubic_meter,
+    molar_concentration::mole_per_cubic_meter,
+    molar_mass::kilogram_per_mole,
+    pressure::pascal,
+    thermodynamic_temperature::kelvin,
+};
 
 macro_rules! trivial_output_doc {
     (always_ok, $key:ident, $description:literal, $units_description:literal) => {

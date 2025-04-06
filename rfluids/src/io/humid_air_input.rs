@@ -442,17 +442,17 @@ define_input_macro!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::io::Input;
-    use crate::test::{assert_relative_eq, test_input};
+    use crate::{
+        io::Input,
+        test::{assert_relative_eq, test_input},
+    };
     use rstest::*;
-    use uom::si::available_energy::joule_per_kilogram;
-    use uom::si::length::meter;
-    use uom::si::mass_density::kilogram_per_cubic_meter;
-    use uom::si::pressure::pascal;
-    use uom::si::ratio::ratio;
-    use uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
-    use uom::si::specific_volume::cubic_meter_per_kilogram;
-    use uom::si::thermodynamic_temperature::kelvin;
+    use uom::si::{
+        available_energy::joule_per_kilogram, length::meter,
+        mass_density::kilogram_per_cubic_meter, pressure::pascal, ratio::ratio,
+        specific_heat_capacity::joule_per_kilogram_kelvin,
+        specific_volume::cubic_meter_per_kilogram, thermodynamic_temperature::kelvin,
+    };
 
     test_input!(abs_humidity, HumidAirInput, HumidAirParam::W, Ratio, ratio);
 

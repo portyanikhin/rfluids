@@ -1,11 +1,10 @@
 use super::{BackendName, Pure};
-use crate::error::CustomMixError;
-use crate::io::FluidTrivialParam::MolarMass;
-use crate::native::AbstractState;
+use crate::{error::CustomMixError, io::FluidTrivialParam::MolarMass, native::AbstractState};
 use std::collections::HashMap;
-use uom::ConstZero;
-use uom::si::f64::Ratio;
-use uom::si::ratio::ratio;
+use uom::{
+    ConstZero,
+    si::{f64::Ratio, ratio::ratio},
+};
 
 /// `CoolProp` custom mixture.
 ///
@@ -264,7 +263,6 @@ impl CustomMix {
 #[cfg(test)]
 mod tests {
     use super::*;
-
     use approx::relative_eq;
     use rstest::*;
     use uom::si::ratio::percent;

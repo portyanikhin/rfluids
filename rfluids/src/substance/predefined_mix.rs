@@ -256,8 +256,7 @@ pub enum PredefinedMix {
 
 #[cfg(test)]
 mod tests {
-    use super::PredefinedMix::*;
-    use super::*;
+    use super::{PredefinedMix::*, *};
     use rstest::*;
     use std::str::FromStr;
 

@@ -1,6 +1,5 @@
 use super::{Fluid, StateResult};
-use crate::io::fluid_input::FluidInput;
-use crate::state_variant::Undefined;
+use crate::{io::fluid_input::FluidInput, state_variant::Undefined};
 use std::marker::PhantomData;
 
 impl Fluid<Undefined> {
@@ -89,13 +88,14 @@ impl PartialEq for Fluid<Undefined> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::error::FluidStateError;
-    use crate::io::{Input, fluid_input};
-    use crate::substance::*;
-    use crate::test::fluid::test_output;
+    use crate::{
+        error::FluidStateError,
+        io::{Input, fluid_input},
+        substance::*,
+        test::fluid::test_output,
+    };
     use rstest::*;
-    use uom::si::pressure::atmosphere;
-    use uom::si::thermodynamic_temperature::degree_celsius;
+    use uom::si::{pressure::atmosphere, thermodynamic_temperature::degree_celsius};
 
     #[fixture]
     fn temperature(#[default(20.0)] value: f64) -> FluidInput {

@@ -143,8 +143,7 @@ impl TryFrom<f64> for Phase {
 
 #[cfg(test)]
 mod tests {
-    use super::Phase::*;
-    use super::*;
+    use super::{Phase::*, *};
     use rstest::*;
     use std::str::FromStr;
 

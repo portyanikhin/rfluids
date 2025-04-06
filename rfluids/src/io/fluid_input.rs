@@ -282,18 +282,14 @@ define_input_macro!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::io::Input;
-    use crate::test::test_input;
-    use uom::si::available_energy::joule_per_kilogram;
-    use uom::si::mass_density::kilogram_per_cubic_meter;
-    use uom::si::molar_concentration::mole_per_cubic_meter;
-    use uom::si::molar_energy::joule_per_mole;
-    use uom::si::molar_heat_capacity::joule_per_kelvin_mole;
-    use uom::si::pressure::pascal;
-    use uom::si::ratio::ratio;
-    use uom::si::specific_heat_capacity::joule_per_kilogram_kelvin;
-    use uom::si::specific_volume::cubic_meter_per_kilogram;
-    use uom::si::thermodynamic_temperature::kelvin;
+    use crate::{io::Input, test::test_input};
+    use uom::si::{
+        available_energy::joule_per_kilogram, mass_density::kilogram_per_cubic_meter,
+        molar_concentration::mole_per_cubic_meter, molar_energy::joule_per_mole,
+        molar_heat_capacity::joule_per_kelvin_mole, pressure::pascal, ratio::ratio,
+        specific_heat_capacity::joule_per_kilogram_kelvin,
+        specific_volume::cubic_meter_per_kilogram, thermodynamic_temperature::kelvin,
+    };
 
     test_input!(
         density,

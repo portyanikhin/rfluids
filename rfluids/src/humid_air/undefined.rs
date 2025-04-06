@@ -1,8 +1,6 @@
 use super::{HumidAir, StateResult};
-use crate::io::humid_air_input::HumidAirInput;
-use crate::state_variant::Undefined;
-use std::collections::HashMap;
-use std::marker::PhantomData;
+use crate::{io::humid_air_input::HumidAirInput, state_variant::Undefined};
+use std::{collections::HashMap, marker::PhantomData};
 
 impl HumidAir<Undefined> {
     /// Creates and returns a new [`HumidAir`] instance
@@ -113,13 +111,12 @@ impl PartialEq for HumidAir<Undefined> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::error::HumidAirStateError;
-    use crate::io::humid_air_input;
+    use crate::{error::HumidAirStateError, io::humid_air_input};
     use rstest::*;
-    use uom::si::length::meter;
-    use uom::si::pressure::atmosphere;
-    use uom::si::ratio::percent;
-    use uom::si::thermodynamic_temperature::degree_celsius;
+    use uom::si::{
+        length::meter, pressure::atmosphere, ratio::percent,
+        thermodynamic_temperature::degree_celsius,
+    };
 
     #[fixture]
     fn altitude(#[default(0.0)] value: f64) -> HumidAirInput {

@@ -1,8 +1,8 @@
+use crate::{
+    error::HumidAirStateError,
+    io::{Input, humid_air_input::HumidAirInput},
+};
 use std::collections::HashSet;
-
-use crate::error::HumidAirStateError;
-use crate::io::Input;
-use crate::io::humid_air_input::HumidAirInput;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub(crate) struct HumidAirUpdateRequest(
@@ -32,10 +32,10 @@ mod tests {
     use super::*;
     use crate::io::{HumidAirParam, humid_air_input};
     use rstest::*;
-    use uom::si::length::meter;
-    use uom::si::pressure::atmosphere;
-    use uom::si::ratio::percent;
-    use uom::si::thermodynamic_temperature::degree_celsius;
+    use uom::si::{
+        length::meter, pressure::atmosphere, ratio::percent,
+        thermodynamic_temperature::degree_celsius,
+    };
 
     #[test]
     fn try_from_valid_inputs_returns_ok() {

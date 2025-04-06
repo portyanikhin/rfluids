@@ -6,8 +6,7 @@ use strum::EnumProperty;
 #[cfg(test)]
 use strum_macros::EnumIter;
 use strum_macros::{AsRefStr, EnumProperty, EnumString};
-use uom::si::f64::Ratio;
-use uom::si::ratio::ratio;
+use uom::si::{f64::Ratio, ratio::ratio};
 
 /// `CoolProp` incompressible binary mixtures _(mass-based or volume-based)_.
 ///
@@ -348,12 +347,10 @@ mod tests {
     use super::*;
 
     mod binary_mix_kind {
-        use super::BinaryMixKind::*;
-        use super::*;
+        use super::{BinaryMixKind::*, *};
         use crate::substance::BinaryMixKind;
         use rstest::*;
-        use uom::si::f64::Ratio;
-        use uom::si::ratio::ratio;
+        use uom::si::{f64::Ratio, ratio::ratio};
 
         #[rstest]
         #[case(FRE, 0.19, 0.5)]

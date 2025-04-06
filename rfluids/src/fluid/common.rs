@@ -1,9 +1,10 @@
 use super::OutputResult;
-use crate::error::{CoolPropError, FluidOutputError};
-use crate::io::{FluidParam, FluidTrivialParam};
-use crate::native::AbstractState;
-use std::collections::HashMap;
-use std::hash::Hash;
+use crate::{
+    error::{CoolPropError, FluidOutputError},
+    io::{FluidParam, FluidTrivialParam},
+    native::AbstractState,
+};
+use std::{collections::HashMap, hash::Hash};
 
 pub(crate) fn cached_output<K>(
     cache: &mut HashMap<K, OutputResult<f64>>,

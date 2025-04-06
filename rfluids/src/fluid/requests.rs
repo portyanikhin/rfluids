@@ -1,7 +1,8 @@
-use crate::error::FluidStateError;
-use crate::io::fluid_input::FluidInput;
-use crate::io::{FluidInputPair, FluidParam, Input};
-use crate::substance::{BackendName, Substance};
+use crate::{
+    error::FluidStateError,
+    io::{FluidInputPair, FluidParam, Input, fluid_input::FluidInput},
+    substance::{BackendName, Substance},
+};
 use std::borrow::Cow;
 
 pub(crate) struct FluidCreateRequest<'a> {
@@ -87,8 +88,7 @@ mod tests {
         use super::*;
         use crate::substance::*;
         use std::collections::HashMap;
-        use uom::si::f64::Ratio;
-        use uom::si::ratio::percent;
+        use uom::si::{f64::Ratio, ratio::percent};
 
         #[test]
         fn from_pure_substance_returns_expected_value() {
@@ -154,9 +154,11 @@ mod tests {
         use super::*;
         use crate::test::assert_relative_eq;
         use rstest::*;
-        use uom::si::f64::{Pressure, ThermodynamicTemperature};
-        use uom::si::pressure::atmosphere;
-        use uom::si::thermodynamic_temperature::degree_celsius;
+        use uom::si::{
+            f64::{Pressure, ThermodynamicTemperature},
+            pressure::atmosphere,
+            thermodynamic_temperature::degree_celsius,
+        };
 
         #[test]
         fn two_fluid_inputs_from_fluid_update_request_returns_expected_value() {

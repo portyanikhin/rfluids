@@ -479,12 +479,9 @@ impl TryFrom<f64> for FluidTrivialParam {
 
 #[cfg(test)]
 mod tests {
-    use super::FluidParam::*;
-    use super::FluidTrivialParam::*;
-    use super::*;
+    use super::{FluidParam::*, FluidTrivialParam::*, *};
     use rstest::*;
-    use std::fmt::Debug;
-    use std::str::FromStr;
+    use std::{fmt::Debug, str::FromStr};
 
     #[rstest]
     #[case(GasConstant, "gas_constant")]
