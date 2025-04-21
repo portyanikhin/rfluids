@@ -2,7 +2,6 @@
 
 use crate::io::{FluidParam, FluidTrivialParam, HumidAirParam};
 use thiserror::Error;
-use uom::si::{f64::Ratio, ratio::percent};
 
 /// Superset of all possible errors that can occur in the library.
 #[derive(Error, Debug, Clone, PartialEq)]
@@ -35,8 +34,7 @@ pub enum Error {
     #[error(transparent)]
     FluidOutput(#[from] FluidOutputError),
 
-    /// Error during [`HumidAirInput::altitude`](crate::io::humid_air_input::HumidAirInput::altitude)
-    /// or [`HumidAirInput::altitude_si`](crate::io::humid_air_input::HumidAirInput::altitude_si).
+    /// Error during [`HumidAirInput::altitude`](crate::io::HumidAirInput::altitude).
     #[error(transparent)]
     Altitude(#[from] AltitudeError),
 
@@ -60,19 +58,14 @@ pub struct CoolPropError(pub(crate) String);
 #[derive(Error, Debug, Clone, PartialEq)]
 pub enum BinaryMixError {
     /// Specified fraction is invalid.
-    #[error(
-        "Specified fraction ({:?} %) is out of possible range [{:.1}; {:.1}] %!",
-        .specified.get::<percent>(),
-        .min.get::<percent>(),
-        .max.get::<percent>()
-    )]
+    #[error("Specified fraction `{specified:?}` is out of possible range [{min:.1}; {max:.1}]!")]
     InvalidFraction {
         /// Specified value.
-        specified: Ratio,
+        specified: f64,
         /// Minimum possible value.
-        min: Ratio,
+        min: f64,
         /// Maximum possible value.
-        max: Ratio,
+        max: f64,
     },
 }
 
@@ -84,11 +77,11 @@ pub enum CustomMixError {
     NotEnoughComponents,
 
     /// Some of the specified fractions are invalid.
-    #[error("All of the specified fractions must be exclusive between 0 and 100 %!")]
+    #[error("All of the specified fractions must be exclusive between 0 and 1!")]
     InvalidFraction,
 
     /// The sum of the specified fractions is invalid.
-    #[error("The sum of the specified fractions must be equal to 100 %!")]
+    #[error("The sum of the specified fractions must be equal to 1!")]
     InvalidFractionsSum,
 }
 
@@ -135,12 +128,11 @@ pub enum FluidOutputError {
     CalculationFailed(FluidParam, CoolPropError),
 }
 
-/// Error during [`HumidAirInput::altitude`](crate::io::humid_air_input::HumidAirInput::altitude)
-/// or [`HumidAirInput::altitude_si`](crate::io::humid_air_input::HumidAirInput::altitude_si).
+/// Error during [`HumidAirInput::altitude`](crate::io::HumidAirInput::altitude).
 #[derive(Error, Debug, Clone, PartialEq)]
 pub enum AltitudeError {
     /// Altitude value is out of possible range.
-    #[error("Altitude value ({0:?} m) is out of possible range [-5 000; 10 000] m!")]
+    #[error("Altitude value `{0:?} m` is out of possible range [-5 000; 10 000] m!")]
     OutOfRange(f64),
 }
 

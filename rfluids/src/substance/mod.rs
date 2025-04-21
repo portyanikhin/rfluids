@@ -15,7 +15,7 @@
 //!     - [`IncompPure`] -- incompressible pure substances.
 //!     - [`PredefinedMix`] -- predefined mixtures.
 //!     - [`BinaryMix`] -- binary mixtures with specified fraction
-//!       (mass-based or volume-based):
+//!       _(mass-based or volume-based)_:
 //!
 //!         - [`BinaryMixKind`] -- binary mixture kinds.
 //!

@@ -1,5 +1,5 @@
 use super::{Fluid, StateResult};
-use crate::{io::fluid_input::FluidInput, state_variant::Undefined};
+use crate::{io::FluidInput, state_variant::Undefined};
 use std::marker::PhantomData;
 
 impl Fluid<Undefined> {
@@ -21,8 +21,6 @@ impl Fluid<Undefined> {
     /// ```
     /// use rfluids::fluid::StateResult;
     /// use rfluids::prelude::*;
-    /// use uom::si::pressure::atmosphere;
-    /// use uom::si::thermodynamic_temperature::degree_celsius;
     ///
     /// // After creation the `Fluid` instance has `Undefined` state variant
     /// let mut water: Fluid<Undefined> = Fluid::from(Pure::Water);
@@ -31,24 +29,24 @@ impl Fluid<Undefined> {
     /// // perform conversion between `Undefined` and `Defined` state variants
     /// // (since `Defined` is the default state variant, it can be omitted)
     /// let mut water: Fluid = water.in_state(
-    ///     fluid_input::pressure!(1.0, atmosphere),
-    ///     fluid_input::temperature!(20.0, degree_celsius),
+    ///     FluidInput::pressure(101_325.0),
+    ///     FluidInput::temperature(293.15),
     /// )?;
     ///
     /// // The `Fluid` instance now has `Defined` state variant
     /// // and it's thermodynamic state can be updated in place by calling `update` method
     /// // (which returns a mutable reference to the instance)
     /// let same_water_in_new_state: StateResult<&mut Fluid> = water.update(
-    ///     fluid_input::pressure!(2.0, atmosphere),
-    ///     fluid_input::temperature!(40.0, degree_celsius),
+    ///     FluidInput::pressure(202_650.0),
+    ///     FluidInput::temperature(313.15),
     /// );
     /// assert!(same_water_in_new_state.is_ok());
     ///
     /// // Calling `in_state` method on `Fluid<Defined>` will return
     /// // a new instance in the specified thermodynamic state
     /// let new_water: StateResult<Fluid> = water.in_state(
-    ///     fluid_input::pressure!(4.0, atmosphere),
-    ///     fluid_input::temperature!(80.0, degree_celsius),
+    ///     FluidInput::pressure(405_300.0),
+    ///     FluidInput::temperature(353.15),
     /// );
     /// assert!(new_water.is_ok());
     /// # Ok::<(), rfluids::error::Error>(())
@@ -88,23 +86,17 @@ impl PartialEq for Fluid<Undefined> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{
-        error::FluidStateError,
-        io::{Input, fluid_input},
-        substance::*,
-        test::fluid::test_output,
-    };
+    use crate::{error::FluidStateError, substance::*, test::test_output};
     use rstest::*;
-    use uom::si::{pressure::atmosphere, thermodynamic_temperature::degree_celsius};
 
     #[fixture]
-    fn temperature(#[default(20.0)] value: f64) -> FluidInput {
-        fluid_input::temperature!(value, degree_celsius)
+    fn temperature(#[default(293.15)] value: f64) -> FluidInput {
+        FluidInput::temperature(value)
     }
 
     #[fixture]
-    fn pressure(#[default(1.0)] value: f64) -> FluidInput {
-        fluid_input::pressure!(value, atmosphere)
+    fn pressure(#[default(101_325.0)] value: f64) -> FluidInput {
+        FluidInput::pressure(value)
     }
 
     #[fixture]
@@ -143,8 +135,8 @@ mod tests {
     }
 
     #[fixture]
-    fn propylene_glycol() -> Fluid<Undefined> {
-        Fluid::from(BinaryMix::with_fraction_si(BinaryMixKind::MPG, 0.4).unwrap())
+    fn pg() -> Fluid<Undefined> {
+        Fluid::from(BinaryMixKind::MPG.with_fraction(0.4).unwrap())
     }
 
     #[test]
@@ -155,160 +147,30 @@ mod tests {
         assert_eq!(sut.substance(), &substance);
     }
 
-    test_output!(
-        Fluid<Undefined>,
-        f64,
-        acentric_factor,
-        water,
-        0.344_292_084_3,
-        r444a
-    );
-
-    test_output!(
-        Fluid<Undefined>,
-        critical_density,
-        water,
-        322.0,
-        r444a,
-        incomp_water
-    );
-
-    test_output!(
-        Fluid<Undefined>,
-        critical_molar_density,
-        water,
-        17_873.727_995_609_06,
-        r444a,
-        incomp_water
-    );
-
-    test_output!(
-        Fluid<Undefined>,
-        critical_pressure,
-        water,
-        22.064e6,
-        r444a,
-        incomp_water
-    );
-
-    test_output!(
-        Fluid<Undefined>,
-        critical_temperature,
-        water,
-        647.096,
-        r444a,
-        incomp_water
-    );
-
-    test_output!(
-        Fluid<Undefined>,
-        f64,
-        flammability_hazard,
-        water,
-        0.0,
-        incomp_water
-    );
-
-    test_output!(
-        Fluid<Undefined>,
-        freezing_temperature,
-        propylene_glycol,
-        252.581_754_953_058_38,
-        water
-    );
-
-    test_output!(Fluid<Undefined>, f64, gwp20, r32, 2330.0, water);
-    test_output!(Fluid<Undefined>, f64, gwp100, r32, 675.0, water);
-    test_output!(Fluid<Undefined>, f64, gwp500, r32, 205.0, water);
-
-    test_output!(
-        Fluid<Undefined>,
-        f64,
-        health_hazard,
-        water,
-        0.0,
-        incomp_water
-    );
-
-    test_output!(Fluid<Undefined>, max_pressure, water, 1e9, incomp_water);
-    test_output!(Fluid<Undefined>, always_ok, max_temperature, water, 2e3);
-
-    test_output!(
-        Fluid<Undefined>,
-        min_pressure,
-        water,
-        611.654_800_896_868_4,
-        incomp_water
-    );
-
-    test_output!(Fluid<Undefined>, always_ok, min_temperature, water, 273.16);
-
-    test_output!(
-        Fluid<Undefined>,
-        molar_mass,
-        water,
-        0.018_015_268,
-        incomp_water
-    );
-
-    test_output!(Fluid<Undefined>, f64, odp, r22, 0.05, water, incomp_water);
-
-    test_output!(
-        Fluid<Undefined>,
-        f64,
-        physical_hazard,
-        water,
-        0.0,
-        incomp_water
-    );
-
-    test_output!(
-        Fluid<Undefined>,
-        reducing_density,
-        water,
-        322.0,
-        incomp_water
-    );
-
-    test_output!(
-        Fluid<Undefined>,
-        reducing_molar_density,
-        water,
-        17_873.727_995_609_06,
-        incomp_water
-    );
-
-    test_output!(
-        Fluid<Undefined>,
-        reducing_pressure,
-        water,
-        22.064e6,
-        incomp_water
-    );
-
-    test_output!(
-        Fluid<Undefined>,
-        reducing_temperature,
-        water,
-        647.096,
-        incomp_water
-    );
-
-    test_output!(
-        Fluid<Undefined>,
-        triple_pressure,
-        water,
-        611.654_800_896_868_4,
-        incomp_water
-    );
-
-    test_output!(
-        Fluid<Undefined>,
-        triple_temperature,
-        water,
-        273.16,
-        incomp_water
-    );
+    test_output!(Fluid<Undefined>: acentric_factor, water: 0.344_292_084_3, r444a: Err);
+    test_output!(Fluid<Undefined>: critical_density, water: 322.0, r444a: Err, incomp_water: Err);
+    test_output!(Fluid<Undefined>: critical_molar_density, water: 17_873.727_995_609_06, r444a: Err, incomp_water: Err);
+    test_output!(Fluid<Undefined>: critical_pressure, water: 22.064e6, r444a: Err, incomp_water: Err);
+    test_output!(Fluid<Undefined>: critical_temperature, water: 647.096, r444a: Err, incomp_water: Err);
+    test_output!(Fluid<Undefined>: flammability_hazard, water: 0.0, incomp_water: Err);
+    test_output!(Fluid<Undefined>: freezing_temperature, pg: 252.581_754_953_058_38, water: Err);
+    test_output!(Fluid<Undefined>: gwp20, r32: 2330.0, water: Err);
+    test_output!(Fluid<Undefined>: gwp100, r32: 675.0, water: Err);
+    test_output!(Fluid<Undefined>: gwp500, r32: 205.0, water: Err);
+    test_output!(Fluid<Undefined>: health_hazard, water: 0.0, incomp_water: Err);
+    test_output!(Fluid<Undefined>: max_pressure, water: 1e9, incomp_water: Err);
+    test_output!(Fluid<Undefined>: max_temperature, water: 2e3, always_ok);
+    test_output!(Fluid<Undefined>: min_pressure, water: 611.654_800_896_868_4, incomp_water: Err);
+    test_output!(Fluid<Undefined>: min_temperature, water: 273.16, always_ok);
+    test_output!(Fluid<Undefined>: molar_mass, water: 0.018_015_268, incomp_water: Err);
+    test_output!(Fluid<Undefined>: odp, r22: 0.05, water: Err, incomp_water: Err);
+    test_output!(Fluid<Undefined>: physical_hazard, water: 0.0, incomp_water: Err);
+    test_output!(Fluid<Undefined>: reducing_density, water: 322.0, incomp_water: Err);
+    test_output!(Fluid<Undefined>: reducing_molar_density, water: 17_873.727_995_609_06, incomp_water: Err);
+    test_output!(Fluid<Undefined>: reducing_pressure, water: 22.064e6, incomp_water: Err);
+    test_output!(Fluid<Undefined>: reducing_temperature, water: 647.096, incomp_water: Err);
+    test_output!(Fluid<Undefined>: triple_pressure, water: 611.654_800_896_868_4, incomp_water: Err);
+    test_output!(Fluid<Undefined>: triple_temperature, water: 273.16, incomp_water: Err);
 
     #[rstest]
     fn in_state_valid_inputs_returns_ok(
@@ -323,7 +185,7 @@ mod tests {
     fn in_state_same_inputs_returns_err(water: Fluid<Undefined>, pressure: FluidInput) {
         assert_eq!(
             water.in_state(pressure, pressure).unwrap_err(),
-            FluidStateError::InvalidInputPair(pressure.key(), pressure.key())
+            FluidStateError::InvalidInputPair(pressure.key, pressure.key)
         );
     }
 

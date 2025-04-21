@@ -1,6 +1,6 @@
 use crate::{
     error::FluidStateError,
-    io::{FluidInputPair, FluidParam, Input, fluid_input::FluidInput},
+    io::{FluidInput, FluidInputPair, FluidParam},
     substance::{BackendName, Substance},
 };
 use std::borrow::Cow;
@@ -32,18 +32,18 @@ impl<'a> From<&'a Substance> for FluidCreateRequest<'a> {
             Substance::BinaryMix(binary_mix) => FluidCreateRequest {
                 name: Cow::Borrowed(binary_mix.kind.as_ref()),
                 backend_name: binary_mix.kind.backend_name(),
-                fractions: Some(vec![binary_mix.fraction.value]),
+                fractions: Some(vec![binary_mix.fraction]),
             },
             Substance::CustomMix(custom_mix) => {
-                let mix = custom_mix.to_mole_based();
+                let mix = custom_mix.clone().into_mole_based();
                 let (components, fractions): (Vec<&str>, Vec<f64>) = mix
                     .components()
                     .iter()
-                    .map(|component| (component.0.as_ref(), component.1.value))
+                    .map(|component| (component.0.as_ref(), component.1))
                     .unzip();
                 FluidCreateRequest {
                     name: Cow::Owned(components.join("&")),
-                    backend_name: custom_mix.backend_name(),
+                    backend_name: mix.backend_name(),
                     fractions: Some(fractions),
                 }
             }
@@ -52,31 +52,48 @@ impl<'a> From<&'a Substance> for FluidCreateRequest<'a> {
 }
 
 #[derive(Debug, Copy, Clone, PartialEq)]
-pub(crate) struct FluidUpdateRequest(pub(crate) FluidInputPair, pub(crate) f64, pub(crate) f64);
+pub(crate) struct FluidUpdateRequest {
+    pub(crate) input_pair: FluidInputPair,
+    pub(crate) value1: f64,
+    pub(crate) value2: f64,
+}
 
 impl From<FluidUpdateRequest> for (FluidInput, FluidInput) {
-    fn from(value: FluidUpdateRequest) -> Self {
-        let keys: (FluidParam, FluidParam) = value.0.into();
-        (FluidInput(keys.0, value.1), FluidInput(keys.1, value.2))
+    fn from(request: FluidUpdateRequest) -> Self {
+        let keys: (FluidParam, FluidParam) = request.input_pair.into();
+        (
+            FluidInput {
+                key: keys.0,
+                value: request.value1,
+            },
+            FluidInput {
+                key: keys.1,
+                value: request.value2,
+            },
+        )
     }
 }
 
 impl TryFrom<(FluidInput, FluidInput)> for FluidUpdateRequest {
     type Error = FluidStateError;
 
-    fn try_from(value: (FluidInput, FluidInput)) -> Result<Self, Self::Error> {
-        let key = FluidInputPair::try_from((value.0.key(), value.1.key()))
-            .map_err(|_| FluidStateError::InvalidInputPair(value.0.key(), value.1.key()))?;
-        if !value.0.si_value().is_finite() || !value.1.si_value().is_finite() {
+    fn try_from(inputs: (FluidInput, FluidInput)) -> Result<Self, Self::Error> {
+        let input_pair = FluidInputPair::try_from((inputs.0.key, inputs.1.key))
+            .map_err(|_| FluidStateError::InvalidInputPair(inputs.0.key, inputs.1.key))?;
+        if !inputs.0.value.is_finite() || !inputs.1.value.is_finite() {
             return Err(FluidStateError::InvalidInputValue);
         }
         let (value1, value2) =
-            if <(FluidParam, FluidParam)>::from(key) == (value.0.key(), value.1.key()) {
-                (value.0.si_value(), value.1.si_value())
+            if <(FluidParam, FluidParam)>::from(input_pair) == (inputs.0.key, inputs.1.key) {
+                (inputs.0.value, inputs.1.value)
             } else {
-                (value.1.si_value(), value.0.si_value())
+                (inputs.1.value, inputs.0.value)
             };
-        Ok(Self(key, value1, value2))
+        Ok(Self {
+            input_pair,
+            value1,
+            value2,
+        })
     }
 }
 
@@ -88,7 +105,6 @@ mod tests {
         use super::*;
         use crate::substance::*;
         use std::collections::HashMap;
-        use uom::si::{f64::Ratio, ratio::percent};
 
         #[test]
         fn from_pure_substance_returns_expected_value() {
@@ -122,8 +138,7 @@ mod tests {
 
         #[test]
         fn from_binary_mix_substance_returns_expected_value() {
-            let propylene_glycol =
-                BinaryMix::with_fraction(BinaryMixKind::MPG, Ratio::new::<percent>(40.0)).unwrap();
+            let propylene_glycol = BinaryMixKind::MPG.with_fraction(0.4).unwrap();
             let substance = Substance::from(propylene_glycol);
             let request = FluidCreateRequest::from(&substance);
             assert_eq!(request.name, Cow::Borrowed(BinaryMixKind::MPG.as_ref()));
@@ -133,11 +148,9 @@ mod tests {
 
         #[test]
         fn from_custom_mix_substance_returns_expected_value() {
-            let mix = CustomMix::mole_based(HashMap::from([
-                (Pure::Water, Ratio::new::<percent>(80.0)),
-                (Pure::Ethanol, Ratio::new::<percent>(20.0)),
-            ]))
-            .unwrap();
+            let mix =
+                CustomMix::mole_based(HashMap::from([(Pure::Water, 0.8), (Pure::Ethanol, 0.2)]))
+                    .unwrap();
             let substance = Substance::from(mix.clone());
             let request = FluidCreateRequest::from(&substance);
             assert!(
@@ -154,52 +167,49 @@ mod tests {
         use super::*;
         use crate::test::assert_relative_eq;
         use rstest::*;
-        use uom::si::{
-            f64::{Pressure, ThermodynamicTemperature},
-            pressure::atmosphere,
-            thermodynamic_temperature::degree_celsius,
-        };
 
         #[test]
         fn two_fluid_inputs_from_fluid_update_request_returns_expected_value() {
-            let request = FluidUpdateRequest(FluidInputPair::PT, 101_325.0, 293.15);
+            let request = FluidUpdateRequest {
+                input_pair: FluidInputPair::PT,
+                value1: 101_325.0,
+                value2: 293.15,
+            };
             let result = <(FluidInput, FluidInput)>::from(request);
-            assert_eq!(result.0.key(), FluidParam::P);
-            assert_eq!(result.0.si_value(), request.1);
-            assert_eq!(result.1.key(), FluidParam::T);
-            assert_eq!(result.1.si_value(), request.2);
+            assert_eq!(result.0.key, FluidParam::P);
+            assert_eq!(result.0.value, request.value1);
+            assert_eq!(result.1.key, FluidParam::T);
+            assert_eq!(result.1.value, request.value2);
         }
 
         #[test]
         fn try_from_two_valid_inputs_with_invariant_order_returns_ok() {
-            let input1 =
-                FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(20.0));
-            let input2 = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
+            let input1 = FluidInput::temperature(293.15);
+            let input2 = FluidInput::pressure(101_325.0);
             let result1 = FluidUpdateRequest::try_from((input1, input2)).unwrap();
             let result2 = FluidUpdateRequest::try_from((input2, input1)).unwrap();
             assert_eq!(result1, result2);
-            assert_eq!(result1.0, FluidInputPair::PT);
-            assert_relative_eq!(result1.1, 101_325.0);
-            assert_relative_eq!(result1.2, 293.15);
+            assert_eq!(result1.input_pair, FluidInputPair::PT);
+            assert_relative_eq!(result1.value1, 101_325.0);
+            assert_relative_eq!(result1.value2, 293.15);
         }
 
         #[test]
         fn try_from_two_same_inputs_returns_err() {
-            let input = FluidInput::pressure(Pressure::new::<atmosphere>(1.0));
+            let input = FluidInput::pressure(101_325.0);
             assert_eq!(
                 FluidUpdateRequest::try_from((input, input)).unwrap_err(),
-                FluidStateError::InvalidInputPair(input.key(), input.key())
+                FluidStateError::InvalidInputPair(input.key, input.key)
             );
         }
 
         #[rstest]
         fn try_from_non_finite_inputs_returns_err(
             #[values(f64::NAN, f64::INFINITY, -f64::INFINITY)] value1: f64,
-            #[values(f64::NAN, f64::INFINITY, -f64::INFINITY, 1.0)] value2: f64,
+            #[values(f64::NAN, f64::INFINITY, -f64::INFINITY, 101_325.0)] value2: f64,
         ) {
-            let input1 =
-                FluidInput::temperature(ThermodynamicTemperature::new::<degree_celsius>(value1));
-            let input2 = FluidInput::pressure(Pressure::new::<atmosphere>(value2));
+            let input1 = FluidInput::temperature(value1);
+            let input2 = FluidInput::pressure(value2);
             assert_eq!(
                 FluidUpdateRequest::try_from((input1, input2)).unwrap_err(),
                 FluidStateError::InvalidInputValue

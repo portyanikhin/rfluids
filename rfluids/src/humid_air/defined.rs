@@ -4,293 +4,245 @@ use super::{
     HumidAir, OutputResult, StateResult,
     common::{cached_output, guard},
 };
-use crate::io::{HumidAirParam, humid_air_input::HumidAirInput};
+use crate::io::{HumidAirInput, HumidAirParam};
 use std::marker::PhantomData;
-use uom::si::{
-    available_energy::joule_per_kilogram,
-    dynamic_viscosity::pascal_second,
-    f64::{
-        AvailableEnergy, DynamicViscosity, MassDensity, Pressure, Ratio, SpecificHeatCapacity,
-        SpecificVolume, ThermalConductivity, ThermodynamicTemperature,
-    },
-    pressure::pascal,
-    ratio::ratio,
-    specific_heat_capacity::joule_per_kilogram_kelvin,
-    specific_volume::cubic_meter_per_kilogram,
-    thermal_conductivity::watt_per_meter_kelvin,
-    thermodynamic_temperature::kelvin,
-};
-
-macro_rules! output_doc {
-    ($key:ident, $description:literal, $units_description:literal) => {
-        concat!(
-            $description,
-            "\n_(key: [`",
-            stringify!($key),
-            "`](HumidAirParam::",
-            stringify!($key),
-            "), ",
-            $units_description,
-            ")_.\n\n",
-            "# Errors\n\n",
-            "If it's not available or calculation is failed,\n",
-            "a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.",
-        )
-    };
-    ($description:literal, $units_description:literal) => {
-        concat!(
-            $description,
-            "\n_(",
-            $units_description,
-            ")_.\n\n",
-            "# Errors\n\n",
-            "If it's not available or calculation is failed,\n",
-            "a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.",
-        )
-    };
-}
-
-macro_rules! define_output {
-    (
-        $method:ident,
-        $name:ident,
-        $key:ident,
-        $type:ty,
-        $description:literal,
-        $units_description:literal
-        $(, $map:expr)?
-    ) => {
-        #[doc = output_doc!($key, $description, $units_description)]
-        pub fn $name(&mut self) -> OutputResult<$type> {
-            self.$method(HumidAirParam::$key)
-                $(.map($map))?
-        }
-    };
-}
 
 impl HumidAir {
-    define_output!(
-        non_negative_output,
-        abs_humidity,
-        W,
-        Ratio,
-        "Absolute humidity",
-        "SI units: kg water/kg dry air",
-        Ratio::new::<ratio>
-    );
-
-    #[doc = output_doc!(
-        "Mass density per unit of humid air = `1` / [`specific_volume`](crate::humid_air::HumidAir::specific_volume)",
-        "SI units: kg humid air/m³"
-    )]
-    pub fn density(&mut self) -> OutputResult<MassDensity> {
-        self.specific_volume().map(uom::si::Quantity::recip)
+    /// Absolute humidity **\[kg water/kg dry air\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn abs_humidity(&mut self) -> OutputResult<f64> {
+        self.non_negative_output(HumidAirParam::W)
     }
 
-    #[doc = output_doc!(
-        "Mass density per unit of dry air = `1` / [`specific_volume_da`](crate::humid_air::HumidAir::specific_volume_da)",
-        "SI units: kg dry air/m³"
-    )]
-    pub fn density_da(&mut self) -> OutputResult<MassDensity> {
-        self.specific_volume_da().map(uom::si::Quantity::recip)
+    /// Mass density per unit of humid air =
+    /// `1` / [`specific_volume`](crate::humid_air::HumidAir::specific_volume)
+    /// **\[kg humid air/m³\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn density(&mut self) -> OutputResult<f64> {
+        self.specific_volume().map(|value| 1.0 / value)
     }
 
-    define_output!(
-        positive_output,
-        compressibility,
-        Z,
-        f64,
-        "Compressibility factor",
-        "dimensionless"
-    );
+    /// Mass density per unit of dry air =
+    /// `1` / [`specific_volume_da`](crate::humid_air::HumidAir::specific_volume_da)
+    /// **\[kg dry air/m³\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn density_da(&mut self) -> OutputResult<f64> {
+        self.specific_volume_da().map(|value| 1.0 / value)
+    }
 
-    define_output!(
-        positive_output,
-        conductivity,
-        Conductivity,
-        ThermalConductivity,
-        "Thermal conductivity",
-        "SI units: W/m/K",
-        ThermalConductivity::new::<watt_per_meter_kelvin>
-    );
+    /// Compressibility factor **\[dimensionless\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn compressibility(&mut self) -> OutputResult<f64> {
+        self.positive_output(HumidAirParam::Z)
+    }
 
-    define_output!(
-        positive_output,
-        dew_temperature,
-        TDew,
-        ThermodynamicTemperature,
-        "Dew-point temperature",
-        "SI units: K",
-        ThermodynamicTemperature::new::<kelvin>
-    );
+    /// Thermal conductivity **\[W/m/K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn conductivity(&mut self) -> OutputResult<f64> {
+        self.positive_output(HumidAirParam::Conductivity)
+    }
 
-    define_output!(
-        positive_output,
-        dynamic_viscosity,
-        DynamicViscosity,
-        DynamicViscosity,
-        "Dynamic viscosity",
-        "SI units: Pa·s",
-        DynamicViscosity::new::<pascal_second>
-    );
+    /// Dew-point temperature **\[K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn dew_temperature(&mut self) -> OutputResult<f64> {
+        self.positive_output(HumidAirParam::TDew)
+    }
 
-    define_output!(
-        output,
-        enthalpy,
-        Hha,
-        AvailableEnergy,
-        "Specific enthalpy per unit of humid air",
-        "SI units: J/kg humid air",
-        AvailableEnergy::new::<joule_per_kilogram>
-    );
+    /// Dynamic viscosity **\[Pa·s\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn dynamic_viscosity(&mut self) -> OutputResult<f64> {
+        self.positive_output(HumidAirParam::DynamicViscosity)
+    }
 
-    define_output!(
-        output,
-        enthalpy_da,
-        Hda,
-        AvailableEnergy,
-        "Specific enthalpy per unit of dry air",
-        "SI units: J/kg dry air",
-        AvailableEnergy::new::<joule_per_kilogram>
-    );
+    /// Specific enthalpy per unit of humid air **\[J/kg humid air\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn enthalpy(&mut self) -> OutputResult<f64> {
+        self.output(HumidAirParam::Hha)
+    }
 
-    define_output!(
-        output,
-        entropy,
-        Sha,
-        SpecificHeatCapacity,
-        "Specific entropy per unit of humid air",
-        "SI units: J/kg humid air/K",
-        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
-    );
+    /// Specific enthalpy per unit of dry air **\[J/kg dry air\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn enthalpy_da(&mut self) -> OutputResult<f64> {
+        self.output(HumidAirParam::Hda)
+    }
 
-    define_output!(
-        output,
-        entropy_da,
-        Sda,
-        SpecificHeatCapacity,
-        "Specific entropy per unit of dry air",
-        "SI units: J/kg dry air/K",
-        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
-    );
+    /// Specific entropy per unit of humid air **\[J/kg humid air/K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn entropy(&mut self) -> OutputResult<f64> {
+        self.output(HumidAirParam::Sha)
+    }
 
-    define_output!(
-        positive_output,
-        pressure,
-        P,
-        Pressure,
-        "Pressure",
-        "SI units: Pa",
-        Pressure::new::<pascal>
-    );
+    /// Specific entropy per unit of dry air **\[J/kg dry air/K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn entropy_da(&mut self) -> OutputResult<f64> {
+        self.output(HumidAirParam::Sda)
+    }
 
-    #[doc = output_doc!(R, "Relative humidity", "SI units: dimensionless, from 0 to 1")]
-    pub fn rel_humidity(&mut self) -> OutputResult<Ratio> {
+    /// Pressure **\[Pa\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn pressure(&mut self) -> OutputResult<f64> {
+        self.positive_output(HumidAirParam::P)
+    }
+
+    /// Relative humidity **\[dimensionless, from 0 to 1\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn rel_humidity(&mut self) -> OutputResult<f64> {
         let key = HumidAirParam::R;
         self.output(key)
             .and_then(|value| guard(key, value, |x| (0.0..=1.0).contains(&x)))
-            .map(Ratio::new::<ratio>)
     }
 
-    define_output!(
-        positive_output,
-        specific_heat,
-        Cpha,
-        SpecificHeatCapacity,
-        "Specific heat at constant pressure per unit of humid air",
-        "SI units: J/kg humid air/K",
-        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
-    );
+    /// Specific heat at constant pressure per unit of humid air **\[J/kg humid air/K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn specific_heat(&mut self) -> OutputResult<f64> {
+        self.positive_output(HumidAirParam::Cpha)
+    }
 
-    define_output!(
-        positive_output,
-        specific_heat_da,
-        Cpda,
-        SpecificHeatCapacity,
-        "Specific heat at constant pressure per unit of dry air",
-        "SI units: J/kg dry air/K",
-        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
-    );
+    /// Specific heat at constant pressure per unit of dry air **\[J/kg dry air/K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn specific_heat_da(&mut self) -> OutputResult<f64> {
+        self.positive_output(HumidAirParam::Cpda)
+    }
 
-    define_output!(
-        positive_output,
-        specific_heat_const_volume,
-        Cvha,
-        SpecificHeatCapacity,
-        "Specific heat at constant volume per unit of humid air",
-        "SI units: J/kg humid air/K",
-        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
-    );
+    /// Specific heat at constant volume per unit of humid air **\[J/kg humid air/K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn specific_heat_const_volume(&mut self) -> OutputResult<f64> {
+        self.positive_output(HumidAirParam::Cvha)
+    }
 
-    define_output!(
-        positive_output,
-        specific_heat_const_volume_da,
-        Cvda,
-        SpecificHeatCapacity,
-        "Specific heat at constant volume per unit of dry air",
-        "SI units: J/kg dry air/K",
-        SpecificHeatCapacity::new::<joule_per_kilogram_kelvin>
-    );
+    /// Specific heat at constant volume per unit of dry air **\[J/kg dry air/K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn specific_heat_const_volume_da(&mut self) -> OutputResult<f64> {
+        self.positive_output(HumidAirParam::Cvda)
+    }
 
-    define_output!(
-        positive_output,
-        specific_volume,
-        Vha,
-        SpecificVolume,
-        "Specific volume per unit of humid air",
-        "SI units: m³/kg humid air",
-        SpecificVolume::new::<cubic_meter_per_kilogram>
-    );
+    /// Specific volume per unit of humid air **\[m³/kg humid air\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn specific_volume(&mut self) -> OutputResult<f64> {
+        self.positive_output(HumidAirParam::Vha)
+    }
 
-    define_output!(
-        positive_output,
-        specific_volume_da,
-        Vda,
-        SpecificVolume,
-        "Specific volume per unit of dry air",
-        "SI units: m³/kg dry air",
-        SpecificVolume::new::<cubic_meter_per_kilogram>
-    );
+    /// Specific volume per unit of dry air **\[m³/kg dry air\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn specific_volume_da(&mut self) -> OutputResult<f64> {
+        self.positive_output(HumidAirParam::Vda)
+    }
 
-    define_output!(
-        positive_output,
-        temperature,
-        T,
-        ThermodynamicTemperature,
-        "Dry-bulb temperature",
-        "SI units: K",
-        ThermodynamicTemperature::new::<kelvin>
-    );
+    /// Dry-bulb temperature **\[K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn temperature(&mut self) -> OutputResult<f64> {
+        self.positive_output(HumidAirParam::T)
+    }
 
-    define_output!(
-        non_negative_output,
-        water_mole_fraction,
-        PsiW,
-        Ratio,
-        "Water mole fraction",
-        "SI units: mol water/mol humid air",
-        Ratio::new::<ratio>
-    );
+    /// Water mole fraction **\[mol water/mol humid air\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn water_mole_fraction(&mut self) -> OutputResult<f64> {
+        self.non_negative_output(HumidAirParam::PsiW)
+    }
 
-    define_output!(
-        non_negative_output,
-        water_partial_pressure,
-        Pw,
-        Pressure,
-        "Partial pressure of water vapor",
-        "SI units: Pa",
-        Pressure::new::<pascal>
-    );
+    /// Partial pressure of water vapor **\[Pa\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn water_partial_pressure(&mut self) -> OutputResult<f64> {
+        self.non_negative_output(HumidAirParam::Pw)
+    }
 
-    define_output!(
-        positive_output,
-        wet_bulb_temperature,
-        TWetBulb,
-        ThermodynamicTemperature,
-        "Wet-bulb temperature",
-        "SI units: K",
-        ThermodynamicTemperature::new::<kelvin>
-    );
+    /// Wet-bulb temperature **\[K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available or calculation is failed,
+    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    pub fn wet_bulb_temperature(&mut self) -> OutputResult<f64> {
+        self.positive_output(HumidAirParam::TWetBulb)
+    }
 
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
@@ -310,10 +262,6 @@ impl HumidAir {
     /// ```
     /// use rfluids::humid_air::StateResult;
     /// use rfluids::prelude::*;
-    /// use uom::si::length::meter;
-    /// use uom::si::pressure::atmosphere;
-    /// use uom::si::ratio::percent;
-    /// use uom::si::thermodynamic_temperature::degree_celsius;
     ///
     /// // After creation the `HumidAir` instance has `Undefined` state variant
     /// let mut humid_air: HumidAir<Undefined> = HumidAir::new();
@@ -322,27 +270,27 @@ impl HumidAir {
     /// // perform conversion between `Undefined` and `Defined` state variants
     /// // (since `Defined` is the default state variant, it can be omitted)
     /// let mut humid_air: HumidAir = humid_air.in_state(
-    ///     humid_air_input::altitude!(0.0, meter)?,
-    ///     humid_air_input::temperature!(20.0, degree_celsius),
-    ///     humid_air_input::rel_humidity!(50.0, percent),
+    ///     HumidAirInput::altitude(0.0)?,
+    ///     HumidAirInput::temperature(293.15),
+    ///     HumidAirInput::rel_humidity(0.5),
     /// )?;
     ///
     /// // The `HumidAir` instance now has `Defined` state variant
     /// // and it's thermodynamic state can be updated in place by calling `update` method
     /// // (which returns a mutable reference to the instance)
     /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air.update(
-    ///     humid_air_input::pressure!(2.0, atmosphere),
-    ///     humid_air_input::temperature!(40.0, degree_celsius),
-    ///     humid_air_input::rel_humidity!(75.0, percent),
+    ///     HumidAirInput::pressure(202_650.0),
+    ///     HumidAirInput::temperature(313.15),
+    ///     HumidAirInput::rel_humidity(0.75),
     /// );
     /// assert!(same_humid_air_in_new_state.is_ok());
     ///
     /// // Calling `in_state` method on `HumidAir<Defined>` will return
     /// // a new instance in the specified thermodynamic state
     /// let new_humid_air: StateResult<HumidAir> = humid_air.in_state(
-    ///     humid_air_input::pressure!(4.0, atmosphere),
-    ///     humid_air_input::temperature!(80.0, degree_celsius),
-    ///     humid_air_input::rel_humidity!(100.0, percent),
+    ///     HumidAirInput::pressure(405_300.0),
+    ///     HumidAirInput::temperature(353.15),
+    ///     HumidAirInput::rel_humidity(1.0),
     /// );
     /// assert!(new_humid_air.is_ok());
     /// # Ok::<(), rfluids::error::Error>(())
@@ -379,10 +327,6 @@ impl HumidAir {
     /// ```
     /// use rfluids::humid_air::StateResult;
     /// use rfluids::prelude::*;
-    /// use uom::si::length::meter;
-    /// use uom::si::pressure::atmosphere;
-    /// use uom::si::ratio::percent;
-    /// use uom::si::thermodynamic_temperature::degree_celsius;
     ///
     /// // After creation the `HumidAir` instance has `Undefined` state variant
     /// let mut humid_air: HumidAir<Undefined> = HumidAir::new();
@@ -391,27 +335,27 @@ impl HumidAir {
     /// // perform conversion between `Undefined` and `Defined` state variants
     /// // (since `Defined` is the default state variant, it can be omitted)
     /// let mut humid_air: HumidAir = humid_air.in_state(
-    ///     humid_air_input::altitude!(0.0, meter)?,
-    ///     humid_air_input::temperature!(20.0, degree_celsius),
-    ///     humid_air_input::rel_humidity!(50.0, percent),
+    ///     HumidAirInput::altitude(0.0)?,
+    ///     HumidAirInput::temperature(293.15),
+    ///     HumidAirInput::rel_humidity(0.5),
     /// )?;
     ///
     /// // The `HumidAir` instance now has `Defined` state variant
     /// // and it's thermodynamic state can be updated in place by calling `update` method
     /// // (which returns a mutable reference to the instance)
     /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air.update(
-    ///     humid_air_input::pressure!(2.0, atmosphere),
-    ///     humid_air_input::temperature!(40.0, degree_celsius),
-    ///     humid_air_input::rel_humidity!(75.0, percent),
+    ///     HumidAirInput::pressure(202_650.0),
+    ///     HumidAirInput::temperature(313.15),
+    ///     HumidAirInput::rel_humidity(0.75),
     /// );
     /// assert!(same_humid_air_in_new_state.is_ok());
     ///
     /// // Calling `in_state` method on `HumidAir<Defined>` will return
     /// // a new instance in the specified thermodynamic state
     /// let new_humid_air: StateResult<HumidAir> = humid_air.in_state(
-    ///     humid_air_input::pressure!(4.0, atmosphere),
-    ///     humid_air_input::temperature!(80.0, degree_celsius),
-    ///     humid_air_input::rel_humidity!(100.0, percent),
+    ///     HumidAirInput::pressure(405_300.0),
+    ///     HumidAirInput::temperature(353.15),
+    ///     HumidAirInput::rel_humidity(1.0),
     /// );
     /// assert!(new_humid_air.is_ok());
     /// # Ok::<(), rfluids::error::Error>(())
@@ -464,21 +408,17 @@ impl PartialEq for HumidAir {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{error::HumidAirStateError, io::humid_air_input, test::humid_air::test_output};
+    use crate::{error::HumidAirStateError, test::test_output};
     use rstest::*;
-    use uom::si::{
-        length::meter, pressure::atmosphere, ratio::percent,
-        thermodynamic_temperature::degree_celsius,
-    };
 
     #[fixture]
     fn altitude(#[default(0.0)] value: f64) -> HumidAirInput {
-        humid_air_input::altitude!(value, meter).unwrap()
+        HumidAirInput::altitude(value).unwrap()
     }
 
     #[fixture]
-    fn pressure(#[default(1.0)] value: f64) -> HumidAirInput {
-        humid_air_input::pressure!(value, atmosphere)
+    fn pressure(#[default(101_325.0)] value: f64) -> HumidAirInput {
+        HumidAirInput::pressure(value)
     }
 
     #[fixture]
@@ -487,13 +427,13 @@ mod tests {
     }
 
     #[fixture]
-    fn temperature(#[default(20.0)] value: f64) -> HumidAirInput {
-        humid_air_input::temperature!(value, degree_celsius)
+    fn temperature(#[default(293.15)] value: f64) -> HumidAirInput {
+        HumidAirInput::temperature(value)
     }
 
     #[fixture]
-    fn relative_humidity(#[default(50.0)] value: f64) -> HumidAirInput {
-        humid_air_input::rel_humidity!(value, percent)
+    fn relative_humidity(#[default(0.5)] value: f64) -> HumidAirInput {
+        HumidAirInput::rel_humidity(value)
     }
 
     #[fixture]
@@ -518,146 +458,29 @@ mod tests {
             .unwrap()
     }
 
-    test_output!(
-        abs_humidity,
-        humid_air,
-        7.293_697_701_992_549e-3,
-        invalid_humid_air
-    );
-
-    test_output!(
-        density,
-        humid_air,
-        1.199_359_276_772_349_3,
-        invalid_humid_air
-    );
-
-    test_output!(
-        density_da,
-        humid_air,
-        1.190_674_854_323_549_2,
-        invalid_humid_air
-    );
-
-    test_output!(
-        f64,
-        compressibility,
-        humid_air,
-        0.999_594_693_604_325_6,
-        invalid_humid_air
-    );
-
-    test_output!(
-        conductivity,
-        humid_air,
-        2.586_613_250_369_777_4e-2,
-        invalid_humid_air
-    );
-
-    test_output!(
-        dew_temperature,
-        humid_air,
-        282.424_425_814_578_2,
-        invalid_humid_air
-    );
-
-    test_output!(
-        dynamic_viscosity,
-        humid_air,
-        1.814_316_044_123_345e-5,
-        invalid_humid_air
-    );
-
-    test_output!(
-        enthalpy,
-        humid_air,
-        38_343.175_393_657_12,
-        invalid_humid_air
-    );
-
-    test_output!(
-        enthalpy_da,
-        humid_air,
-        38_622.838_923_912_93,
-        invalid_humid_air
-    );
-
-    test_output!(entropy, humid_air, 138.956_660_316_574_3, invalid_humid_air);
-
-    test_output!(
-        entropy_da,
-        humid_air,
-        139.970_168_190_601_87,
-        invalid_humid_air
-    );
-
-    test_output!(pressure, humid_air, 101_325.0, invalid_humid_air);
-    test_output!(rel_humidity, humid_air, 0.5, invalid_humid_air);
-
-    test_output!(
-        specific_heat,
-        humid_air,
-        1_012.467_815_774_874_7,
-        invalid_humid_air
-    );
-
-    test_output!(
-        specific_heat_da,
-        humid_air,
-        1_019.852_449_956_133_3,
-        invalid_humid_air
-    );
-
-    test_output!(
-        specific_heat_const_volume,
-        humid_air,
-        722.687_189_706_325_1,
-        invalid_humid_air
-    );
-
-    test_output!(
-        specific_heat_const_volume_da,
-        humid_air,
-        727.958_251_601_145_5,
-        invalid_humid_air
-    );
-
-    test_output!(
-        specific_volume,
-        humid_air,
-        0.833_778_517_719_182_3,
-        invalid_humid_air
-    );
-
-    test_output!(
-        specific_volume_da,
-        humid_air,
-        0.839_859_846_177_841_6,
-        invalid_humid_air
-    );
-
-    test_output!(temperature, humid_air, 293.15, invalid_humid_air);
-
-    test_output!(
-        water_mole_fraction,
-        humid_air,
-        1.159_130_506_217_982_9e-2,
-        invalid_humid_air
-    );
-
-    test_output!(
-        water_partial_pressure,
-        humid_air,
-        1_174.488_985_425_371,
-        invalid_humid_air
-    );
-
-    test_output!(
-        wet_bulb_temperature,
-        humid_air,
-        286.926_468_858_340_74,
-        invalid_humid_air
-    );
+    test_output!(HumidAir: abs_humidity, humid_air: 7.293_697_701_992_549e-3, invalid_humid_air: Err);
+    test_output!(HumidAir: density, humid_air: 1.199_359_276_772_349_3, invalid_humid_air: Err);
+    test_output!(HumidAir: density_da, humid_air: 1.190_674_854_323_549_2, invalid_humid_air: Err);
+    test_output!(HumidAir: compressibility, humid_air: 0.999_594_693_604_325_6, invalid_humid_air: Err);
+    test_output!(HumidAir: conductivity, humid_air: 2.586_613_250_369_777_4e-2, invalid_humid_air: Err);
+    test_output!(HumidAir: dew_temperature, humid_air: 282.424_425_814_578_2, invalid_humid_air: Err);
+    test_output!(HumidAir: dynamic_viscosity, humid_air: 1.814_316_044_123_345e-5, invalid_humid_air: Err);
+    test_output!(HumidAir: enthalpy, humid_air: 38_343.175_393_657_12, invalid_humid_air: Err);
+    test_output!(HumidAir: enthalpy_da, humid_air: 38_622.838_923_912_93, invalid_humid_air: Err);
+    test_output!(HumidAir: entropy, humid_air: 138.956_660_316_574_3, invalid_humid_air: Err);
+    test_output!(HumidAir: entropy_da, humid_air: 139.970_168_190_601_87, invalid_humid_air: Err);
+    test_output!(HumidAir: pressure, humid_air: 101_325.0, invalid_humid_air: Err);
+    test_output!(HumidAir: rel_humidity, humid_air: 0.5, invalid_humid_air: Err);
+    test_output!(HumidAir: specific_heat, humid_air: 1_012.467_815_774_874_7, invalid_humid_air: Err);
+    test_output!(HumidAir: specific_heat_da, humid_air: 1_019.852_449_956_133_3, invalid_humid_air: Err);
+    test_output!(HumidAir: specific_heat_const_volume, humid_air: 722.687_189_706_325_1, invalid_humid_air: Err);
+    test_output!(HumidAir: specific_heat_const_volume_da, humid_air: 727.958_251_601_145_5, invalid_humid_air: Err);
+    test_output!(HumidAir: specific_volume, humid_air: 0.833_778_517_719_182_3, invalid_humid_air: Err);
+    test_output!(HumidAir: specific_volume_da, humid_air: 0.839_859_846_177_841_6, invalid_humid_air: Err);
+    test_output!(HumidAir: temperature, humid_air: 293.15, invalid_humid_air: Err);
+    test_output!(HumidAir: water_mole_fraction, humid_air: 1.159_130_506_217_982_9e-2, invalid_humid_air: Err);
+    test_output!(HumidAir: water_partial_pressure, humid_air: 1_174.488_985_425_371, invalid_humid_air: Err);
+    test_output!(HumidAir: wet_bulb_temperature, humid_air: 286.926_468_858_340_74, invalid_humid_air: Err);
 
     #[rstest]
     fn update_valid_inputs_returns_ok(

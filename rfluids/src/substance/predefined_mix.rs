@@ -12,7 +12,7 @@ use strum_macros::{AsRefStr, EnumString};
 ///
 /// ```
 /// use std::str::FromStr;
-/// use rfluids::substance::PredefinedMix;
+/// use rfluids::prelude::*;
 ///
 /// assert_eq!(PredefinedMix::R444A.as_ref(), "R444A.mix");
 /// assert_eq!(PredefinedMix::from_str("R444A.mix"), Ok(PredefinedMix::R444A));

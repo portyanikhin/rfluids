@@ -11,7 +11,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 ///
 /// ```
 /// use std::str::FromStr;
-/// use rfluids::io::FluidParam;
+/// use rfluids::prelude::*;
 ///
 /// assert_eq!(FluidParam::Conductivity.as_ref(), "conductivity");
 /// assert_eq!(FluidParam::from_str("conductivity"), Ok(FluidParam::Conductivity));
@@ -21,7 +21,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// Conversion between [`u8`]:
 ///
 /// ```
-/// use rfluids::io::FluidParam;
+/// use rfluids::prelude::*;
 ///
 /// assert_eq!(u8::from(FluidParam::Conductivity), 46);
 /// assert_eq!(FluidParam::try_from(46), Ok(FluidParam::Conductivity));
@@ -30,7 +30,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// Conversion between [`f64`]:
 ///
 /// ```
-/// use rfluids::io::FluidParam;
+/// use rfluids::prelude::*;
 ///
 /// assert_eq!(FluidParam::try_from(46.0), Ok(FluidParam::Conductivity));
 /// ```
@@ -38,7 +38,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// Conversion between [`FluidInputPair`](crate::io::FluidInputPair):
 ///
 /// ```
-/// use rfluids::io::{FluidInputPair, FluidParam};
+/// use rfluids::prelude::*;
 ///
 /// assert_eq!(
 ///     <(FluidParam, FluidParam)>::from(FluidInputPair::PT),
@@ -57,131 +57,131 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
 pub enum FluidParam {
-    /// Temperature _(K)_.
+    /// Temperature **\[K\]**.
     #[strum(to_string = "T")]
     T = 19,
 
-    /// Pressure _(Pa)_.
+    /// Pressure **\[Pa\]**.
     #[strum(to_string = "P")]
     P = 20,
 
-    /// Vapor quality _(dimensionless, from 0 to 1)_.
+    /// Vapor quality **\[dimensionless, from 0 to 1\]**.
     #[strum(to_string = "Q")]
     Q = 21,
 
     /// Reciprocal reduced temperature =
     /// [`TCritical`](FluidTrivialParam::TCritical)/[`T`](FluidParam::T)
-    /// _(dimensionless)_.
+    /// **\[dimensionless\]**.
     #[strum(to_string = "Tau")]
     Tau = 22,
 
     /// Reduced density =
     /// [`DMass`](FluidParam::DMass)/[`DMassCritical`](FluidTrivialParam::DMassCritical)
-    /// _(dimensionless)_.
+    /// **\[dimensionless\]**.
     #[strum(to_string = "Delta")]
     Delta = 23,
 
-    /// Molar density _(mol/m³)_.
+    /// Molar density **\[mol/m³\]**.
     #[strum(to_string = "Dmolar")]
     DMolar = 24,
 
-    /// Molar specific enthalpy _(J/mol)_.
+    /// Molar specific enthalpy **\[J/mol\]**.
     #[strum(to_string = "Hmolar")]
     HMolar = 25,
 
-    /// Molar specific entropy _(J/mol/K)_.
+    /// Molar specific entropy **\[J/mol/K\]**.
     #[strum(to_string = "Smolar")]
     SMolar = 26,
 
-    /// Molar specific heat at constant pressure _(J/mol/K)_.
+    /// Molar specific heat at constant pressure **\[J/mol/K\]**.
     #[strum(to_string = "Cpmolar")]
     CpMolar = 27,
 
-    /// Ideal gas molar specific heat at constant pressure _(J/mol/K)_.
+    /// Ideal gas molar specific heat at constant pressure **\[J/mol/K\]**.
     #[strum(to_string = "Cp0molar")]
     Cp0Molar = 28,
 
-    /// Molar specific heat at constant volume _(J/mol/K)_.
+    /// Molar specific heat at constant volume **\[J/mol/K\]**.
     #[strum(to_string = "Cvmolar")]
     CvMolar = 29,
 
-    /// Molar specific internal energy _(J/mol)_.
+    /// Molar specific internal energy **\[J/mol\]**.
     #[strum(to_string = "Umolar")]
     UMolar = 30,
 
-    /// Molar specific Gibbs energy _(J/mol)_.
+    /// Molar specific Gibbs energy **\[J/mol\]**.
     #[strum(to_string = "Gmolar")]
     GMolar = 31,
 
-    /// Molar specific Helmholtz energy _(J/mol)_.
+    /// Molar specific Helmholtz energy **\[J/mol\]**.
     #[strum(to_string = "Helmholtzmolar")]
     HelmholtzMolar = 32,
 
-    /// Residual molar specific enthalpy _(J/mol)_.
+    /// Residual molar specific enthalpy **\[J/mol\]**.
     #[strum(to_string = "Hmolar_residual")]
     HMolarResidual = 33,
 
-    /// Residual molar specific entropy _(J/mol/K)_.
+    /// Residual molar specific entropy **\[J/mol/K\]**.
     #[strum(to_string = "Smolar_residual")]
     SMolarResidual = 34,
 
-    /// Residual molar specific Gibbs energy _(J/mol)_.
+    /// Residual molar specific Gibbs energy **\[J/mol\]**.
     #[strum(to_string = "Gmolar_residual")]
     GMolarResidual = 35,
 
-    /// Mass density _(kg/m³)_.
+    /// Mass density **\[kg/m³\]**.
     #[strum(to_string = "Dmass", serialize = "D")]
     DMass = 36,
 
-    /// Mass specific enthalpy _(J/kg)_.
+    /// Mass specific enthalpy **\[J/kg\]**.
     #[strum(to_string = "Hmass", serialize = "H")]
     HMass = 37,
 
-    /// Mass specific entropy _(J/kg/K)_.
+    /// Mass specific entropy **\[J/kg/K\]**.
     #[strum(to_string = "Smass", serialize = "S")]
     SMass = 38,
 
-    /// Mass specific heat at constant pressure _(J/kg/K)_.
+    /// Mass specific heat at constant pressure **\[J/kg/K\]**.
     #[strum(to_string = "Cpmass", serialize = "C")]
     CpMass = 39,
 
-    /// Ideal gas mass specific heat at constant pressure _(J/kg/K)_.
+    /// Ideal gas mass specific heat at constant pressure **\[J/kg/K\]**.
     #[strum(to_string = "Cp0mass")]
     Cp0Mass = 40,
 
-    /// Mass specific heat at constant volume _(J/kg/K)_.
+    /// Mass specific heat at constant volume **\[J/kg/K\]**.
     #[strum(to_string = "Cvmass", serialize = "O")]
     CvMass = 41,
 
-    /// Mass specific internal energy _(J/kg)_.
+    /// Mass specific internal energy **\[J/kg\]**.
     #[strum(to_string = "Umass", serialize = "U")]
     UMass = 42,
 
-    /// Mass specific Gibbs energy _(J/kg)_.
+    /// Mass specific Gibbs energy **\[J/kg\]**.
     #[strum(to_string = "Gmass", serialize = "G")]
     GMass = 43,
 
-    /// Mass specific Helmholtz energy _(J/kg)_.
+    /// Mass specific Helmholtz energy **\[J/kg\]**.
     #[strum(to_string = "Helmholtzmass")]
     HelmholtzMass = 44,
 
-    /// Dynamic viscosity _(Pa·s)_.
+    /// Dynamic viscosity **\[Pa·s\]**.
     #[strum(to_string = "viscosity", serialize = "V")]
     DynamicViscosity = 45,
 
-    /// Thermal conductivity _(W/m/K)_.
+    /// Thermal conductivity **\[W/m/K\]**.
     #[strum(to_string = "conductivity", serialize = "L")]
     Conductivity = 46,
 
-    /// Surface tension _(N/m)_.
+    /// Surface tension **\[N/m\]**.
     #[strum(to_string = "surface_tension", serialize = "I")]
     SurfaceTension = 47,
 
-    /// Prandtl number _(dimensionless)_.
+    /// Prandtl number **\[dimensionless\]**.
     #[strum(to_string = "Prandtl")]
     Prandtl = 48,
 
-    /// Sound speed _(m/s)_.
+    /// Sound speed **\[m/s\]**.
     #[strum(
         to_string = "speed_sound",
         serialize = "speed_of_sound",
@@ -189,87 +189,87 @@ pub enum FluidParam {
     )]
     SoundSpeed = 49,
 
-    /// Isothermal compressibility _(1/Pa)_.
+    /// Isothermal compressibility **\[1/Pa\]**.
     #[strum(to_string = "isothermal_compressibility")]
     IsothermalCompressibility = 50,
 
-    /// Isobaric expansion coefficient _(1/K)_.
+    /// Isobaric expansion coefficient **\[1/K\]**.
     #[strum(to_string = "isobaric_expansion_coefficient")]
     IsobaricExpansionCoefficient = 51,
 
-    /// Isentropic expansion coefficient _(dimensionless)_.
+    /// Isentropic expansion coefficient **\[dimensionless\]**.
     #[strum(to_string = "isentropic_expansion_coefficient")]
     IsentropicExpansionCoefficient = 52,
 
-    /// Fundamental derivative of gas dynamics _(dimensionless)_.
+    /// Fundamental derivative of gas dynamics **\[dimensionless\]**.
     #[strum(to_string = "fundamental_derivative_of_gas_dynamics")]
     FundamentalDerivativeOfGasDynamics = 53,
 
-    /// Residual Helmholtz energy contribution _(dimensionless)_.
+    /// Residual Helmholtz energy contribution **\[dimensionless\]**.
     #[strum(to_string = "alphar")]
     AlphaR = 54,
 
     /// Derivative of residual Helmholtz energy contribution
-    /// with _[`Tau`](FluidParam::Tau) (dimensionless)_.
+    /// with [`Tau`](FluidParam::Tau) **\[dimensionless\]**.
     #[strum(to_string = "dalphar_dtau_constdelta")]
     DAlphaRDTauConstDelta = 55,
 
     /// Derivative of residual Helmholtz energy contribution
-    /// with _[`Delta`](FluidParam::Delta) (dimensionless)_.
+    /// with [`Delta`](FluidParam::Delta) **\[dimensionless\]**.
     #[strum(to_string = "dalphar_ddelta_consttau")]
     DAlphaRDDeltaConstTau = 56,
 
-    /// Ideal gas Helmholtz energy contribution _(dimensionless)_.
+    /// Ideal gas Helmholtz energy contribution **\[dimensionless\]**.
     #[strum(to_string = "alpha0")]
     Alpha0 = 57,
 
     /// Derivative of ideal gas Helmholtz energy contribution
-    /// with _[`Tau`](FluidParam::Tau) (dimensionless)_.
+    /// with [`Tau`](FluidParam::Tau) **\[dimensionless\]**.
     #[strum(to_string = "dalpha0_dtau_constdelta")]
     DAlpha0DTauConstDelta = 58,
 
     /// Derivative of ideal gas Helmholtz energy contribution
-    /// with _[`Delta`](FluidParam::Delta) (dimensionless)_.
+    /// with [`Delta`](FluidParam::Delta) **\[dimensionless\]**.
     #[strum(to_string = "dalpha0_ddelta_consttau")]
     DAlpha0DDeltaConstTau = 59,
 
     /// Second derivative of ideal gas Helmholtz energy contribution
-    /// with _[`Delta`](FluidParam::Delta) (dimensionless)_.
+    /// with [`Delta`](FluidParam::Delta) **\[dimensionless\]**.
     #[strum(to_string = "d2alpha0_ddelta2_consttau")]
     D2Alpha0DDelta2ConstTau = 60,
 
     /// Third derivative of ideal gas Helmholtz energy contribution
-    /// with _[`Delta`](FluidParam::Delta) (dimensionless)_.
+    /// with [`Delta`](FluidParam::Delta) **\[dimensionless\]**.
     #[strum(to_string = "d3alpha0_ddelta3_consttau")]
     D3Alpha0DDelta3ConstTau = 61,
 
-    /// Second virial coefficient _(dimensionless)_.
+    /// Second virial coefficient **\[dimensionless\]**.
     #[strum(to_string = "Bvirial")]
     BVirial = 62,
 
-    /// Third virial coefficient _(dimensionless)_.
+    /// Third virial coefficient **\[dimensionless\]**.
     #[strum(to_string = "Cvirial")]
     CVirial = 63,
 
     /// Derivative of second virial coefficient
-    /// with _[`T`](FluidParam::T) (dimensionless)_.
+    /// with [`T`](FluidParam::T) **\[dimensionless\]**.
     #[strum(to_string = "dBvirial_dT")]
     DBVirialDT = 64,
 
     /// Derivative of third virial coefficient
-    /// with _[`T`](FluidParam::T) (dimensionless)_.
+    /// with [`T`](FluidParam::T) **\[dimensionless\]**.
     #[strum(to_string = "dCvirial_dT")]
     DCVirialDT = 65,
 
-    /// Compressibility factor _(dimensionless)_.
+    /// Compressibility factor **\[dimensionless\]**.
     #[strum(to_string = "Z")]
     Z = 66,
 
-    /// Phase identification parameter _(dimensionless)_.
+    /// Phase identification parameter **\[dimensionless\]**.
     #[strum(to_string = "PIP")]
     PIP = 67,
 
-    /// Phase index _(dimensionless)_.
+    /// Phase index **\[dimensionless\]**.
     #[strum(to_string = "Phase")]
     Phase = 78,
 }
@@ -304,7 +304,7 @@ impl TryFrom<f64> for FluidParam {
 ///
 /// ```
 /// use std::str::FromStr;
-/// use rfluids::io::FluidTrivialParam;
+/// use rfluids::prelude::*;
 ///
 /// assert_eq!(FluidTrivialParam::TMin.as_ref(), "T_min");
 /// assert_eq!(FluidTrivialParam::from_str("T_min"), Ok(FluidTrivialParam::TMin));
@@ -314,7 +314,7 @@ impl TryFrom<f64> for FluidParam {
 /// Conversion between [`u8`]:
 ///
 /// ```
-/// use rfluids::io::FluidTrivialParam;
+/// use rfluids::prelude::*;
 ///
 /// assert_eq!(u8::from(FluidTrivialParam::TMax), 15);
 /// assert_eq!(FluidTrivialParam::try_from(15), Ok(FluidTrivialParam::TMax));
@@ -323,7 +323,7 @@ impl TryFrom<f64> for FluidParam {
 /// Conversion between [`f64`]:
 ///
 /// ```
-/// use rfluids::io::FluidTrivialParam;
+/// use rfluids::prelude::*;
 ///
 /// assert_eq!(FluidTrivialParam::try_from(15.0), Ok(FluidTrivialParam::TMax));
 /// ```
@@ -335,11 +335,11 @@ impl TryFrom<f64> for FluidParam {
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
 pub enum FluidTrivialParam {
-    /// Molar gas constant _(J/mol/K)_.
+    /// Molar gas constant **\[J/mol/K\]**.
     #[strum(to_string = "gas_constant")]
     GasConstant = 1,
 
-    /// Molar mass _(kg/mol)_.
+    /// Molar mass **\[kg/mol\]**.
     #[strum(
         to_string = "molar_mass",
         serialize = "M",
@@ -348,109 +348,109 @@ pub enum FluidTrivialParam {
     )]
     MolarMass = 2,
 
-    /// Acentric factor _(dimensionless)_.
+    /// Acentric factor **\[dimensionless\]**.
     #[strum(to_string = "acentric_factor", serialize = "acentric")]
     AcentricFactor = 3,
 
-    /// Reducing point molar density _(mol/m³)_.
+    /// Reducing point molar density **\[mol/m³\]**.
     #[strum(to_string = "rhomolar_reducing")]
     DMolarReducing = 4,
 
-    /// Critical point molar density _(mol/m³)_.
+    /// Critical point molar density **\[mol/m³\]**.
     #[strum(to_string = "rhomolar_critical")]
     DMolarCritical = 5,
 
-    /// Reducing point temperature _(K)_.
+    /// Reducing point temperature **\[K\]**.
     #[strum(to_string = "T_reducing")]
     TReducing = 6,
 
-    /// Critical point temperature _(K)_.
+    /// Critical point temperature **\[K\]**.
     #[strum(to_string = "T_critical", serialize = "Tcrit")]
     TCritical = 7,
 
-    /// Reducing point mass density _(kg/m³)_.
+    /// Reducing point mass density **\[kg/m³\]**.
     #[strum(to_string = "rhomass_reducing")]
     DMassReducing = 8,
 
-    /// Critical point mass density _(kg/m³)_.
+    /// Critical point mass density **\[kg/m³\]**.
     #[strum(to_string = "rhomass_critical", serialize = "rhocrit")]
     DMassCritical = 9,
 
-    /// Critical point pressure _(Pa)_.
+    /// Critical point pressure **\[Pa\]**.
     #[strum(to_string = "P_critical", serialize = "Pcrit")]
     PCritical = 10,
 
-    /// Reducing point pressure _(Pa)_.
+    /// Reducing point pressure **\[Pa\]**.
     #[strum(to_string = "P_reducing")]
     PReducing = 11,
 
-    /// Triple point temperature _(K)_.
+    /// Triple point temperature **\[K\]**.
     #[strum(to_string = "T_triple", serialize = "Ttriple")]
     TTriple = 12,
 
-    /// Triple point pressure _(Pa)_.
+    /// Triple point pressure **\[Pa\]**.
     #[strum(to_string = "P_triple", serialize = "Ptriple")]
     PTriple = 13,
 
-    /// Minimum temperature _(K)_.
+    /// Minimum temperature **\[K\]**.
     #[strum(to_string = "T_min", serialize = "Tmin")]
     TMin = 14,
 
-    /// Maximum temperature _(K)_.
+    /// Maximum temperature **\[K\]**.
     #[strum(to_string = "T_max", serialize = "Tmax")]
     TMax = 15,
 
-    /// Maximum pressure _(Pa)_.
+    /// Maximum pressure **\[Pa\]**.
     #[strum(to_string = "P_max", serialize = "Pmax")]
     PMax = 16,
 
-    /// Minimum pressure _(Pa)_.
+    /// Minimum pressure **\[Pa\]**.
     #[strum(to_string = "P_min", serialize = "Pmin")]
     PMin = 17,
 
-    /// Dipole moment (C*m).
+    /// Dipole moment **\[C*m\]**.
     #[strum(to_string = "dipole_moment")]
     DipoleMoment = 18,
 
-    /// Minimum fraction (mole, mass or volume) value
-    /// for incompressible mixtures _(dimensionless, from 0 to 1)_.
+    /// Minimum fraction _(mole, mass or volume)_ value
+    /// for incompressible mixtures **\[dimensionless, from 0 to 1\]**.
     #[strum(to_string = "fraction_min")]
     MinFraction = 68,
 
-    /// Maximum fraction (mole, mass or volume) value
-    /// for incompressible mixtures _(dimensionless, from 0 to 1)_.
+    /// Maximum fraction _(mole, mass or volume)_ value
+    /// for incompressible mixtures **\[dimensionless, from 0 to 1\]**.
     #[strum(to_string = "fraction_max")]
     MaxFraction = 69,
 
-    /// Freezing temperature for incompressible mixtures _(K)_.
+    /// Freezing temperature for incompressible mixtures **\[K\]**.
     #[strum(to_string = "T_freeze")]
     TFreeze = 70,
 
-    /// 20-year global warming potential _(dimensionless)_.
+    /// 20-year global warming potential **\[dimensionless\]**.
     #[strum(to_string = "GWP20")]
     GWP20 = 71,
 
-    /// 100-year global warming potential _(dimensionless)_.
+    /// 100-year global warming potential **\[dimensionless\]**.
     #[strum(to_string = "GWP100")]
     GWP100 = 72,
 
-    /// 500-year global warming potential _(dimensionless)_.
+    /// 500-year global warming potential **\[dimensionless\]**.
     #[strum(to_string = "GWP500")]
     GWP500 = 73,
 
-    /// Flammability hazard index _(dimensionless)_.
+    /// Flammability hazard index **\[dimensionless\]**.
     #[strum(to_string = "FH")]
     FH = 74,
 
-    /// Health hazard index _(dimensionless)_.
+    /// Health hazard index **\[dimensionless\]**.
     #[strum(to_string = "HH")]
     HH = 75,
 
-    /// Physical hazard index _(dimensionless)_.
+    /// Physical hazard index **\[dimensionless\]**.
     #[strum(to_string = "PH")]
     PH = 76,
 
-    /// Ozone depletion potential _(dimensionless)_.
+    /// Ozone depletion potential **\[dimensionless\]**.
     #[strum(to_string = "ODP")]
     ODP = 77,
 }

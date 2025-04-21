@@ -1,378 +1,141 @@
-//! [`Fluid`](crate::fluid::Fluid) input.
-//!
-//! # Examples
-//!
-//! ```
-//! use rfluids::prelude::*;
-//! use uom::si::pressure::atmosphere;
-//!
-//! let pressure = fluid_input::pressure!(1.0, atmosphere);
-//! let pressure_si = fluid_input::pressure!(101325.0);
-//! assert_eq!(pressure, pressure_si);
-//! assert_eq!(pressure, FluidInput::pressure(Pressure::new::<atmosphere>(1.0)));
-//! assert_eq!(pressure_si, FluidInput::pressure_si(101325.0));
-//! ```
+use super::{FluidParam, Input};
 
-use super::{FluidParam, define_input, define_input_macro, impl_input};
-use uom::si::f64::{
-    AvailableEnergy, MassDensity, MolarConcentration, MolarEnergy, MolarHeatCapacity, Pressure,
-    Ratio, SpecificHeatCapacity, SpecificVolume, ThermodynamicTemperature,
-};
-
-/// [`Fluid`](crate::fluid::Fluid) input.
+/// [`Fluid`](crate::fluid::Fluid) input parameter with specified value.
 ///
 /// # Examples
 ///
 /// ```
 /// use rfluids::prelude::*;
-/// use uom::si::pressure::atmosphere;
 ///
-/// let pressure = fluid_input::pressure!(1.0, atmosphere);
-/// let pressure_si = fluid_input::pressure!(101325.0);
-/// assert_eq!(pressure, pressure_si);
-/// assert_eq!(pressure, FluidInput::pressure(Pressure::new::<atmosphere>(1.0)));
-/// assert_eq!(pressure_si, FluidInput::pressure_si(101325.0));
+/// let pressure = FluidInput::pressure(101_325.0);
 /// ```
-#[derive(Debug, Copy, Clone, PartialEq)]
-pub struct FluidInput(pub(crate) FluidParam, pub(crate) f64);
-
-impl_input!(FluidInput, FluidParam);
+pub type FluidInput = Input<FluidParam>;
 
 impl FluidInput {
-    define_input!(
-        fluid_input,
-        density,
-        FluidParam,
-        DMass,
-        MassDensity,
-        "Mass density",
-        "kg/m³"
-    );
+    /// Mass density **\[kg/m³\]**.
+    #[must_use]
+    pub fn density(value: f64) -> Self {
+        Self {
+            key: FluidParam::DMass,
+            value,
+        }
+    }
 
-    define_input!(
-        fluid_input,
-        enthalpy,
-        FluidParam,
-        HMass,
-        AvailableEnergy,
-        "Mass specific enthalpy",
-        "J/kg"
-    );
+    /// Mass specific enthalpy **\[J/kg\]**.
+    #[must_use]
+    pub fn enthalpy(value: f64) -> Self {
+        Self {
+            key: FluidParam::HMass,
+            value,
+        }
+    }
 
-    define_input!(
-        fluid_input,
-        entropy,
-        FluidParam,
-        SMass,
-        SpecificHeatCapacity,
-        "Mass specific entropy",
-        "J/kg/K"
-    );
+    /// Mass specific entropy **\[J/kg/K\]**.
+    #[must_use]
+    pub fn entropy(value: f64) -> Self {
+        Self {
+            key: FluidParam::SMass,
+            value,
+        }
+    }
 
-    define_input!(
-        fluid_input,
-        internal_energy,
-        FluidParam,
-        UMass,
-        AvailableEnergy,
-        "Mass specific internal energy",
-        "J/kg"
-    );
+    /// Mass specific internal energy **\[J/kg\]**.
+    #[must_use]
+    pub fn internal_energy(value: f64) -> Self {
+        Self {
+            key: FluidParam::UMass,
+            value,
+        }
+    }
 
-    define_input!(
-        fluid_input,
-        molar_density,
-        FluidParam,
-        DMolar,
-        MolarConcentration,
-        "Molar density",
-        "mol/m³"
-    );
+    /// Molar density **\[mol/m³\]**.
+    #[must_use]
+    pub fn molar_density(value: f64) -> Self {
+        Self {
+            key: FluidParam::DMolar,
+            value,
+        }
+    }
 
-    define_input!(
-        fluid_input,
-        molar_enthalpy,
-        FluidParam,
-        HMolar,
-        MolarEnergy,
-        "Molar specific enthalpy",
-        "J/mol"
-    );
+    /// Molar specific enthalpy **\[J/mol\]**.
+    #[must_use]
+    pub fn molar_enthalpy(value: f64) -> Self {
+        Self {
+            key: FluidParam::HMolar,
+            value,
+        }
+    }
 
-    define_input!(
-        fluid_input,
-        molar_entropy,
-        FluidParam,
-        SMolar,
-        MolarHeatCapacity,
-        "Molar specific entropy",
-        "J/mol/K"
-    );
+    /// Molar specific entropy **\[J/mol/K\]**.
+    #[must_use]
+    pub fn molar_entropy(value: f64) -> Self {
+        Self {
+            key: FluidParam::SMolar,
+            value,
+        }
+    }
 
-    define_input!(
-        fluid_input,
-        molar_internal_energy,
-        FluidParam,
-        UMolar,
-        MolarEnergy,
-        "Molar specific internal energy",
-        "J/mol"
-    );
+    /// Molar specific internal energy **\[J/mol\]**.
+    #[must_use]
+    pub fn molar_internal_energy(value: f64) -> Self {
+        Self {
+            key: FluidParam::UMolar,
+            value,
+        }
+    }
 
-    define_input!(
-        fluid_input,
-        pressure,
-        FluidParam,
-        P,
-        Pressure,
-        "Pressure",
-        "Pa"
-    );
+    /// Pressure **\[Pa\]**.
+    #[must_use]
+    pub fn pressure(value: f64) -> Self {
+        Self {
+            key: FluidParam::P,
+            value,
+        }
+    }
 
-    define_input!(
-        fluid_input,
-        quality,
-        FluidParam,
-        Q,
-        Ratio,
-        "Vapor quality",
-        "dimensionless, from 0 to 1"
-    );
+    /// Vapor quality **\[dimensionless, from 0 to 1\]**.
+    #[must_use]
+    pub fn quality(value: f64) -> Self {
+        Self {
+            key: FluidParam::Q,
+            value,
+        }
+    }
 
-    /// Specific volume _(SI units: m³/kg)_.
+    /// Specific volume **\[m³/kg\]**.
     ///
     /// **NB.** It will be converted to the [`density`](Self::density),
     /// since there is no specific [`FluidParam`] for this.
-    ///
-    /// # See also
-    ///
-    /// - [`fluid_input::specific_volume!`](crate::io::fluid_input::specific_volume) macro
-    /// - [`specific_volume_si`](Self::specific_volume_si)
     #[must_use]
-    pub fn specific_volume(value: SpecificVolume) -> Self {
-        Self::specific_volume_si(value.value)
+    pub fn specific_volume(value: f64) -> Self {
+        Self::density(1.0 / value)
     }
 
-    /// Specific volume in SI units _(m³/kg)_.
-    ///
-    /// **NB.** It will be converted to the [`density_si`](Self::density_si),
-    /// since there is no specific [`FluidParam`] for this.
-    ///
-    /// # See also
-    ///
-    /// - [`fluid_input::specific_volume!`](crate::io::fluid_input::specific_volume) macro
-    /// - [`specific_volume`](Self::specific_volume)
+    /// Temperature **\[K\]**.
     #[must_use]
-    pub fn specific_volume_si(value: f64) -> Self {
-        Self::density_si(1.0 / value)
+    pub fn temperature(value: f64) -> Self {
+        Self {
+            key: FluidParam::T,
+            value,
+        }
     }
-
-    define_input!(
-        fluid_input,
-        temperature,
-        FluidParam,
-        T,
-        ThermodynamicTemperature,
-        "Temperature",
-        "K"
-    );
 }
-
-define_input_macro!(
-    fluid_input,
-    FluidInput,
-    density,
-    MassDensity,
-    mass_density,
-    gram_per_cubic_centimeter
-);
-
-define_input_macro!(
-    fluid_input,
-    FluidInput,
-    enthalpy,
-    AvailableEnergy,
-    available_energy,
-    kilojoule_per_kilogram
-);
-
-define_input_macro!(
-    fluid_input,
-    FluidInput,
-    entropy,
-    SpecificHeatCapacity,
-    specific_heat_capacity,
-    joule_per_kilogram_kelvin
-);
-
-define_input_macro!(
-    fluid_input,
-    FluidInput,
-    internal_energy,
-    AvailableEnergy,
-    available_energy,
-    kilojoule_per_kilogram
-);
-
-define_input_macro!(
-    fluid_input,
-    FluidInput,
-    molar_density,
-    MolarConcentration,
-    molar_concentration,
-    mole_per_cubic_meter
-);
-
-define_input_macro!(
-    fluid_input,
-    FluidInput,
-    molar_enthalpy,
-    MolarEnergy,
-    molar_energy,
-    kilojoule_per_mole
-);
-
-define_input_macro!(
-    fluid_input,
-    FluidInput,
-    molar_entropy,
-    MolarHeatCapacity,
-    molar_heat_capacity,
-    joule_per_kelvin_mole
-);
-
-define_input_macro!(
-    fluid_input,
-    FluidInput,
-    molar_internal_energy,
-    MolarEnergy,
-    molar_energy,
-    kilojoule_per_mole
-);
-
-define_input_macro!(
-    fluid_input,
-    FluidInput,
-    pressure,
-    Pressure,
-    pressure,
-    kilopascal
-);
-
-define_input_macro!(fluid_input, FluidInput, quality, Ratio, ratio, percent);
-
-define_input_macro!(
-    fluid_input,
-    FluidInput,
-    specific_volume,
-    SpecificVolume,
-    specific_volume,
-    cubic_meter_per_kilogram
-);
-
-define_input_macro!(
-    fluid_input,
-    FluidInput,
-    temperature,
-    ThermodynamicTemperature,
-    thermodynamic_temperature,
-    degree_celsius
-);
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{io::Input, test::test_input};
-    use uom::si::{
-        available_energy::joule_per_kilogram, mass_density::kilogram_per_cubic_meter,
-        molar_concentration::mole_per_cubic_meter, molar_energy::joule_per_mole,
-        molar_heat_capacity::joule_per_kelvin_mole, pressure::pascal, ratio::ratio,
-        specific_heat_capacity::joule_per_kilogram_kelvin,
-        specific_volume::cubic_meter_per_kilogram, thermodynamic_temperature::kelvin,
-    };
+    use crate::test::test_input;
 
-    test_input!(
-        density,
-        FluidInput,
-        FluidParam::DMass,
-        MassDensity,
-        kilogram_per_cubic_meter
-    );
-
-    test_input!(
-        enthalpy,
-        FluidInput,
-        FluidParam::HMass,
-        AvailableEnergy,
-        joule_per_kilogram
-    );
-
-    test_input!(
-        entropy,
-        FluidInput,
-        FluidParam::SMass,
-        SpecificHeatCapacity,
-        joule_per_kilogram_kelvin
-    );
-
-    test_input!(
-        internal_energy,
-        FluidInput,
-        FluidParam::UMass,
-        AvailableEnergy,
-        joule_per_kilogram
-    );
-
-    test_input!(
-        molar_density,
-        FluidInput,
-        FluidParam::DMolar,
-        MolarConcentration,
-        mole_per_cubic_meter
-    );
-
-    test_input!(
-        molar_enthalpy,
-        FluidInput,
-        FluidParam::HMolar,
-        MolarEnergy,
-        joule_per_mole
-    );
-
-    test_input!(
-        molar_entropy,
-        FluidInput,
-        FluidParam::SMolar,
-        MolarHeatCapacity,
-        joule_per_kelvin_mole
-    );
-
-    test_input!(
-        molar_internal_energy,
-        FluidInput,
-        FluidParam::UMolar,
-        MolarEnergy,
-        joule_per_mole
-    );
-
-    test_input!(pressure, FluidInput, FluidParam::P, Pressure, pascal);
-    test_input!(quality, FluidInput, FluidParam::Q, Ratio, ratio);
-
-    #[test]
-    fn specific_volume_returns_expected_key_and_si_value() {
-        let sut = FluidInput::specific_volume(SpecificVolume::new::<cubic_meter_per_kilogram>(2.0));
-        assert_eq!(sut.key(), FluidParam::DMass);
-        assert_eq!(sut.si_value(), 0.5);
-        assert_eq!(sut, FluidInput::specific_volume_si(2.0));
-        assert_eq!(sut, specific_volume!(2.0, cubic_meter_per_kilogram));
-        assert_eq!(sut, specific_volume!(2.0));
-    }
-
-    test_input!(
-        temperature,
-        FluidInput,
-        FluidParam::T,
-        ThermodynamicTemperature,
-        kelvin
-    );
+    test_input!(FluidInput: density, key: FluidParam::DMass);
+    test_input!(FluidInput: enthalpy, key: FluidParam::HMass);
+    test_input!(FluidInput: entropy, key: FluidParam::SMass);
+    test_input!(FluidInput: internal_energy, key: FluidParam::UMass);
+    test_input!(FluidInput: molar_density, key: FluidParam::DMolar);
+    test_input!(FluidInput: molar_enthalpy, key: FluidParam::HMolar);
+    test_input!(FluidInput: molar_entropy, key: FluidParam::SMolar);
+    test_input!(FluidInput: molar_internal_energy, key: FluidParam::UMolar);
+    test_input!(FluidInput: pressure, key: FluidParam::P);
+    test_input!(FluidInput: quality, key: FluidParam::Q);
+    test_input!(FluidInput: specific_volume, key: FluidParam::DMass, reciprocal);
+    test_input!(FluidInput: temperature, key: FluidParam::T);
 }

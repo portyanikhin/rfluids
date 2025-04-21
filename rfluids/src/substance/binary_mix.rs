@@ -6,7 +6,6 @@ use strum::EnumProperty;
 #[cfg(test)]
 use strum_macros::EnumIter;
 use strum_macros::{AsRefStr, EnumProperty, EnumString};
-use uom::si::{f64::Ratio, ratio::ratio};
 
 /// `CoolProp` incompressible binary mixtures _(mass-based or volume-based)_.
 ///
@@ -16,7 +15,7 @@ use uom::si::{f64::Ratio, ratio::ratio};
 ///
 /// ```
 /// use std::str::FromStr;
-/// use rfluids::substance::BinaryMixKind;
+/// use rfluids::prelude::*;
 ///
 /// assert_eq!(BinaryMixKind::MPG.as_ref(), "MPG");
 /// assert_eq!(BinaryMixKind::from_str("MPG"), Ok(BinaryMixKind::MPG));
@@ -221,370 +220,296 @@ pub enum BinaryMixKind {
 }
 
 impl BinaryMixKind {
-    /// Minimum possible fraction.
+    /// Minimum possible fraction **\[dimensionless, from 0 to 1\]**.
     ///
     /// # Examples
     ///
     /// ```
-    /// use rfluids::substance::BinaryMixKind;
-    /// use uom::si::f64::Ratio;
-    /// use uom::si::ratio::percent;
+    /// use rfluids::prelude::*;
     ///
-    /// assert_eq!(BinaryMixKind::MPG.min_fraction(), Ratio::new::<percent>(0.0));
+    /// assert_eq!(BinaryMixKind::MPG.min_fraction(), 0.0);
     /// ```
     #[must_use]
-    pub fn min_fraction(&self) -> Ratio {
-        Ratio::new::<ratio>(f64::from_str(self.get_str("min_fraction").unwrap()).unwrap())
+    pub fn min_fraction(&self) -> f64 {
+        f64::from_str(self.get_str("min_fraction").unwrap()).unwrap()
     }
 
-    /// Maximum possible fraction.
+    /// Maximum possible fraction **\[dimensionless, from 0 to 1\]**.
     ///
     /// # Examples
     ///
     /// ```
-    /// use rfluids::substance::BinaryMixKind;
-    /// use uom::si::f64::Ratio;
-    /// use uom::si::ratio::percent;
+    /// use rfluids::prelude::*;
     ///
-    /// assert_eq!(BinaryMixKind::MPG.max_fraction(), Ratio::new::<percent>(60.0));
+    /// assert_eq!(BinaryMixKind::MPG.max_fraction(), 0.6);
     /// ```
     #[must_use]
-    pub fn max_fraction(&self) -> Ratio {
-        Ratio::new::<ratio>(f64::from_str(self.get_str("max_fraction").unwrap()).unwrap())
+    pub fn max_fraction(&self) -> f64 {
+        f64::from_str(self.get_str("max_fraction").unwrap()).unwrap()
+    }
+
+    /// Creates and returns a new [`BinaryMix`] instance.
+    ///
+    /// # Args
+    ///
+    /// - `fraction` -- specified fraction **\[dimensionless, from 0 to 1\]**.
+    ///
+    /// # Errors
+    ///
+    /// For invalid fraction _(out of [[`min_fraction`](BinaryMixKind::min_fraction);
+    /// [`max_fraction`](BinaryMixKind::max_fraction)] range)_,
+    /// a [`BinaryMixError`] is returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::*;
+    ///
+    /// assert!(BinaryMixKind::MPG.with_fraction(0.4).is_ok());
+    /// assert!(BinaryMixKind::MPG.with_fraction(1.0).is_err());
+    /// ```
+    pub fn with_fraction(self, fraction: f64) -> Result<BinaryMix, BinaryMixError> {
+        if !(self.min_fraction()..=self.max_fraction()).contains(&fraction) {
+            return Err(BinaryMixError::InvalidFraction {
+                specified: fraction,
+                min: self.min_fraction(),
+                max: self.max_fraction(),
+            });
+        }
+        Ok(BinaryMix {
+            kind: self,
+            fraction,
+        })
     }
 }
 
-/// [`BinaryMixKind`] with specified fraction.
+/// [`BinaryMixKind`] with specified fraction _(mass-based or volume-based)_.
 #[derive(Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub struct BinaryMix {
     /// Specified kind.
     pub kind: BinaryMixKind,
-    /// Specified fraction _(inclusive between
-    /// [`min_fraction`](BinaryMixKind::min_fraction) and
-    /// [`max_fraction`](BinaryMixKind::max_fraction))_.
-    pub fraction: Ratio,
-}
-
-impl BinaryMix {
-    /// Creates and returns a new [`BinaryMix`] instance.
-    ///
-    /// # Args
-    ///
-    /// - `kind` -- binary mixture kind.
-    /// - `fraction` -- fraction of the specified binary mixture kind.
-    ///
-    /// # Errors
-    ///
-    /// For invalid fraction _(out of [[`min_fraction`](BinaryMixKind::min_fraction);
-    /// [`max_fraction`](BinaryMixKind::max_fraction)] range)_, a [`BinaryMixError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::substance::{BinaryMix, BinaryMixKind};
-    /// use uom::si::f64::Ratio;
-    /// use uom::si::ratio::percent;
-    ///
-    /// assert!(
-    ///     BinaryMix::with_fraction(
-    ///         BinaryMixKind::MPG, Ratio::new::<percent>(40.0)
-    ///     ).is_ok()
-    /// );
-    /// assert!(
-    ///     BinaryMix::with_fraction(
-    ///         BinaryMixKind::MPG, Ratio::new::<percent>(100.0)
-    ///     ).is_err()
-    /// );
-    /// ```
-    ///
-    /// # See also
-    ///
-    /// - [`BinaryMix::with_fraction_si`](BinaryMix::with_fraction_si)
-    pub fn with_fraction(kind: BinaryMixKind, fraction: Ratio) -> Result<Self, BinaryMixError> {
-        if !(kind.min_fraction()..=kind.max_fraction()).contains(&fraction) {
-            return Err(BinaryMixError::InvalidFraction {
-                specified: fraction,
-                min: kind.min_fraction(),
-                max: kind.max_fraction(),
-            });
-        }
-        Ok(Self { kind, fraction })
-    }
-
-    /// Creates and returns a new [`BinaryMix`] instance.
-    ///
-    /// # Args
-    ///
-    /// - `kind` -- binary mixture kind.
-    /// - `fraction` -- fraction of the specified binary mixture kind
-    ///   in SI units _(dimensionless, from 0 to 1)_.
-    ///
-    /// # Errors
-    ///
-    /// For invalid fraction _(out of [[`min_fraction`](BinaryMixKind::min_fraction);
-    /// [`max_fraction`](BinaryMixKind::max_fraction)] range)_, a [`BinaryMixError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::substance::{BinaryMix, BinaryMixKind};
-    ///
-    /// assert!(BinaryMix::with_fraction_si(BinaryMixKind::MPG, 0.4).is_ok());
-    /// assert!(BinaryMix::with_fraction_si(BinaryMixKind::MPG, 1.0).is_err());
-    /// ```
-    ///
-    /// # See also
-    ///
-    /// - [`BinaryMix::with_fraction`](BinaryMix::with_fraction)
-    pub fn with_fraction_si(kind: BinaryMixKind, fraction: f64) -> Result<Self, BinaryMixError> {
-        Self::with_fraction(kind, Ratio::new::<ratio>(fraction))
-    }
+    /// Specified fraction **\[dimensionless, from 0 to 1\]**.
+    pub fraction: f64,
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{BinaryMixKind::*, *};
+    use rstest::*;
+    use strum::IntoEnumIterator;
 
-    mod binary_mix_kind {
-        use super::{BinaryMixKind::*, *};
-        use crate::substance::BinaryMixKind;
-        use rstest::*;
-        use uom::si::{f64::Ratio, ratio::ratio};
+    #[rstest]
+    #[case(FRE, 0.19, 0.5)]
+    #[case(IceEA, 0.05, 0.35)]
+    #[case(IceNA, 0.05, 0.35)]
+    #[case(IcePG, 0.05, 0.35)]
+    #[case(LiBr, 0.0, 0.75)]
+    #[case(MAM, 0.0, 0.3)]
+    #[case(MAM2, 0.078, 0.236)]
+    #[case(MCA, 0.0, 0.3)]
+    #[case(MCA2, 0.09, 0.294)]
+    #[case(MEA, 0.0, 0.6)]
+    #[case(MEA2, 0.11, 0.6)]
+    #[case(MEG, 0.0, 0.6)]
+    #[case(MEG2, 0.0, 0.56)]
+    #[case(MGL, 0.0, 0.6)]
+    #[case(MGL2, 0.195, 0.63)]
+    #[case(MITSW, 0.0, 0.12)]
+    #[case(MKA, 0.0, 0.45)]
+    #[case(MKA2, 0.11, 0.41)]
+    #[case(MKC, 0.0, 0.4)]
+    #[case(MKC2, 0.0, 0.39)]
+    #[case(MKF, 0.0, 0.48)]
+    #[case(MLI, 0.0, 0.24)]
+    #[case(MMA, 0.0, 0.6)]
+    #[case(MMA2, 0.078, 0.474)]
+    #[case(MMG, 0.0, 0.3)]
+    #[case(MMG2, 0.0, 0.205)]
+    #[case(MNA, 0.0, 0.23)]
+    #[case(MNA2, 0.0, 0.23)]
+    #[case(MPG, 0.0, 0.6)]
+    #[case(MPG2, 0.15, 0.57)]
+    #[case(VCA, 0.147, 0.299)]
+    #[case(VKC, 0.128, 0.389)]
+    #[case(VMA, 0.1, 0.9)]
+    #[case(VMG, 0.072, 0.206)]
+    #[case(VNA, 0.07, 0.231)]
+    #[case(AEG, 0.1, 0.6)]
+    #[case(AKF, 0.4, 1.0)]
+    #[case(AL, 0.1, 0.6)]
+    #[case(AN, 0.1, 0.6)]
+    #[case(APG, 0.1, 0.6)]
+    #[case(GKN, 0.1, 0.6)]
+    #[case(PK2, 0.3, 1.0)]
+    #[case(PKL, 0.1, 0.6)]
+    #[case(ZAC, 0.06, 0.5)]
+    #[case(ZFC, 0.3, 0.6)]
+    #[case(ZLC, 0.3, 0.7)]
+    #[case(ZM, 0.0, 1.0)]
+    #[case(ZMC, 0.3, 0.7)]
+    fn min_max_fractions_returns_expected_values(
+        #[case] substance: BinaryMixKind,
+        #[case] expected_min_fraction: f64,
+        #[case] expected_max_fraction: f64,
+    ) {
+        assert_eq!(substance.min_fraction(), expected_min_fraction);
+        assert_eq!(substance.max_fraction(), expected_max_fraction);
+    }
 
-        #[rstest]
-        #[case(FRE, 0.19, 0.5)]
-        #[case(IceEA, 0.05, 0.35)]
-        #[case(IceNA, 0.05, 0.35)]
-        #[case(IcePG, 0.05, 0.35)]
-        #[case(LiBr, 0.0, 0.75)]
-        #[case(MAM, 0.0, 0.3)]
-        #[case(MAM2, 0.078, 0.236)]
-        #[case(MCA, 0.0, 0.3)]
-        #[case(MCA2, 0.09, 0.294)]
-        #[case(MEA, 0.0, 0.6)]
-        #[case(MEA2, 0.11, 0.6)]
-        #[case(MEG, 0.0, 0.6)]
-        #[case(MEG2, 0.0, 0.56)]
-        #[case(MGL, 0.0, 0.6)]
-        #[case(MGL2, 0.195, 0.63)]
-        #[case(MITSW, 0.0, 0.12)]
-        #[case(MKA, 0.0, 0.45)]
-        #[case(MKA2, 0.11, 0.41)]
-        #[case(MKC, 0.0, 0.4)]
-        #[case(MKC2, 0.0, 0.39)]
-        #[case(MKF, 0.0, 0.48)]
-        #[case(MLI, 0.0, 0.24)]
-        #[case(MMA, 0.0, 0.6)]
-        #[case(MMA2, 0.078, 0.474)]
-        #[case(MMG, 0.0, 0.3)]
-        #[case(MMG2, 0.0, 0.205)]
-        #[case(MNA, 0.0, 0.23)]
-        #[case(MNA2, 0.0, 0.23)]
-        #[case(MPG, 0.0, 0.6)]
-        #[case(MPG2, 0.15, 0.57)]
-        #[case(VCA, 0.147, 0.299)]
-        #[case(VKC, 0.128, 0.389)]
-        #[case(VMA, 0.1, 0.9)]
-        #[case(VMG, 0.072, 0.206)]
-        #[case(VNA, 0.07, 0.231)]
-        #[case(AEG, 0.1, 0.6)]
-        #[case(AKF, 0.4, 1.0)]
-        #[case(AL, 0.1, 0.6)]
-        #[case(AN, 0.1, 0.6)]
-        #[case(APG, 0.1, 0.6)]
-        #[case(GKN, 0.1, 0.6)]
-        #[case(PK2, 0.3, 1.0)]
-        #[case(PKL, 0.1, 0.6)]
-        #[case(ZAC, 0.06, 0.5)]
-        #[case(ZFC, 0.3, 0.6)]
-        #[case(ZLC, 0.3, 0.7)]
-        #[case(ZM, 0.0, 1.0)]
-        #[case(ZMC, 0.3, 0.7)]
-        fn min_max_fractions_returns_expected_values(
-            #[case] substance: BinaryMixKind,
-            #[case] expected_min_fraction: f64,
-            #[case] expected_max_fraction: f64,
-        ) {
-            assert_eq!(
-                substance.min_fraction(),
-                Ratio::new::<ratio>(expected_min_fraction)
-            );
-            assert_eq!(
-                substance.max_fraction(),
-                Ratio::new::<ratio>(expected_max_fraction)
-            );
-        }
-
-        #[rstest]
-        #[case(FRE, "FRE")]
-        #[case(IceEA, "IceEA")]
-        #[case(IceNA, "IceNA")]
-        #[case(IcePG, "IcePG")]
-        #[case(LiBr, "LiBr")]
-        #[case(MAM, "MAM")]
-        #[case(MAM2, "MAM2")]
-        #[case(MCA, "MCA")]
-        #[case(MCA2, "MCA2")]
-        #[case(MEA, "MEA")]
-        #[case(MEA2, "MEA2")]
-        #[case(MEG, "MEG")]
-        #[case(MEG2, "MEG2")]
-        #[case(MGL, "MGL")]
-        #[case(MGL2, "MGL2")]
-        #[case(MITSW, "MITSW")]
-        #[case(MKA, "MKA")]
-        #[case(MKA2, "MKA2")]
-        #[case(MKC, "MKC")]
-        #[case(MKC2, "MKC2")]
-        #[case(MKF, "MKF")]
-        #[case(MLI, "MLI")]
-        #[case(MMA, "MMA")]
-        #[case(MMA2, "MMA2")]
-        #[case(MMG, "MMG")]
-        #[case(MMG2, "MMG2")]
-        #[case(MNA, "MNA")]
-        #[case(MNA2, "MNA2")]
-        #[case(MPG, "MPG")]
-        #[case(MPG2, "MPG2")]
-        #[case(VCA, "VCA")]
-        #[case(VKC, "VKC")]
-        #[case(VMA, "VMA")]
-        #[case(VMG, "VMG")]
-        #[case(VNA, "VNA")]
-        #[case(AEG, "AEG")]
-        #[case(AKF, "AKF")]
-        #[case(AL, "AL")]
-        #[case(AN, "AN")]
-        #[case(APG, "APG")]
-        #[case(GKN, "GKN")]
-        #[case(PK2, "PK2")]
-        #[case(PKL, "PKL")]
-        #[case(ZAC, "ZAC")]
-        #[case(ZFC, "ZFC")]
-        #[case(ZLC, "ZLC")]
-        #[case(ZM, "ZM")]
-        #[case(ZMC, "ZMC")]
-        fn as_ref_returns_expected_str(#[case] substance: BinaryMixKind, #[case] expected: &str) {
-            assert_eq!(substance.as_ref(), expected);
-        }
-
-        #[rstest]
-        #[case("FRE", FRE)]
-        #[case("IceEA", IceEA)]
-        #[case("IceNA", IceNA)]
-        #[case("IcePG", IcePG)]
-        #[case("LiBr", LiBr)]
-        #[case("MAM", MAM)]
-        #[case("MAM2", MAM2)]
-        #[case("MCA", MCA)]
-        #[case("MCA2", MCA2)]
-        #[case("MEA", MEA)]
-        #[case("MEA2", MEA2)]
-        #[case("MEG", MEG)]
-        #[case("MEG2", MEG2)]
-        #[case("MGL", MGL)]
-        #[case("MGL2", MGL2)]
-        #[case("MITSW", MITSW)]
-        #[case("MKA", MKA)]
-        #[case("MKA2", MKA2)]
-        #[case("MKC", MKC)]
-        #[case("MKC2", MKC2)]
-        #[case("MKF", MKF)]
-        #[case("MLI", MLI)]
-        #[case("MMA", MMA)]
-        #[case("MMA2", MMA2)]
-        #[case("MMG", MMG)]
-        #[case("MMG2", MMG2)]
-        #[case("MNA", MNA)]
-        #[case("MNA2", MNA2)]
-        #[case("MPG", MPG)]
-        #[case("MPG2", MPG2)]
-        #[case("VCA", VCA)]
-        #[case("VKC", VKC)]
-        #[case("VMA", VMA)]
-        #[case("VMG", VMG)]
-        #[case("VNA", VNA)]
-        #[case("AEG", AEG)]
-        #[case("AKF", AKF)]
-        #[case("AL", AL)]
-        #[case("AN", AN)]
-        #[case("APG", APG)]
-        #[case("GKN", GKN)]
-        #[case("PK2", PK2)]
-        #[case("PKL", PKL)]
-        #[case("ZAC", ZAC)]
-        #[case("ZFC", ZFC)]
-        #[case("ZLC", ZLC)]
-        #[case("ZM", ZM)]
-        #[case("ZMC", ZMC)]
-        fn from_valid_str_returns_ok(#[case] valid_value: &str, #[case] expected: BinaryMixKind) {
-            assert_eq!(BinaryMixKind::from_str(valid_value), Ok(expected));
-            assert_eq!(BinaryMixKind::try_from(valid_value), Ok(expected));
-        }
-
-        #[rstest]
-        #[case("")]
-        #[case("Hello, World!")]
-        fn from_invalid_str_returns_err(#[case] invalid_value: &str) {
-            assert!(BinaryMixKind::from_str(invalid_value).is_err());
-            assert!(BinaryMixKind::try_from(invalid_value).is_err());
+    #[test]
+    fn with_fraction_valid_value_returns_ok() {
+        for kind in BinaryMixKind::iter() {
+            let min_fraction = kind.min_fraction();
+            let average_fraction = 0.5 * (kind.min_fraction() + kind.max_fraction());
+            let max_fraction = kind.max_fraction();
+            let sut_with_min_fraction = kind.with_fraction(min_fraction).unwrap();
+            let sut_with_average_fraction = kind.with_fraction(average_fraction).unwrap();
+            let sut_with_max_fraction = kind.with_fraction(max_fraction).unwrap();
+            assert_eq!(sut_with_min_fraction.kind, kind);
+            assert_eq!(sut_with_min_fraction.fraction, min_fraction);
+            assert_eq!(sut_with_average_fraction.kind, kind);
+            assert_eq!(sut_with_average_fraction.fraction, average_fraction);
+            assert_eq!(sut_with_max_fraction.kind, kind);
+            assert_eq!(sut_with_max_fraction.fraction, max_fraction);
         }
     }
 
-    mod binary_mix {
-        use super::*;
-        use strum::IntoEnumIterator;
-        use uom::si::ratio::part_per_billion;
-
-        #[test]
-        fn new_with_valid_fraction_returns_ok() {
-            for kind in BinaryMixKind::iter() {
-                let min_fraction = kind.min_fraction();
-                let average_fraction = 0.5 * (kind.min_fraction() + kind.max_fraction());
-                let max_fraction = kind.max_fraction();
-                let sut_with_min_fraction = BinaryMix::with_fraction(kind, min_fraction);
-                let sut_with_average_fraction = BinaryMix::with_fraction(kind, average_fraction);
-                let sut_with_max_fraction = BinaryMix::with_fraction(kind, max_fraction);
-                assert!(sut_with_min_fraction.is_ok());
-                assert_eq!(
-                    sut_with_min_fraction,
-                    BinaryMix::with_fraction_si(kind, min_fraction.value)
-                );
-                assert!(sut_with_average_fraction.is_ok());
-                assert_eq!(
-                    sut_with_average_fraction,
-                    BinaryMix::with_fraction_si(kind, average_fraction.value)
-                );
-                assert!(sut_with_max_fraction.is_ok());
-                assert_eq!(
-                    sut_with_max_fraction,
-                    BinaryMix::with_fraction_si(kind, max_fraction.value)
-                );
-            }
+    #[test]
+    fn with_fraction_invalid_value_returns_err() {
+        const DELTA: f64 = 1e-6;
+        for kind in BinaryMixKind::iter() {
+            assert_eq!(
+                kind.with_fraction(kind.min_fraction() - DELTA).unwrap_err(),
+                BinaryMixError::InvalidFraction {
+                    specified: kind.min_fraction() - DELTA,
+                    min: kind.min_fraction(),
+                    max: kind.max_fraction(),
+                }
+            );
+            assert_eq!(
+                kind.with_fraction(kind.max_fraction() + DELTA).unwrap_err(),
+                BinaryMixError::InvalidFraction {
+                    specified: kind.max_fraction() + DELTA,
+                    min: kind.min_fraction(),
+                    max: kind.max_fraction(),
+                }
+            );
         }
+    }
 
-        #[test]
-        fn new_with_invalid_fraction_returns_err() {
-            let delta = Ratio::new::<part_per_billion>(1.0);
-            for kind in BinaryMixKind::iter() {
-                assert_eq!(
-                    BinaryMix::with_fraction(kind, kind.min_fraction() - delta).unwrap_err(),
-                    BinaryMixError::InvalidFraction {
-                        specified: kind.min_fraction() - delta,
-                        min: kind.min_fraction(),
-                        max: kind.max_fraction(),
-                    }
-                );
-                assert_eq!(
-                    BinaryMix::with_fraction(kind, kind.max_fraction() + delta).unwrap_err(),
-                    BinaryMixError::InvalidFraction {
-                        specified: kind.max_fraction() + delta,
-                        min: kind.min_fraction(),
-                        max: kind.max_fraction(),
-                    }
-                );
-            }
-        }
+    #[rstest]
+    #[case(FRE, "FRE")]
+    #[case(IceEA, "IceEA")]
+    #[case(IceNA, "IceNA")]
+    #[case(IcePG, "IcePG")]
+    #[case(LiBr, "LiBr")]
+    #[case(MAM, "MAM")]
+    #[case(MAM2, "MAM2")]
+    #[case(MCA, "MCA")]
+    #[case(MCA2, "MCA2")]
+    #[case(MEA, "MEA")]
+    #[case(MEA2, "MEA2")]
+    #[case(MEG, "MEG")]
+    #[case(MEG2, "MEG2")]
+    #[case(MGL, "MGL")]
+    #[case(MGL2, "MGL2")]
+    #[case(MITSW, "MITSW")]
+    #[case(MKA, "MKA")]
+    #[case(MKA2, "MKA2")]
+    #[case(MKC, "MKC")]
+    #[case(MKC2, "MKC2")]
+    #[case(MKF, "MKF")]
+    #[case(MLI, "MLI")]
+    #[case(MMA, "MMA")]
+    #[case(MMA2, "MMA2")]
+    #[case(MMG, "MMG")]
+    #[case(MMG2, "MMG2")]
+    #[case(MNA, "MNA")]
+    #[case(MNA2, "MNA2")]
+    #[case(MPG, "MPG")]
+    #[case(MPG2, "MPG2")]
+    #[case(VCA, "VCA")]
+    #[case(VKC, "VKC")]
+    #[case(VMA, "VMA")]
+    #[case(VMG, "VMG")]
+    #[case(VNA, "VNA")]
+    #[case(AEG, "AEG")]
+    #[case(AKF, "AKF")]
+    #[case(AL, "AL")]
+    #[case(AN, "AN")]
+    #[case(APG, "APG")]
+    #[case(GKN, "GKN")]
+    #[case(PK2, "PK2")]
+    #[case(PKL, "PKL")]
+    #[case(ZAC, "ZAC")]
+    #[case(ZFC, "ZFC")]
+    #[case(ZLC, "ZLC")]
+    #[case(ZM, "ZM")]
+    #[case(ZMC, "ZMC")]
+    fn as_ref_returns_expected_str(#[case] substance: BinaryMixKind, #[case] expected: &str) {
+        assert_eq!(substance.as_ref(), expected);
+    }
+
+    #[rstest]
+    #[case("FRE", FRE)]
+    #[case("IceEA", IceEA)]
+    #[case("IceNA", IceNA)]
+    #[case("IcePG", IcePG)]
+    #[case("LiBr", LiBr)]
+    #[case("MAM", MAM)]
+    #[case("MAM2", MAM2)]
+    #[case("MCA", MCA)]
+    #[case("MCA2", MCA2)]
+    #[case("MEA", MEA)]
+    #[case("MEA2", MEA2)]
+    #[case("MEG", MEG)]
+    #[case("MEG2", MEG2)]
+    #[case("MGL", MGL)]
+    #[case("MGL2", MGL2)]
+    #[case("MITSW", MITSW)]
+    #[case("MKA", MKA)]
+    #[case("MKA2", MKA2)]
+    #[case("MKC", MKC)]
+    #[case("MKC2", MKC2)]
+    #[case("MKF", MKF)]
+    #[case("MLI", MLI)]
+    #[case("MMA", MMA)]
+    #[case("MMA2", MMA2)]
+    #[case("MMG", MMG)]
+    #[case("MMG2", MMG2)]
+    #[case("MNA", MNA)]
+    #[case("MNA2", MNA2)]
+    #[case("MPG", MPG)]
+    #[case("MPG2", MPG2)]
+    #[case("VCA", VCA)]
+    #[case("VKC", VKC)]
+    #[case("VMA", VMA)]
+    #[case("VMG", VMG)]
+    #[case("VNA", VNA)]
+    #[case("AEG", AEG)]
+    #[case("AKF", AKF)]
+    #[case("AL", AL)]
+    #[case("AN", AN)]
+    #[case("APG", APG)]
+    #[case("GKN", GKN)]
+    #[case("PK2", PK2)]
+    #[case("PKL", PKL)]
+    #[case("ZAC", ZAC)]
+    #[case("ZFC", ZFC)]
+    #[case("ZLC", ZLC)]
+    #[case("ZM", ZM)]
+    #[case("ZMC", ZMC)]
+    fn from_valid_str_returns_ok(#[case] valid_value: &str, #[case] expected: BinaryMixKind) {
+        assert_eq!(BinaryMixKind::from_str(valid_value), Ok(expected));
+        assert_eq!(BinaryMixKind::try_from(valid_value), Ok(expected));
+    }
+
+    #[rstest]
+    #[case("")]
+    #[case("Hello, World!")]
+    fn from_invalid_str_returns_err(#[case] invalid_value: &str) {
+        assert!(BinaryMixKind::from_str(invalid_value).is_err());
+        assert!(BinaryMixKind::try_from(invalid_value).is_err());
     }
 }

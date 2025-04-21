@@ -23,7 +23,7 @@ use strum_macros::{AsRefStr, EnumString};
 #[derive(AsRefStr, EnumString, Debug, Copy, Clone, Eq, PartialEq, Hash)]
 #[strum(ascii_case_insensitive)]
 pub enum HumidAirParam {
-    /// Wet-bulb temperature _(K)_.
+    /// Wet-bulb temperature **\[K\]**.
     #[strum(
         to_string = "B",
         serialize = "Twb",
@@ -33,7 +33,7 @@ pub enum HumidAirParam {
     )]
     TWetBulb,
 
-    /// Specific heat at constant pressure per unit of dry air _(J/kg dry air/K)_.
+    /// Specific heat at constant pressure per unit of dry air **\[J/kg dry air/K\]**.
     #[strum(
         to_string = "C",
         serialize = "Cp",
@@ -42,19 +42,19 @@ pub enum HumidAirParam {
     )]
     Cpda,
 
-    /// Specific heat at constant pressure per unit of humid air _(J/kg humid air/K)_.
+    /// Specific heat at constant pressure per unit of humid air **\[J/kg humid air/K\]**.
     #[strum(to_string = "Cha", serialize = "Cpha", serialize = "Cp_ha")]
     Cpha,
 
-    /// Specific heat at constant volume per unit of dry air _(J/kg dry air/K)_.
+    /// Specific heat at constant volume per unit of dry air **\[J/kg dry air/K\]**.
     #[strum(to_string = "CV", serialize = "Cvda", serialize = "Cv_da")]
     Cvda,
 
-    /// Specific heat at constant volume per unit of humid air _(J/kg humid air/K)_.
+    /// Specific heat at constant volume per unit of humid air **\[J/kg humid air/K\]**.
     #[strum(to_string = "CVha", serialize = "Cv_ha")]
     Cvha,
 
-    /// Dew-point temperature _(K)_.
+    /// Dew-point temperature **\[K\]**.
     #[strum(
         to_string = "D",
         serialize = "Tdp",
@@ -64,7 +64,7 @@ pub enum HumidAirParam {
     )]
     TDew,
 
-    /// Specific enthalpy per unit of dry air _(J/kg dry air)_.
+    /// Specific enthalpy per unit of dry air **\[J/kg dry air\]**.
     #[strum(
         to_string = "H",
         serialize = "Hda",
@@ -73,15 +73,15 @@ pub enum HumidAirParam {
     )]
     Hda,
 
-    /// Specific enthalpy per unit of humid air _(J/kg humid air)_.
+    /// Specific enthalpy per unit of humid air **\[J/kg humid air\]**.
     #[strum(to_string = "Hha", serialize = "H_ha")]
     Hha,
 
-    /// Thermal conductivity _(W/m/K)_.
+    /// Thermal conductivity **\[W/m/K\]**.
     #[strum(to_string = "K", serialize = "Conductivity")]
     Conductivity,
 
-    /// Dynamic viscosity _(Pa·s)_.
+    /// Dynamic viscosity **\[Pa·s\]**.
     #[strum(
         to_string = "M",
         serialize = "Visc",
@@ -91,23 +91,23 @@ pub enum HumidAirParam {
     )]
     DynamicViscosity,
 
-    /// Water mole fraction _(mol water/mol humid air)_.
+    /// Water mole fraction **\[mol water/mol humid air\]**.
     #[strum(to_string = "psi_w", serialize = "Y", serialize = "PsiW")]
     PsiW,
 
-    /// Pressure _(Pa)_.
+    /// Pressure **\[Pa\]**.
     #[strum(to_string = "P", serialize = "Pressure")]
     P,
 
-    /// Partial pressure of water vapor _(Pa)_.
+    /// Partial pressure of water vapor **\[Pa\]**.
     #[strum(to_string = "P_w", serialize = "Pw")]
     Pw,
 
-    /// Relative humidity _(dimensionless, from 0 to 1)_.
+    /// Relative humidity **\[dimensionless, from 0 to 1\]**.
     #[strum(to_string = "R", serialize = "RH", serialize = "RelHum")]
     R,
 
-    /// Specific entropy per unit of dry air _(J/kg dry air/K)_.
+    /// Specific entropy per unit of dry air **\[J/kg dry air/K\]**.
     #[strum(
         to_string = "S",
         serialize = "Sda",
@@ -116,11 +116,11 @@ pub enum HumidAirParam {
     )]
     Sda,
 
-    /// Specific entropy per unit of humid air _(J/kg humid air/K)_.
+    /// Specific entropy per unit of humid air **\[J/kg humid air/K\]**.
     #[strum(to_string = "Sha", serialize = "S_ha")]
     Sha,
 
-    /// Dry-bulb temperature _(K)_.
+    /// Dry-bulb temperature **\[K\]**.
     #[strum(
         to_string = "T",
         serialize = "Tdb",
@@ -129,19 +129,19 @@ pub enum HumidAirParam {
     )]
     T,
 
-    /// Specific volume per unit of dry air _(m³/kg dry air)_.
+    /// Specific volume per unit of dry air **\[m³/kg dry air\]**.
     #[strum(to_string = "V", serialize = "Vda", serialize = "V_da")]
     Vda,
 
-    /// Specific volume per unit of humid air _(m³/kg humid air)_.
+    /// Specific volume per unit of humid air **\[m³/kg humid air\]**.
     #[strum(to_string = "Vha", serialize = "V_ha")]
     Vha,
 
-    /// Absolute humidity _(kg water/kg dry air)_.
+    /// Absolute humidity **\[kg water/kg dry air\]**.
     #[strum(to_string = "W", serialize = "Omega", serialize = "HumRat")]
     W,
 
-    /// Compressibility factor _(dimensionless)_.
+    /// Compressibility factor **\[dimensionless\]**.
     #[strum(to_string = "Z", serialize = "Compressibility")]
     Z,
 }

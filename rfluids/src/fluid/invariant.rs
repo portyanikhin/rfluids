@@ -5,96 +5,11 @@ use super::{
 };
 use crate::{
     error::FluidOutputError,
-    io::{FluidTrivialParam, Input, fluid_input::FluidInput},
+    io::{FluidInput, FluidTrivialParam},
     ops::mul,
     state_variant::StateVariant,
     substance::Substance,
 };
-use uom::si::{
-    f64::{MassDensity, MolarConcentration, MolarMass, Pressure, ThermodynamicTemperature},
-    mass_density::kilogram_per_cubic_meter,
-    molar_concentration::mole_per_cubic_meter,
-    molar_mass::kilogram_per_mole,
-    pressure::pascal,
-    thermodynamic_temperature::kelvin,
-};
-
-macro_rules! trivial_output_doc {
-    (always_ok, $key:ident, $description:literal, $units_description:literal) => {
-        concat!(
-            $description,
-            "\n_(key: [`",
-            stringify!($key),
-            "`](FluidTrivialParam::",
-            stringify!($key),
-            "), ",
-            $units_description,
-            ")_.",
-        )
-    };
-    ($key:ident, $description:literal, $units_description:literal) => {
-        concat!(
-            trivial_output_doc!(always_ok, $key, $description, $units_description),
-            "\n\n# Errors\n\n",
-            "If it's not available for the specified substance,\n",
-            "a [`FluidOutputError`] is returned.",
-        )
-    };
-}
-
-macro_rules! define_trivial_output {
-    (
-        $method:ident,
-        $name:ident,
-        $key:ident,
-        $type:ty,
-        $description:literal,
-        $units_description:literal
-        $(, $map:expr)?
-    ) => {
-        #[doc = trivial_output_doc!($key, $description, $units_description)]
-        pub fn $name(&mut self) -> OutputResult<$type> {
-            self.$method(FluidTrivialParam::$key)
-                $(.map($map))?
-        }
-    };
-    (
-        not_available_for_predefined_mix,
-        $method:ident,
-        $name:ident,
-        $key:ident,
-        $type:ty,
-        $description:literal,
-        $units_description:literal
-        $(, $map:expr)?
-    ) => {
-        #[doc = trivial_output_doc!($key, $description, $units_description)]
-        pub fn $name(&mut self) -> OutputResult<$type> {
-            let key = FluidTrivialParam::$key;
-            // Due to CoolProp freeze
-            if let Substance::PredefinedMix(_) = self.substance {
-                return Err(FluidOutputError::UnavailableTrivialOutput(key));
-            }
-            self.$method(key)
-                $(.map($map))?
-        }
-    };
-    (
-        always_ok,
-        $method:ident,
-        $name:ident,
-        $key:ident,
-        $type:ty,
-        $description:literal,
-        $units_description:literal,
-        $map:expr
-    ) => {
-        #[doc = trivial_output_doc!(always_ok, $key, $description, $units_description)]
-        pub fn $name(&mut self) -> $type {
-            $map(self.$method(FluidTrivialParam::$key).unwrap())
-        }
-    };
-}
 
 impl<S: StateVariant> Fluid<S> {
     /// Specified substance.
@@ -103,239 +18,257 @@ impl<S: StateVariant> Fluid<S> {
         &self.substance
     }
 
-    define_trivial_output!(
-        trivial_output,
-        acentric_factor,
-        AcentricFactor,
-        f64,
-        "Acentric factor",
-        "dimensionless"
-    );
+    /// Acentric factor **\[dimensionless\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn acentric_factor(&mut self) -> OutputResult<f64> {
+        self.trivial_output(FluidTrivialParam::AcentricFactor)
+    }
 
-    define_trivial_output!(
-        not_available_for_predefined_mix,
-        positive_trivial_output,
-        critical_density,
-        DMassCritical,
-        MassDensity,
-        "Critical point mass density",
-        "SI units: kg/m³",
-        MassDensity::new::<kilogram_per_cubic_meter>
-    );
+    /// Critical point mass density **\[kg/m³\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn critical_density(&mut self) -> OutputResult<f64> {
+        let key = FluidTrivialParam::DMassCritical;
+        // Due to CoolProp freeze
+        if let Substance::PredefinedMix(_) = self.substance {
+            return Err(FluidOutputError::UnavailableTrivialOutput(key));
+        }
+        self.positive_trivial_output(key)
+    }
 
-    define_trivial_output!(
-        not_available_for_predefined_mix,
-        positive_trivial_output,
-        critical_molar_density,
-        DMolarCritical,
-        MolarConcentration,
-        "Critical point molar density",
-        "SI units: mol/m³",
-        MolarConcentration::new::<mole_per_cubic_meter>
-    );
+    /// Critical point molar density **\[mol/m³\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn critical_molar_density(&mut self) -> OutputResult<f64> {
+        let key = FluidTrivialParam::DMolarCritical;
+        // Due to CoolProp freeze
+        if let Substance::PredefinedMix(_) = self.substance {
+            return Err(FluidOutputError::UnavailableTrivialOutput(key));
+        }
+        self.positive_trivial_output(key)
+    }
 
-    define_trivial_output!(
-        not_available_for_predefined_mix,
-        positive_trivial_output,
-        critical_pressure,
-        PCritical,
-        Pressure,
-        "Critical point pressure",
-        "SI units: Pa",
-        Pressure::new::<pascal>
-    );
+    /// Critical point pressure **\[Pa\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn critical_pressure(&mut self) -> OutputResult<f64> {
+        let key = FluidTrivialParam::PCritical;
+        // Due to CoolProp freeze
+        if let Substance::PredefinedMix(_) = self.substance {
+            return Err(FluidOutputError::UnavailableTrivialOutput(key));
+        }
+        self.positive_trivial_output(key)
+    }
 
-    define_trivial_output!(
-        not_available_for_predefined_mix,
-        positive_trivial_output,
-        critical_temperature,
-        TCritical,
-        ThermodynamicTemperature,
-        "Critical point temperature",
-        "SI units: K",
-        ThermodynamicTemperature::new::<kelvin>
-    );
+    /// Critical point temperature **\[K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn critical_temperature(&mut self) -> OutputResult<f64> {
+        let key = FluidTrivialParam::TCritical;
+        // Due to CoolProp freeze
+        if let Substance::PredefinedMix(_) = self.substance {
+            return Err(FluidOutputError::UnavailableTrivialOutput(key));
+        }
+        self.positive_trivial_output(key)
+    }
 
-    define_trivial_output!(
-        non_negative_trivial_output,
-        flammability_hazard,
-        FH,
-        f64,
-        "Flammability hazard index",
-        "dimensionless"
-    );
+    /// Flammability hazard index **\[dimensionless\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn flammability_hazard(&mut self) -> OutputResult<f64> {
+        self.non_negative_trivial_output(FluidTrivialParam::FH)
+    }
 
-    define_trivial_output!(
-        positive_trivial_output,
-        freezing_temperature,
-        TFreeze,
-        ThermodynamicTemperature,
-        "Freezing temperature for incompressible mixtures",
-        "SI units: K",
-        ThermodynamicTemperature::new::<kelvin>
-    );
+    /// Freezing temperature for incompressible mixtures **\[K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn freezing_temperature(&mut self) -> OutputResult<f64> {
+        self.positive_trivial_output(FluidTrivialParam::TFreeze)
+    }
 
-    define_trivial_output!(
-        non_negative_trivial_output,
-        gwp20,
-        GWP20,
-        f64,
-        "20-year global warming potential",
-        "dimensionless"
-    );
+    /// 20-year global warming potential **\[dimensionless\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn gwp20(&mut self) -> OutputResult<f64> {
+        self.non_negative_trivial_output(FluidTrivialParam::GWP20)
+    }
 
-    define_trivial_output!(
-        non_negative_trivial_output,
-        gwp100,
-        GWP100,
-        f64,
-        "100-year global warming potential",
-        "dimensionless"
-    );
+    /// 100-year global warming potential **\[dimensionless\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn gwp100(&mut self) -> OutputResult<f64> {
+        self.non_negative_trivial_output(FluidTrivialParam::GWP100)
+    }
 
-    define_trivial_output!(
-        non_negative_trivial_output,
-        gwp500,
-        GWP500,
-        f64,
-        "500-year global warming potential",
-        "dimensionless"
-    );
+    /// 500-year global warming potential **\[dimensionless\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn gwp500(&mut self) -> OutputResult<f64> {
+        self.non_negative_trivial_output(FluidTrivialParam::GWP500)
+    }
 
-    define_trivial_output!(
-        non_negative_trivial_output,
-        health_hazard,
-        HH,
-        f64,
-        "Health hazard index",
-        "dimensionless"
-    );
+    /// Health hazard index **\[dimensionless\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn health_hazard(&mut self) -> OutputResult<f64> {
+        self.non_negative_trivial_output(FluidTrivialParam::HH)
+    }
 
-    define_trivial_output!(
-        positive_trivial_output,
-        max_pressure,
-        PMax,
-        Pressure,
-        "Maximum pressure",
-        "SI units: Pa",
-        Pressure::new::<pascal>
-    );
+    /// Maximum pressure **\[Pa\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn max_pressure(&mut self) -> OutputResult<f64> {
+        self.positive_trivial_output(FluidTrivialParam::PMax)
+    }
 
-    define_trivial_output!(
-        always_ok,
-        positive_trivial_output,
-        max_temperature,
-        TMax,
-        ThermodynamicTemperature,
-        "Maximum temperature",
-        "SI units: K",
-        ThermodynamicTemperature::new::<kelvin>
-    );
+    /// Maximum temperature **\[K\]**.
+    pub fn max_temperature(&mut self) -> f64 {
+        self.positive_trivial_output(FluidTrivialParam::TMax)
+            .unwrap()
+    }
 
-    define_trivial_output!(
-        positive_trivial_output,
-        min_pressure,
-        PMin,
-        Pressure,
-        "Minimum pressure",
-        "SI units: Pa",
-        Pressure::new::<pascal>
-    );
+    /// Minimum pressure **\[Pa\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn min_pressure(&mut self) -> OutputResult<f64> {
+        self.positive_trivial_output(FluidTrivialParam::PMin)
+    }
 
-    define_trivial_output!(
-        always_ok,
-        positive_trivial_output,
-        min_temperature,
-        TMin,
-        ThermodynamicTemperature,
-        "Minimum temperature",
-        "SI units: K",
-        ThermodynamicTemperature::new::<kelvin>
-    );
+    /// Minimum temperature **\[K\]**.
+    pub fn min_temperature(&mut self) -> f64 {
+        self.positive_trivial_output(FluidTrivialParam::TMin)
+            .unwrap()
+    }
 
-    define_trivial_output!(
-        positive_trivial_output,
-        molar_mass,
-        MolarMass,
-        MolarMass,
-        "Molar mass",
-        "SI units: kg/mol",
-        MolarMass::new::<kilogram_per_mole>
-    );
+    /// Molar mass **\[kg/mol\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn molar_mass(&mut self) -> OutputResult<f64> {
+        self.positive_trivial_output(FluidTrivialParam::MolarMass)
+    }
 
-    define_trivial_output!(
-        non_negative_trivial_output,
-        odp,
-        ODP,
-        f64,
-        "Ozone depletion potential",
-        "dimensionless"
-    );
+    /// Ozone depletion potential **\[dimensionless\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn odp(&mut self) -> OutputResult<f64> {
+        self.non_negative_trivial_output(FluidTrivialParam::ODP)
+    }
 
-    define_trivial_output!(
-        non_negative_trivial_output,
-        physical_hazard,
-        PH,
-        f64,
-        "Physical hazard index",
-        "dimensionless"
-    );
+    /// Physical hazard index **\[dimensionless\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn physical_hazard(&mut self) -> OutputResult<f64> {
+        self.non_negative_trivial_output(FluidTrivialParam::PH)
+    }
 
-    #[doc = trivial_output_doc!(DMassReducing, "Reducing point mass density", "SI units: kg/m³")]
-    pub fn reducing_density(&mut self) -> OutputResult<MassDensity> {
-        // Due to CoolProp bug
+    /// Reducing point mass density **\[kg/m³\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn reducing_density(&mut self) -> OutputResult<f64> {
         mul(self.reducing_molar_density(), self.molar_mass())
     }
 
-    define_trivial_output!(
-        positive_trivial_output,
-        reducing_molar_density,
-        DMolarReducing,
-        MolarConcentration,
-        "Reducing point molar density",
-        "SI units: mol/m³",
-        MolarConcentration::new::<mole_per_cubic_meter>
-    );
+    /// Reducing point molar density **\[mol/m³\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn reducing_molar_density(&mut self) -> OutputResult<f64> {
+        self.positive_trivial_output(FluidTrivialParam::DMolarReducing)
+    }
 
-    define_trivial_output!(
-        positive_trivial_output,
-        reducing_pressure,
-        PReducing,
-        Pressure,
-        "Reducing point pressure",
-        "SI units: Pa",
-        Pressure::new::<pascal>
-    );
+    /// Reducing point pressure **\[Pa\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn reducing_pressure(&mut self) -> OutputResult<f64> {
+        self.positive_trivial_output(FluidTrivialParam::PReducing)
+    }
 
-    define_trivial_output!(
-        positive_trivial_output,
-        reducing_temperature,
-        TReducing,
-        ThermodynamicTemperature,
-        "Reducing point temperature",
-        "SI units: K",
-        ThermodynamicTemperature::new::<kelvin>
-    );
+    /// Reducing point temperature **\[K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn reducing_temperature(&mut self) -> OutputResult<f64> {
+        self.positive_trivial_output(FluidTrivialParam::TReducing)
+    }
 
-    define_trivial_output!(
-        positive_trivial_output,
-        triple_pressure,
-        PTriple,
-        Pressure,
-        "Triple point pressure",
-        "SI units: Pa",
-        Pressure::new::<pascal>
-    );
+    /// Triple point pressure **\[Pa\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn triple_pressure(&mut self) -> OutputResult<f64> {
+        self.positive_trivial_output(FluidTrivialParam::PTriple)
+    }
 
-    define_trivial_output!(
-        positive_trivial_output,
-        triple_temperature,
-        TTriple,
-        ThermodynamicTemperature,
-        "Triple point temperature",
-        "SI units: K",
-        ThermodynamicTemperature::new::<kelvin>
-    );
+    /// Triple point temperature **\[K\]**.
+    ///
+    /// # Errors
+    ///
+    /// If it's not available for the specified substance,
+    /// a [`FluidOutputError`] is returned.
+    pub fn triple_temperature(&mut self) -> OutputResult<f64> {
+        self.positive_trivial_output(FluidTrivialParam::TTriple)
+    }
 
     pub(crate) fn inner_update(
         &mut self,
@@ -343,10 +276,11 @@ impl<S: StateVariant> Fluid<S> {
         input2: FluidInput,
     ) -> StateResult<()> {
         let request: FluidUpdateRequest = (input1, input2).try_into()?;
-        self.backend.update(request.0, request.1, request.2)?;
+        self.backend
+            .update(request.input_pair, request.value1, request.value2)?;
         self.outputs.clear();
-        self.outputs.insert(input1.key(), Ok(input1.si_value()));
-        self.outputs.insert(input2.key(), Ok(input2.si_value()));
+        self.outputs.insert(input1.key, Ok(input1.value));
+        self.outputs.insert(input2.key, Ok(input2.value));
         self.update_request = Some(request);
         Ok(())
     }

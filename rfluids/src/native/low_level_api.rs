@@ -12,7 +12,8 @@ pub struct AbstractState {
 }
 
 impl AbstractState {
-    /// Creates and returns a new [`AbstractState`] instance with specified backend and fluid names.
+    /// Creates and returns a new [`AbstractState`] instance
+    /// with specified backend and fluid names.
     ///
     /// # Args
     ///
@@ -87,7 +88,7 @@ impl AbstractState {
     /// # Args
     ///
     /// - `fractions` -- fractions of the specified fluid
-    ///   _(dimensionless, from 0 to 1 each)_.
+    ///   **\[dimensionless, from 0 to 1 each\]**.
     ///
     /// # Errors
     ///
@@ -106,7 +107,7 @@ impl AbstractState {
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
-    /// For mixtures:
+    /// For custom mixtures:
     ///
     /// ```
     /// use rfluids::prelude::*;
@@ -137,8 +138,8 @@ impl AbstractState {
     ///
     /// - `input_pair_key` -- input pair key
     ///   _(raw [`u8`] or [`FluidInputPair`](crate::io::FluidInputPair))_.
-    /// - `input1` -- value of the first input property _(in SI units)_.
-    /// - `input2` -- value of the second input property _(in SI units)_.
+    /// - `input1` -- value of the first input property **\[SI units\]**.
+    /// - `input2` -- value of the second input property **\[SI units\]**.
     ///
     /// # Errors
     ///
@@ -150,7 +151,7 @@ impl AbstractState {
     /// use rfluids::prelude::*;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water")?;
-    /// let result = water.update(FluidInputPair::PT, 101325.0, 293.15);
+    /// let result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
     /// assert!(result.is_ok());
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
@@ -179,7 +180,7 @@ impl AbstractState {
         Self::result((), error)
     }
 
-    /// Returns an output parameter value _(in SI units)_.
+    /// Returns an output parameter value **\[SI units\]**.
     ///
     /// # Args
     ///
@@ -196,22 +197,22 @@ impl AbstractState {
     ///
     /// ## Pure fluids
     ///
-    /// To calculate the specific heat of saturated water vapor at _1 atm_:
+    /// To calculate the specific heat **\[J/kg/K\]** of saturated water vapor at _1 atm_:
     ///
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::*;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water")?;
-    /// water.update(FluidInputPair::PQ, 101325.0, 1.0)?;
+    /// water.update(FluidInputPair::PQ, 101_325.0, 1.0)?;
     /// let result = water.keyed_output(FluidParam::CpMass)?;
-    /// assert_relative_eq!(result, 2079.937085633241, max_relative = 1e-6);
+    /// assert_relative_eq!(result, 2_079.937_085_633_241, max_relative = 1e-6);
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
     /// ## Incompressible binary mixtures
     ///
-    /// To calculate the dynamic viscosity of propylene glycol aqueous solution
+    /// To calculate the dynamic viscosity **\[Pa·s\]** of propylene glycol aqueous solution
     /// with _60 %_ mass fraction at _100 kPa_ and _-20 °C_:
     ///
     /// ```
@@ -222,13 +223,13 @@ impl AbstractState {
     /// propylene_glycol.set_fractions(&[0.6])?;
     /// propylene_glycol.update(FluidInputPair::PT, 100e3, 253.15)?;
     /// let result = propylene_glycol.keyed_output(FluidParam::DynamicViscosity)?;
-    /// assert_relative_eq!(result, 0.13907391053938847, max_relative = 1e-6);
+    /// assert_relative_eq!(result, 0.139_073_910_539_388_47, max_relative = 1e-6);
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
-    /// ## Mixtures
+    /// ## Custom mixtures
     ///
-    /// To calculate the density of ethanol aqueous solution
+    /// To calculate the density **\[kg/m³\]** of ethanol aqueous solution
     /// (with ethanol _20 %_ mole fraction) at _200 kPa_ and _4 °C_:
     ///
     /// ```
@@ -239,7 +240,7 @@ impl AbstractState {
     /// mixture.set_fractions(&[0.8, 0.2])?;
     /// mixture.update(FluidInputPair::PT, 200e3, 277.15)?;
     /// let result = mixture.keyed_output(FluidParam::DMass)?;
-    /// assert_relative_eq!(result, 883.8826353773796, max_relative = 1e-6);
+    /// assert_relative_eq!(result, 883.882_635_377_379_6, max_relative = 1e-6);
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
     ///
@@ -280,10 +281,10 @@ impl AbstractState {
     ///
     /// let mut water = AbstractState::new("HEOS", "Water")?;
     /// water.specify_phase(Phase::Liquid)?;
-    /// let mut result = water.update(FluidInputPair::PT, 101325.0, 293.15);
+    /// let mut result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
     /// assert!(result.is_ok());
     /// water.specify_phase(Phase::Gas)?;
-    /// result = water.update(FluidInputPair::PT, 101325.0, 293.15);
+    /// result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
     /// assert!(result.is_err());
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```
@@ -315,10 +316,10 @@ impl AbstractState {
     ///
     /// let mut water = AbstractState::new("HEOS", "Water")?;
     /// water.specify_phase(Phase::Gas)?;
-    /// let mut result = water.update(FluidInputPair::PT, 101325.0, 293.15);
+    /// let mut result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
     /// assert!(result.is_err());
     /// water.unspecify_phase();
-    /// result = water.update(FluidInputPair::PT, 101325.0, 293.15);
+    /// result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
     /// assert!(result.is_ok());
     /// # Ok::<(), rfluids::error::CoolPropError>(())
     /// ```

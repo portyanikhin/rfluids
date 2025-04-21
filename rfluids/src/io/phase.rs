@@ -9,7 +9,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 ///
 /// ```
 /// use std::str::FromStr;
-/// use rfluids::io::Phase;
+/// use rfluids::prelude::*;
 ///
 /// assert_eq!(Phase::Liquid.as_ref(), "phase_liquid");
 /// assert_eq!(Phase::from_str("phase_liquid"), Ok(Phase::Liquid));
@@ -19,7 +19,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// Conversion between [`u8`]:
 ///
 /// ```
-/// use rfluids::io::Phase;
+/// use rfluids::prelude::*;
 ///
 /// assert_eq!(u8::from(Phase::Gas), 5);
 /// assert_eq!(Phase::try_from(5), Ok(Phase::Gas));
@@ -28,7 +28,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// Conversion between [`f64`]:
 ///
 /// ```
-/// use rfluids::io::Phase;
+/// use rfluids::prelude::*;
 ///
 /// assert_eq!(Phase::try_from(5.0), Ok(Phase::Gas));
 /// ```

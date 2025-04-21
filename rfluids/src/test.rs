@@ -7,16 +7,23 @@ macro_rules! assert_relative_eq {
 pub(crate) use assert_relative_eq;
 
 macro_rules! test_input {
-    ($name:ident, $type:ident, $key:expr, $value_type:ident, $unit:ty) => {
+    ($type:ty: $name:ident, key: $key:expr) => {
         paste::paste! {
             #[test]
-            fn [<$name _returns_expected_key_and_si_value>]() {
-                let sut = $type::$name($value_type::new::<$unit>(1.0));
-                assert_eq!(sut.key(), $key);
-                assert_eq!(sut.si_value(), 1.0);
-                assert_eq!(sut, $type::[<$name _si>](1.0));
-                assert_eq!(sut, $name!(1.0, $unit));
-                assert_eq!(sut, $name!(1.0));
+            fn [<$name _returns_expected_key_and_value>]() {
+                let sut = $type::$name(42.0);
+                assert_eq!(sut.key, $key);
+                assert_eq!(sut.value, 42.0);
+            }
+        }
+    };
+    ($type:ty: $name:ident, key: $key:expr, reciprocal) => {
+        paste::paste! {
+            #[test]
+            fn [<$name _returns_expected_key_and_value>]() {
+                let sut = $type::$name(42.0);
+                assert_eq!(sut.key, $key);
+                assert_eq!(sut.value, 1.0 / 42.0);
             }
         }
     };
@@ -24,76 +31,28 @@ macro_rules! test_input {
 
 pub(crate) use test_input;
 
-pub(crate) mod fluid {
-    macro_rules! test_output {
-        ($fluid_type:ty, $name:ident, $ok_fluid:ident, $ok_value:expr $(, $err_fluid:ident)*) => {
-            paste::paste! {
-                #[rstest::rstest]
-                fn [<$name _returns_expected_value>](
-                    mut $ok_fluid: $fluid_type,
-                    $(mut $err_fluid: $fluid_type,)*
-                ) {
-                    assert!($ok_fluid.$name().is_ok());
-                    $crate::test::assert_relative_eq!($ok_fluid.$name().unwrap().value, $ok_value);
-                    $(assert!($err_fluid.$name().is_err());)*
-                }
+macro_rules! test_output {
+    ($type:ty: $name:ident, $ok:ident: $ok_value:expr $(, $err:ident: Err)*) => {
+        paste::paste! {
+            #[rstest::rstest]
+            fn [<$name _returns_expected_value>](
+                mut $ok: $type,
+                $(mut $err: $type,)*
+            ) {
+                assert!($ok.$name().is_ok());
+                $crate::test::assert_relative_eq!($ok.$name().unwrap(), $ok_value);
+                $(assert!($err.$name().is_err());)*
             }
-        };
-        ($fluid_type:ty, f64, $name:ident, $ok_fluid:ident, $ok_value:expr $(, $err_fluid:ident)*) => {
-            paste::paste! {
-                #[rstest::rstest]
-                fn [<$name _returns_expected_value>](
-                    mut $ok_fluid: $fluid_type,
-                    $(mut $err_fluid: $fluid_type,)*
-                ) {
-                    assert!($ok_fluid.$name().is_ok());
-                    $crate::test::assert_relative_eq!($ok_fluid.$name().unwrap(), $ok_value);
-                    $(assert!($err_fluid.$name().is_err());)*
-                }
+        }
+    };
+    ($type:ty: $name:ident, $ok:ident: $ok_value:expr, always_ok) => {
+        paste::paste! {
+            #[rstest::rstest]
+            fn [<$name _returns_expected_value>](mut $ok: $type) {
+                $crate::test::assert_relative_eq!($ok.$name(), $ok_value);
             }
-        };
-        ($fluid_type:ty, always_ok, $name:ident, $fluid:ident, $value:expr) => {
-            paste::paste! {
-                #[rstest::rstest]
-                fn [<$name _returns_expected_value>](mut $fluid: $fluid_type) {
-                    $crate::test::assert_relative_eq!($fluid.$name().value, $value);
-                }
-            }
-        };
-    }
-
-    pub(crate) use test_output;
+        }
+    };
 }
 
-pub(crate) mod humid_air {
-    macro_rules! test_output {
-        ($name:ident, $valid:ident, $ok_value:expr $(, $invalid:ident)?) => {
-            paste::paste! {
-                #[rstest::rstest]
-                fn [<$name _returns_expected_value>](
-                    mut $valid: HumidAir,
-                    $(mut $invalid: HumidAir,)?
-                ) {
-                    assert!($valid.$name().is_ok());
-                    $crate::test::assert_relative_eq!($valid.$name().unwrap().value, $ok_value);
-                    $(assert!($invalid.$name().is_err());)?
-                }
-            }
-        };
-        (f64, $name:ident, $valid:ident, $ok_value:expr $(, $invalid:ident)?) => {
-            paste::paste! {
-                #[rstest::rstest]
-                fn [<$name _returns_expected_value>](
-                    mut $valid: HumidAir,
-                    $(mut $invalid: HumidAir,)?
-                ) {
-                    assert!($valid.$name().is_ok());
-                    $crate::test::assert_relative_eq!($valid.$name().unwrap(), $ok_value);
-                    $(assert!($invalid.$name().is_err());)?
-                }
-            }
-        };
-    }
-
-    pub(crate) use test_output;
-}
+pub(crate) use test_output;

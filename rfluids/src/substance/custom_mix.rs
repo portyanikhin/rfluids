@@ -1,10 +1,6 @@
 use super::{BackendName, Pure};
 use crate::{error::CustomMixError, io::FluidTrivialParam::MolarMass, native::AbstractState};
 use std::collections::HashMap;
-use uom::{
-    ConstZero,
-    si::{f64::Ratio, ratio::ratio},
-};
 
 /// `CoolProp` custom mixture.
 ///
@@ -15,11 +11,11 @@ use uom::{
 pub enum CustomMix {
     /// Mole-based mixture _(with mole fractions)_.
     #[non_exhaustive]
-    MoleBased(HashMap<Pure, Ratio>),
+    MoleBased(HashMap<Pure, f64>),
 
     /// Mass-based mixture _(with mass fractions)_.
     #[non_exhaustive]
-    MassBased(HashMap<Pure, Ratio>),
+    MassBased(HashMap<Pure, f64>),
 }
 
 impl CustomMix {
@@ -27,7 +23,8 @@ impl CustomMix {
     ///
     /// # Args
     ///
-    /// - `components` -- hash map of components and their _mole_ fractions.
+    /// - `components` -- hash map of components and
+    ///   their _mole_ fractions **\[dimensionless, from 0 to 1\]**.
     ///
     /// # Errors
     ///
@@ -36,119 +33,32 @@ impl CustomMix {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::substance::{CustomMix, Pure};
-    /// use uom::si::f64::Ratio;
-    /// use uom::si::ratio::percent;
+    /// use rfluids::prelude::*;
     /// use std::collections::HashMap;
     ///
     /// assert!(CustomMix::mole_based(HashMap::from([
-    ///     (Pure::Water, Ratio::new::<percent>(80.0)),
-    ///     (Pure::Ethanol, Ratio::new::<percent>(20.0)),
-    /// ]))
-    /// .is_ok());
-    ///
-    /// assert!(CustomMix::mole_based(HashMap::from([
-    ///     (Pure::R32, Ratio::new::<percent>(70.0)),
-    ///     (Pure::R125, Ratio::new::<percent>(30.0)),
-    /// ]))
-    /// .is_ok());
-    /// ```
-    ///
-    /// # See also
-    ///
-    /// - [`CustomMix::mole_based_si`](CustomMix::mole_based_si)
-    pub fn mole_based(components: HashMap<Pure, Ratio>) -> Result<Self, CustomMixError> {
-        Self::validate(&components)?;
-        Ok(Self::MoleBased(components))
-    }
-
-    /// Creates and returns a new [`CustomMix::MoleBased`] instance.
-    ///
-    /// # Args
-    ///
-    /// - `components` -- hash map of components and their _mole_ fractions
-    ///   in SI units _(dimensionless, from 0 to 1)_.
-    ///
-    /// # Errors
-    ///
-    /// For invalid inputs, a [`CustomMixError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::substance::{CustomMix, Pure};
-    /// use std::collections::HashMap;
-    ///
-    /// assert!(CustomMix::mole_based_si(HashMap::from([
     ///     (Pure::Water, 0.8),
     ///     (Pure::Ethanol, 0.2),
     /// ]))
     /// .is_ok());
     ///
-    /// assert!(CustomMix::mole_based_si(HashMap::from([
+    /// assert!(CustomMix::mole_based(HashMap::from([
     ///     (Pure::R32, 0.7),
     ///     (Pure::R125, 0.3),
     /// ]))
     /// .is_ok());
     /// ```
-    ///
-    /// # See also
-    ///
-    /// - [`CustomMix::mole_based`](CustomMix::mole_based)
-    pub fn mole_based_si(components: HashMap<Pure, f64>) -> Result<Self, CustomMixError> {
-        Self::mole_based(
-            components
-                .into_iter()
-                .map(|c| (c.0, Ratio::new::<ratio>(c.1)))
-                .collect(),
-        )
-    }
-
-    /// Creates and returns a new [`CustomMix::MassBased`] instance.
-    ///
-    /// # Args
-    ///
-    /// - `components` -- hash map of components and their _mass_ fractions.
-    ///
-    /// # Errors
-    ///
-    /// For invalid inputs, a [`CustomMixError`] is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::substance::{CustomMix, Pure};
-    /// use uom::si::f64::Ratio;
-    /// use uom::si::ratio::percent;
-    /// use std::collections::HashMap;
-    ///
-    /// assert!(CustomMix::mass_based(HashMap::from([
-    ///     (Pure::Water, Ratio::new::<percent>(60.0)),
-    ///     (Pure::Ethanol, Ratio::new::<percent>(40.0)),
-    /// ]))
-    /// .is_ok());
-    ///
-    /// assert!(CustomMix::mass_based(HashMap::from([
-    ///     (Pure::R32, Ratio::new::<percent>(50.0)),
-    ///     (Pure::R125, Ratio::new::<percent>(50.0)),
-    /// ]))
-    /// .is_ok());
-    /// ```
-    ///
-    /// # See also
-    ///
-    /// - [`CustomMix::mass_based_si`](CustomMix::mass_based_si)
-    pub fn mass_based(components: HashMap<Pure, Ratio>) -> Result<Self, CustomMixError> {
+    pub fn mole_based(components: HashMap<Pure, f64>) -> Result<Self, CustomMixError> {
         Self::validate(&components)?;
-        Ok(Self::MassBased(components))
+        Ok(Self::MoleBased(components))
     }
 
     /// Creates and returns a new [`CustomMix::MassBased`] instance.
     ///
     /// # Args
     ///
-    /// - `components` -- hash map of components and their _mass_ fractions.
-    ///   in SI units _(dimensionless, from 0 to 1)_.
+    /// - `components` -- hash map of components and
+    ///   their _mass_ fractions **\[dimensionless, from 0 to 1\]**.
     ///
     /// # Errors
     ///
@@ -157,96 +67,83 @@ impl CustomMix {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::substance::{CustomMix, Pure};
+    /// use rfluids::prelude::*;
     /// use std::collections::HashMap;
     ///
-    /// assert!(CustomMix::mass_based_si(HashMap::from([
+    /// assert!(CustomMix::mass_based(HashMap::from([
     ///     (Pure::Water, 0.6),
     ///     (Pure::Ethanol, 0.4),
     /// ]))
     /// .is_ok());
     ///
-    /// assert!(CustomMix::mass_based_si(HashMap::from([
+    /// assert!(CustomMix::mass_based(HashMap::from([
     ///     (Pure::R32, 0.5),
     ///     (Pure::R125, 0.5),
     /// ]))
     /// .is_ok());
     /// ```
-    ///
-    /// # See also
-    ///
-    /// - [`CustomMix::mass_based`](CustomMix::mass_based)
-    pub fn mass_based_si(components: HashMap<Pure, f64>) -> Result<Self, CustomMixError> {
-        Self::mass_based(
-            components
-                .into_iter()
-                .map(|c| (c.0, Ratio::new::<ratio>(c.1)))
-                .collect(),
-        )
+    pub fn mass_based(components: HashMap<Pure, f64>) -> Result<Self, CustomMixError> {
+        Self::validate(&components)?;
+        Ok(Self::MassBased(components))
     }
 
-    /// Clone and convert to [`CustomMix::MoleBased`]
+    /// Convert to [`CustomMix::MoleBased`]
     /// _(mass fractions will be converted to mole fractions)_.
     ///
     /// # Examples
     ///
     /// ```
-    /// use rfluids::substance::{CustomMix, Pure};
-    /// use uom::si::f64::Ratio;
-    /// use uom::si::ratio::percent;
+    /// use rfluids::prelude::*;
     /// use std::collections::HashMap;
     ///
     /// let mole_based_mix = CustomMix::mole_based(HashMap::from([
-    ///     (Pure::Water, Ratio::new::<percent>(80.0)),
-    ///     (Pure::Ethanol, Ratio::new::<percent>(20.0)),
+    ///     (Pure::Water, 0.8),
+    ///     (Pure::Ethanol, 0.2),
     /// ]))?;
-    /// assert_eq!(mole_based_mix.to_mole_based(), mole_based_mix);
+    /// assert_eq!(mole_based_mix.clone().into_mole_based(), mole_based_mix);
     ///
     /// let mass_based_mix = CustomMix::mass_based(HashMap::from([
-    ///     (Pure::R32, Ratio::new::<percent>(50.0)),
-    ///     (Pure::R125, Ratio::new::<percent>(50.0)),
+    ///     (Pure::R32, 0.5),
+    ///     (Pure::R125, 0.5),
     /// ]))?;
-    /// assert_ne!(mass_based_mix.to_mole_based(), mass_based_mix);
+    /// assert_ne!(mass_based_mix.clone().into_mole_based(), mass_based_mix);
     /// # Ok::<(), rfluids::error::Error>(())
     /// ```
     #[must_use]
-    pub fn to_mole_based(&self) -> Self {
+    pub fn into_mole_based(self) -> Self {
         match self {
             CustomMix::MassBased(c) => {
-                let mut components = c.clone().into_iter().collect::<Vec<_>>();
+                let mut components = c;
                 let mut sum = 0.0;
                 for component in &mut components {
-                    component.1 /= Self::molar_mass(component.0);
-                    sum += component.1.value;
+                    *component.1 /= Self::molar_mass(*component.0);
+                    sum += *component.1;
                 }
                 for component in &mut components {
-                    component.1 /= sum;
+                    *component.1 /= sum;
                 }
                 Self::MoleBased(HashMap::from_iter(components))
             }
-            CustomMix::MoleBased(_) => self.clone(),
+            CustomMix::MoleBased(_) => self,
         }
     }
 
     /// Specified components and their fractions.
     #[must_use]
-    pub fn components(&self) -> &HashMap<Pure, Ratio> {
+    pub fn components(&self) -> &HashMap<Pure, f64> {
         match self {
             CustomMix::MoleBased(components) | CustomMix::MassBased(components) => components,
         }
     }
 
-    fn validate(components: &HashMap<Pure, Ratio>) -> Result<(), CustomMixError> {
+    fn validate(components: &HashMap<Pure, f64>) -> Result<(), CustomMixError> {
         if components.len() < 2 {
             return Err(CustomMixError::NotEnoughComponents);
         }
-        if components
-            .values()
-            .any(|f| f <= &Ratio::ZERO || f >= &Ratio::new::<ratio>(1.0))
-        {
+        if components.values().any(|f| !(0.0..=1.0).contains(f)) {
             return Err(CustomMixError::InvalidFraction);
         }
-        if (components.values().map(|f| f.value).sum::<f64>() - 1.0).abs() > 1e-6 {
+        if (components.values().sum::<f64>() - 1.0).abs() > 1e-6 {
             return Err(CustomMixError::InvalidFractionsSum);
         }
         Ok(())
@@ -265,30 +162,13 @@ mod tests {
     use super::*;
     use approx::relative_eq;
     use rstest::*;
-    use uom::si::ratio::percent;
 
     #[rstest]
     #[case(HashMap::from([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]))]
     #[case(HashMap::from([(Pure::R32, 0.5), (Pure::R125, 0.5)]))]
     fn mole_or_mass_based_from_valid_input_returns_ok(#[case] components: HashMap<Pure, f64>) {
-        let mole_based = CustomMix::mole_based(
-            components
-                .clone()
-                .into_iter()
-                .map(|c| (c.0, Ratio::new::<ratio>(c.1)))
-                .collect(),
-        );
-        assert!(mole_based.is_ok());
-        assert_eq!(mole_based, CustomMix::mole_based_si(components.clone()));
-        let mass_based = CustomMix::mass_based(
-            components
-                .clone()
-                .into_iter()
-                .map(|c| (c.0, Ratio::new::<ratio>(c.1)))
-                .collect(),
-        );
-        assert!(mass_based.is_ok());
-        assert_eq!(mass_based, CustomMix::mass_based_si(components));
+        assert!(CustomMix::mole_based(components.clone()).is_ok());
+        assert!(CustomMix::mass_based(components).is_ok());
     }
 
     #[rstest]
@@ -314,32 +194,26 @@ mod tests {
         #[case] expected: CustomMixError,
     ) {
         assert_eq!(
-            CustomMix::mole_based_si(components.clone()).unwrap_err(),
+            CustomMix::mole_based(components.clone()).unwrap_err(),
             expected
         );
-        assert_eq!(CustomMix::mass_based_si(components).unwrap_err(), expected);
+        assert_eq!(CustomMix::mass_based(components).unwrap_err(), expected);
     }
 
     #[test]
-    fn to_mole_based_from_mole_based_returns_same() {
-        let sut = CustomMix::mole_based(HashMap::from([
-            (Pure::Water, Ratio::new::<percent>(80.0)),
-            (Pure::Ethanol, Ratio::new::<percent>(20.0)),
-        ]))
-        .unwrap();
-        let result = sut.to_mole_based();
+    fn into_mole_based_from_mole_based_returns_same() {
+        let sut = CustomMix::mole_based(HashMap::from([(Pure::Water, 0.8), (Pure::Ethanol, 0.2)]))
+            .unwrap();
+        let result = sut.clone().into_mole_based();
         assert_eq!(result, sut);
         assert!(matches(&result, [("Water", 0.8), ("Ethanol", 0.2)]));
     }
 
     #[test]
-    fn to_mole_based_from_mass_based_returns_other_with_converted_fractions() {
-        let sut = CustomMix::mass_based(HashMap::from([
-            (Pure::R32, Ratio::new::<percent>(50.0)),
-            (Pure::R125, Ratio::new::<percent>(50.0)),
-        ]))
-        .unwrap();
-        let result = sut.to_mole_based();
+    fn into_mole_based_from_mass_based_returns_other_with_converted_fractions() {
+        let sut =
+            CustomMix::mass_based(HashMap::from([(Pure::R32, 0.5), (Pure::R125, 0.5)])).unwrap();
+        let result = sut.clone().into_mole_based();
         assert_ne!(result, sut);
         assert!(matches(&sut, [("R32", 0.5), ("R125", 0.5)]));
         assert!(matches(
@@ -358,7 +232,7 @@ mod tests {
                 .iter()
                 .filter(|component| {
                     expected.iter().any(|exp| {
-                        component.0.as_ref() == exp.0 && relative_eq!(component.1.value, exp.1)
+                        component.0.as_ref() == exp.0 && relative_eq!(*component.1, exp.1)
                     })
                 })
                 .count()

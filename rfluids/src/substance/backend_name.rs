@@ -10,9 +10,7 @@ pub trait BackendName {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::substance::*;
-    /// use uom::si::f64::Ratio;
-    /// use uom::si::ratio::percent;
+    /// use rfluids::prelude::*;
     /// use std::collections::HashMap;
     ///
     /// assert_eq!(Pure::Water.backend_name(), "HEOS");
@@ -21,8 +19,8 @@ pub trait BackendName {
     /// assert_eq!(BinaryMixKind::MPG.backend_name(), "INCOMP");
     /// assert_eq!(
     ///     CustomMix::mass_based(HashMap::from([
-    ///         (Pure::Water, Ratio::new::<percent>(60.0)),
-    ///         (Pure::Ethanol, Ratio::new::<percent>(40.0)),
+    ///         (Pure::Water, 0.6),
+    ///         (Pure::Ethanol, 0.4),
     ///     ]))?
     ///     .backend_name(),
     ///     "HEOS"
@@ -32,38 +30,41 @@ pub trait BackendName {
     fn backend_name(&self) -> &'static str;
 }
 
-macro_rules! heos {
-    ($value:ty) => {
-        impl BackendName for $value {
-            fn backend_name(&self) -> &'static str {
-                HELMHOLTZ_EOS_BACKEND_NAME
-            }
-        }
-    };
+impl BackendName for Pure {
+    fn backend_name(&self) -> &'static str {
+        HELMHOLTZ_EOS_BACKEND_NAME
+    }
 }
 
-macro_rules! incomp {
-    ($value:ty) => {
-        impl BackendName for $value {
-            fn backend_name(&self) -> &'static str {
-                INCOMP_BACKEND_NAME
-            }
-        }
-    };
+impl BackendName for IncompPure {
+    fn backend_name(&self) -> &'static str {
+        INCOMP_BACKEND_NAME
+    }
 }
 
-heos!(Pure);
-incomp!(IncompPure);
-heos!(PredefinedMix);
-incomp!(BinaryMixKind);
-heos!(CustomMix);
+impl BackendName for PredefinedMix {
+    fn backend_name(&self) -> &'static str {
+        HELMHOLTZ_EOS_BACKEND_NAME
+    }
+}
+
+impl BackendName for BinaryMixKind {
+    fn backend_name(&self) -> &'static str {
+        INCOMP_BACKEND_NAME
+    }
+}
+
+impl BackendName for CustomMix {
+    fn backend_name(&self) -> &'static str {
+        HELMHOLTZ_EOS_BACKEND_NAME
+    }
+}
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::collections::HashMap;
     use strum::IntoEnumIterator;
-    use uom::si::{f64::Ratio, ratio::percent};
 
     #[test]
     fn pure_returns_heos() {
@@ -95,11 +96,8 @@ mod tests {
 
     #[test]
     fn custom_mix_returns_heos() {
-        let sut = CustomMix::mass_based(HashMap::from([
-            (Pure::Water, Ratio::new::<percent>(60.0)),
-            (Pure::Ethanol, Ratio::new::<percent>(40.0)),
-        ]))
-        .unwrap();
+        let sut = CustomMix::mass_based(HashMap::from([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]))
+            .unwrap();
         assert_eq!(sut.backend_name(), HELMHOLTZ_EOS_BACKEND_NAME);
     }
 }

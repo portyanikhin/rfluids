@@ -1,7 +1,4 @@
-use crate::{
-    error::HumidAirStateError,
-    io::{Input, humid_air_input::HumidAirInput},
-};
+use crate::{error::HumidAirStateError, io::HumidAirInput};
 use std::collections::HashSet;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -14,34 +11,32 @@ pub(crate) struct HumidAirUpdateRequest(
 impl TryFrom<(HumidAirInput, HumidAirInput, HumidAirInput)> for HumidAirUpdateRequest {
     type Error = HumidAirStateError;
 
-    fn try_from(value: (HumidAirInput, HumidAirInput, HumidAirInput)) -> Result<Self, Self::Error> {
-        let inputs: [HumidAirInput; 3] = value.into();
-        let (keys, values) = (inputs.map(|x| x.key()), inputs.map(|x| x.si_value()));
+    fn try_from(
+        inputs: (HumidAirInput, HumidAirInput, HumidAirInput),
+    ) -> Result<Self, Self::Error> {
+        let inputs_array: [HumidAirInput; 3] = inputs.into();
+        let (keys, values) = (inputs_array.map(|x| x.key), inputs_array.map(|x| x.value));
         if HashSet::from(keys).len() != 3 {
             return Err(HumidAirStateError::InvalidInputs(keys[0], keys[1], keys[2]));
         }
         if !values.iter().all(|x| x.is_finite()) {
             return Err(HumidAirStateError::InvalidInputValue);
         }
-        Ok(Self(value.0, value.1, value.2))
+        Ok(Self(inputs.0, inputs.1, inputs.2))
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::io::{HumidAirParam, humid_air_input};
+    use crate::io::HumidAirParam;
     use rstest::*;
-    use uom::si::{
-        length::meter, pressure::atmosphere, ratio::percent,
-        thermodynamic_temperature::degree_celsius,
-    };
 
     #[test]
     fn try_from_valid_inputs_returns_ok() {
-        let input1 = humid_air_input::pressure!(1.0, atmosphere);
-        let input2 = humid_air_input::temperature!(20.0, degree_celsius);
-        let input3 = humid_air_input::rel_humidity!(50.0, percent);
+        let input1 = HumidAirInput::pressure(101_325.0);
+        let input2 = HumidAirInput::temperature(293.15);
+        let input3 = HumidAirInput::rel_humidity(0.5);
         let result = HumidAirUpdateRequest::try_from((input1, input2, input3)).unwrap();
         assert_eq!(result.0, input1);
         assert_eq!(result.1, input2);
@@ -50,9 +45,9 @@ mod tests {
 
     #[test]
     fn try_from_non_unique_inputs_returns_err() {
-        let input1 = humid_air_input::pressure!(1.0, atmosphere);
-        let input2 = humid_air_input::altitude!(300.0, meter).unwrap();
-        let input3 = humid_air_input::rel_humidity!(50.0, percent);
+        let input1 = HumidAirInput::pressure(101_325.0);
+        let input2 = HumidAirInput::altitude(300.0).unwrap();
+        let input3 = HumidAirInput::rel_humidity(0.5);
         let result = HumidAirUpdateRequest::try_from((input1, input2, input3));
         assert_eq!(
             result.unwrap_err(),
@@ -61,23 +56,23 @@ mod tests {
     }
 
     #[rstest]
-    #[case(f64::INFINITY, 20.0, 50.0)]
-    #[case(1.0, f64::INFINITY, 50.0)]
-    #[case(1.0, 20.0, f64::INFINITY)]
-    #[case(-f64::INFINITY, 20.0, 50.0)]
-    #[case(1.0, -f64::INFINITY, 50.0)]
-    #[case(1.0, 20.0, -f64::INFINITY)]
-    #[case(f64::NAN, 20.0, 50.0)]
-    #[case(1.0, f64::NAN, 50.0)]
-    #[case(1.0, 20.0, f64::NAN)]
+    #[case(f64::INFINITY, 293.15, 0.5)]
+    #[case(101_325.0, f64::INFINITY, 0.5)]
+    #[case(101_325.0, 293.15, f64::INFINITY)]
+    #[case(-f64::INFINITY, 293.15, 0.5)]
+    #[case(101_325.0, -f64::INFINITY, 0.5)]
+    #[case(101_325.0, 293.15, -f64::INFINITY)]
+    #[case(f64::NAN, 293.15, 0.5)]
+    #[case(101_325.0, f64::NAN, 0.5)]
+    #[case(101_325.0, 293.15, f64::NAN)]
     fn try_from_non_finite_inputs_returns_err(
         #[case] pressure: f64,
         #[case] temperature: f64,
         #[case] rel_humidity: f64,
     ) {
-        let input1 = humid_air_input::pressure!(pressure, atmosphere);
-        let input2 = humid_air_input::temperature!(temperature, degree_celsius);
-        let input3 = humid_air_input::rel_humidity!(rel_humidity, percent);
+        let input1 = HumidAirInput::pressure(pressure);
+        let input2 = HumidAirInput::temperature(temperature);
+        let input3 = HumidAirInput::rel_humidity(rel_humidity);
         let result = HumidAirUpdateRequest::try_from((input1, input2, input3));
         assert_eq!(result.unwrap_err(), HumidAirStateError::InvalidInputValue);
     }

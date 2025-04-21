@@ -1,5 +1,5 @@
 use super::{HumidAir, StateResult};
-use crate::{io::humid_air_input::HumidAirInput, state_variant::Undefined};
+use crate::{io::HumidAirInput, state_variant::Undefined};
 use std::{collections::HashMap, marker::PhantomData};
 
 impl HumidAir<Undefined> {
@@ -33,10 +33,6 @@ impl HumidAir<Undefined> {
     /// ```
     /// use rfluids::humid_air::StateResult;
     /// use rfluids::prelude::*;
-    /// use uom::si::length::meter;
-    /// use uom::si::pressure::atmosphere;
-    /// use uom::si::ratio::percent;
-    /// use uom::si::thermodynamic_temperature::degree_celsius;
     ///
     /// // After creation the `HumidAir` instance has `Undefined` state variant
     /// let mut humid_air: HumidAir<Undefined> = HumidAir::new();
@@ -45,27 +41,27 @@ impl HumidAir<Undefined> {
     /// // perform conversion between `Undefined` and `Defined` state variants
     /// // (since `Defined` is the default state variant, it can be omitted)
     /// let mut humid_air: HumidAir = humid_air.in_state(
-    ///     humid_air_input::altitude!(0.0, meter)?,
-    ///     humid_air_input::temperature!(20.0, degree_celsius),
-    ///     humid_air_input::rel_humidity!(50.0, percent),
+    ///     HumidAirInput::altitude(0.0)?,
+    ///     HumidAirInput::temperature(293.15),
+    ///     HumidAirInput::rel_humidity(0.5),
     /// )?;
     ///
     /// // The `HumidAir` instance now has `Defined` state variant
     /// // and it's thermodynamic state can be updated in place by calling `update` method
     /// // (which returns a mutable reference to the instance)
     /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air.update(
-    ///     humid_air_input::pressure!(2.0, atmosphere),
-    ///     humid_air_input::temperature!(40.0, degree_celsius),
-    ///     humid_air_input::rel_humidity!(75.0, percent),
+    ///     HumidAirInput::pressure(202_650.0),
+    ///     HumidAirInput::temperature(313.15),
+    ///     HumidAirInput::rel_humidity(0.75),
     /// );
     /// assert!(same_humid_air_in_new_state.is_ok());
     ///
     /// // Calling `in_state` method on `HumidAir<Defined>` will return
     /// // a new instance in the specified thermodynamic state
     /// let new_humid_air: StateResult<HumidAir> = humid_air.in_state(
-    ///     humid_air_input::pressure!(4.0, atmosphere),
-    ///     humid_air_input::temperature!(80.0, degree_celsius),
-    ///     humid_air_input::rel_humidity!(100.0, percent),
+    ///     HumidAirInput::pressure(405_300.0),
+    ///     HumidAirInput::temperature(353.15),
+    ///     HumidAirInput::rel_humidity(1.0),
     /// );
     /// assert!(new_humid_air.is_ok());
     /// # Ok::<(), rfluids::error::Error>(())
@@ -111,21 +107,17 @@ impl PartialEq for HumidAir<Undefined> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{error::HumidAirStateError, io::humid_air_input};
+    use crate::{error::HumidAirStateError, io::HumidAirInput};
     use rstest::*;
-    use uom::si::{
-        length::meter, pressure::atmosphere, ratio::percent,
-        thermodynamic_temperature::degree_celsius,
-    };
 
     #[fixture]
     fn altitude(#[default(0.0)] value: f64) -> HumidAirInput {
-        humid_air_input::altitude!(value, meter).unwrap()
+        HumidAirInput::altitude(value).unwrap()
     }
 
     #[fixture]
-    fn pressure(#[default(1.0)] value: f64) -> HumidAirInput {
-        humid_air_input::pressure!(value, atmosphere)
+    fn pressure(#[default(101_325.0)] value: f64) -> HumidAirInput {
+        HumidAirInput::pressure(value)
     }
 
     #[fixture]
@@ -134,13 +126,13 @@ mod tests {
     }
 
     #[fixture]
-    fn temperature(#[default(20.0)] value: f64) -> HumidAirInput {
-        humid_air_input::temperature!(value, degree_celsius)
+    fn temperature(#[default(293.15)] value: f64) -> HumidAirInput {
+        HumidAirInput::temperature(value)
     }
 
     #[fixture]
-    fn relative_humidity(#[default(50.0)] value: f64) -> HumidAirInput {
-        humid_air_input::rel_humidity!(value, percent)
+    fn rel_humidity(#[default(0.5)] value: f64) -> HumidAirInput {
+        HumidAirInput::rel_humidity(value)
     }
 
     #[fixture]
@@ -161,11 +153,11 @@ mod tests {
         humid_air: HumidAir<Undefined>,
         altitude: HumidAirInput,
         temperature: HumidAirInput,
-        relative_humidity: HumidAirInput,
+        rel_humidity: HumidAirInput,
     ) {
         assert!(
             humid_air
-                .in_state(altitude, temperature, relative_humidity)
+                .in_state(altitude, temperature, rel_humidity)
                 .is_ok()
         );
     }
@@ -175,11 +167,11 @@ mod tests {
         humid_air: HumidAir<Undefined>,
         altitude: HumidAirInput,
         pressure: HumidAirInput,
-        relative_humidity: HumidAirInput,
+        rel_humidity: HumidAirInput,
     ) {
         assert!(matches!(
             humid_air
-                .in_state(altitude, pressure, relative_humidity)
+                .in_state(altitude, pressure, rel_humidity)
                 .unwrap_err(),
             HumidAirStateError::InvalidInputs(_, _, _)
         ));
@@ -190,11 +182,11 @@ mod tests {
         humid_air: HumidAir<Undefined>,
         infinite_pressure: HumidAirInput,
         temperature: HumidAirInput,
-        relative_humidity: HumidAirInput,
+        rel_humidity: HumidAirInput,
     ) {
         assert!(matches!(
             humid_air
-                .in_state(infinite_pressure, temperature, relative_humidity)
+                .in_state(infinite_pressure, temperature, rel_humidity)
                 .unwrap_err(),
             HumidAirStateError::InvalidInputValue
         ));

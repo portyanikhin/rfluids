@@ -1,9 +1,5 @@
 use super::{OutputResult, requests::HumidAirUpdateRequest};
-use crate::{
-    error::HumidAirOutputError,
-    io::{HumidAirParam, Input},
-    native::CoolProp,
-};
+use crate::{error::HumidAirOutputError, io::HumidAirParam, native::CoolProp};
 use std::collections::HashMap;
 
 pub(crate) fn cached_output(
@@ -16,12 +12,12 @@ pub(crate) fn cached_output(
         .or_insert_with(|| {
             CoolProp::ha_props_si(
                 key,
-                request.0.key(),
-                request.0.si_value(),
-                request.1.key(),
-                request.1.si_value(),
-                request.2.key(),
-                request.2.si_value(),
+                request.0.key,
+                request.0.value,
+                request.1.key,
+                request.1.value,
+                request.2.key,
+                request.2.value,
             )
             .map_err(|e| HumidAirOutputError::CalculationFailed(key, e))
         })

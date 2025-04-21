@@ -12,7 +12,7 @@ use strum_macros::{AsRefStr, EnumString};
 ///
 /// ```
 /// use std::str::FromStr;
-/// use rfluids::substance::IncompPure;
+/// use rfluids::prelude::*;
 ///
 /// assert_eq!(IncompPure::Water.as_ref(), "Water");
 /// assert_eq!(IncompPure::from_str("Water"), Ok(IncompPure::Water));
