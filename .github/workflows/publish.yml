@@ -17,7 +17,7 @@ jobs:
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
       - name: Publish coolprop-sys
-        run: cargo publish --package coolprop-sys --token ${CARGO_REGISTRY_TOKEN}
+        run: cargo publish --package coolprop-sys --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
         continue-on-error: true
       - name: Publish rfluids
-        run: cargo publish --package rfluids --token ${CARGO_REGISTRY_TOKEN}
+        run: cargo publish --package rfluids --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
