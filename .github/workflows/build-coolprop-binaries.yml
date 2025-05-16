@@ -1,0 +1,48 @@
+name: Build CoolProp binaries
+
+on:
+  workflow_dispatch:
+    inputs:
+      coolprop_version:
+        required: true
+        description: "CoolProp version"
+        default: "v6.8.0"
+
+jobs:
+  build-coolprop-binaries:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macos-13, macos-latest ]
+      fail-fast: false
+
+    steps:
+      - name: Checkout CoolProp repository
+        uses: actions/checkout@v4
+        with:
+          repository: CoolProp/CoolProp
+          ref: ${{ github.event.inputs.coolprop_version }}
+          submodules: recursive
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.13
+      - name: Restore Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install six
+      - name: Build a Makefile
+        run: cmake . -DCOOLPROP_SHARED_LIBRARY=ON -DCMAKE_BUILD_TYPE=Release
+      - name: Build CoolProp binaries
+        run: cmake --build . --config Release
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: CoolProp ${{ github.event.inputs.coolprop_version }} (${{ matrix.os }})
+          path: |
+            Release/*.dll
+            Release/*.lib
+            *.dylib
+            *.so
+          if-no-files-found: error
