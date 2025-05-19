@@ -1,6 +1,14 @@
-﻿[workspace]
+[workspace]
 resolver = "3"
-members = ["coolprop-sys", "rfluids"]
+members = [
+    "coolprop-sys",
+    "coolprop-sys-linux-x86-64",
+    "coolprop-sys-macos-aarch64",
+    "coolprop-sys-macos-x86-64",
+    "coolprop-sys-windows-aarch64",
+    "coolprop-sys-windows-x86-64",
+    "rfluids",
+]
 
 [workspace.package]
 authors = ["Vladimir Portyanikhin <v.portyanikhin@ya.ru>"]
