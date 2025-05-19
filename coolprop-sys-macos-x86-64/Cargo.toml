@@ -1,0 +1,15 @@
+[package]
+name = "coolprop-sys-macos-x86-64"
+version = "6.8.0"
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "CoolProp native binaries for macOS x86-64"
+readme = "README.md"
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords = ["CoolProp", "native", "binaries", "macOS", "x86-64"]
+categories = ["api-bindings", "science"]
+
+[dependencies]

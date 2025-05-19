@@ -39,9 +39,13 @@
 pub mod bindings;
 
 /// `CoolProp` dynamic library absolute path.
-#[cfg(target_os = "windows")]
-pub const COOLPROP_PATH: &str = concat!(env!("OUT_DIR"), "/CoolProp.dll");
-#[cfg(target_os = "linux")]
-pub const COOLPROP_PATH: &str = concat!(env!("OUT_DIR"), "/libCoolProp.so");
-#[cfg(target_os = "macos")]
-pub const COOLPROP_PATH: &str = concat!(env!("OUT_DIR"), "/libCoolProp.dylib");
+#[cfg(all(target_os = "windows", target_arch = "x86_64"))]
+pub const COOLPROP_PATH: &str = coolprop_sys_windows_x86_64::COOLPROP_PATH;
+#[cfg(all(target_os = "windows", target_arch = "aarch64"))]
+pub const COOLPROP_PATH: &str = coolprop_sys_windows_aarch64::COOLPROP_PATH;
+#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+pub const COOLPROP_PATH: &str = coolprop_sys_linux_x86_64::COOLPROP_PATH;
+#[cfg(all(target_os = "macos", target_arch = "x86_64"))]
+pub const COOLPROP_PATH: &str = coolprop_sys_macos_x86_64::COOLPROP_PATH;
+#[cfg(all(target_os = "macos", target_arch = "aarch64"))]
+pub const COOLPROP_PATH: &str = coolprop_sys_macos_aarch64::COOLPROP_PATH;
