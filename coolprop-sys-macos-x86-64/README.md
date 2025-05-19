@@ -5,7 +5,7 @@
 [<img alt="crates.io" src="https://img.shields.io/crates/v/coolprop-sys?style=for-the-badge&logo=rust&labelColor=555555&color=fc8d62" height="22">](https://crates.io/crates/coolprop-sys)
 [<img alt="CI" src="https://img.shields.io/github/actions/workflow/status/portyanikhin/rfluids/ci.yml?style=for-the-badge&logo=githubactions&logoColor=ffffff&label=ci&labelColor=555555" height="22">](https://github.com/portyanikhin/rfluids/actions/workflows/ci.yml)
 
-[CoolProp](https://coolprop.github.io/CoolProp/) native binaries for macOS x86-64.
+[CoolProp](https://coolprop.github.io/CoolProp/) native binaries for `macOS x86-64`.
 
 #### License
 

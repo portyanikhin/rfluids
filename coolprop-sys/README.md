@@ -9,11 +9,11 @@ Raw FFI bindings to [CoolProp](https://coolprop.github.io/CoolProp/).
 
 ## Supported platforms
 
-- `Windows x86-64`
-- `Windows AArch64`
 - `Linux x86-64`
-- `macOS x86-64`
 - `macOS AArch64`
+- `macOS x86-64`
+- `Windows AArch64`
+- `Windows x86-64`
 
 ## MSRV
 
