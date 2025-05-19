@@ -143,6 +143,9 @@ another_humid_air.update(
 assert_ne!(humid_air, another_humid_air);
 ```
 
-## License
+#### License
 
-This project is licensed under [MIT License](https://github.com/portyanikhin/rfluids/blob/main/LICENSE).
+<sup>
+This project is licensed under
+<a href="https://github.com/portyanikhin/rfluids/blob/main/LICENSE">MIT License</a>.
+</sup>

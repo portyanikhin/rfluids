@@ -31,6 +31,9 @@ cargo add coolprop-sys
 The library required for your platform will be automatically copied
 to the target directory during build.
 
-## License
+#### License
 
-This project is licensed under [MIT License](https://github.com/portyanikhin/rfluids/blob/main/LICENSE).
+<sup>
+This project is licensed under
+<a href="https://github.com/portyanikhin/rfluids/blob/main/LICENSE">MIT License</a>.
+</sup>

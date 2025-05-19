@@ -146,9 +146,12 @@
 //! # Ok::<(), rfluids::error::Error>(())
 //! ```
 //!
-//! ## License
+//! #### License
 //!
-//! This project is licensed under [MIT License](https://github.com/portyanikhin/rfluids/blob/main/LICENSE).
+//! <sup>
+//! This project is licensed under
+//! <a href="https://github.com/portyanikhin/rfluids/blob/main/LICENSE">MIT License</a>.
+//! </sup>
 
 #![warn(clippy::all, clippy::pedantic, missing_docs)]
 #![allow(
