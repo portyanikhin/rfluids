@@ -1,5 +1,5 @@
+use super::FluidStateError;
 use crate::{
-    error::FluidStateError,
     io::{FluidInput, FluidInputPair, FluidParam},
     substance::{BackendName, Substance},
 };

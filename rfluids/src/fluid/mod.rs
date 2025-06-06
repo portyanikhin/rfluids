@@ -24,14 +24,14 @@ mod requests;
 mod undefined;
 
 use crate::{
-    error::{FluidFromCustomMixError, FluidOutputError, FluidStateError},
     io::{FluidParam, FluidTrivialParam},
-    native::AbstractState,
+    native::{AbstractState, CoolPropError},
     state_variant::{Defined, StateVariant, Undefined},
     substance::{BinaryMix, CustomMix, IncompPure, PredefinedMix, Pure, Substance},
 };
 use requests::{FluidCreateRequest, FluidUpdateRequest};
 use std::{collections::HashMap, fmt::Debug, marker::PhantomData};
+use thiserror::Error;
 
 /// Result type for operations that could fail while updating fluid state.
 pub type StateResult<T> = Result<T, FluidStateError>;
@@ -91,7 +91,7 @@ impl TryFrom<Substance> for Fluid<Undefined> {
     ///     ]))?,
     /// );
     /// assert!(Fluid::try_from(unsupported_mix).is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
+    /// # Ok::<(), rfluids::Error>(())
     /// ```
     fn try_from(value: Substance) -> Result<Self, Self::Error> {
         let request = FluidCreateRequest::from(&value);
@@ -168,7 +168,7 @@ impl From<BinaryMix> for Fluid<Undefined> {
     /// use rfluids::prelude::*;
     ///
     /// let propylene_glycol = Fluid::from(BinaryMixKind::MPG.with_fraction(0.4)?);
-    /// # Ok::<(), rfluids::error::Error>(())
+    /// # Ok::<(), rfluids::Error>(())
     /// ```
     fn from(value: BinaryMix) -> Self {
         Substance::from(value).try_into().unwrap()
@@ -202,11 +202,51 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
     ///     (Pure::R32, 0.4),
     /// ]))?;
     /// assert!(Fluid::try_from(unsupported_mix).is_err());
-    /// # Ok::<(), rfluids::error::Error>(())
+    /// # Ok::<(), rfluids::Error>(())
     /// ```
     fn try_from(value: CustomMix) -> Result<Self, Self::Error> {
         Substance::from(value).try_into()
     }
+}
+
+/// Error during creation of [`Fluid`] from [`CustomMix`].
+#[derive(Error, Debug, Clone, Eq, PartialEq)]
+pub enum FluidFromCustomMixError {
+    /// Specified custom mixture is not supported.
+    #[error("Specified custom mixture is not supported! {0}")]
+    Unsupported(#[from] CoolPropError),
+}
+
+/// Error during [`Fluid::update`] or [`Fluid::in_state`].
+#[derive(Error, Debug, Clone, Eq, PartialEq)]
+pub enum FluidStateError {
+    /// Specified inputs are invalid.
+    #[error("Specified inputs (`{0:?}`, `{1:?}`) are invalid!")]
+    InvalidInputPair(FluidParam, FluidParam),
+
+    /// Some of the specified input value is infinite or NaN.
+    #[error("Input values must be finite!")]
+    InvalidInputValue,
+
+    /// Failed to update the fluid state due to unsupported inputs or invalid state.
+    #[error("Failed to update the fluid state! {0}")]
+    UpdateFailed(#[from] CoolPropError),
+}
+
+/// Error during calculation of the [`Fluid`] output parameter value.
+#[derive(Error, Debug, Clone, Eq, PartialEq)]
+pub enum FluidOutputError {
+    /// Specified trivial output parameter is not available.
+    #[error("Specified trivial output parameter `{0:?}` is not available!")]
+    UnavailableTrivialOutput(FluidTrivialParam),
+
+    /// Specified output parameter is not available.
+    #[error("Specified output parameter `{0:?}` is not available!")]
+    UnavailableOutput(FluidParam),
+
+    /// Failed to calculate the output parameter value.
+    #[error("Failed to calculate the output value of `{0:?}`! {1}")]
+    CalculationFailed(FluidParam, CoolPropError),
 }
 
 #[cfg(test)]

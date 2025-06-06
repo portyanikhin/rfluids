@@ -26,7 +26,7 @@ impl HumidAir<Undefined> {
     /// # Errors
     ///
     /// For invalid inputs,
-    /// a [`HumidAirStateError`](crate::error::HumidAirStateError) is returned.
+    /// a [`HumidAirStateError`](crate::humid_air::HumidAirStateError) is returned.
     ///
     /// # Examples
     ///
@@ -64,7 +64,7 @@ impl HumidAir<Undefined> {
     ///     HumidAirInput::rel_humidity(1.0),
     /// );
     /// assert!(new_humid_air.is_ok());
-    /// # Ok::<(), rfluids::error::Error>(())
+    /// # Ok::<(), rfluids::Error>(())
     /// ```
     ///
     /// # See also
@@ -107,7 +107,7 @@ impl PartialEq for HumidAir<Undefined> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{error::HumidAirStateError, io::HumidAirInput};
+    use crate::{humid_air::HumidAirStateError, io::HumidAirInput};
     use rstest::*;
 
     #[fixture]

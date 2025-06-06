@@ -1,6 +1,7 @@
 use super::{BackendName, Pure};
-use crate::{error::CustomMixError, io::FluidTrivialParam::MolarMass, native::AbstractState};
+use crate::{io::FluidTrivialParam::MolarMass, native::AbstractState};
 use std::collections::HashMap;
+use thiserror::Error;
 
 /// `CoolProp` custom mixture.
 ///
@@ -107,7 +108,7 @@ impl CustomMix {
     ///     (Pure::R125, 0.5),
     /// ]))?;
     /// assert_ne!(mass_based_mix.clone().into_mole_based(), mass_based_mix);
-    /// # Ok::<(), rfluids::error::Error>(())
+    /// # Ok::<(), rfluids::Error>(())
     /// ```
     #[must_use]
     pub fn into_mole_based(self) -> Self {
@@ -155,6 +156,22 @@ impl CustomMix {
             .keyed_output(MolarMass)
             .unwrap()
     }
+}
+
+/// Error during creation of [`CustomMix`].
+#[derive(Error, Debug, Clone, Eq, PartialEq)]
+pub enum CustomMixError {
+    /// The specified components are not enough.
+    #[error("At least 2 unique components must be provided!")]
+    NotEnoughComponents,
+
+    /// Some of the specified fractions are invalid.
+    #[error("All of the specified fractions must be exclusive between 0 and 1!")]
+    InvalidFraction,
+
+    /// The sum of the specified fractions is invalid.
+    #[error("The sum of the specified fractions must be equal to 1!")]
+    InvalidFractionsSum,
 }
 
 #[cfg(test)]

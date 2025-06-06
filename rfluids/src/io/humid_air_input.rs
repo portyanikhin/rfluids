@@ -1,5 +1,5 @@
 use super::{HumidAirParam, Input};
-use crate::error::AltitudeError;
+use thiserror::Error;
 
 /// [`HumidAir`](crate::humid_air::HumidAir) input parameter with specified value.
 ///
@@ -175,6 +175,14 @@ impl HumidAirInput {
             value,
         }
     }
+}
+
+/// Error during [`HumidAirInput::altitude`].
+#[derive(Error, Debug, Clone, PartialEq)]
+pub enum AltitudeError {
+    /// Altitude value is out of possible range.
+    #[error("Altitude value `{0:?} m` is out of possible range [-5 000; 10 000] m!")]
+    OutOfRange(f64),
 }
 
 #[cfg(test)]

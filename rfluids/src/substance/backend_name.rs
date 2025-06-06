@@ -25,7 +25,7 @@ pub trait BackendName {
     ///     .backend_name(),
     ///     "HEOS"
     /// );
-    /// # Ok::<(), rfluids::error::Error>(())
+    /// # Ok::<(), rfluids::Error>(())
     /// ```
     fn backend_name(&self) -> &'static str;
 }

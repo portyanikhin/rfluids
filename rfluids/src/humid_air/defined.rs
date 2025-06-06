@@ -13,7 +13,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn abs_humidity(&mut self) -> OutputResult<f64> {
         self.non_negative_output(HumidAirParam::W)
     }
@@ -25,7 +25,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn density(&mut self) -> OutputResult<f64> {
         self.specific_volume().map(|value| 1.0 / value)
     }
@@ -37,7 +37,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn density_da(&mut self) -> OutputResult<f64> {
         self.specific_volume_da().map(|value| 1.0 / value)
     }
@@ -47,7 +47,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn compressibility(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Z)
     }
@@ -57,7 +57,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn conductivity(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Conductivity)
     }
@@ -67,7 +67,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn dew_temperature(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::TDew)
     }
@@ -77,7 +77,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn dynamic_viscosity(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::DynamicViscosity)
     }
@@ -87,7 +87,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn enthalpy(&mut self) -> OutputResult<f64> {
         self.output(HumidAirParam::Hha)
     }
@@ -97,7 +97,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn enthalpy_da(&mut self) -> OutputResult<f64> {
         self.output(HumidAirParam::Hda)
     }
@@ -107,7 +107,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn entropy(&mut self) -> OutputResult<f64> {
         self.output(HumidAirParam::Sha)
     }
@@ -117,7 +117,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn entropy_da(&mut self) -> OutputResult<f64> {
         self.output(HumidAirParam::Sda)
     }
@@ -127,7 +127,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn pressure(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::P)
     }
@@ -137,7 +137,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn rel_humidity(&mut self) -> OutputResult<f64> {
         let key = HumidAirParam::R;
         self.output(key)
@@ -149,7 +149,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn specific_heat(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Cpha)
     }
@@ -159,7 +159,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn specific_heat_da(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Cpda)
     }
@@ -169,7 +169,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn specific_heat_const_volume(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Cvha)
     }
@@ -179,7 +179,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn specific_heat_const_volume_da(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Cvda)
     }
@@ -189,7 +189,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn specific_volume(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Vha)
     }
@@ -199,7 +199,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn specific_volume_da(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Vda)
     }
@@ -209,7 +209,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn temperature(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::T)
     }
@@ -219,7 +219,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn water_mole_fraction(&mut self) -> OutputResult<f64> {
         self.non_negative_output(HumidAirParam::PsiW)
     }
@@ -229,7 +229,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn water_partial_pressure(&mut self) -> OutputResult<f64> {
         self.non_negative_output(HumidAirParam::Pw)
     }
@@ -239,7 +239,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::error::HumidAirOutputError) is returned.
+    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
     pub fn wet_bulb_temperature(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::TWetBulb)
     }
@@ -255,7 +255,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// For invalid inputs,
-    /// a [`HumidAirStateError`](crate::error::HumidAirStateError) is returned.
+    /// a [`HumidAirStateError`](crate::humid_air::HumidAirStateError) is returned.
     ///
     /// # Examples
     ///
@@ -293,7 +293,7 @@ impl HumidAir {
     ///     HumidAirInput::rel_humidity(1.0),
     /// );
     /// assert!(new_humid_air.is_ok());
-    /// # Ok::<(), rfluids::error::Error>(())
+    /// # Ok::<(), rfluids::Error>(())
     /// ```
     ///
     /// # See also
@@ -320,7 +320,7 @@ impl HumidAir {
     /// # Errors
     ///
     /// For invalid inputs,
-    /// a [`HumidAirStateError`](crate::error::HumidAirStateError) is returned.
+    /// a [`HumidAirStateError`](crate::humid_air::HumidAirStateError) is returned.
     ///
     /// # Examples
     ///
@@ -358,7 +358,7 @@ impl HumidAir {
     ///     HumidAirInput::rel_humidity(1.0),
     /// );
     /// assert!(new_humid_air.is_ok());
-    /// # Ok::<(), rfluids::error::Error>(())
+    /// # Ok::<(), rfluids::Error>(())
     /// ```
     ///
     /// # See also
@@ -408,7 +408,7 @@ impl PartialEq for HumidAir {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{error::HumidAirStateError, test::test_output};
+    use crate::{humid_air::HumidAirStateError, test::test_output};
     use rstest::*;
 
     #[fixture]

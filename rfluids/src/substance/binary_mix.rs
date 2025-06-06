@@ -1,11 +1,11 @@
 // cSpell:disable
 
-use crate::error::BinaryMixError;
 use std::str::FromStr;
 use strum::EnumProperty;
 #[cfg(test)]
 use strum_macros::EnumIter;
 use strum_macros::{AsRefStr, EnumProperty, EnumString};
+use thiserror::Error;
 
 /// `CoolProp` incompressible binary mixtures _(mass-based or volume-based)_.
 ///
@@ -291,6 +291,21 @@ pub struct BinaryMix {
     pub kind: BinaryMixKind,
     /// Specified fraction **\[dimensionless, from 0 to 1\]**.
     pub fraction: f64,
+}
+
+/// Error during creation of [`BinaryMix`].
+#[derive(Error, Debug, Clone, PartialEq)]
+pub enum BinaryMixError {
+    /// Specified fraction is invalid.
+    #[error("Specified fraction `{specified:?}` is out of possible range [{min:.1}; {max:.1}]!")]
+    InvalidFraction {
+        /// Specified value.
+        specified: f64,
+        /// Minimum possible value.
+        min: f64,
+        /// Maximum possible value.
+        max: f64,
+    },
 }
 
 #[cfg(test)]

@@ -10,12 +10,13 @@ mod requests;
 mod undefined;
 
 use crate::{
-    error::{HumidAirOutputError, HumidAirStateError},
     io::HumidAirParam,
+    native::CoolPropError,
     state_variant::{Defined, StateVariant},
 };
 use requests::HumidAirUpdateRequest;
 use std::{collections::HashMap, marker::PhantomData};
+use thiserror::Error;
 
 /// Result type for operations that could fail while updating humid air state.
 pub type StateResult<T> = Result<T, HumidAirStateError>;
@@ -35,4 +36,28 @@ pub struct HumidAir<S: StateVariant = Defined> {
     update_request: Option<HumidAirUpdateRequest>,
     outputs: HashMap<HumidAirParam, OutputResult<f64>>,
     state: PhantomData<S>,
+}
+
+/// Error during [`HumidAir::update`] or [`HumidAir::in_state`].
+#[derive(Error, Debug, Clone, Eq, PartialEq)]
+pub enum HumidAirStateError {
+    /// Specified inputs are invalid.
+    #[error("Specified inputs (`{0:?}`, `{1:?}`, `{2:?}`) are invalid!")]
+    InvalidInputs(HumidAirParam, HumidAirParam, HumidAirParam),
+
+    /// Some of the specified input value is infinite or NaN.
+    #[error("Input values must be finite!")]
+    InvalidInputValue,
+}
+
+/// Error during calculation of the [`HumidAir`] output parameter value.
+#[derive(Error, Debug, Clone, Eq, PartialEq)]
+pub enum HumidAirOutputError {
+    /// Specified output parameter is not available.
+    #[error("Specified output parameter `{0:?}` is not available!")]
+    UnavailableOutput(HumidAirParam),
+
+    /// Failed to calculate the output parameter value.
+    #[error("Failed to calculate the output value of `{0:?}`! {1}")]
+    CalculationFailed(HumidAirParam, CoolPropError),
 }
