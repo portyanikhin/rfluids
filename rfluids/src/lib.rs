@@ -50,7 +50,7 @@
 //!     2_079.937_085_633_241,
 //!     max_relative = 1e-6
 //! );
-//! # Ok::<(), rfluids::error::Error>(())
+//! # Ok::<(), rfluids::Error>(())
 //! ```
 //!
 //! Dynamic viscosity **\[Pa·s\]** of propylene glycol aqueous solution
@@ -71,7 +71,7 @@
 //!     0.139_073_910_539_388_78,
 //!     max_relative = 1e-6
 //! );
-//! # Ok::<(), rfluids::error::Error>(())
+//! # Ok::<(), rfluids::Error>(())
 //! ```
 //!
 //! Density **\[kg/m³\]** of ethanol aqueous solution (with ethanol _40 %_ mass fraction)
@@ -96,7 +96,7 @@
 //!     883.392_277_162_775_9,
 //!     max_relative = 1e-6
 //! );
-//! # Ok::<(), rfluids::error::Error>(())
+//! # Ok::<(), rfluids::Error>(())
 //! ```
 //!
 //! Wet-bulb temperature **\[K\]** of humid air
@@ -116,7 +116,7 @@
 //!     295.067_569_033_474_57,
 //!     max_relative = 1e-6
 //! );
-//! # Ok::<(), rfluids::error::Error>(())
+//! # Ok::<(), rfluids::Error>(())
 //! ```
 //!
 //! [`Fluid`](crate::fluid::Fluid) and [`HumidAir`](crate::humid_air::HumidAir)
@@ -143,7 +143,7 @@
 //!     HumidAirInput::rel_humidity(0.5),
 //! )?;
 //! assert_ne!(humid_air, another_humid_air);
-//! # Ok::<(), rfluids::error::Error>(())
+//! # Ok::<(), rfluids::Error>(())
 //! ```
 //!
 //! #### License
@@ -163,14 +163,17 @@
     clippy::missing_panics_doc
 )]
 
-pub mod error;
+pub use error::*;
+pub use state_variant::*;
+
+mod error;
 pub mod fluid;
 pub mod humid_air;
 pub mod io;
 pub mod native;
 mod ops;
 pub mod prelude;
-pub mod state_variant;
+mod state_variant;
 pub mod substance;
 #[cfg(test)]
 mod test;

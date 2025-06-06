@@ -14,7 +14,7 @@ impl Fluid<Undefined> {
     /// # Errors
     ///
     /// For invalid/unsupported inputs or invalid state,
-    /// a [`FluidStateError`](crate::error::FluidStateError) is returned.
+    /// a [`FluidStateError`](crate::fluid::FluidStateError) is returned.
     ///
     /// # Examples
     ///
@@ -49,7 +49,7 @@ impl Fluid<Undefined> {
     ///     FluidInput::temperature(353.15),
     /// );
     /// assert!(new_water.is_ok());
-    /// # Ok::<(), rfluids::error::Error>(())
+    /// # Ok::<(), rfluids::Error>(())
     /// ```
     ///
     /// # See also
@@ -86,7 +86,7 @@ impl PartialEq for Fluid<Undefined> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{error::FluidStateError, substance::*, test::test_output};
+    use crate::{fluid::FluidStateError, substance::*, test::test_output};
     use rstest::*;
 
     #[fixture]

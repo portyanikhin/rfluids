@@ -6,5 +6,8 @@ pub use crate::{
     io::{FluidInput, FluidInputPair, FluidParam, FluidTrivialParam, HumidAirInput, Input, Phase},
     native::{AbstractState, CoolProp},
     state_variant::*,
-    substance::*,
+    substance::{
+        BackendName, BinaryMix, BinaryMixKind, CustomMix, IncompPure, PredefinedMix, Pure,
+        Substance,
+    },
 };

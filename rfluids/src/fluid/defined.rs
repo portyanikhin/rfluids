@@ -1,11 +1,10 @@
 // cSpell:disable
 
 use super::{
-    Fluid, OutputResult, StateResult,
+    Fluid, FluidOutputError, OutputResult, StateResult,
     common::{cached_output, guard},
 };
 use crate::{
-    error::FluidOutputError,
     io::{FluidInput, FluidParam, Phase},
     ops::div,
 };
@@ -558,7 +557,7 @@ impl Fluid {
     /// # Errors
     ///
     /// For invalid/unsupported inputs or invalid state,
-    /// a [`FluidStateError`](crate::error::FluidStateError) is returned.
+    /// a [`FluidStateError`](crate::fluid::FluidStateError) is returned.
     ///
     /// # Examples
     ///
@@ -593,7 +592,7 @@ impl Fluid {
     ///     FluidInput::temperature(353.15),
     /// );
     /// assert!(new_water.is_ok());
-    /// # Ok::<(), rfluids::error::Error>(())
+    /// # Ok::<(), rfluids::Error>(())
     /// ```
     ///
     /// # See also
@@ -614,7 +613,7 @@ impl Fluid {
     /// # Errors
     ///
     /// For invalid/unsupported inputs or invalid state,
-    /// a [`FluidStateError`](crate::error::FluidStateError) is returned.
+    /// a [`FluidStateError`](crate::fluid::FluidStateError) is returned.
     ///
     /// # Examples
     ///
@@ -649,7 +648,7 @@ impl Fluid {
     ///     FluidInput::temperature(353.15),
     /// );
     /// assert!(new_water.is_ok());
-    /// # Ok::<(), rfluids::error::Error>(())
+    /// # Ok::<(), rfluids::Error>(())
     /// ```
     ///
     /// # See also
@@ -704,7 +703,7 @@ impl PartialEq for Fluid {
 mod tests {
     use super::*;
     use crate::{
-        error::FluidStateError,
+        fluid::FluidStateError,
         substance::*,
         test::{assert_relative_eq, test_output},
     };

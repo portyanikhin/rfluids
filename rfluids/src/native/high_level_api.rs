@@ -1,10 +1,9 @@
 // cSpell:disable
 
 use super::{
-    Result,
+    CoolPropError, Result,
     common::{COOLPROP, MessageBuffer, const_ptr_c_char},
 };
-use crate::error::CoolPropError;
 use core::ffi::c_char;
 use std::sync::MutexGuard;
 
@@ -43,7 +42,7 @@ impl CoolProp {
     ///
     /// let result = CoolProp::props_si("C", "P", 101_325.0, "Q", 1.0, "Water")?;
     /// assert_relative_eq!(result, 2_079.937_085_633_241, max_relative = 1e-6);
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// ## Incompressible binary mixtures
@@ -57,7 +56,7 @@ impl CoolProp {
     ///
     /// let result = CoolProp::props_si("V", "P", 100e3, "T", 253.15, "INCOMP::MPG-60%")?;
     /// assert_relative_eq!(result, 0.139_073_910_539_388_47, max_relative = 1e-6);
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// ## Custom mixtures
@@ -78,7 +77,7 @@ impl CoolProp {
     ///     "HEOS::Water[0.6]&Ethanol[0.4]",
     /// )?;
     /// assert_relative_eq!(result, 859.529_660_279_914_7, max_relative = 1e-6);
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// # See also
@@ -143,7 +142,7 @@ impl CoolProp {
     ///
     /// let result = CoolProp::ha_props_si("B", "P", 100e3, "T", 303.15, "R", 0.5)?;
     /// assert_relative_eq!(result, 295.120_036_536_265_6, max_relative = 1e-6);
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// # See also
@@ -199,7 +198,7 @@ impl CoolProp {
     ///
     /// let result = CoolProp::props1_si("Tcrit", "Water")?;
     /// assert_relative_eq!(result, 647.096, max_relative = 1e-6);
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// R32 100-year global warming potential **\[dimensionless\]**:
@@ -209,7 +208,7 @@ impl CoolProp {
     ///
     /// let result = CoolProp::props1_si("GWP100", "R32")?;
     /// assert_eq!(result, 675.0);
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// # See also

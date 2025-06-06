@@ -1,8 +1,7 @@
 use super::{
-    Result,
+    CoolPropError, Result,
     common::{COOLPROP, ErrorBuffer, const_ptr_c_char},
 };
-use crate::error::CoolPropError;
 use core::ffi::{c_char, c_long};
 
 /// `CoolProp` thread safe low-level API.
@@ -104,7 +103,7 @@ impl AbstractState {
     /// let mut propylene_glycol = AbstractState::new("INCOMP", "MPG")?;
     /// let result = propylene_glycol.set_fractions(&[0.6]);
     /// assert!(result.is_ok());
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// For custom mixtures:
@@ -115,7 +114,7 @@ impl AbstractState {
     /// let mut mixture = AbstractState::new("HEOS", "Water&Ethanol")?;
     /// let result = mixture.set_fractions(&[0.8, 0.2]);
     /// assert!(result.is_ok());
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     pub fn set_fractions(&mut self, fractions: &[f64]) -> Result<()> {
         let error = ErrorBuffer::default();
@@ -153,7 +152,7 @@ impl AbstractState {
     /// let mut water = AbstractState::new("HEOS", "Water")?;
     /// let result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
     /// assert!(result.is_ok());
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// # See also
@@ -207,7 +206,7 @@ impl AbstractState {
     /// water.update(FluidInputPair::PQ, 101_325.0, 1.0)?;
     /// let result = water.keyed_output(FluidParam::CpMass)?;
     /// assert_relative_eq!(result, 2_079.937_085_633_241, max_relative = 1e-6);
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// ## Incompressible binary mixtures
@@ -224,7 +223,7 @@ impl AbstractState {
     /// propylene_glycol.update(FluidInputPair::PT, 100e3, 253.15)?;
     /// let result = propylene_glycol.keyed_output(FluidParam::DynamicViscosity)?;
     /// assert_relative_eq!(result, 0.139_073_910_539_388_47, max_relative = 1e-6);
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// ## Custom mixtures
@@ -241,7 +240,7 @@ impl AbstractState {
     /// mixture.update(FluidInputPair::PT, 200e3, 277.15)?;
     /// let result = mixture.keyed_output(FluidParam::DMass)?;
     /// assert_relative_eq!(result, 883.882_635_377_379_6, max_relative = 1e-6);
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// # See also
@@ -286,7 +285,7 @@ impl AbstractState {
     /// water.specify_phase(Phase::Gas)?;
     /// result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
     /// assert!(result.is_err());
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// # See also
@@ -321,7 +320,7 @@ impl AbstractState {
     /// water.unspecify_phase();
     /// result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
     /// assert!(result.is_ok());
-    /// # Ok::<(), rfluids::error::CoolPropError>(())
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// # See also

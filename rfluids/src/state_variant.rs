@@ -1,6 +1,4 @@
-﻿//! Thermodynamic states.
-
-use std::fmt::Debug;
+﻿use std::fmt::Debug;
 
 /// Thermodynamic state variant.
 pub trait StateVariant: Debug {}

@@ -1,10 +1,9 @@
 use super::{
-    Fluid, OutputResult, StateResult,
+    Fluid, FluidOutputError, OutputResult, StateResult,
     common::{cached_output, guard},
     requests::FluidUpdateRequest,
 };
 use crate::{
-    error::FluidOutputError,
     io::{FluidInput, FluidTrivialParam},
     ops::mul,
     state_variant::StateVariant,

@@ -1,4 +1,5 @@
-use crate::{error::HumidAirStateError, io::HumidAirInput};
+use super::HumidAirStateError;
+use crate::io::HumidAirInput;
 use std::collections::HashSet;
 
 #[derive(Debug, Copy, Clone, PartialEq)]

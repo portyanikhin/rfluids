@@ -1,8 +1,7 @@
-use super::OutputResult;
+use super::{FluidOutputError, OutputResult};
 use crate::{
-    error::{CoolPropError, FluidOutputError},
     io::{FluidParam, FluidTrivialParam},
-    native::AbstractState,
+    native::{AbstractState, CoolPropError},
 };
 use std::{collections::HashMap, hash::Hash};
 

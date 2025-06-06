@@ -10,13 +10,18 @@
 //! - [`CoolProp`] -- high-level API for simplified access to properties.
 //! - [`AbstractState`] -- low-level API for direct control and improved performance.
 
-use crate::error::CoolPropError;
 pub use high_level_api::CoolProp;
 pub use low_level_api::AbstractState;
+use thiserror::Error;
 
 mod common;
 mod high_level_api;
 mod low_level_api;
+
+/// `CoolProp` internal error.
+#[derive(Error, Debug, Clone, Eq, PartialEq)]
+#[error("{0}")]
+pub struct CoolPropError(pub(crate) String);
 
 /// A type alias for results returned by `CoolProp` native API.
 pub type Result<T> = std::result::Result<T, CoolPropError>;
