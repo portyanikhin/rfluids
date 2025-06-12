@@ -23,7 +23,7 @@ use strum_macros::{AsRefStr, EnumString};
 ///
 /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
 /// - [List of REFPROP-only refrigerant mixes which are not available in CoolProp yet](https://github.com/portyanikhin/rfluids/blob/main/rfluids/src/substance/refprop_refrigerants.txt)
-#[derive(AsRefStr, EnumString, Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(AsRefStr, Clone, Copy, Debug, EnumString, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(test, derive(EnumIter))]
 pub enum PredefinedMix {

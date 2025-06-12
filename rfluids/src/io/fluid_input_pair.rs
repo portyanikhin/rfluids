@@ -26,7 +26,7 @@ use super::FluidParam;
 ///     Ok(FluidInputPair::PT)
 /// );
 /// ```
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum FluidInputPair {
     /// Vapor quality **\[dimensionless, from 0 to 1\]**, temperature **\[K\]**.
     QT = 1,

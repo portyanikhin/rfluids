@@ -1,5 +1,5 @@
 /// Keyed input.
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct Input<T: Copy> {
     /// Specified key.

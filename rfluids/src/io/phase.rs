@@ -36,7 +36,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// # See also
 ///
 /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
-#[derive(AsRefStr, EnumString, FromRepr, Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(AsRefStr, Copy, Clone, Debug, EnumString, Eq, FromRepr, PartialEq)]
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
 pub enum Phase {

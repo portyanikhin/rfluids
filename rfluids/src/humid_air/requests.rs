@@ -2,7 +2,7 @@ use super::HumidAirStateError;
 use crate::io::HumidAirInput;
 use std::collections::HashSet;
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) struct HumidAirUpdateRequest(
     pub(crate) HumidAirInput,
     pub(crate) HumidAirInput,

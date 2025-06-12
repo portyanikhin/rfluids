@@ -39,7 +39,7 @@ pub struct HumidAir<S: StateVariant = Defined> {
 }
 
 /// Error during [`HumidAir::update`] or [`HumidAir::in_state`].
-#[derive(Error, Debug, Clone, Eq, PartialEq)]
+#[derive(Clone, Debug, Error, Eq, PartialEq)]
 pub enum HumidAirStateError {
     /// Specified inputs are invalid.
     #[error("Specified inputs (`{0:?}`, `{1:?}`, `{2:?}`) are invalid!")]
@@ -51,7 +51,7 @@ pub enum HumidAirStateError {
 }
 
 /// Error during calculation of the [`HumidAir`] output parameter value.
-#[derive(Error, Debug, Clone, Eq, PartialEq)]
+#[derive(Clone, Debug, Error, Eq, PartialEq)]
 pub enum HumidAirOutputError {
     /// Specified output parameter is not available.
     #[error("Specified output parameter `{0:?}` is not available!")]

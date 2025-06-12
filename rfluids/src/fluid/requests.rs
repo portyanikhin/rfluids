@@ -5,6 +5,7 @@ use crate::{
 };
 use std::borrow::Cow;
 
+#[derive(Clone, Debug, PartialEq)]
 pub(crate) struct FluidCreateRequest<'a> {
     pub(crate) name: Cow<'a, str>,
     pub(crate) backend_name: &'a str,
@@ -51,7 +52,7 @@ impl<'a> From<&'a Substance> for FluidCreateRequest<'a> {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) struct FluidUpdateRequest {
     pub(crate) input_pair: FluidInputPair,
     pub(crate) value1: f64,

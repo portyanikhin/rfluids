@@ -210,7 +210,7 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
 }
 
 /// Error during creation of [`Fluid`] from [`CustomMix`].
-#[derive(Error, Debug, Clone, Eq, PartialEq)]
+#[derive(Clone, Debug, Error, Eq, PartialEq)]
 pub enum FluidFromCustomMixError {
     /// Specified custom mixture is not supported.
     #[error("Specified custom mixture is not supported! {0}")]
@@ -218,7 +218,7 @@ pub enum FluidFromCustomMixError {
 }
 
 /// Error during [`Fluid::update`] or [`Fluid::in_state`].
-#[derive(Error, Debug, Clone, Eq, PartialEq)]
+#[derive(Clone, Debug, Error, Eq, PartialEq)]
 pub enum FluidStateError {
     /// Specified inputs are invalid.
     #[error("Specified inputs (`{0:?}`, `{1:?}`) are invalid!")]
@@ -234,7 +234,7 @@ pub enum FluidStateError {
 }
 
 /// Error during calculation of the [`Fluid`] output parameter value.
-#[derive(Error, Debug, Clone, Eq, PartialEq)]
+#[derive(Clone, Debug, Error, Eq, PartialEq)]
 pub enum FluidOutputError {
     /// Specified trivial output parameter is not available.
     #[error("Specified trivial output parameter `{0:?}` is not available!")]

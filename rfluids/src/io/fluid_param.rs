@@ -53,7 +53,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// # See also
 ///
 /// - [CoolProp fluids input/output parameters _(only those for which the value in the "Trivial" column is "False")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
-#[derive(AsRefStr, EnumString, FromRepr, Debug, Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(AsRefStr, Clone, Copy, Debug, EnumString, Eq, FromRepr, Hash, PartialEq)]
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
 pub enum FluidParam {
@@ -331,7 +331,7 @@ impl TryFrom<f64> for FluidParam {
 /// # See also
 ///
 /// - [CoolProp fluids input/output parameters _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
-#[derive(AsRefStr, EnumString, FromRepr, Debug, Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(AsRefStr, Clone, Copy, Debug, EnumString, Eq, FromRepr, Hash, PartialEq)]
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
 pub enum FluidTrivialParam {

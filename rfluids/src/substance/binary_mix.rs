@@ -25,7 +25,7 @@ use thiserror::Error;
 /// # See also
 ///
 /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incompressibles.html)
-#[derive(AsRefStr, EnumString, EnumProperty, Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(AsRefStr, Clone, Copy, Debug, EnumProperty, EnumString, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(test, derive(EnumIter))]
 pub enum BinaryMixKind {
@@ -284,7 +284,7 @@ impl BinaryMixKind {
 }
 
 /// [`BinaryMixKind`] with specified fraction _(mass-based or volume-based)_.
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct BinaryMix {
     /// Specified kind.
@@ -294,7 +294,7 @@ pub struct BinaryMix {
 }
 
 /// Error during creation of [`BinaryMix`].
-#[derive(Error, Debug, Clone, PartialEq)]
+#[derive(Clone, Debug, Error, PartialEq)]
 pub enum BinaryMixError {
     /// Specified fraction is invalid.
     #[error("Specified fraction `{specified:?}` is out of possible range [{min:.1}; {max:.1}]!")]

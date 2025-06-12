@@ -22,7 +22,7 @@ use strum_macros::{AsRefStr, EnumString};
 /// # See also
 ///
 /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
-#[derive(AsRefStr, EnumString, Debug, Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(AsRefStr, Clone, Copy, Debug, EnumString, Eq, Hash, PartialEq)]
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(test, derive(EnumIter))]
 pub enum Pure {

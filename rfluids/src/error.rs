@@ -8,7 +8,7 @@ use crate::{
 use thiserror::Error;
 
 /// Superset of all possible errors that can occur in the library.
-#[derive(Error, Debug, Clone, PartialEq)]
+#[derive(Clone, Debug, Error, PartialEq)]
 #[non_exhaustive]
 pub enum Error {
     /// `CoolProp` internal error.

@@ -19,7 +19,7 @@ mod high_level_api;
 mod low_level_api;
 
 /// `CoolProp` internal error.
-#[derive(Error, Debug, Clone, Eq, PartialEq)]
+#[derive(Clone, Debug, Error, Eq, PartialEq)]
 #[error("{0}")]
 pub struct CoolPropError(pub(crate) String);
 

@@ -22,7 +22,7 @@ use strum_macros::{AsRefStr, EnumString};
 /// # See also
 ///
 /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incompressibles.html)
-#[derive(AsRefStr, EnumString, Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(AsRefStr, Clone, Copy, Debug, EnumString, Eq, PartialEq)]
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(test, derive(EnumIter))]
 pub enum IncompPure {

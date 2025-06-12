@@ -54,7 +54,7 @@ mod pure;
 ///
 /// The `Substance` enum provides [`From`] implementations for each of its variants,
 /// allowing for easy conversion from the specific substance types to the `Substance` enum.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Substance {
     /// Pure or pseudo-pure substance.
     Pure(Pure),

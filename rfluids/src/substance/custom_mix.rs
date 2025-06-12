@@ -8,7 +8,7 @@ use thiserror::Error;
 /// # See also
 ///
 /// - [Custom mixtures](https://coolprop.github.io/CoolProp/fluid_properties/Mixtures.html)
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum CustomMix {
     /// Mole-based mixture _(with mole fractions)_.
     #[non_exhaustive]
@@ -159,7 +159,7 @@ impl CustomMix {
 }
 
 /// Error during creation of [`CustomMix`].
-#[derive(Error, Debug, Clone, Eq, PartialEq)]
+#[derive(Clone, Debug, Error, Eq, PartialEq)]
 pub enum CustomMixError {
     /// The specified components are not enough.
     #[error("At least 2 unique components must be provided!")]
