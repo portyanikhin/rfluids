@@ -174,8 +174,12 @@ mod tests {
     #[case(Vha, "Vha")]
     #[case(W, "W")]
     #[case(Z, "Z")]
-    fn as_ref_returns_expected_str(#[case] param: HumidAirParam, #[case] expected: &str) {
-        assert_eq!(param.as_ref(), expected);
+    fn as_ref(#[case] sut: HumidAirParam, #[case] expected: &str) {
+        // When
+        let res = sut.as_ref();
+
+        // Then
+        assert_eq!(res, expected);
     }
 
     #[rstest]
@@ -200,18 +204,28 @@ mod tests {
     #[case(vec!["Vha", "V_ha"], Vha)]
     #[case(vec!["W", "Omega", "HumRat"], W)]
     #[case(vec!["Z", "Compressibility"], Z)]
-    fn from_valid_str_returns_ok(#[case] valid_values: Vec<&str>, #[case] expected: HumidAirParam) {
-        for s in valid_values {
-            assert_eq!(HumidAirParam::from_str(s), Ok(expected));
-            assert_eq!(HumidAirParam::try_from(s), Ok(expected));
+    fn from_valid_str(#[case] valid: Vec<&str>, #[case] expected: HumidAirParam) {
+        for s in valid {
+            // When
+            let res1 = HumidAirParam::from_str(s).unwrap();
+            let res2 = HumidAirParam::try_from(s).unwrap();
+
+            // Then
+            assert_eq!(res1, expected);
+            assert_eq!(res2, expected);
         }
     }
 
     #[rstest]
     #[case("")]
     #[case("Hello, World!")]
-    fn from_invalid_str_returns_err(#[case] invalid_value: &str) {
-        assert!(HumidAirParam::from_str(invalid_value).is_err());
-        assert!(HumidAirParam::try_from(invalid_value).is_err());
+    fn from_invalid_str(#[case] invalid: &str) {
+        // When
+        let res1 = HumidAirParam::from_str(invalid);
+        let res2 = HumidAirParam::try_from(invalid);
+
+        // Then
+        assert!(res1.is_err());
+        assert!(res2.is_err());
     }
 }

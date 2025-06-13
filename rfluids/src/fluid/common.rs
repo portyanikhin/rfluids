@@ -53,7 +53,7 @@ pub(crate) fn guard(key: Param, value: f64, ok: fn(f64) -> bool) -> OutputResult
 }
 
 #[cfg(test)]
-pub(crate) mod tests {
+mod tests {
     use super::*;
     use rstest::*;
 
@@ -72,11 +72,15 @@ pub(crate) mod tests {
     )]
     #[case(FluidParam::T, 0.0, Ok(0.0))]
     #[case(FluidParam::T, 1.0, Ok(1.0))]
-    fn guard_returns_expected_value(
+    fn guard(
         #[case] key: impl Into<Param>,
         #[case] value: f64,
         #[case] expected: OutputResult<f64>,
     ) {
-        assert_eq!(guard(key.into(), value, |x| x >= 0.0), expected);
+        // When
+        let res = super::guard(key.into(), value, |x| x >= 0.0);
+
+        // Then
+        assert_eq!(res, expected);
     }
 }

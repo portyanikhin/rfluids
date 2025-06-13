@@ -338,11 +338,12 @@ mod tests {
     #[case(DMolarSMolar, 33)]
     #[case(DMassUMass, 34)]
     #[case(DMolarUMolar, 35)]
-    fn u8_from_input_pair_returns_expected_value(
-        #[case] input_pair: FluidInputPair,
-        #[case] expected: u8,
-    ) {
-        assert_eq!(u8::from(input_pair), expected);
+    fn into_u8(#[case] sut: FluidInputPair, #[case] expected: u8) {
+        // When
+        let res: u8 = sut.into();
+
+        // Then
+        assert_eq!(res, expected);
     }
 
     #[rstest]
@@ -381,11 +382,12 @@ mod tests {
     #[case(DMolarSMolar , (DMolar, SMolar))]
     #[case(DMassUMass , (DMass, UMass))]
     #[case(DMolarUMolar , (DMolar, UMolar))]
-    fn two_params_from_input_pair_returns_expected_value(
-        #[case] input_pair: FluidInputPair,
-        #[case] expected: (FluidParam, FluidParam),
-    ) {
-        assert_eq!(<(FluidParam, FluidParam)>::from(input_pair), expected);
+    fn into_params(#[case] sut: FluidInputPair, #[case] expected: (FluidParam, FluidParam)) {
+        // When
+        let res: (FluidParam, FluidParam) = sut.into();
+
+        // Then
+        assert_eq!(res, expected);
     }
 
     #[rstest]
@@ -459,18 +461,26 @@ mod tests {
     #[case((UMass, DMass), DMassUMass)]
     #[case((DMolar, UMolar), DMolarUMolar)]
     #[case((UMolar, DMolar), DMolarUMolar)]
-    fn try_from_two_valid_params_returns_ok(
-        #[case] valid_params: (FluidParam, FluidParam),
+    fn try_from_valid_params(
+        #[case] valid: (FluidParam, FluidParam),
         #[case] expected: FluidInputPair,
     ) {
-        assert_eq!(FluidInputPair::try_from(valid_params), Ok(expected));
+        // When
+        let res = FluidInputPair::try_from(valid).unwrap();
+
+        // Then
+        assert_eq!(res, expected);
     }
 
     #[rstest]
     #[case((CvMass, CpMass))]
     #[case((Phase, DMolar))]
     #[case((Tau, Delta))]
-    fn try_from_two_invalid_params_returns_err(#[case] invalid_params: (FluidParam, FluidParam)) {
-        assert!(FluidInputPair::try_from(invalid_params).is_err());
+    fn try_from_invalid_params(#[case] invalid: (FluidParam, FluidParam)) {
+        // When
+        let res = FluidInputPair::try_from(invalid);
+
+        // Then
+        assert!(res.is_err());
     }
 }

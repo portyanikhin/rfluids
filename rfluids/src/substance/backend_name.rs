@@ -67,37 +67,59 @@ mod tests {
     use strum::IntoEnumIterator;
 
     #[test]
-    fn pure_returns_heos() {
+    fn pure() {
         for substance in Pure::iter() {
-            assert_eq!(substance.backend_name(), HELMHOLTZ_EOS_BACKEND_NAME);
+            // When
+            let res = substance.backend_name();
+
+            // Then
+            assert_eq!(res, HELMHOLTZ_EOS_BACKEND_NAME);
         }
     }
 
     #[test]
-    fn incomp_pure_returns_incomp() {
+    fn incomp_pure() {
         for substance in IncompPure::iter() {
-            assert_eq!(substance.backend_name(), INCOMP_BACKEND_NAME);
+            // When
+            let res = substance.backend_name();
+
+            // Then
+            assert_eq!(res, INCOMP_BACKEND_NAME);
         }
     }
 
     #[test]
-    fn predefined_mix_returns_heos() {
+    fn predefined_mix() {
         for substance in PredefinedMix::iter() {
-            assert_eq!(substance.backend_name(), HELMHOLTZ_EOS_BACKEND_NAME);
+            // When
+            let res = substance.backend_name();
+
+            // Then
+            assert_eq!(res, HELMHOLTZ_EOS_BACKEND_NAME);
         }
     }
 
     #[test]
-    fn binary_mix_kind_returns_incomp() {
+    fn binary_mix_kind() {
         for substance in BinaryMixKind::iter() {
-            assert_eq!(substance.backend_name(), INCOMP_BACKEND_NAME);
+            // When
+            let res = substance.backend_name();
+
+            // Then
+            assert_eq!(res, INCOMP_BACKEND_NAME);
         }
     }
 
     #[test]
-    fn custom_mix_returns_heos() {
-        let sut = CustomMix::mass_based(HashMap::from([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]))
+    fn custom_mix() {
+        // Given
+        let mix = CustomMix::mass_based(HashMap::from([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]))
             .unwrap();
-        assert_eq!(sut.backend_name(), HELMHOLTZ_EOS_BACKEND_NAME);
+
+        // When
+        let res = mix.backend_name();
+
+        // Then
+        assert_eq!(res, HELMHOLTZ_EOS_BACKEND_NAME);
     }
 }

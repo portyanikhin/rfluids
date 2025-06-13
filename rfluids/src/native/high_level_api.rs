@@ -261,66 +261,139 @@ mod tests {
     use rayon::prelude::*;
 
     #[test]
-    fn props_si_water_density_in_standard_conditions_returns_ok() {
-        let result = CoolProp::props_si("D", "P", 101_325.0, "T", 293.15, "Water").unwrap();
-        assert_relative_eq!(result, 998.207_150_467_928_4);
-    }
+    fn props_si_thread_safety() {
+        // Given
+        let substance = "Water";
+        let pressure_range = 101_000..101_500;
+        let quality = 0.0;
 
-    #[test]
-    fn props_si_is_thread_safe() {
-        let result: Vec<Result<f64>> = (101_000..101_500)
+        // When
+        let res: Vec<Result<f64>> = pressure_range
             .into_par_iter()
-            .map(move |p| CoolProp::props_si("T", "P", f64::from(p), "Q", 0.0, "Water"))
+            .map(move |p| CoolProp::props_si("T", "P", p.into(), "Q", quality, substance))
             .collect();
-        assert!(result.iter().all(Result::is_ok));
+
+        // Then
+        assert!(res.iter().all(Result::is_ok));
     }
 
     #[test]
-    fn props_si_invalid_input_returns_err() {
-        let result = CoolProp::props_si("D", "P", 101_325.0, "Q", -1.0, "Water");
+    fn props_si_water_density_in_standard_conditions() {
+        // Given
+        let substance = "Water";
+        let pressure = 101_325.0;
+        let temperature = 293.15;
+
+        // When
+        let res = CoolProp::props_si("D", "P", pressure, "T", temperature, substance).unwrap();
+
+        // Then
+        assert_relative_eq!(res, 998.207_150_467_928_4);
+    }
+
+    #[test]
+    fn props_si_invalid_input() {
+        // Given
+        let substance = "Water";
+        let pressure = 101_325.0;
+        let negative_quality = -1.0;
+
+        // When
+        let res = CoolProp::props_si("D", "P", pressure, "Q", negative_quality, substance);
+
+        // Then
         assert_eq!(
-            result.unwrap_err().to_string(),
+            res.unwrap_err().to_string(),
             "Input vapor quality [Q] must be between 0 and 1 : \
             PropsSI(\"D\",\"P\",101325,\"Q\",-1,\"Water\")"
         );
     }
 
     #[test]
-    fn ha_props_si_humid_air_humidity_in_standard_conditions_returns_ok() {
-        let result = CoolProp::ha_props_si("W", "P", 101_325.0, "T", 293.15, "R", 0.5).unwrap();
-        assert_relative_eq!(result, 0.007_293_697_701_992_549);
-    }
+    fn ha_props_si_thread_safety() {
+        // Given
+        let pressure_range = 101_000..101_500;
+        let temperature = 293.15;
+        let rel_humidity = 0.5;
 
-    #[test]
-    fn ha_props_si_is_thread_safe() {
-        let result: Vec<Result<f64>> = (101_000..101_500)
+        // When
+        let res: Vec<Result<f64>> = pressure_range
             .into_par_iter()
-            .map(move |p| CoolProp::ha_props_si("W", "P", f64::from(p), "T", 293.15, "R", 0.5))
+            .map(move |p| {
+                CoolProp::ha_props_si("W", "P", p.into(), "T", temperature, "R", rel_humidity)
+            })
             .collect();
-        assert!(result.iter().all(Result::is_ok));
+
+        // Then
+        assert!(res.iter().all(Result::is_ok));
     }
 
     #[test]
-    fn ha_props_si_invalid_input_returns_err() {
-        let result = CoolProp::ha_props_si("W", "P", 101_325.0, "T", 293.15, "R", -0.5);
+    fn ha_props_si_humid_air_humidity_in_standard_conditions() {
+        // Given
+        let pressure = 101_325.0;
+        let temperature = 293.15;
+        let rel_humidity = 0.5;
+
+        // When
+        let res =
+            CoolProp::ha_props_si("W", "P", pressure, "T", temperature, "R", rel_humidity).unwrap();
+
+        // Then
+        assert_relative_eq!(res, 7.293_697_701_992_549e-3);
+    }
+
+    #[test]
+    fn ha_props_si_invalid_input() {
+        // Given
+        let pressure = 101_325.0;
+        let temperature = 293.15;
+        let negative_rel_humidity = -0.5;
+
+        // When
+        let res = CoolProp::ha_props_si(
+            "W",
+            "P",
+            pressure,
+            "T",
+            temperature,
+            "R",
+            negative_rel_humidity,
+        );
+
+        // Then
         assert_eq!(
-            result.unwrap_err().to_string(),
+            res.unwrap_err().to_string(),
             "The input for key (7) with value (-0.5) \
             is outside the range of validity: (0) to (1)"
         );
     }
 
     #[test]
-    fn props1_si_valid_input_returns_ok() {
-        let result = CoolProp::props1_si("Tcrit", "Water").unwrap();
-        assert_relative_eq!(result, 647.096);
+    fn props1_si_valid_input() {
+        // Given
+        let substance = "Water";
+        let key = "Tcrit";
+
+        // When
+        let res = CoolProp::props1_si(key, substance).unwrap();
+
+        // Then
+        assert_relative_eq!(res, 647.096);
     }
 
     #[test]
-    fn props1_si_invalid_input_returns_err() {
-        let result = CoolProp::props1_si("T", "Water");
+    fn props1_si_invalid_input() {
+        // Given
+        let substance = "Water";
+        let non_trivial_key = "T";
+
+        // When
+        let res = CoolProp::props1_si(non_trivial_key, substance);
+
+        // Then
         assert_eq!(
-            result.unwrap_err().to_string(),
+            res.unwrap_err().to_string(),
             "Unable to use input parameter [T] in Props1SI for fluid Water; \
             error was Input pair variable is invalid and output(s) are non-trivial; \
             cannot do state update : PropsSI(\"T\",\"\",0,\"\",0,\"Water\")"
@@ -328,14 +401,26 @@ mod tests {
     }
 
     #[test]
-    fn validate_result_valid_number_returns_ok() {
-        let result = CoolProp::result(42.0, &COOLPROP.lock().unwrap());
-        assert!(result.is_ok());
+    fn result_valid() {
+        // Given
+        let valid = 42.0;
+
+        // When
+        let res = CoolProp::result(valid, &COOLPROP.lock().unwrap());
+
+        // Then
+        assert!(res.is_ok());
     }
 
     #[test]
-    fn validate_result_invalid_number_returns_err() {
-        let result = CoolProp::result(f64::NAN, &COOLPROP.lock().unwrap());
-        assert_eq!(result.unwrap_err().to_string(), "Unknown error");
+    fn result_invalid() {
+        // Given
+        let invalid = f64::NAN;
+
+        // When
+        let res = CoolProp::result(invalid, &COOLPROP.lock().unwrap());
+
+        // Then
+        assert_eq!(res.unwrap_err().to_string(), "Unknown error");
     }
 }

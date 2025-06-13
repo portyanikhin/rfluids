@@ -408,173 +408,207 @@ impl PartialEq for HumidAir {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{humid_air::HumidAirStateError, test::test_output};
+    use crate::{
+        humid_air::HumidAirStateError,
+        test::{SutFactory, test_output},
+    };
     use rstest::*;
 
-    #[fixture]
-    fn altitude(#[default(0.0)] value: f64) -> HumidAirInput {
-        HumidAirInput::altitude(value).unwrap()
-    }
-
-    #[fixture]
-    fn pressure(#[default(101_325.0)] value: f64) -> HumidAirInput {
-        HumidAirInput::pressure(value)
-    }
-
-    #[fixture]
-    fn infinite_pressure(#[with(f64::INFINITY)] pressure: HumidAirInput) -> HumidAirInput {
-        pressure
-    }
-
-    #[fixture]
-    fn temperature(#[default(293.15)] value: f64) -> HumidAirInput {
-        HumidAirInput::temperature(value)
-    }
-
-    #[fixture]
-    fn relative_humidity(#[default(0.5)] value: f64) -> HumidAirInput {
-        HumidAirInput::rel_humidity(value)
-    }
-
-    #[fixture]
-    fn humid_air(
-        altitude: HumidAirInput,
-        temperature: HumidAirInput,
-        relative_humidity: HumidAirInput,
-    ) -> HumidAir {
-        HumidAir::new()
-            .in_state(altitude, temperature, relative_humidity)
-            .unwrap()
-    }
-
-    #[fixture]
-    fn invalid_humid_air(
-        #[with(-1.0)] pressure: HumidAirInput,
-        #[with(-300.0)] temperature: HumidAirInput,
-        #[with(150.0)] relative_humidity: HumidAirInput,
-    ) -> HumidAir {
-        HumidAir::new()
-            .in_state(pressure, temperature, relative_humidity)
-            .unwrap()
-    }
-
-    test_output!(HumidAir: abs_humidity, humid_air: 7.293_697_701_992_549e-3, invalid_humid_air: Err);
-    test_output!(HumidAir: density, humid_air: 1.199_359_276_772_349_3, invalid_humid_air: Err);
-    test_output!(HumidAir: density_da, humid_air: 1.190_674_854_323_549_2, invalid_humid_air: Err);
-    test_output!(HumidAir: compressibility, humid_air: 0.999_594_693_604_325_6, invalid_humid_air: Err);
-    test_output!(HumidAir: conductivity, humid_air: 2.586_613_250_369_777_4e-2, invalid_humid_air: Err);
-    test_output!(HumidAir: dew_temperature, humid_air: 282.424_425_814_578_2, invalid_humid_air: Err);
-    test_output!(HumidAir: dynamic_viscosity, humid_air: 1.814_316_044_123_345e-5, invalid_humid_air: Err);
-    test_output!(HumidAir: enthalpy, humid_air: 38_343.175_393_657_12, invalid_humid_air: Err);
-    test_output!(HumidAir: enthalpy_da, humid_air: 38_622.838_923_912_93, invalid_humid_air: Err);
-    test_output!(HumidAir: entropy, humid_air: 138.956_660_316_574_3, invalid_humid_air: Err);
-    test_output!(HumidAir: entropy_da, humid_air: 139.970_168_190_601_87, invalid_humid_air: Err);
-    test_output!(HumidAir: pressure, humid_air: 101_325.0, invalid_humid_air: Err);
-    test_output!(HumidAir: rel_humidity, humid_air: 0.5, invalid_humid_air: Err);
-    test_output!(HumidAir: specific_heat, humid_air: 1_012.467_815_774_874_7, invalid_humid_air: Err);
-    test_output!(HumidAir: specific_heat_da, humid_air: 1_019.852_449_956_133_3, invalid_humid_air: Err);
-    test_output!(HumidAir: specific_heat_const_volume, humid_air: 722.687_189_706_325_1, invalid_humid_air: Err);
-    test_output!(HumidAir: specific_heat_const_volume_da, humid_air: 727.958_251_601_145_5, invalid_humid_air: Err);
-    test_output!(HumidAir: specific_volume, humid_air: 0.833_778_517_719_182_3, invalid_humid_air: Err);
-    test_output!(HumidAir: specific_volume_da, humid_air: 0.839_859_846_177_841_6, invalid_humid_air: Err);
-    test_output!(HumidAir: temperature, humid_air: 293.15, invalid_humid_air: Err);
-    test_output!(HumidAir: water_mole_fraction, humid_air: 1.159_130_506_217_982_9e-2, invalid_humid_air: Err);
-    test_output!(HumidAir: water_partial_pressure, humid_air: 1_174.488_985_425_371, invalid_humid_air: Err);
-    test_output!(HumidAir: wet_bulb_temperature, humid_air: 286.926_468_858_340_74, invalid_humid_air: Err);
-
-    #[rstest]
-    fn update_valid_inputs_returns_ok(
-        mut humid_air: HumidAir,
-        pressure: HumidAirInput,
-        temperature: HumidAirInput,
-        relative_humidity: HumidAirInput,
-    ) {
-        assert!(
-            humid_air
-                .update(pressure, temperature, relative_humidity)
-                .is_ok()
-        );
-    }
-
-    #[rstest]
-    fn update_same_inputs_returns_err(
-        mut humid_air: HumidAir,
+    struct Context {
         altitude: HumidAirInput,
         pressure: HumidAirInput,
-        relative_humidity: HumidAirInput,
-    ) {
-        assert!(matches!(
-            humid_air
-                .update(altitude, pressure, relative_humidity)
-                .unwrap_err(),
-            HumidAirStateError::InvalidInputs(_, _, _)
-        ));
-    }
-
-    #[rstest]
-    fn update_invalid_inputs_returns_err(
-        mut humid_air: HumidAir,
-        infinite_pressure: HumidAirInput,
         temperature: HumidAirInput,
         relative_humidity: HumidAirInput,
-    ) {
+        valid: (HumidAirInput, HumidAirInput, HumidAirInput),
+        invalid: (HumidAirInput, HumidAirInput, HumidAirInput),
+    }
+
+    impl SutFactory<(HumidAirInput, HumidAirInput, HumidAirInput)> for Context {
+        type Sut = HumidAir;
+
+        fn sut(&self, payload: (HumidAirInput, HumidAirInput, HumidAirInput)) -> Self::Sut {
+            HumidAir::new()
+                .in_state(payload.0, payload.1, payload.2)
+                .unwrap()
+        }
+    }
+
+    #[fixture]
+    fn ctx() -> Context {
+        let altitude = HumidAirInput::altitude(0.0).unwrap();
+        let pressure = HumidAirInput::pressure(101_325.0);
+        let temperature = HumidAirInput::temperature(293.15);
+        let relative_humidity = HumidAirInput::rel_humidity(0.5);
+        Context {
+            altitude,
+            pressure,
+            temperature,
+            relative_humidity,
+            valid: (altitude, temperature, relative_humidity),
+            invalid: (
+                HumidAirInput::pressure(-1.0),
+                HumidAirInput::temperature(-1.0),
+                HumidAirInput::rel_humidity(1.5),
+            ),
+        }
+    }
+
+    test_output!(abs_humidity, valid: 7.293_697_701_992_549e-3, invalid: Err);
+    test_output!(density, valid: 1.199_359_276_772_349_3, invalid: Err);
+    test_output!(density_da, valid: 1.190_674_854_323_549_2, invalid: Err);
+    test_output!(compressibility, valid: 0.999_594_693_604_325_6, invalid: Err);
+    test_output!(conductivity, valid: 2.586_613_250_369_777_4e-2, invalid: Err);
+    test_output!(dew_temperature, valid: 282.424_425_814_578_2, invalid: Err);
+    test_output!(dynamic_viscosity, valid: 1.814_316_044_123_345e-5, invalid: Err);
+    test_output!(enthalpy, valid: 38_343.175_393_657_12, invalid: Err);
+    test_output!(enthalpy_da, valid: 38_622.838_923_912_93, invalid: Err);
+    test_output!(entropy, valid: 138.956_660_316_574_3, invalid: Err);
+    test_output!(entropy_da, valid: 139.970_168_190_601_87, invalid: Err);
+    test_output!(pressure, valid: 101_325.0, invalid: Err);
+    test_output!(rel_humidity, valid: 0.5, invalid: Err);
+    test_output!(specific_heat, valid: 1_012.467_815_774_874_7, invalid: Err);
+    test_output!(specific_heat_da, valid: 1_019.852_449_956_133_3, invalid: Err);
+    test_output!(specific_heat_const_volume, valid: 722.687_189_706_325_1, invalid: Err);
+    test_output!(specific_heat_const_volume_da, valid: 727.958_251_601_145_5, invalid: Err);
+    test_output!(specific_volume, valid: 0.833_778_517_719_182_3, invalid: Err);
+    test_output!(specific_volume_da, valid: 0.839_859_846_177_841_6, invalid: Err);
+    test_output!(temperature, valid: 293.15, invalid: Err);
+    test_output!(water_mole_fraction, valid: 1.159_130_506_217_982_9e-2, invalid: Err);
+    test_output!(water_partial_pressure, valid: 1_174.488_985_425_371, invalid: Err);
+    test_output!(wet_bulb_temperature, valid: 286.926_468_858_340_74, invalid: Err);
+
+    #[rstest]
+    fn update_valid_inputs(ctx: Context) {
+        // Given
+        let Context {
+            pressure,
+            temperature,
+            relative_humidity,
+            valid,
+            ..
+        } = ctx;
+        let mut sut = ctx.sut(valid);
+
+        // When
+        let res = sut.update(pressure, temperature, relative_humidity);
+
+        // Then
+        assert!(res.is_ok());
+    }
+
+    #[rstest]
+    fn update_same_inputs(ctx: Context) {
+        // Given
+        let Context {
+            altitude,
+            pressure,
+            relative_humidity,
+            valid,
+            ..
+        } = ctx;
+        let mut sut = ctx.sut(valid);
+
+        // When
+        let res = sut.update(altitude, pressure, relative_humidity);
+
+        // Then
         assert!(matches!(
-            humid_air
-                .update(infinite_pressure, temperature, relative_humidity)
-                .unwrap_err(),
-            HumidAirStateError::InvalidInputValue
+            res,
+            Err(HumidAirStateError::InvalidInputs(_, _, _))
         ));
     }
 
     #[rstest]
-    fn in_state_valid_inputs_returns_ok(
-        humid_air: HumidAir,
-        pressure: HumidAirInput,
-        temperature: HumidAirInput,
-        relative_humidity: HumidAirInput,
-    ) {
-        assert!(
-            humid_air
-                .in_state(pressure, temperature, relative_humidity)
-                .is_ok()
-        );
+    fn update_invalid_inputs(ctx: Context) {
+        // Given
+        let Context {
+            temperature,
+            relative_humidity,
+            valid,
+            ..
+        } = ctx;
+        let infinite_pressure = HumidAirInput::pressure(f64::INFINITY);
+        let mut sut = ctx.sut(valid);
+
+        // When
+        let res = sut.update(infinite_pressure, temperature, relative_humidity);
+
+        // Then
+        assert_eq!(res, Err(HumidAirStateError::InvalidInputValue));
     }
 
     #[rstest]
-    fn in_state_same_inputs_returns_err(
-        humid_air: HumidAir,
-        altitude: HumidAirInput,
-        pressure: HumidAirInput,
-        relative_humidity: HumidAirInput,
-    ) {
+    fn in_state_valid_inputs(ctx: Context) {
+        // Given
+        let Context {
+            pressure,
+            temperature,
+            relative_humidity,
+            valid,
+            ..
+        } = ctx;
+        let sut = ctx.sut(valid);
+
+        // When
+        let res = sut.in_state(pressure, temperature, relative_humidity);
+
+        // Then
+        assert!(res.is_ok());
+    }
+
+    #[rstest]
+    fn in_state_same_inputs(ctx: Context) {
+        // Given
+        let Context {
+            altitude,
+            pressure,
+            relative_humidity,
+            valid,
+            ..
+        } = ctx;
+        let sut = ctx.sut(valid);
+
+        // When
+        let res = sut.in_state(altitude, pressure, relative_humidity);
+
+        // Then
         assert!(matches!(
-            humid_air
-                .in_state(altitude, pressure, relative_humidity)
-                .unwrap_err(),
-            HumidAirStateError::InvalidInputs(_, _, _)
+            res,
+            Err(HumidAirStateError::InvalidInputs(_, _, _))
         ));
     }
 
     #[rstest]
-    fn in_state_invalid_inputs_returns_err(
-        humid_air: HumidAir,
-        infinite_pressure: HumidAirInput,
-        temperature: HumidAirInput,
-        relative_humidity: HumidAirInput,
-    ) {
-        assert!(matches!(
-            humid_air
-                .in_state(infinite_pressure, temperature, relative_humidity)
-                .unwrap_err(),
-            HumidAirStateError::InvalidInputValue
-        ));
+    fn in_state_invalid_inputs(ctx: Context) {
+        // Given
+        let Context {
+            temperature,
+            relative_humidity,
+            valid,
+            ..
+        } = ctx;
+        let infinite_pressure = HumidAirInput::pressure(f64::INFINITY);
+        let sut = ctx.sut(valid);
+
+        // When
+        let res = sut.in_state(infinite_pressure, temperature, relative_humidity);
+
+        // Then
+        assert_eq!(res, Err(HumidAirStateError::InvalidInputValue));
     }
 
     #[rstest]
-    fn clone_returns_new_instance(humid_air: HumidAir) {
-        let clone = humid_air.clone();
-        assert_eq!(clone, humid_air);
-        assert_eq!(clone.update_request, humid_air.update_request);
-        assert_eq!(clone.outputs, humid_air.outputs);
+    fn clone(ctx: Context) {
+        // Given
+        let Context { valid, .. } = ctx;
+        let sut = ctx.sut(valid);
+
+        // When
+        let clone = sut.clone();
+
+        // Then
+        assert_eq!(clone, sut);
+        assert_eq!(clone.update_request, sut.update_request);
+        assert_eq!(clone.outputs, sut.outputs);
     }
 }

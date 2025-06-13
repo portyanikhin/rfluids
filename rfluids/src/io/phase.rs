@@ -157,8 +157,12 @@ mod tests {
     #[case(TwoPhase, "phase_twophase")]
     #[case(Unknown, "phase_unknown")]
     #[case(NotImposed, "phase_not_imposed")]
-    fn as_ref_returns_expected_str(#[case] phase: Phase, #[case] expected: &str) {
-        assert_eq!(phase.as_ref(), expected);
+    fn as_ref(#[case] sut: Phase, #[case] expected: &str) {
+        // When
+        let res = sut.as_ref();
+
+        // Then
+        assert_eq!(res, expected);
     }
 
     #[rstest]
@@ -171,18 +175,29 @@ mod tests {
     #[case(vec!["phase_twophase", "phase_two_phase", "two_phase", "TwoPhase"], TwoPhase)]
     #[case(vec!["phase_unknown", "unknown"], Unknown)]
     #[case(vec!["phase_not_imposed", "not_imposed", "NotImposed"], NotImposed)]
-    fn from_valid_str_returns_ok(#[case] valid_values: Vec<&str>, #[case] expected: Phase) {
-        for s in valid_values {
-            assert_eq!(Phase::from_str(s), Ok(expected));
-            assert_eq!(Phase::try_from(s), Ok(expected));
+    fn from_valid_str(#[case] valid: Vec<&str>, #[case] expected: Phase) {
+        for s in valid {
+            // When
+            let res1 = Phase::from_str(s).unwrap();
+            let res2 = Phase::try_from(s).unwrap();
+
+            // Then
+            assert_eq!(res1, expected);
+            assert_eq!(res2, expected);
         }
     }
 
     #[rstest]
     #[case("")]
     #[case("Hello, World!")]
-    fn from_invalid_str_returns_err(#[case] invalid_value: &str) {
-        assert!(Phase::from_str(invalid_value).is_err());
+    fn from_invalid_str(#[case] invalid: &str) {
+        // When
+        let res1 = Phase::from_str(invalid);
+        let res2 = Phase::try_from(invalid);
+
+        // Then
+        assert!(res1.is_err());
+        assert!(res2.is_err());
     }
 
     #[rstest]
@@ -195,8 +210,12 @@ mod tests {
     #[case(TwoPhase, 6)]
     #[case(Unknown, 7)]
     #[case(NotImposed, 8)]
-    fn u8_from_phase_returns_expected_value(#[case] phase: Phase, #[case] expected: u8) {
-        assert_eq!(u8::from(phase), expected);
+    fn into_u8(#[case] sut: Phase, #[case] expected: u8) {
+        // When
+        let res: u8 = sut.into();
+
+        // Then
+        assert_eq!(res, expected);
     }
 
     #[rstest]
@@ -209,23 +228,36 @@ mod tests {
     #[case(6, TwoPhase)]
     #[case(7, Unknown)]
     #[case(8, NotImposed)]
-    fn try_from_valid_u8_or_f64_returns_ok(#[case] valid_value: u8, #[case] expected: Phase) {
-        assert_eq!(Phase::try_from(valid_value), Ok(expected));
-        assert_eq!(Phase::try_from(f64::from(valid_value)), Ok(expected));
+    fn try_from_valid_u8_or_f64(#[case] valid: u8, #[case] expected: Phase) {
+        // When
+        let res1 = Phase::try_from(valid).unwrap();
+        let res2 = Phase::try_from(f64::from(valid)).unwrap();
+
+        // Then
+        assert_eq!(res1, expected);
+        assert_eq!(res2, expected);
     }
 
     #[rstest]
     #[case(254)]
     #[case(255)]
-    fn try_from_invalid_u8_returns_err(#[case] invalid_value: u8) {
-        assert!(Phase::try_from(invalid_value).is_err());
+    fn try_from_invalid_u8(#[case] invalid: u8) {
+        // When
+        let res = Phase::try_from(invalid);
+
+        // Then
+        assert!(res.is_err());
     }
 
     #[rstest]
     #[case(-1.0)]
     #[case(255.0)]
     #[case(100e3)]
-    fn try_from_invalid_f64_returns_err(#[case] invalid_value: f64) {
-        assert!(Phase::try_from(invalid_value).is_err());
+    fn try_from_invalid_f64(#[case] invalid: f64) {
+        // When
+        let res = Phase::try_from(invalid);
+
+        // Then
+        assert!(res.is_err());
     }
 }

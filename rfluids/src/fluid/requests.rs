@@ -108,59 +108,84 @@ mod tests {
         use std::collections::HashMap;
 
         #[test]
-        fn from_pure_substance_returns_expected_value() {
+        fn from_pure() {
+            // Given
             let r32 = Pure::R32;
             let substance = Substance::from(r32);
-            let request = FluidCreateRequest::from(&substance);
-            assert_eq!(request.name, Cow::Borrowed(r32.as_ref()));
-            assert_eq!(request.backend_name, r32.backend_name());
-            assert!(request.fractions.is_none());
+
+            // When
+            let sut = FluidCreateRequest::from(&substance);
+
+            // Then
+            assert_eq!(sut.name, Cow::Borrowed(r32.as_ref()));
+            assert_eq!(sut.backend_name, r32.backend_name());
+            assert!(sut.fractions.is_none());
         }
 
         #[test]
-        fn from_incomp_pure_substance_returns_expected_value() {
+        fn from_incomp_pure() {
+            // Given
             let water = IncompPure::Water;
             let substance = Substance::from(water);
-            let request = FluidCreateRequest::from(&substance);
-            assert_eq!(request.name, Cow::Borrowed(water.as_ref()));
-            assert_eq!(request.backend_name, water.backend_name());
-            assert!(request.fractions.is_none());
+
+            // When
+            let sut = FluidCreateRequest::from(&substance);
+
+            // Then
+            assert_eq!(sut.name, Cow::Borrowed(water.as_ref()));
+            assert_eq!(sut.backend_name, water.backend_name());
+            assert!(sut.fractions.is_none());
         }
 
         #[test]
-        fn from_predefined_mix_substance_returns_expected_value() {
+        fn from_predefined_mix() {
+            // Given
             let r444a = PredefinedMix::R444A;
             let substance = Substance::from(r444a);
-            let request = FluidCreateRequest::from(&substance);
-            assert_eq!(request.name, Cow::Borrowed(r444a.as_ref()));
-            assert_eq!(request.backend_name, r444a.backend_name());
-            assert!(request.fractions.is_none());
+
+            // When
+            let sut = FluidCreateRequest::from(&substance);
+
+            // Then
+            assert_eq!(sut.name, Cow::Borrowed(r444a.as_ref()));
+            assert_eq!(sut.backend_name, r444a.backend_name());
+            assert!(sut.fractions.is_none());
         }
 
         #[test]
-        fn from_binary_mix_substance_returns_expected_value() {
+        fn from_binary_mix() {
+            // Given
             let propylene_glycol = BinaryMixKind::MPG.with_fraction(0.4).unwrap();
             let substance = Substance::from(propylene_glycol);
-            let request = FluidCreateRequest::from(&substance);
-            assert_eq!(request.name, Cow::Borrowed(BinaryMixKind::MPG.as_ref()));
-            assert_eq!(request.backend_name, BinaryMixKind::MPG.backend_name());
-            assert_eq!(request.fractions, Some(vec![0.4]));
+
+            // When
+            let sut = FluidCreateRequest::from(&substance);
+
+            // Then
+            assert_eq!(sut.name, Cow::Borrowed(BinaryMixKind::MPG.as_ref()));
+            assert_eq!(sut.backend_name, BinaryMixKind::MPG.backend_name());
+            assert_eq!(sut.fractions, Some(vec![0.4]));
         }
 
         #[test]
-        fn from_custom_mix_substance_returns_expected_value() {
+        fn from_custom_mix() {
+            // Given
             let mix =
                 CustomMix::mole_based(HashMap::from([(Pure::Water, 0.8), (Pure::Ethanol, 0.2)]))
                     .unwrap();
             let substance = Substance::from(mix.clone());
-            let request = FluidCreateRequest::from(&substance);
+
+            // When
+            let sut = FluidCreateRequest::from(&substance);
+
+            // Then
             assert!(
                 [(Pure::Water, Pure::Ethanol), (Pure::Ethanol, Pure::Water)]
                     .map(|x| Cow::Owned(format!("{}&{}", x.0.as_ref(), x.1.as_ref())))
-                    .contains(&request.name)
+                    .contains(&sut.name)
             );
-            assert_eq!(request.backend_name, mix.backend_name());
-            assert!([Some(vec![0.8, 0.2]), Some(vec![0.2, 0.8])].contains(&request.fractions));
+            assert_eq!(sut.backend_name, mix.backend_name());
+            assert!([Some(vec![0.8, 0.2]), Some(vec![0.2, 0.8])].contains(&sut.fractions));
         }
     }
 
@@ -170,51 +195,70 @@ mod tests {
         use rstest::*;
 
         #[test]
-        fn two_fluid_inputs_from_fluid_update_request_returns_expected_value() {
-            let request = FluidUpdateRequest {
+        fn into_inputs() {
+            // Given
+            let sut = FluidUpdateRequest {
                 input_pair: FluidInputPair::PT,
                 value1: 101_325.0,
                 value2: 293.15,
             };
-            let result = <(FluidInput, FluidInput)>::from(request);
-            assert_eq!(result.0.key, FluidParam::P);
-            assert_eq!(result.0.value, request.value1);
-            assert_eq!(result.1.key, FluidParam::T);
-            assert_eq!(result.1.value, request.value2);
+
+            // When
+            let res: (FluidInput, FluidInput) = sut.into();
+
+            // Then
+            assert_eq!(res.0.key, FluidParam::P);
+            assert_eq!(res.0.value, sut.value1);
+            assert_eq!(res.1.key, FluidParam::T);
+            assert_eq!(res.1.value, sut.value2);
         }
 
         #[test]
-        fn try_from_two_valid_inputs_with_invariant_order_returns_ok() {
+        fn try_from_valid_inputs_with_invariant_order() {
+            // Given
             let input1 = FluidInput::temperature(293.15);
             let input2 = FluidInput::pressure(101_325.0);
-            let result1 = FluidUpdateRequest::try_from((input1, input2)).unwrap();
-            let result2 = FluidUpdateRequest::try_from((input2, input1)).unwrap();
-            assert_eq!(result1, result2);
-            assert_eq!(result1.input_pair, FluidInputPair::PT);
-            assert_relative_eq!(result1.value1, 101_325.0);
-            assert_relative_eq!(result1.value2, 293.15);
+
+            // When
+            let res1 = FluidUpdateRequest::try_from((input1, input2)).unwrap();
+            let res2 = FluidUpdateRequest::try_from((input2, input1)).unwrap();
+
+            // Then
+            assert_eq!(res1, res2);
+            assert_eq!(res1.input_pair, FluidInputPair::PT);
+            assert_relative_eq!(res1.value1, 101_325.0);
+            assert_relative_eq!(res1.value2, 293.15);
         }
 
         #[test]
-        fn try_from_two_same_inputs_returns_err() {
+        fn try_from_same_inputs() {
+            // Given
             let input = FluidInput::pressure(101_325.0);
+
+            // When
+            let res = FluidUpdateRequest::try_from((input, input));
+
+            // Then
             assert_eq!(
-                FluidUpdateRequest::try_from((input, input)).unwrap_err(),
-                FluidStateError::InvalidInputPair(input.key, input.key)
+                res,
+                Err(FluidStateError::InvalidInputPair(input.key, input.key))
             );
         }
 
         #[rstest]
-        fn try_from_non_finite_inputs_returns_err(
-            #[values(f64::NAN, f64::INFINITY, -f64::INFINITY)] value1: f64,
-            #[values(f64::NAN, f64::INFINITY, -f64::INFINITY, 101_325.0)] value2: f64,
+        fn try_from_non_finite_inputs(
+            #[values(f64::NAN, f64::INFINITY, -f64::INFINITY)] temperature: f64,
+            #[values(f64::NAN, f64::INFINITY, -f64::INFINITY, 101_325.0)] pressure: f64,
         ) {
-            let input1 = FluidInput::temperature(value1);
-            let input2 = FluidInput::pressure(value2);
-            assert_eq!(
-                FluidUpdateRequest::try_from((input1, input2)).unwrap_err(),
-                FluidStateError::InvalidInputValue
-            );
+            // Given
+            let input1 = FluidInput::temperature(temperature);
+            let input2 = FluidInput::pressure(pressure);
+
+            // When
+            let res = FluidUpdateRequest::try_from((input1, input2));
+
+            // Then
+            assert_eq!(res, Err(FluidStateError::InvalidInputValue));
         }
     }
 }

@@ -565,8 +565,12 @@ mod tests {
     #[case(PH, "PH")]
     #[case(ODP, "ODP")]
     #[case(Phase, "Phase")]
-    fn as_ref_returns_expected_str(#[case] param: impl AsRef<str>, #[case] expected: &str) {
-        assert_eq!(param.as_ref(), expected);
+    fn as_ref(#[case] sut: impl AsRef<str>, #[case] expected: &str) {
+        // When
+        let res = sut.as_ref();
+
+        // Then
+        assert_eq!(res, expected);
     }
 
     #[rstest]
@@ -655,7 +659,7 @@ mod tests {
     #[case(vec!["PH"], PH)]
     #[case(vec!["ODP"], ODP)]
     #[case(vec!["Phase"], Phase)]
-    fn from_valid_str_returns_ok<'a, T>(#[case] valid_values: Vec<&'a str>, #[case] expected: T)
+    fn from_valid_str<'a, T>(#[case] valid: Vec<&'a str>, #[case] expected: T)
     where
         T: FromStr<Err = strum::ParseError>
             + TryFrom<&'a str, Error = strum::ParseError>
@@ -664,20 +668,32 @@ mod tests {
             + Eq
             + PartialEq,
     {
-        for s in valid_values {
-            assert_eq!(T::from_str(s), Ok(expected));
-            assert_eq!(T::try_from(s), Ok(expected));
+        for s in valid {
+            // When
+            let res1 = T::from_str(s).unwrap();
+            let res2 = T::try_from(s).unwrap();
+
+            // Then
+            assert_eq!(res1, expected);
+            assert_eq!(res2, expected);
         }
     }
 
     #[rstest]
     #[case("")]
     #[case("Hello, World!")]
-    fn from_invalid_str_returns_err(#[case] invalid_value: &str) {
-        assert!(FluidParam::from_str(invalid_value).is_err());
-        assert!(FluidParam::try_from(invalid_value).is_err());
-        assert!(FluidTrivialParam::from_str(invalid_value).is_err());
-        assert!(FluidTrivialParam::try_from(invalid_value).is_err());
+    fn from_invalid_str(#[case] invalid: &str) {
+        // When
+        let res1 = FluidParam::from_str(invalid);
+        let res2 = FluidParam::try_from(invalid);
+        let res3 = FluidTrivialParam::from_str(invalid);
+        let res4 = FluidTrivialParam::try_from(invalid);
+
+        // Then
+        assert!(res1.is_err());
+        assert!(res2.is_err());
+        assert!(res3.is_err());
+        assert!(res4.is_err());
     }
 
     #[rstest]
@@ -759,8 +775,12 @@ mod tests {
     #[case(PH, 76)]
     #[case(ODP, 77)]
     #[case(Phase, 78)]
-    fn u8_from_param_returns_expected_value(#[case] param: impl Into<u8>, #[case] expected: u8) {
-        assert_eq!(param.into(), expected);
+    fn into_u8(#[case] sut: impl Into<u8>, #[case] expected: u8) {
+        // When
+        let res = sut.into();
+
+        // Then
+        assert_eq!(res, expected);
     }
 
     #[rstest]
@@ -842,7 +862,7 @@ mod tests {
     #[case(76, PH)]
     #[case(77, ODP)]
     #[case(78, Phase)]
-    fn try_from_valid_u8_or_f64_returns_ok<T>(#[case] valid_value: u8, #[case] expected: T)
+    fn try_from_valid_u8_or_f64<T>(#[case] valid: u8, #[case] expected: T)
     where
         T: TryFrom<u8, Error = strum::ParseError>
             + TryFrom<f64, Error = strum::ParseError>
@@ -851,24 +871,39 @@ mod tests {
             + Eq
             + PartialEq,
     {
-        assert_eq!(T::try_from(valid_value), Ok(expected));
-        assert_eq!(T::try_from(f64::from(valid_value)), Ok(expected));
+        // When
+        let res1 = T::try_from(valid).unwrap();
+        let res2 = T::try_from(f64::from(valid)).unwrap();
+
+        // Then
+        assert_eq!(res1, expected);
+        assert_eq!(res2, expected);
     }
 
     #[rstest]
     #[case(254)]
     #[case(255)]
-    fn try_from_invalid_u8_returns_err(#[case] invalid_value: u8) {
-        assert!(FluidParam::try_from(invalid_value).is_err());
-        assert!(FluidTrivialParam::try_from(invalid_value).is_err());
+    fn try_from_invalid_u8(#[case] invalid: u8) {
+        // When
+        let res1 = FluidParam::try_from(invalid);
+        let res2 = FluidTrivialParam::try_from(invalid);
+
+        // Then
+        assert!(res1.is_err());
+        assert!(res2.is_err());
     }
 
     #[rstest]
     #[case(-1.0)]
     #[case(255.0)]
     #[case(100e3)]
-    fn try_from_invalid_f64_returns_err(#[case] invalid_value: f64) {
-        assert!(FluidParam::try_from(invalid_value).is_err());
-        assert!(FluidTrivialParam::try_from(invalid_value).is_err());
+    fn try_from_invalid_f64(#[case] invalid: f64) {
+        // When
+        let res1 = FluidParam::try_from(invalid);
+        let res2 = FluidTrivialParam::try_from(invalid);
+
+        // Then
+        assert!(res1.is_err());
+        assert!(res2.is_err());
     }
 }

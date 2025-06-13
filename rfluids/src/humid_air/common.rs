@@ -46,11 +46,11 @@ pub(crate) mod tests {
     )]
     #[case(HumidAirParam::W, 0.0, Ok(0.0))]
     #[case(HumidAirParam::W, 1.0, Ok(1.0))]
-    fn guard_returns_expected_value(
-        #[case] key: HumidAirParam,
-        #[case] value: f64,
-        #[case] expected: OutputResult<f64>,
-    ) {
-        assert_eq!(guard(key, value, |x| x >= 0.0), expected);
+    fn guard(#[case] key: HumidAirParam, #[case] value: f64, #[case] expected: OutputResult<f64>) {
+        // When
+        let res = super::guard(key, value, |x| x >= 0.0);
+
+        // Then
+        assert_eq!(res, expected);
     }
 }

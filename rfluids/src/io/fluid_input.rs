@@ -126,16 +126,16 @@ mod tests {
     use super::*;
     use crate::test::test_input;
 
-    test_input!(FluidInput: density, key: FluidParam::DMass);
-    test_input!(FluidInput: enthalpy, key: FluidParam::HMass);
-    test_input!(FluidInput: entropy, key: FluidParam::SMass);
-    test_input!(FluidInput: internal_energy, key: FluidParam::UMass);
-    test_input!(FluidInput: molar_density, key: FluidParam::DMolar);
-    test_input!(FluidInput: molar_enthalpy, key: FluidParam::HMolar);
-    test_input!(FluidInput: molar_entropy, key: FluidParam::SMolar);
-    test_input!(FluidInput: molar_internal_energy, key: FluidParam::UMolar);
-    test_input!(FluidInput: pressure, key: FluidParam::P);
-    test_input!(FluidInput: quality, key: FluidParam::Q);
-    test_input!(FluidInput: specific_volume, key: FluidParam::DMass, reciprocal);
-    test_input!(FluidInput: temperature, key: FluidParam::T);
+    test_input!(density, key: FluidParam::DMass);
+    test_input!(enthalpy, key: FluidParam::HMass);
+    test_input!(entropy, key: FluidParam::SMass);
+    test_input!(internal_energy, key: FluidParam::UMass);
+    test_input!(molar_density, key: FluidParam::DMolar);
+    test_input!(molar_enthalpy, key: FluidParam::HMolar);
+    test_input!(molar_entropy, key: FluidParam::SMolar);
+    test_input!(molar_internal_energy, key: FluidParam::UMolar);
+    test_input!(pressure, key: FluidParam::P);
+    test_input!(quality, key: FluidParam::Q);
+    test_input!(specific_volume, key: FluidParam::DMass, reciprocal);
+    test_input!(temperature, key: FluidParam::T);
 }

@@ -335,8 +335,12 @@ mod tests {
     #[case(R512A, "R512A.mix")]
     #[case(R513A, "R513A.mix")]
     #[case(TypicalNaturalGas, "TypicalNaturalGas.mix")]
-    fn as_ref_returns_expected_str(#[case] substance: PredefinedMix, #[case] expected: &str) {
-        assert_eq!(substance.as_ref(), expected);
+    fn as_ref(#[case] sut: PredefinedMix, #[case] expected: &str) {
+        // When
+        let res = sut.as_ref();
+
+        // Then
+        assert_eq!(res, expected);
     }
 
     #[rstest]
@@ -414,18 +418,28 @@ mod tests {
     #[case(vec!["R512A.mix", "R512A"], R512A)]
     #[case(vec!["R513A.mix", "R513A"], R513A)]
     #[case(vec!["TypicalNaturalGas.mix", "TypicalNaturalGas", "NaturalGas"], TypicalNaturalGas)]
-    fn from_valid_str_returns_ok(#[case] valid_values: Vec<&str>, #[case] expected: PredefinedMix) {
-        for s in valid_values {
-            assert_eq!(PredefinedMix::from_str(s), Ok(expected));
-            assert_eq!(PredefinedMix::try_from(s), Ok(expected));
+    fn from_valid_str(#[case] valid: Vec<&str>, #[case] expected: PredefinedMix) {
+        for s in valid {
+            // When
+            let res1 = PredefinedMix::from_str(s).unwrap();
+            let res2 = PredefinedMix::try_from(s).unwrap();
+
+            // Then
+            assert_eq!(res1, expected);
+            assert_eq!(res2, expected);
         }
     }
 
     #[rstest]
     #[case("")]
     #[case("Hello, World!")]
-    fn from_invalid_str_returns_err(#[case] invalid_value: &str) {
-        assert!(PredefinedMix::from_str(invalid_value).is_err());
-        assert!(PredefinedMix::try_from(invalid_value).is_err());
+    fn from_invalid_str(#[case] invalid: &str) {
+        // When
+        let res1 = PredefinedMix::from_str(invalid);
+        let res2 = PredefinedMix::try_from(invalid);
+
+        // Then
+        assert!(res1.is_err());
+        assert!(res2.is_err());
     }
 }

@@ -110,91 +110,103 @@ mod tests {
     use crate::{humid_air::HumidAirStateError, io::HumidAirInput};
     use rstest::*;
 
-    #[fixture]
-    fn altitude(#[default(0.0)] value: f64) -> HumidAirInput {
-        HumidAirInput::altitude(value).unwrap()
+    struct Context {
+        altitude: HumidAirInput,
+        pressure: HumidAirInput,
+        temperature: HumidAirInput,
+        rel_humidity: HumidAirInput,
     }
 
     #[fixture]
-    fn pressure(#[default(101_325.0)] value: f64) -> HumidAirInput {
-        HumidAirInput::pressure(value)
-    }
-
-    #[fixture]
-    fn infinite_pressure(#[with(f64::INFINITY)] pressure: HumidAirInput) -> HumidAirInput {
-        pressure
-    }
-
-    #[fixture]
-    fn temperature(#[default(293.15)] value: f64) -> HumidAirInput {
-        HumidAirInput::temperature(value)
-    }
-
-    #[fixture]
-    fn rel_humidity(#[default(0.5)] value: f64) -> HumidAirInput {
-        HumidAirInput::rel_humidity(value)
-    }
-
-    #[fixture]
-    fn humid_air() -> HumidAir<Undefined> {
-        HumidAir::new()
+    fn ctx() -> Context {
+        Context {
+            altitude: HumidAirInput::altitude(0.0).unwrap(),
+            pressure: HumidAirInput::pressure(101_325.0),
+            temperature: HumidAirInput::temperature(293.15),
+            rel_humidity: HumidAirInput::rel_humidity(0.5),
+        }
     }
 
     #[test]
-    fn new_returns_humid_air_instance_with_undefined_state() {
-        let humid_air = HumidAir::new();
-        assert!(humid_air.update_request.is_none());
-        assert!(humid_air.outputs.is_empty());
-        assert_eq!(humid_air, HumidAir::default());
+    fn new() {
+        // Given
+        let sut = HumidAir::new();
+
+        // When
+        let (outputs, update_request) = (sut.outputs.clone(), sut.update_request);
+
+        // Then
+        assert_eq!(sut, HumidAir::default());
+        assert!(update_request.is_none());
+        assert!(outputs.is_empty());
     }
 
     #[rstest]
-    fn in_state_valid_inputs_returns_ok(
-        humid_air: HumidAir<Undefined>,
-        altitude: HumidAirInput,
-        temperature: HumidAirInput,
-        rel_humidity: HumidAirInput,
-    ) {
-        assert!(
-            humid_air
-                .in_state(altitude, temperature, rel_humidity)
-                .is_ok()
-        );
+    fn in_state_valid_inputs(ctx: Context) {
+        // Given
+        let Context {
+            altitude,
+            temperature,
+            rel_humidity,
+            ..
+        } = ctx;
+        let sut = HumidAir::new();
+
+        // When
+        let res = sut.in_state(altitude, temperature, rel_humidity);
+
+        // Then
+        assert!(res.is_ok());
     }
 
     #[rstest]
-    fn in_state_same_inputs_returns_err(
-        humid_air: HumidAir<Undefined>,
-        altitude: HumidAirInput,
-        pressure: HumidAirInput,
-        rel_humidity: HumidAirInput,
-    ) {
+    fn in_state_same_inputs(ctx: Context) {
+        // Given
+        let Context {
+            altitude,
+            pressure,
+            rel_humidity,
+            ..
+        } = ctx;
+        let sut = HumidAir::new();
+
+        // When
+        let res = sut.in_state(altitude, pressure, rel_humidity);
+
+        // Then
         assert!(matches!(
-            humid_air
-                .in_state(altitude, pressure, rel_humidity)
-                .unwrap_err(),
-            HumidAirStateError::InvalidInputs(_, _, _)
+            res,
+            Err(HumidAirStateError::InvalidInputs(_, _, _))
         ));
     }
 
     #[rstest]
-    fn in_state_invalid_inputs_returns_err(
-        humid_air: HumidAir<Undefined>,
-        infinite_pressure: HumidAirInput,
-        temperature: HumidAirInput,
-        rel_humidity: HumidAirInput,
-    ) {
-        assert!(matches!(
-            humid_air
-                .in_state(infinite_pressure, temperature, rel_humidity)
-                .unwrap_err(),
-            HumidAirStateError::InvalidInputValue
-        ));
+    fn in_state_invalid_inputs(ctx: Context) {
+        // Given
+        let Context {
+            temperature,
+            rel_humidity,
+            ..
+        } = ctx;
+        let infinite_pressure = HumidAirInput::pressure(f64::INFINITY);
+        let sut = HumidAir::new();
+
+        // When
+        let res = sut.in_state(infinite_pressure, temperature, rel_humidity);
+
+        // Then
+        assert_eq!(res, Err(HumidAirStateError::InvalidInputValue));
     }
 
-    #[rstest]
-    fn clone_returns_new_instance(humid_air: HumidAir<Undefined>) {
-        let clone = humid_air.clone();
-        assert_eq!(clone, humid_air);
+    #[test]
+    fn clone() {
+        // Given
+        let sut = HumidAir::new();
+
+        // When
+        let clone = sut.clone();
+
+        // Then
+        assert_eq!(clone, sut);
     }
 }

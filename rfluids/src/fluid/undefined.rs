@@ -86,137 +86,149 @@ impl PartialEq for Fluid<Undefined> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{fluid::FluidStateError, substance::*, test::test_output};
+    use crate::{
+        fluid::FluidStateError,
+        substance::*,
+        test::{SutFactory, test_output},
+    };
     use rstest::*;
 
-    #[fixture]
-    fn temperature(#[default(293.15)] value: f64) -> FluidInput {
-        FluidInput::temperature(value)
-    }
-
-    #[fixture]
-    fn pressure(#[default(101_325.0)] value: f64) -> FluidInput {
-        FluidInput::pressure(value)
-    }
-
-    #[fixture]
-    fn infinite_pressure(#[with(f64::INFINITY)] pressure: FluidInput) -> FluidInput {
-        pressure
-    }
-
-    #[fixture]
-    fn negative_pressure(#[with(-1.0)] pressure: FluidInput) -> FluidInput {
-        pressure
-    }
-
-    #[fixture]
-    fn water() -> Fluid<Undefined> {
-        Fluid::from(Pure::Water)
-    }
-
-    #[fixture]
-    fn r22() -> Fluid<Undefined> {
-        Fluid::from(Pure::R22)
-    }
-
-    #[fixture]
-    fn r32() -> Fluid<Undefined> {
-        Fluid::from(Pure::R32)
-    }
-
-    #[fixture]
-    fn incomp_water() -> Fluid<Undefined> {
-        Fluid::from(IncompPure::Water)
-    }
-
-    #[fixture]
-    fn r444a() -> Fluid<Undefined> {
-        Fluid::from(PredefinedMix::R444A)
-    }
-
-    #[fixture]
-    fn pg() -> Fluid<Undefined> {
-        Fluid::from(BinaryMixKind::MPG.with_fraction(0.4).unwrap())
-    }
-
-    #[test]
-    fn substance_returns_entered_value() {
-        let water = Pure::Water;
-        let substance = Substance::from(water);
-        let sut = Fluid::from(water);
-        assert_eq!(sut.substance(), &substance);
-    }
-
-    test_output!(Fluid<Undefined>: acentric_factor, water: 0.344_292_084_3, r444a: Err);
-    test_output!(Fluid<Undefined>: critical_density, water: 322.0, r444a: Err, incomp_water: Err);
-    test_output!(Fluid<Undefined>: critical_molar_density, water: 17_873.727_995_609_06, r444a: Err, incomp_water: Err);
-    test_output!(Fluid<Undefined>: critical_pressure, water: 22.064e6, r444a: Err, incomp_water: Err);
-    test_output!(Fluid<Undefined>: critical_temperature, water: 647.096, r444a: Err, incomp_water: Err);
-    test_output!(Fluid<Undefined>: flammability_hazard, water: 0.0, incomp_water: Err);
-    test_output!(Fluid<Undefined>: freezing_temperature, pg: 252.581_754_953_058_38, water: Err);
-    test_output!(Fluid<Undefined>: gwp20, r32: 2330.0, water: Err);
-    test_output!(Fluid<Undefined>: gwp100, r32: 675.0, water: Err);
-    test_output!(Fluid<Undefined>: gwp500, r32: 205.0, water: Err);
-    test_output!(Fluid<Undefined>: health_hazard, water: 0.0, incomp_water: Err);
-    test_output!(Fluid<Undefined>: max_pressure, water: 1e9, incomp_water: Err);
-    test_output!(Fluid<Undefined>: max_temperature, water: 2e3, always_ok);
-    test_output!(Fluid<Undefined>: min_pressure, water: 611.654_800_896_868_4, incomp_water: Err);
-    test_output!(Fluid<Undefined>: min_temperature, water: 273.16, always_ok);
-    test_output!(Fluid<Undefined>: molar_mass, water: 0.018_015_268, incomp_water: Err);
-    test_output!(Fluid<Undefined>: odp, r22: 0.05, water: Err, incomp_water: Err);
-    test_output!(Fluid<Undefined>: physical_hazard, water: 0.0, incomp_water: Err);
-    test_output!(Fluid<Undefined>: reducing_density, water: 322.0, incomp_water: Err);
-    test_output!(Fluid<Undefined>: reducing_molar_density, water: 17_873.727_995_609_06, incomp_water: Err);
-    test_output!(Fluid<Undefined>: reducing_pressure, water: 22.064e6, incomp_water: Err);
-    test_output!(Fluid<Undefined>: reducing_temperature, water: 647.096, incomp_water: Err);
-    test_output!(Fluid<Undefined>: triple_pressure, water: 611.654_800_896_868_4, incomp_water: Err);
-    test_output!(Fluid<Undefined>: triple_temperature, water: 273.16, incomp_water: Err);
-
-    #[rstest]
-    fn in_state_valid_inputs_returns_ok(
-        water: Fluid<Undefined>,
-        temperature: FluidInput,
+    struct Context {
         pressure: FluidInput,
-    ) {
-        assert!(water.in_state(temperature, pressure).is_ok());
+        temperature: FluidInput,
+        water: Pure,
+        incomp_water: IncompPure,
+        r22: Pure,
+        r32: Pure,
+        r444a: PredefinedMix,
+        pg: BinaryMix,
+    }
+
+    impl<P: Into<Fluid<Undefined>>> SutFactory<P> for Context {
+        type Sut = Fluid<Undefined>;
+
+        fn sut(&self, payload: P) -> Self::Sut {
+            payload.into()
+        }
+    }
+
+    #[fixture]
+    fn ctx() -> Context {
+        Context {
+            pressure: FluidInput::pressure(101_325.0),
+            temperature: FluidInput::temperature(293.15),
+            water: Pure::Water,
+            incomp_water: IncompPure::Water,
+            r22: Pure::R22,
+            r32: Pure::R32,
+            r444a: PredefinedMix::R444A,
+            pg: BinaryMixKind::MPG.with_fraction(0.4).unwrap(),
+        }
+    }
+
+    test_output!(acentric_factor, water: 0.344_292_084_3, r444a: Err);
+    test_output!(critical_density, water: 322.0, r444a: Err, incomp_water: Err);
+    test_output!(critical_molar_density, water: 17_873.727_995_609_06, r444a: Err, incomp_water: Err);
+    test_output!(critical_pressure, water: 22.064e6, r444a: Err, incomp_water: Err);
+    test_output!(critical_temperature, water: 647.096, r444a: Err, incomp_water: Err);
+    test_output!(flammability_hazard, water: 0.0, incomp_water: Err);
+    test_output!(freezing_temperature, pg: 252.581_754_953_058_38, water: Err);
+    test_output!(gwp20, r32: 2330.0, water: Err);
+    test_output!(gwp100, r32: 675.0, water: Err);
+    test_output!(gwp500, r32: 205.0, water: Err);
+    test_output!(health_hazard, water: 0.0, incomp_water: Err);
+    test_output!(max_pressure, water: 1e9, incomp_water: Err);
+    test_output!(max_temperature, water: 2e3, always_ok);
+    test_output!(min_pressure, water: 611.654_800_896_868_4, incomp_water: Err);
+    test_output!(min_temperature, water: 273.16, always_ok);
+    test_output!(molar_mass, water: 0.018_015_268, incomp_water: Err);
+    test_output!(odp, r22: 0.05, water: Err, incomp_water: Err);
+    test_output!(physical_hazard, water: 0.0, incomp_water: Err);
+    test_output!(reducing_density, water: 322.0, incomp_water: Err);
+    test_output!(reducing_molar_density, water: 17_873.727_995_609_06, incomp_water: Err);
+    test_output!(reducing_pressure, water: 22.064e6, incomp_water: Err);
+    test_output!(reducing_temperature, water: 647.096, incomp_water: Err);
+    test_output!(triple_pressure, water: 611.654_800_896_868_4, incomp_water: Err);
+    test_output!(triple_temperature, water: 273.16, incomp_water: Err);
+
+    #[rstest]
+    fn substance(ctx: Context) {
+        // Given
+        let Context { water, .. } = ctx;
+        let substance = Substance::from(water);
+        let sut = ctx.sut(water);
+
+        // When
+        let res = sut.substance();
+
+        // Then
+        assert_eq!(*res, substance);
     }
 
     #[rstest]
-    fn in_state_same_inputs_returns_err(water: Fluid<Undefined>, pressure: FluidInput) {
+    fn in_state_same_inputs(ctx: Context) {
+        // Given
+        let Context {
+            pressure, water, ..
+        } = ctx;
+        let sut = ctx.sut(water);
+
+        // When
+        let res = sut.in_state(pressure, pressure);
+
+        // Then
         assert_eq!(
-            water.in_state(pressure, pressure).unwrap_err(),
-            FluidStateError::InvalidInputPair(pressure.key, pressure.key)
+            res,
+            Err(FluidStateError::InvalidInputPair(
+                pressure.key,
+                pressure.key
+            ))
         );
     }
 
     #[rstest]
-    fn in_state_invalid_inputs_returns_err(
-        water: Fluid<Undefined>,
-        temperature: FluidInput,
-        infinite_pressure: FluidInput,
-    ) {
-        assert_eq!(
-            water.in_state(temperature, infinite_pressure).unwrap_err(),
-            FluidStateError::InvalidInputValue
-        );
+    fn in_state_invalid_inputs(ctx: Context) {
+        // Given
+        let Context {
+            temperature, water, ..
+        } = ctx;
+        let infinite_pressure = FluidInput::pressure(f64::INFINITY);
+        let sut = ctx.sut(water);
+
+        // When
+        let res = sut.in_state(infinite_pressure, temperature);
+
+        // Then
+        assert_eq!(res, Err(FluidStateError::InvalidInputValue));
     }
 
     #[rstest]
-    fn in_state_invalid_state_returns_err(
-        water: Fluid<Undefined>,
-        temperature: FluidInput,
-        negative_pressure: FluidInput,
-    ) {
-        assert!(matches!(
-            water.in_state(temperature, negative_pressure).unwrap_err(),
-            FluidStateError::UpdateFailed(_)
-        ));
+    fn in_state_invalid_state(ctx: Context) {
+        // Given
+        let Context {
+            temperature, water, ..
+        } = ctx;
+        let negative_pressure = FluidInput::pressure(-1.0);
+        let sut = ctx.sut(water);
+
+        // When
+        let res = sut.in_state(negative_pressure, temperature);
+
+        // Then
+        assert!(matches!(res, Err(FluidStateError::UpdateFailed(_))));
     }
 
     #[rstest]
-    fn clone_returns_new_instance(water: Fluid<Undefined>) {
-        let clone = water.clone();
-        assert_eq!(clone, water);
-        assert_eq!(clone.trivial_outputs, water.trivial_outputs);
+    fn clone(ctx: Context) {
+        // Given
+        let Context { water, .. } = ctx;
+        let sut = ctx.sut(water);
+
+        // When
+        let clone = sut.clone();
+
+        // Then
+        assert_eq!(clone, sut);
+        assert_eq!(clone.trivial_outputs, sut.trivial_outputs);
     }
 }

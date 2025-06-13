@@ -183,9 +183,14 @@ mod tests {
     #[rstest]
     #[case(HashMap::from([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]))]
     #[case(HashMap::from([(Pure::R32, 0.5), (Pure::R125, 0.5)]))]
-    fn mole_or_mass_based_from_valid_input_returns_ok(#[case] components: HashMap<Pure, f64>) {
-        assert!(CustomMix::mole_based(components.clone()).is_ok());
-        assert!(CustomMix::mass_based(components).is_ok());
+    fn new_valid_components(#[case] components: HashMap<Pure, f64>) {
+        // When
+        let res1 = CustomMix::mole_based(components.clone());
+        let res2 = CustomMix::mass_based(components);
+
+        // Then
+        assert!(res1.is_ok());
+        assert!(res2.is_ok());
     }
 
     #[rstest]
@@ -206,35 +211,47 @@ mod tests {
             HashMap::from([(Pure::R32, 0.4), (Pure::R125, 0.4)]),
             CustomMixError::InvalidFractionsSum
         )]
-    fn mole_or_mass_based_from_invalid_input_returns_err(
+    fn new_invalid_components(
         #[case] components: HashMap<Pure, f64>,
         #[case] expected: CustomMixError,
     ) {
-        assert_eq!(
-            CustomMix::mole_based(components.clone()).unwrap_err(),
-            expected
-        );
-        assert_eq!(CustomMix::mass_based(components).unwrap_err(), expected);
+        // When
+        let res1 = CustomMix::mole_based(components.clone());
+        let res2 = CustomMix::mass_based(components);
+
+        // Then
+        assert_eq!(res1, Err(expected.clone()));
+        assert_eq!(res2, Err(expected));
     }
 
     #[test]
-    fn into_mole_based_from_mole_based_returns_same() {
+    fn into_mole_based_from_mole_based() {
+        // Given
         let sut = CustomMix::mole_based(HashMap::from([(Pure::Water, 0.8), (Pure::Ethanol, 0.2)]))
             .unwrap();
-        let result = sut.clone().into_mole_based();
-        assert_eq!(result, sut);
-        assert!(matches(&result, [("Water", 0.8), ("Ethanol", 0.2)]));
+
+        // When
+        let res = sut.clone().into_mole_based();
+
+        // Then
+        assert_eq!(res, sut);
+        assert!(matches(&res, [("Water", 0.8), ("Ethanol", 0.2)]));
     }
 
     #[test]
-    fn into_mole_based_from_mass_based_returns_other_with_converted_fractions() {
+    fn into_mole_based_from_mass_based() {
+        // Given
         let sut =
             CustomMix::mass_based(HashMap::from([(Pure::R32, 0.5), (Pure::R125, 0.5)])).unwrap();
-        let result = sut.clone().into_mole_based();
-        assert_ne!(result, sut);
+
+        // When
+        let res = sut.clone().into_mole_based();
+
+        // Then
+        assert_ne!(res, sut);
         assert!(matches(&sut, [("R32", 0.5), ("R125", 0.5)]));
         assert!(matches(
-            &result,
+            &res,
             [
                 ("R32", 0.697_614_699_375_862_4),
                 ("R125", 0.302_385_300_624_137_54)

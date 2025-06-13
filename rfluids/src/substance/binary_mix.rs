@@ -363,52 +363,79 @@ mod tests {
     #[case(ZLC, 0.3, 0.7)]
     #[case(ZM, 0.0, 1.0)]
     #[case(ZMC, 0.3, 0.7)]
-    fn min_max_fractions_returns_expected_values(
-        #[case] substance: BinaryMixKind,
-        #[case] expected_min_fraction: f64,
-        #[case] expected_max_fraction: f64,
+    fn min_max_fractions(
+        #[case] sut: BinaryMixKind,
+        #[case] expected_min: f64,
+        #[case] expected_max: f64,
     ) {
-        assert_eq!(substance.min_fraction(), expected_min_fraction);
-        assert_eq!(substance.max_fraction(), expected_max_fraction);
+        // When
+        let (min, max) = (sut.min_fraction(), sut.max_fraction());
+
+        // Then
+        assert_eq!(min, expected_min);
+        assert_eq!(max, expected_max);
     }
 
     #[test]
-    fn with_fraction_valid_value_returns_ok() {
+    fn with_fraction_valid() {
         for kind in BinaryMixKind::iter() {
-            let min_fraction = kind.min_fraction();
-            let average_fraction = 0.5 * (kind.min_fraction() + kind.max_fraction());
-            let max_fraction = kind.max_fraction();
-            let sut_with_min_fraction = kind.with_fraction(min_fraction).unwrap();
-            let sut_with_average_fraction = kind.with_fraction(average_fraction).unwrap();
-            let sut_with_max_fraction = kind.with_fraction(max_fraction).unwrap();
-            assert_eq!(sut_with_min_fraction.kind, kind);
-            assert_eq!(sut_with_min_fraction.fraction, min_fraction);
-            assert_eq!(sut_with_average_fraction.kind, kind);
-            assert_eq!(sut_with_average_fraction.fraction, average_fraction);
-            assert_eq!(sut_with_max_fraction.kind, kind);
-            assert_eq!(sut_with_max_fraction.fraction, max_fraction);
+            // Given
+            let min = kind.min_fraction();
+            let average = 0.5 * (kind.min_fraction() + kind.max_fraction());
+            let max = kind.max_fraction();
+
+            // When
+            let BinaryMix {
+                kind: kind1,
+                fraction: fraction1,
+            } = kind.with_fraction(min).unwrap();
+            let BinaryMix {
+                kind: kind2,
+                fraction: fraction2,
+            } = kind.with_fraction(average).unwrap();
+            let BinaryMix {
+                kind: kind3,
+                fraction: fraction3,
+            } = kind.with_fraction(max).unwrap();
+
+            // Then
+            assert_eq!(kind1, kind);
+            assert_eq!(kind2, kind);
+            assert_eq!(kind3, kind);
+            assert_eq!(fraction1, min);
+            assert_eq!(fraction2, average);
+            assert_eq!(fraction3, max);
         }
     }
 
     #[test]
-    fn with_fraction_invalid_value_returns_err() {
+    fn with_fraction_invalid() {
         const DELTA: f64 = 1e-6;
         for kind in BinaryMixKind::iter() {
+            // Given
+            let too_low = kind.min_fraction() - DELTA;
+            let too_high = kind.max_fraction() + DELTA;
+
+            // When
+            let res1 = kind.with_fraction(too_low);
+            let res2 = kind.with_fraction(too_high);
+
+            // Then
             assert_eq!(
-                kind.with_fraction(kind.min_fraction() - DELTA).unwrap_err(),
-                BinaryMixError::InvalidFraction {
-                    specified: kind.min_fraction() - DELTA,
+                res1,
+                Err(BinaryMixError::InvalidFraction {
+                    specified: too_low,
                     min: kind.min_fraction(),
                     max: kind.max_fraction(),
-                }
+                })
             );
             assert_eq!(
-                kind.with_fraction(kind.max_fraction() + DELTA).unwrap_err(),
-                BinaryMixError::InvalidFraction {
-                    specified: kind.max_fraction() + DELTA,
+                res2,
+                Err(BinaryMixError::InvalidFraction {
+                    specified: too_high,
                     min: kind.min_fraction(),
                     max: kind.max_fraction(),
-                }
+                })
             );
         }
     }
@@ -462,8 +489,12 @@ mod tests {
     #[case(ZLC, "ZLC")]
     #[case(ZM, "ZM")]
     #[case(ZMC, "ZMC")]
-    fn as_ref_returns_expected_str(#[case] substance: BinaryMixKind, #[case] expected: &str) {
-        assert_eq!(substance.as_ref(), expected);
+    fn as_ref(#[case] sut: BinaryMixKind, #[case] expected: &str) {
+        // When
+        let res = sut.as_ref();
+
+        // Then
+        assert_eq!(res, expected);
     }
 
     #[rstest]
@@ -515,16 +546,26 @@ mod tests {
     #[case("ZLC", ZLC)]
     #[case("ZM", ZM)]
     #[case("ZMC", ZMC)]
-    fn from_valid_str_returns_ok(#[case] valid_value: &str, #[case] expected: BinaryMixKind) {
-        assert_eq!(BinaryMixKind::from_str(valid_value), Ok(expected));
-        assert_eq!(BinaryMixKind::try_from(valid_value), Ok(expected));
+    fn from_valid_str(#[case] valid: &str, #[case] expected: BinaryMixKind) {
+        // When
+        let res1 = BinaryMixKind::from_str(valid).unwrap();
+        let res2 = BinaryMixKind::try_from(valid).unwrap();
+
+        // Then
+        assert_eq!(res1, expected);
+        assert_eq!(res2, expected);
     }
 
     #[rstest]
     #[case("")]
     #[case("Hello, World!")]
-    fn from_invalid_str_returns_err(#[case] invalid_value: &str) {
-        assert!(BinaryMixKind::from_str(invalid_value).is_err());
-        assert!(BinaryMixKind::try_from(invalid_value).is_err());
+    fn from_invalid_str(#[case] invalid: &str) {
+        // When
+        let res1 = BinaryMixKind::from_str(invalid);
+        let res2 = BinaryMixKind::try_from(invalid);
+
+        // Then
+        assert!(res1.is_err());
+        assert!(res2.is_err());
     }
 }

@@ -191,42 +191,47 @@ mod tests {
     use crate::test::{assert_relative_eq, test_input};
     use rstest::*;
 
-    test_input!(HumidAirInput: abs_humidity, key: HumidAirParam::W);
+    test_input!(abs_humidity, key: HumidAirParam::W);
+    test_input!(density, key: HumidAirParam::Vha, reciprocal);
+    test_input!(density_da, key: HumidAirParam::Vda, reciprocal);
+    test_input!(dew_temperature, key: HumidAirParam::TDew);
+    test_input!(enthalpy, key: HumidAirParam::Hha);
+    test_input!(enthalpy_da, key: HumidAirParam::Hda);
+    test_input!(entropy, key: HumidAirParam::Sha);
+    test_input!(entropy_da, key: HumidAirParam::Sda);
+    test_input!(pressure, key: HumidAirParam::P);
+    test_input!(rel_humidity, key: HumidAirParam::R);
+    test_input!(specific_volume, key: HumidAirParam::Vha);
+    test_input!(specific_volume_da, key: HumidAirParam::Vda);
+    test_input!(temperature, key: HumidAirParam::T);
+    test_input!(water_mole_fraction, key: HumidAirParam::PsiW);
+    test_input!(water_partial_pressure, key: HumidAirParam::Pw);
+    test_input!(wet_bulb_temperature, key: HumidAirParam::TWetBulb);
 
     #[rstest]
     #[case(10_000.0, 26_436.098_351_416_622)]
     #[case(0.0, 101_325.0)]
     #[case(-5_000.0, 177_687.447_332_308_8)]
-    fn altitude_valid_value_returns_ok(#[case] altitude: f64, #[case] pressure: f64) {
-        let sut = HumidAirInput::altitude(altitude).unwrap();
-        assert_eq!(sut.key, HumidAirParam::P);
-        assert_relative_eq!(sut.value, pressure);
+    fn altitude_valid(#[case] valid: f64, #[case] pressure: f64) {
+        // Given
+        let sut = HumidAirInput::altitude(valid).unwrap();
+
+        // When
+        let HumidAirInput { key, value } = sut;
+
+        // Then
+        assert_eq!(key, HumidAirParam::P);
+        assert_relative_eq!(value, pressure);
     }
 
     #[rstest]
     #[case(10_000.0 + 1e-6)]
     #[case(-5_000.0 - 1e-6)]
-    fn altitude_invalid_value_returns_err(#[case] invalid_value: f64) {
-        let result = HumidAirInput::altitude(invalid_value);
-        assert_eq!(
-            result.unwrap_err(),
-            AltitudeError::OutOfRange(invalid_value)
-        );
-    }
+    fn altitude_invalid(#[case] invalid: f64) {
+        // When
+        let res = HumidAirInput::altitude(invalid);
 
-    test_input!(HumidAirInput: density, key: HumidAirParam::Vha, reciprocal);
-    test_input!(HumidAirInput: density_da, key: HumidAirParam::Vda, reciprocal);
-    test_input!(HumidAirInput: dew_temperature, key: HumidAirParam::TDew);
-    test_input!(HumidAirInput: enthalpy, key: HumidAirParam::Hha);
-    test_input!(HumidAirInput: enthalpy_da, key: HumidAirParam::Hda);
-    test_input!(HumidAirInput: entropy, key: HumidAirParam::Sha);
-    test_input!(HumidAirInput: entropy_da, key: HumidAirParam::Sda);
-    test_input!(HumidAirInput: pressure, key: HumidAirParam::P);
-    test_input!(HumidAirInput: rel_humidity, key: HumidAirParam::R);
-    test_input!(HumidAirInput: specific_volume, key: HumidAirParam::Vha);
-    test_input!(HumidAirInput: specific_volume_da, key: HumidAirParam::Vda);
-    test_input!(HumidAirInput: temperature, key: HumidAirParam::T);
-    test_input!(HumidAirInput: water_mole_fraction, key: HumidAirParam::PsiW);
-    test_input!(HumidAirInput: water_partial_pressure, key: HumidAirParam::Pw);
-    test_input!(HumidAirInput: wet_bulb_temperature, key: HumidAirParam::TWetBulb);
+        // Then
+        assert_eq!(res, Err(AltitudeError::OutOfRange(invalid)));
+    }
 }

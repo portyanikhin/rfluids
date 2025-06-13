@@ -256,47 +256,87 @@ mod tests {
     use strum::IntoEnumIterator;
 
     #[test]
-    fn from_each_pure_does_not_panic() {
+    fn from_each_pure() {
         for substance in Pure::iter() {
-            let _fluid = Fluid::from(substance);
+            // Given
+            let sut = Fluid::from(substance);
+
+            // When
+            let res = size_of_val(&sut);
+
+            // Then
+            assert!(res > 0);
         }
     }
 
     #[test]
-    fn from_each_incomp_pure_does_not_panic() {
+    fn from_each_incomp_pure() {
         for substance in IncompPure::iter() {
-            let _fluid = Fluid::from(substance);
+            // Given
+            let sut = Fluid::from(substance);
+
+            // When
+            let res = size_of_val(&sut);
+
+            // Then
+            assert!(res > 0);
         }
     }
 
     #[test]
-    fn from_each_predefined_mix_does_not_panic() {
+    fn from_each_predefined_mix() {
         for substance in PredefinedMix::iter() {
-            let _fluid = Fluid::from(substance);
+            // Given
+            let sut = Fluid::from(substance);
+
+            // When
+            let res = size_of_val(&sut);
+
+            // Then
+            assert!(res > 0);
         }
     }
 
     #[test]
-    fn from_each_binary_mix_does_not_panic() {
+    fn from_each_binary_mix() {
         for kind in BinaryMixKind::iter() {
-            let _fluid = Fluid::from(
+            // Given
+            let sut = Fluid::from(
                 kind.with_fraction(0.5 * (kind.min_fraction() + kind.max_fraction()))
                     .unwrap(),
             );
+
+            // When
+            let res = size_of_val(&sut);
+
+            // Then
+            assert!(res > 0);
         }
     }
 
     #[test]
-    fn try_from_supported_custom_mix_returns_ok() {
+    fn try_from_supported_custom_mix() {
+        // Given
         let supported_mix =
             CustomMix::mass_based(HashMap::from([(Pure::R32, 0.7), (Pure::R134a, 0.3)])).unwrap();
-        assert!(Fluid::try_from(supported_mix).is_ok());
+
+        // When
+        let res = Fluid::try_from(supported_mix);
+
+        // Then
+        assert!(res.is_ok());
     }
 
     #[test]
-    fn try_from_unsupported_custom_mix_returns_err() {
+    fn try_from_unsupported_custom_mix() {
+        // Given
         let unsupported_mix =
             CustomMix::mole_based(HashMap::from([(Pure::Xenon, 0.1), (Pure::R22, 0.9)])).unwrap();
-        assert!(Fluid::try_from(unsupported_mix).is_err());
+
+        // When
+        let res = Fluid::try_from(unsupported_mix);
+
+        // Then
+        assert!(res.is_err());
     }
 }
