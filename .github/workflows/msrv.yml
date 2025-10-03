@@ -6,7 +6,7 @@ on:
       command:
         type: choice
         required: true
-        description: 'Action to perform via cargo-msrv'
+        description: "Action to perform via cargo-msrv"
         options:
           - find
           - verify
@@ -21,9 +21,9 @@ jobs:
     timeout-minutes: 45
 
     steps:
-    - uses: actions/checkout@v5
-    - name: Setup Rust toolchain
-      uses: dtolnay/rust-toolchain@stable
-    - name: Setup cargo-msrv
-      run: cargo install cargo-msrv
-    - run: cargo msrv ${{ github.event.inputs.command }}
+      - uses: actions/checkout@v5
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Setup cargo-msrv
+        run: cargo install cargo-msrv
+      - run: cargo msrv ${{ github.event.inputs.command }}

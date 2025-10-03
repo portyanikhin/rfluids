@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   CARGO_TERM_COLOR: always
@@ -17,13 +17,13 @@ jobs:
     timeout-minutes: 45
 
     steps:
-    - uses: actions/checkout@v5
-    - name: Setup Rust toolchain
-      uses: dtolnay/rust-toolchain@stable
-      with:
-        components: rustfmt
-    - name: Check formatting
-      run: cargo fmt --all -- --check
+      - uses: actions/checkout@v5
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Check formatting
+        run: cargo fmt --all -- --check
 
   clippy:
     needs: fmt
@@ -32,50 +32,50 @@ jobs:
     timeout-minutes: 45
 
     steps:
-    - uses: actions/checkout@v5
-    - name: Setup Rust toolchain
-      uses: dtolnay/rust-toolchain@stable
-      with:
-        components: clippy
-    - name: Run Clippy
-      run: cargo clippy -p rfluids --all-targets --all-features -- --no-deps
+      - uses: actions/checkout@v5
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - name: Run Clippy
+        run: cargo clippy -p rfluids --all-targets --all-features -- --no-deps
 
   tests:
-    needs: [ fmt, clippy ]
+    needs: [fmt, clippy]
     name: Tests / ${{ matrix.os }} / rust-${{ matrix.toolchain }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-latest, ubuntu-latest, macos-13, macos-latest ]
-        toolchain: [ stable, beta, nightly ]
+        os: [windows-latest, ubuntu-latest, macos-13, macos-latest]
+        toolchain: [stable, beta, nightly]
 
     steps:
-    - uses: actions/checkout@v5
-    - name: Setup Rust ${{ matrix.toolchain }} toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: ${{ matrix.toolchain }}
-    - name: Tests
-      run: cargo test --verbose
+      - uses: actions/checkout@v5
+      - name: Setup Rust ${{ matrix.toolchain }} toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.toolchain }}
+      - name: Tests
+        run: cargo test --verbose
 
   coverage:
-    needs: [ fmt, clippy, tests ]
+    needs: [fmt, clippy, tests]
     name: Code coverage
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
     steps:
-    - uses: actions/checkout@v5
-    - name: Setup Rust toolchain
-      uses: dtolnay/rust-toolchain@stable
-    - name: Setup cargo-llvm-cov
-      uses: taiki-e/install-action@cargo-llvm-cov
-    - name: Generate coverage report
-      run: cargo llvm-cov --all-features --verbose --codecov --output-path codecov.json
-    - name: Upload coverage report to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: codecov.json
+      - uses: actions/checkout@v5
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+      - name: Setup cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+      - name: Generate coverage report
+        run: cargo llvm-cov --all-features --verbose --codecov --output-path codecov.json
+      - name: Upload coverage report to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: codecov.json
