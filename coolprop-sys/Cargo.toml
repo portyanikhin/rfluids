@@ -1,6 +1,6 @@
 [package]
 name = "coolprop-sys"
-version = "6.8.0"
+version = "7.1.0"
 authors.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -19,16 +19,16 @@ libloading.workspace = true
 bindgen.workspace = true
 
 [target.'cfg(all(target_os = "windows", target_arch = "x86_64"))'.dependencies]
-coolprop-sys-windows-x86-64 = { path = "../coolprop-sys-windows-x86-64", version = "6.8.0" }
+coolprop-sys-windows-x86-64 = { path = "../coolprop-sys-windows-x86-64", version = "7.1.0" }
 
 [target.'cfg(all(target_os = "windows", target_arch = "aarch64"))'.dependencies]
-coolprop-sys-windows-aarch64 = { path = "../coolprop-sys-windows-aarch64", version = "6.8.0" }
+coolprop-sys-windows-aarch64 = { path = "../coolprop-sys-windows-aarch64", version = "7.1.0" }
 
 [target.'cfg(all(target_os = "linux", target_arch = "x86_64"))'.dependencies]
-coolprop-sys-linux-x86-64 = { path = "../coolprop-sys-linux-x86-64", version = "6.8.0" }
+coolprop-sys-linux-x86-64 = { path = "../coolprop-sys-linux-x86-64", version = "7.1.0" }
 
 [target.'cfg(all(target_os = "macos", target_arch = "x86_64"))'.dependencies]
-coolprop-sys-macos-x86-64 = { path = "../coolprop-sys-macos-x86-64", version = "6.8.0" }
+coolprop-sys-macos-x86-64 = { path = "../coolprop-sys-macos-x86-64", version = "7.1.0" }
 
 [target.'cfg(all(target_os = "macos", target_arch = "aarch64"))'.dependencies]
-coolprop-sys-macos-aarch64 = { path = "../coolprop-sys-macos-aarch64", version = "6.8.0" }
+coolprop-sys-macos-aarch64 = { path = "../coolprop-sys-macos-aarch64", version = "7.1.0" }
