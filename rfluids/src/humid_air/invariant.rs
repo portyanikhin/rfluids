@@ -1,4 +1,4 @@
-use super::{HumidAir, StateResult, requests::HumidAirUpdateRequest};
+use super::{HumidAir, StateResult, request::HumidAirUpdateRequest};
 use crate::{io::HumidAirInput, state_variant::StateVariant};
 
 impl<S: StateVariant> HumidAir<S> {

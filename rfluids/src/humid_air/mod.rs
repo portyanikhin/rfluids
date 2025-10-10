@@ -6,7 +6,7 @@
 mod common;
 mod defined;
 mod invariant;
-mod requests;
+mod request;
 mod undefined;
 
 use crate::{
@@ -14,7 +14,7 @@ use crate::{
     native::CoolPropError,
     state_variant::{Defined, StateVariant},
 };
-use requests::HumidAirUpdateRequest;
+use request::HumidAirUpdateRequest;
 use std::{collections::HashMap, marker::PhantomData};
 use thiserror::Error;
 

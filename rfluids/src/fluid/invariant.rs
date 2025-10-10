@@ -1,7 +1,7 @@
 use super::{
     Fluid, FluidOutputError, OutputResult, StateResult,
     common::{cached_output, guard},
-    requests::FluidUpdateRequest,
+    request::FluidUpdateRequest,
 };
 use crate::{
     io::{FluidInput, FluidTrivialParam},

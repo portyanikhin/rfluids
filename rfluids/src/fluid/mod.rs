@@ -20,7 +20,7 @@
 mod common;
 mod defined;
 mod invariant;
-mod requests;
+mod request;
 mod undefined;
 
 use crate::{
@@ -29,7 +29,7 @@ use crate::{
     state_variant::{Defined, StateVariant, Undefined},
     substance::{BinaryMix, CustomMix, IncompPure, PredefinedMix, Pure, Substance},
 };
-use requests::{FluidCreateRequest, FluidUpdateRequest};
+use request::{FluidCreateRequest, FluidUpdateRequest};
 use std::{collections::HashMap, fmt::Debug, marker::PhantomData};
 use thiserror::Error;
 

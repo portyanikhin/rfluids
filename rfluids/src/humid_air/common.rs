@@ -1,4 +1,4 @@
-use super::{HumidAirOutputError, OutputResult, requests::HumidAirUpdateRequest};
+use super::{HumidAirOutputError, OutputResult, request::HumidAirUpdateRequest};
 use crate::{io::HumidAirParam, native::CoolProp};
 use std::collections::HashMap;
 
