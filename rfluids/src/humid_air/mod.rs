@@ -16,7 +16,6 @@ use crate::{
 };
 use request::HumidAirUpdateRequest;
 use std::{collections::HashMap, marker::PhantomData};
-use thiserror::Error;
 
 /// Result type for operations that could fail while updating humid air state.
 pub type StateResult<T> = Result<T, HumidAirStateError>;
@@ -39,7 +38,7 @@ pub struct HumidAir<S: StateVariant = Defined> {
 }
 
 /// Error during [`HumidAir::update`] or [`HumidAir::in_state`].
-#[derive(Clone, Debug, Error, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 pub enum HumidAirStateError {
     /// Specified inputs are invalid.
     #[error("Specified inputs (`{0:?}`, `{1:?}`, `{2:?}`) are invalid!")]
@@ -51,7 +50,7 @@ pub enum HumidAirStateError {
 }
 
 /// Error during calculation of the [`HumidAir`] output parameter value.
-#[derive(Clone, Debug, Error, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 pub enum HumidAirOutputError {
     /// Specified output parameter is not available.
     #[error("Specified output parameter `{0:?}` is not available!")]

@@ -31,7 +31,6 @@ use crate::{
 };
 use request::{FluidCreateRequest, FluidUpdateRequest};
 use std::{collections::HashMap, fmt::Debug, marker::PhantomData};
-use thiserror::Error;
 
 /// Result type for operations that could fail while updating fluid state.
 pub type StateResult<T> = Result<T, FluidStateError>;
@@ -210,7 +209,7 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
 }
 
 /// Error during creation of [`Fluid`] from [`CustomMix`].
-#[derive(Clone, Debug, Error, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 pub enum FluidFromCustomMixError {
     /// Specified custom mixture is not supported.
     #[error("Specified custom mixture is not supported! {0}")]
@@ -218,7 +217,7 @@ pub enum FluidFromCustomMixError {
 }
 
 /// Error during [`Fluid::update`] or [`Fluid::in_state`].
-#[derive(Clone, Debug, Error, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 pub enum FluidStateError {
     /// Specified inputs are invalid.
     #[error("Specified inputs (`{0:?}`, `{1:?}`) are invalid!")]
@@ -234,7 +233,7 @@ pub enum FluidStateError {
 }
 
 /// Error during calculation of the [`Fluid`] output parameter value.
-#[derive(Clone, Debug, Error, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 pub enum FluidOutputError {
     /// Specified trivial output parameter is not available.
     #[error("Specified trivial output parameter `{0:?}` is not available!")]

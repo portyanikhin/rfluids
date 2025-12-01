@@ -12,14 +12,13 @@
 
 pub use high_level_api::CoolProp;
 pub use low_level_api::AbstractState;
-use thiserror::Error;
 
 mod common;
 mod high_level_api;
 mod low_level_api;
 
 /// `CoolProp` internal error.
-#[derive(Clone, Debug, Error, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 #[error("{0}")]
 pub struct CoolPropError(pub(crate) String);
 

@@ -5,10 +5,9 @@ use crate::{
     native::CoolPropError,
     substance::{BinaryMixError, CustomMixError},
 };
-use thiserror::Error;
 
 /// Superset of all possible errors that can occur in the library.
-#[derive(Clone, Debug, Error, PartialEq)]
+#[derive(Clone, Debug, PartialEq, thiserror::Error)]
 #[non_exhaustive]
 pub enum Error {
     /// `CoolProp` internal error.

@@ -5,7 +5,6 @@ use strum::EnumProperty;
 #[cfg(test)]
 use strum_macros::EnumIter;
 use strum_macros::{AsRefStr, EnumProperty, EnumString};
-use thiserror::Error;
 
 /// `CoolProp` incompressible binary mixtures _(mass-based or volume-based)_.
 ///
@@ -294,7 +293,7 @@ pub struct BinaryMix {
 }
 
 /// Error during creation of [`BinaryMix`].
-#[derive(Clone, Debug, Error, PartialEq)]
+#[derive(Clone, Debug, PartialEq, thiserror::Error)]
 pub enum BinaryMixError {
     /// Specified fraction is invalid.
     #[error("Specified fraction `{specified:?}` is out of possible range [{min:.1}; {max:.1}]!")]

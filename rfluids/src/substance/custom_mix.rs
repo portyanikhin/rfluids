@@ -1,7 +1,6 @@
 use super::{BackendName, Pure};
 use crate::{io::FluidTrivialParam::MolarMass, native::AbstractState};
 use std::collections::HashMap;
-use thiserror::Error;
 
 /// `CoolProp` custom mixture.
 ///
@@ -159,7 +158,7 @@ impl CustomMix {
 }
 
 /// Error during creation of [`CustomMix`].
-#[derive(Clone, Debug, Error, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 pub enum CustomMixError {
     /// The specified components are not enough.
     #[error("At least 2 unique components must be provided!")]
