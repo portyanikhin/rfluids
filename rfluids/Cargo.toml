@@ -13,6 +13,7 @@ keywords = ["CoolProp", "fluids", "mixtures", "humid-air", "thermodynamics"]
 categories = ["api-bindings", "science"]
 
 [dependencies]
+bon.workspace = true
 coolprop-sys = { path = "../coolprop-sys", version = "7.2.0" }
 strum.workspace = true
 strum_macros.workspace = true
