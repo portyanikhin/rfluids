@@ -129,57 +129,81 @@ pub enum FluidParam {
     #[strum(to_string = "Gmolar_residual")]
     GMolarResidual = 35,
 
+    /// Ideal gas molar specific enthalpy **\[J/mol\]**.
+    #[strum(to_string = "Hmolar_idealgas")]
+    HMolarIdealGas = 36,
+
+    /// Ideal gas molar specific entropy **\[J/mol/K\]**.
+    #[strum(to_string = "Smolar_idealgas")]
+    SMolarIdealGas = 37,
+
+    /// Ideal gas molar specific internal energy **\[J/mol\]**.
+    #[strum(to_string = "Umolar_idealgas")]
+    UMolarIdealGas = 38,
+
     /// Mass density **\[kg/m³\]**.
     #[strum(to_string = "Dmass", serialize = "D")]
-    DMass = 36,
+    DMass = 39,
 
     /// Mass specific enthalpy **\[J/kg\]**.
     #[strum(to_string = "Hmass", serialize = "H")]
-    HMass = 37,
+    HMass = 40,
 
     /// Mass specific entropy **\[J/kg/K\]**.
     #[strum(to_string = "Smass", serialize = "S")]
-    SMass = 38,
+    SMass = 41,
 
     /// Mass specific heat at constant pressure **\[J/kg/K\]**.
     #[strum(to_string = "Cpmass", serialize = "C")]
-    CpMass = 39,
+    CpMass = 42,
 
     /// Ideal gas mass specific heat at constant pressure **\[J/kg/K\]**.
     #[strum(to_string = "Cp0mass")]
-    Cp0Mass = 40,
+    Cp0Mass = 43,
 
     /// Mass specific heat at constant volume **\[J/kg/K\]**.
     #[strum(to_string = "Cvmass", serialize = "O")]
-    CvMass = 41,
+    CvMass = 44,
 
     /// Mass specific internal energy **\[J/kg\]**.
     #[strum(to_string = "Umass", serialize = "U")]
-    UMass = 42,
+    UMass = 45,
 
     /// Mass specific Gibbs energy **\[J/kg\]**.
     #[strum(to_string = "Gmass", serialize = "G")]
-    GMass = 43,
+    GMass = 46,
 
     /// Mass specific Helmholtz energy **\[J/kg\]**.
     #[strum(to_string = "Helmholtzmass")]
-    HelmholtzMass = 44,
+    HelmholtzMass = 47,
+
+    /// Ideal gas mass specific enthalpy **\[J/kg\]**.
+    #[strum(to_string = "Hmass_idealgas")]
+    HMassIdealGas = 48,
+
+    /// Ideal gas mass specific entropy **\[J/kg/K\]**.
+    #[strum(to_string = "Smass_idealgas")]
+    SMassIdealGas = 49,
+
+    /// Ideal gas mass specific internal energy **\[J/kg\]**.
+    #[strum(to_string = "Umass_idealgas")]
+    UMassIdealGas = 50,
 
     /// Dynamic viscosity **\[Pa·s\]**.
     #[strum(to_string = "viscosity", serialize = "V")]
-    DynamicViscosity = 45,
+    DynamicViscosity = 51,
 
     /// Thermal conductivity **\[W/m/K\]**.
     #[strum(to_string = "conductivity", serialize = "L")]
-    Conductivity = 46,
+    Conductivity = 52,
 
     /// Surface tension **\[N/m\]**.
     #[strum(to_string = "surface_tension", serialize = "I")]
-    SurfaceTension = 47,
+    SurfaceTension = 53,
 
     /// Prandtl number **\[dimensionless\]**.
     #[strum(to_string = "Prandtl")]
-    Prandtl = 48,
+    Prandtl = 54,
 
     /// Sound speed **\[m/s\]**.
     #[strum(
@@ -187,91 +211,91 @@ pub enum FluidParam {
         serialize = "speed_of_sound",
         serialize = "A"
     )]
-    SoundSpeed = 49,
+    SoundSpeed = 55,
 
     /// Isothermal compressibility **\[1/Pa\]**.
     #[strum(to_string = "isothermal_compressibility")]
-    IsothermalCompressibility = 50,
+    IsothermalCompressibility = 56,
 
     /// Isobaric expansion coefficient **\[1/K\]**.
     #[strum(to_string = "isobaric_expansion_coefficient")]
-    IsobaricExpansionCoefficient = 51,
+    IsobaricExpansionCoefficient = 57,
 
     /// Isentropic expansion coefficient **\[dimensionless\]**.
     #[strum(to_string = "isentropic_expansion_coefficient")]
-    IsentropicExpansionCoefficient = 52,
+    IsentropicExpansionCoefficient = 58,
 
     /// Fundamental derivative of gas dynamics **\[dimensionless\]**.
     #[strum(to_string = "fundamental_derivative_of_gas_dynamics")]
-    FundamentalDerivativeOfGasDynamics = 53,
+    FundamentalDerivativeOfGasDynamics = 59,
 
     /// Residual Helmholtz energy contribution **\[dimensionless\]**.
     #[strum(to_string = "alphar")]
-    AlphaR = 54,
+    AlphaR = 60,
 
     /// Derivative of residual Helmholtz energy contribution
     /// with [`Tau`](FluidParam::Tau) **\[dimensionless\]**.
     #[strum(to_string = "dalphar_dtau_constdelta")]
-    DAlphaRDTauConstDelta = 55,
+    DAlphaRDTauConstDelta = 61,
 
     /// Derivative of residual Helmholtz energy contribution
     /// with [`Delta`](FluidParam::Delta) **\[dimensionless\]**.
     #[strum(to_string = "dalphar_ddelta_consttau")]
-    DAlphaRDDeltaConstTau = 56,
+    DAlphaRDDeltaConstTau = 62,
 
     /// Ideal gas Helmholtz energy contribution **\[dimensionless\]**.
     #[strum(to_string = "alpha0")]
-    Alpha0 = 57,
+    Alpha0 = 63,
 
     /// Derivative of ideal gas Helmholtz energy contribution
     /// with [`Tau`](FluidParam::Tau) **\[dimensionless\]**.
     #[strum(to_string = "dalpha0_dtau_constdelta")]
-    DAlpha0DTauConstDelta = 58,
+    DAlpha0DTauConstDelta = 64,
 
     /// Derivative of ideal gas Helmholtz energy contribution
     /// with [`Delta`](FluidParam::Delta) **\[dimensionless\]**.
     #[strum(to_string = "dalpha0_ddelta_consttau")]
-    DAlpha0DDeltaConstTau = 59,
+    DAlpha0DDeltaConstTau = 65,
 
     /// Second derivative of ideal gas Helmholtz energy contribution
     /// with [`Delta`](FluidParam::Delta) **\[dimensionless\]**.
     #[strum(to_string = "d2alpha0_ddelta2_consttau")]
-    D2Alpha0DDelta2ConstTau = 60,
+    D2Alpha0DDelta2ConstTau = 66,
 
     /// Third derivative of ideal gas Helmholtz energy contribution
     /// with [`Delta`](FluidParam::Delta) **\[dimensionless\]**.
     #[strum(to_string = "d3alpha0_ddelta3_consttau")]
-    D3Alpha0DDelta3ConstTau = 61,
+    D3Alpha0DDelta3ConstTau = 67,
 
     /// Second virial coefficient **\[dimensionless\]**.
     #[strum(to_string = "Bvirial")]
-    BVirial = 62,
+    BVirial = 68,
 
     /// Third virial coefficient **\[dimensionless\]**.
     #[strum(to_string = "Cvirial")]
-    CVirial = 63,
+    CVirial = 69,
 
     /// Derivative of second virial coefficient
     /// with [`T`](FluidParam::T) **\[dimensionless\]**.
     #[strum(to_string = "dBvirial_dT")]
-    DBVirialDT = 64,
+    DBVirialDT = 70,
 
     /// Derivative of third virial coefficient
     /// with [`T`](FluidParam::T) **\[dimensionless\]**.
     #[strum(to_string = "dCvirial_dT")]
-    DCVirialDT = 65,
+    DCVirialDT = 71,
 
     /// Compressibility factor **\[dimensionless\]**.
     #[strum(to_string = "Z")]
-    Z = 66,
+    Z = 72,
 
     /// Phase identification parameter **\[dimensionless\]**.
     #[strum(to_string = "PIP")]
-    PIP = 67,
+    PIP = 73,
 
     /// Phase index **\[dimensionless\]**.
     #[strum(to_string = "Phase")]
-    Phase = 78,
+    Phase = 84,
 }
 
 impl From<FluidParam> for u8 {
@@ -415,44 +439,44 @@ pub enum FluidTrivialParam {
     /// Minimum fraction _(mole, mass or volume)_ value
     /// for incompressible mixtures **\[dimensionless, from 0 to 1\]**.
     #[strum(to_string = "fraction_min")]
-    MinFraction = 68,
+    MinFraction = 74,
 
     /// Maximum fraction _(mole, mass or volume)_ value
     /// for incompressible mixtures **\[dimensionless, from 0 to 1\]**.
     #[strum(to_string = "fraction_max")]
-    MaxFraction = 69,
+    MaxFraction = 75,
 
     /// Freezing temperature for incompressible mixtures **\[K\]**.
     #[strum(to_string = "T_freeze")]
-    TFreeze = 70,
+    TFreeze = 76,
 
     /// 20-year global warming potential **\[dimensionless\]**.
     #[strum(to_string = "GWP20")]
-    GWP20 = 71,
+    GWP20 = 77,
 
     /// 100-year global warming potential **\[dimensionless\]**.
     #[strum(to_string = "GWP100")]
-    GWP100 = 72,
+    GWP100 = 78,
 
     /// 500-year global warming potential **\[dimensionless\]**.
     #[strum(to_string = "GWP500")]
-    GWP500 = 73,
+    GWP500 = 79,
 
     /// Flammability hazard index **\[dimensionless\]**.
     #[strum(to_string = "FH")]
-    FH = 74,
+    FH = 80,
 
     /// Health hazard index **\[dimensionless\]**.
     #[strum(to_string = "HH")]
-    HH = 75,
+    HH = 81,
 
     /// Physical hazard index **\[dimensionless\]**.
     #[strum(to_string = "PH")]
-    PH = 76,
+    PH = 82,
 
     /// Ozone depletion potential **\[dimensionless\]**.
     #[strum(to_string = "ODP")]
-    ODP = 77,
+    ODP = 83,
 }
 
 impl From<FluidTrivialParam> for u8 {
@@ -519,6 +543,9 @@ mod tests {
     #[case(HMolarResidual, "Hmolar_residual")]
     #[case(SMolarResidual, "Smolar_residual")]
     #[case(GMolarResidual, "Gmolar_residual")]
+    #[case(HMolarIdealGas, "Hmolar_idealgas")]
+    #[case(SMolarIdealGas, "Smolar_idealgas")]
+    #[case(UMolarIdealGas, "Umolar_idealgas")]
     #[case(DMass, "Dmass")]
     #[case(HMass, "Hmass")]
     #[case(SMass, "Smass")]
@@ -528,6 +555,9 @@ mod tests {
     #[case(UMass, "Umass")]
     #[case(GMass, "Gmass")]
     #[case(HelmholtzMass, "Helmholtzmass")]
+    #[case(HMassIdealGas, "Hmass_idealgas")]
+    #[case(SMassIdealGas, "Smass_idealgas")]
+    #[case(UMassIdealGas, "Umass_idealgas")]
     #[case(DynamicViscosity, "viscosity")]
     #[case(Conductivity, "conductivity")]
     #[case(SurfaceTension, "surface_tension")]
@@ -609,6 +639,9 @@ mod tests {
     #[case(vec!["Hmolar_residual"], HMolarResidual)]
     #[case(vec!["Smolar_residual"], SMolarResidual)]
     #[case(vec!["Gmolar_residual"], GMolarResidual)]
+    #[case(vec!["Hmolar_idealgas"], HMolarIdealGas)]
+    #[case(vec!["Smolar_idealgas"], SMolarIdealGas)]
+    #[case(vec!["Umolar_idealgas"], UMolarIdealGas)]
     #[case(vec!["Dmass", "D"], DMass)]
     #[case(vec!["Hmass", "H"], HMass)]
     #[case(vec!["Smass", "S"], SMass)]
@@ -619,6 +652,9 @@ mod tests {
     #[case(vec!["Umass", "U"], UMass)]
     #[case(vec!["Gmass", "G"], GMass)]
     #[case(vec!["Helmholtzmass"], HelmholtzMass)]
+    #[case(vec!["Hmass_idealgas"], HMassIdealGas)]
+    #[case(vec!["Smass_idealgas"], SMassIdealGas)]
+    #[case(vec!["Umass_idealgas"], UMassIdealGas)]
     #[case(vec!["viscosity", "V"], DynamicViscosity)]
     #[case(vec!["conductivity", "L"], Conductivity)]
     #[case(vec!["surface_tension", "I"], SurfaceTension)]
@@ -732,49 +768,55 @@ mod tests {
     #[case(HMolarResidual, 33)]
     #[case(SMolarResidual, 34)]
     #[case(GMolarResidual, 35)]
-    #[case(DMass, 36)]
-    #[case(HMass, 37)]
-    #[case(SMass, 38)]
-    #[case(CpMass, 39)]
-    #[case(Cp0Mass, 40)]
-    #[case(CvMass, 41)]
-    #[case(UMass, 42)]
-    #[case(GMass, 43)]
-    #[case(HelmholtzMass, 44)]
-    #[case(DynamicViscosity, 45)]
-    #[case(Conductivity, 46)]
-    #[case(SurfaceTension, 47)]
-    #[case(Prandtl, 48)]
-    #[case(SoundSpeed, 49)]
-    #[case(IsothermalCompressibility, 50)]
-    #[case(IsobaricExpansionCoefficient, 51)]
-    #[case(IsentropicExpansionCoefficient, 52)]
-    #[case(FundamentalDerivativeOfGasDynamics, 53)]
-    #[case(AlphaR, 54)]
-    #[case(DAlphaRDTauConstDelta, 55)]
-    #[case(DAlphaRDDeltaConstTau, 56)]
-    #[case(Alpha0, 57)]
-    #[case(DAlpha0DTauConstDelta, 58)]
-    #[case(DAlpha0DDeltaConstTau, 59)]
-    #[case(D2Alpha0DDelta2ConstTau, 60)]
-    #[case(D3Alpha0DDelta3ConstTau, 61)]
-    #[case(BVirial, 62)]
-    #[case(CVirial, 63)]
-    #[case(DBVirialDT, 64)]
-    #[case(DCVirialDT, 65)]
-    #[case(Z, 66)]
-    #[case(PIP, 67)]
-    #[case(MinFraction, 68)]
-    #[case(MaxFraction, 69)]
-    #[case(TFreeze, 70)]
-    #[case(GWP20, 71)]
-    #[case(GWP100, 72)]
-    #[case(GWP500, 73)]
-    #[case(FH, 74)]
-    #[case(HH, 75)]
-    #[case(PH, 76)]
-    #[case(ODP, 77)]
-    #[case(Phase, 78)]
+    #[case(HMolarIdealGas, 36)]
+    #[case(SMolarIdealGas, 37)]
+    #[case(UMolarIdealGas, 38)]
+    #[case(DMass, 39)]
+    #[case(HMass, 40)]
+    #[case(SMass, 41)]
+    #[case(CpMass, 42)]
+    #[case(Cp0Mass, 43)]
+    #[case(CvMass, 44)]
+    #[case(UMass, 45)]
+    #[case(GMass, 46)]
+    #[case(HelmholtzMass, 47)]
+    #[case(HMassIdealGas, 48)]
+    #[case(SMassIdealGas, 49)]
+    #[case(UMassIdealGas, 50)]
+    #[case(DynamicViscosity, 51)]
+    #[case(Conductivity, 52)]
+    #[case(SurfaceTension, 53)]
+    #[case(Prandtl, 54)]
+    #[case(SoundSpeed, 55)]
+    #[case(IsothermalCompressibility, 56)]
+    #[case(IsobaricExpansionCoefficient, 57)]
+    #[case(IsentropicExpansionCoefficient, 58)]
+    #[case(FundamentalDerivativeOfGasDynamics, 59)]
+    #[case(AlphaR, 60)]
+    #[case(DAlphaRDTauConstDelta, 61)]
+    #[case(DAlphaRDDeltaConstTau, 62)]
+    #[case(Alpha0, 63)]
+    #[case(DAlpha0DTauConstDelta, 64)]
+    #[case(DAlpha0DDeltaConstTau, 65)]
+    #[case(D2Alpha0DDelta2ConstTau, 66)]
+    #[case(D3Alpha0DDelta3ConstTau, 67)]
+    #[case(BVirial, 68)]
+    #[case(CVirial, 69)]
+    #[case(DBVirialDT, 70)]
+    #[case(DCVirialDT, 71)]
+    #[case(Z, 72)]
+    #[case(PIP, 73)]
+    #[case(MinFraction, 74)]
+    #[case(MaxFraction, 75)]
+    #[case(TFreeze, 76)]
+    #[case(GWP20, 77)]
+    #[case(GWP100, 78)]
+    #[case(GWP500, 79)]
+    #[case(FH, 80)]
+    #[case(HH, 81)]
+    #[case(PH, 82)]
+    #[case(ODP, 83)]
+    #[case(Phase, 84)]
     fn into_u8(#[case] sut: impl Into<u8>, #[case] expected: u8) {
         // When
         let res = sut.into();
@@ -819,49 +861,55 @@ mod tests {
     #[case(33, HMolarResidual)]
     #[case(34, SMolarResidual)]
     #[case(35, GMolarResidual)]
-    #[case(36, DMass)]
-    #[case(37, HMass)]
-    #[case(38, SMass)]
-    #[case(39, CpMass)]
-    #[case(40, Cp0Mass)]
-    #[case(41, CvMass)]
-    #[case(42, UMass)]
-    #[case(43, GMass)]
-    #[case(44, HelmholtzMass)]
-    #[case(45, DynamicViscosity)]
-    #[case(46, Conductivity)]
-    #[case(47, SurfaceTension)]
-    #[case(48, Prandtl)]
-    #[case(49, SoundSpeed)]
-    #[case(50, IsothermalCompressibility)]
-    #[case(51, IsobaricExpansionCoefficient)]
-    #[case(52, IsentropicExpansionCoefficient)]
-    #[case(53, FundamentalDerivativeOfGasDynamics)]
-    #[case(54, AlphaR)]
-    #[case(55, DAlphaRDTauConstDelta)]
-    #[case(56, DAlphaRDDeltaConstTau)]
-    #[case(57, Alpha0)]
-    #[case(58, DAlpha0DTauConstDelta)]
-    #[case(59, DAlpha0DDeltaConstTau)]
-    #[case(60, D2Alpha0DDelta2ConstTau)]
-    #[case(61, D3Alpha0DDelta3ConstTau)]
-    #[case(62, BVirial)]
-    #[case(63, CVirial)]
-    #[case(64, DBVirialDT)]
-    #[case(65, DCVirialDT)]
-    #[case(66, Z)]
-    #[case(67, PIP)]
-    #[case(68, MinFraction)]
-    #[case(69, MaxFraction)]
-    #[case(70, TFreeze)]
-    #[case(71, GWP20)]
-    #[case(72, GWP100)]
-    #[case(73, GWP500)]
-    #[case(74, FH)]
-    #[case(75, HH)]
-    #[case(76, PH)]
-    #[case(77, ODP)]
-    #[case(78, Phase)]
+    #[case(36, HMolarIdealGas)]
+    #[case(37, SMolarIdealGas)]
+    #[case(38, UMolarIdealGas)]
+    #[case(39, DMass)]
+    #[case(40, HMass)]
+    #[case(41, SMass)]
+    #[case(42, CpMass)]
+    #[case(43, Cp0Mass)]
+    #[case(44, CvMass)]
+    #[case(45, UMass)]
+    #[case(46, GMass)]
+    #[case(47, HelmholtzMass)]
+    #[case(48, HMassIdealGas)]
+    #[case(49, SMassIdealGas)]
+    #[case(50, UMassIdealGas)]
+    #[case(51, DynamicViscosity)]
+    #[case(52, Conductivity)]
+    #[case(53, SurfaceTension)]
+    #[case(54, Prandtl)]
+    #[case(55, SoundSpeed)]
+    #[case(56, IsothermalCompressibility)]
+    #[case(57, IsobaricExpansionCoefficient)]
+    #[case(58, IsentropicExpansionCoefficient)]
+    #[case(59, FundamentalDerivativeOfGasDynamics)]
+    #[case(60, AlphaR)]
+    #[case(61, DAlphaRDTauConstDelta)]
+    #[case(62, DAlphaRDDeltaConstTau)]
+    #[case(63, Alpha0)]
+    #[case(64, DAlpha0DTauConstDelta)]
+    #[case(65, DAlpha0DDeltaConstTau)]
+    #[case(66, D2Alpha0DDelta2ConstTau)]
+    #[case(67, D3Alpha0DDelta3ConstTau)]
+    #[case(68, BVirial)]
+    #[case(69, CVirial)]
+    #[case(70, DBVirialDT)]
+    #[case(71, DCVirialDT)]
+    #[case(72, Z)]
+    #[case(73, PIP)]
+    #[case(74, MinFraction)]
+    #[case(75, MaxFraction)]
+    #[case(76, TFreeze)]
+    #[case(77, GWP20)]
+    #[case(78, GWP100)]
+    #[case(79, GWP500)]
+    #[case(80, FH)]
+    #[case(81, HH)]
+    #[case(82, PH)]
+    #[case(83, ODP)]
+    #[case(84, Phase)]
     fn try_from_valid_u8_or_f64<T>(#[case] valid: u8, #[case] expected: T)
     where
         T: TryFrom<u8, Error = strum::ParseError>
