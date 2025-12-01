@@ -49,7 +49,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest, macos-15-intel, macos-latest]
-        toolchain: [stable, beta, nightly]
+        toolchain: [stable, beta, nightly, 1.85.0]
 
     steps:
       - uses: actions/checkout@v6
