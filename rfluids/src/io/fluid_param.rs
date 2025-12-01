@@ -23,8 +23,8 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// ```
 /// use rfluids::prelude::*;
 ///
-/// assert_eq!(u8::from(FluidParam::Conductivity), 46);
-/// assert_eq!(FluidParam::try_from(46), Ok(FluidParam::Conductivity));
+/// assert_eq!(u8::from(FluidParam::Conductivity), 52);
+/// assert_eq!(FluidParam::try_from(52), Ok(FluidParam::Conductivity));
 /// ```
 ///
 /// Conversion between [`f64`]:
@@ -32,7 +32,7 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// ```
 /// use rfluids::prelude::*;
 ///
-/// assert_eq!(FluidParam::try_from(46.0), Ok(FluidParam::Conductivity));
+/// assert_eq!(FluidParam::try_from(52.0), Ok(FluidParam::Conductivity));
 /// ```
 ///
 /// Conversion between [`FluidInputPair`](crate::io::FluidInputPair):
