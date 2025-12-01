@@ -15,22 +15,22 @@ pub(crate) struct FluidCreateRequest<'a> {
 impl<'a> From<&'a Substance> for FluidCreateRequest<'a> {
     fn from(value: &'a Substance) -> Self {
         match value {
-            Substance::Pure(pure) => FluidCreateRequest {
+            Substance::Pure(pure) => Self {
                 name: Cow::Borrowed(pure.as_ref()),
                 backend_name: pure.backend_name(),
                 fractions: None,
             },
-            Substance::IncompPure(incomp_pure) => FluidCreateRequest {
+            Substance::IncompPure(incomp_pure) => Self {
                 name: Cow::Borrowed(incomp_pure.as_ref()),
                 backend_name: incomp_pure.backend_name(),
                 fractions: None,
             },
-            Substance::PredefinedMix(predefined_mix) => FluidCreateRequest {
+            Substance::PredefinedMix(predefined_mix) => Self {
                 name: Cow::Borrowed(predefined_mix.as_ref()),
                 backend_name: predefined_mix.backend_name(),
                 fractions: None,
             },
-            Substance::BinaryMix(binary_mix) => FluidCreateRequest {
+            Substance::BinaryMix(binary_mix) => Self {
                 name: Cow::Borrowed(binary_mix.kind.as_ref()),
                 backend_name: binary_mix.kind.backend_name(),
                 fractions: Some(vec![binary_mix.fraction]),
@@ -42,7 +42,7 @@ impl<'a> From<&'a Substance> for FluidCreateRequest<'a> {
                     .iter()
                     .map(|component| (component.0.as_ref(), component.1))
                     .unzip();
-                FluidCreateRequest {
+                Self {
                     name: Cow::Owned(components.join("&")),
                     backend_name: mix.backend_name(),
                     fractions: Some(fractions),
