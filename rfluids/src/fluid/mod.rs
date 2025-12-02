@@ -29,7 +29,7 @@ use crate::{
     state_variant::{Defined, StateVariant, Undefined},
     substance::{BinaryMix, CustomMix, IncompPure, PredefinedMix, Pure, Substance},
 };
-use request::{FluidCreateRequest, FluidUpdateRequest};
+use request::FluidUpdateRequest;
 use std::{collections::HashMap, fmt::Debug, marker::PhantomData};
 
 /// Result type for operations that could fail while updating fluid state.
@@ -50,6 +50,7 @@ pub type OutputResult<T> = Result<T, FluidOutputError>;
 pub struct Fluid<S: StateVariant = Defined> {
     substance: Substance,
     backend: AbstractState,
+    custom_backend_name: Option<String>,
     update_request: Option<FluidUpdateRequest>,
     outputs: HashMap<FluidParam, OutputResult<f64>>,
     trivial_outputs: HashMap<FluidTrivialParam, OutputResult<f64>>,
@@ -92,20 +93,12 @@ impl TryFrom<Substance> for Fluid<Undefined> {
     /// assert!(Fluid::try_from(unsupported_mix).is_err());
     /// # Ok::<(), rfluids::Error>(())
     /// ```
+    ///
+    /// # See Also
+    ///
+    /// - [`Fluid::builder`]
     fn try_from(value: Substance) -> Result<Self, Self::Error> {
-        let request = FluidCreateRequest::from(&value);
-        let mut backend = AbstractState::new(request.backend_name, request.name)?;
-        if let Some(fractions) = request.fractions {
-            backend.set_fractions(&fractions).unwrap();
-        }
-        Ok(Self {
-            substance: value,
-            backend,
-            update_request: None,
-            outputs: HashMap::new(),
-            trivial_outputs: HashMap::new(),
-            state: PhantomData,
-        })
+        Self::builder().substance(value).build()
     }
 }
 
@@ -120,6 +113,10 @@ impl From<Pure> for Fluid<Undefined> {
     ///
     /// let water = Fluid::from(Pure::Water);
     /// ```
+    ///
+    /// # See Also
+    ///
+    /// - [`Fluid::builder`]
     fn from(value: Pure) -> Self {
         Substance::from(value).try_into().unwrap()
     }
@@ -136,6 +133,10 @@ impl From<IncompPure> for Fluid<Undefined> {
     ///
     /// let incomp_water = Fluid::from(IncompPure::Water);
     /// ```
+    ///
+    /// # See Also
+    ///
+    /// - [`Fluid::builder`]
     fn from(value: IncompPure) -> Self {
         Substance::from(value).try_into().unwrap()
     }
@@ -152,6 +153,10 @@ impl From<PredefinedMix> for Fluid<Undefined> {
     ///
     /// let r444a = Fluid::from(PredefinedMix::R444A);
     /// ```
+    ///
+    /// # See Also
+    ///
+    /// - [`Fluid::builder`]
     fn from(value: PredefinedMix) -> Self {
         Substance::from(value).try_into().unwrap()
     }
@@ -169,6 +174,10 @@ impl From<BinaryMix> for Fluid<Undefined> {
     /// let propylene_glycol = Fluid::from(BinaryMixKind::MPG.with_fraction(0.4)?);
     /// # Ok::<(), rfluids::Error>(())
     /// ```
+    ///
+    /// # See Also
+    ///
+    /// - [`Fluid::builder`]
     fn from(value: BinaryMix) -> Self {
         Substance::from(value).try_into().unwrap()
     }
@@ -203,6 +212,10 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
     /// assert!(Fluid::try_from(unsupported_mix).is_err());
     /// # Ok::<(), rfluids::Error>(())
     /// ```
+    ///
+    /// # See Also
+    ///
+    /// - [`Fluid::builder`]
     fn try_from(value: CustomMix) -> Result<Self, Self::Error> {
         Substance::from(value).try_into()
     }

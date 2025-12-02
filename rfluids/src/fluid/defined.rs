@@ -655,7 +655,10 @@ impl Fluid {
     ///
     /// - [`Fluid::update`](crate::fluid::Fluid::update)
     pub fn in_state(&self, input1: FluidInput, input2: FluidInput) -> StateResult<Self> {
-        let mut fluid = Fluid::try_from(self.substance.clone())
+        let mut fluid = Fluid::builder()
+            .substance(self.substance.clone())
+            .maybe_with_backend(self.custom_backend_name.clone())
+            .build()
             .unwrap()
             .in_state(input1, input2)?;
         fluid.trivial_outputs.clone_from(&self.trivial_outputs);
@@ -683,7 +686,10 @@ impl Fluid {
 impl Clone for Fluid {
     fn clone(&self) -> Self {
         let inputs: (FluidInput, FluidInput) = self.update_request.unwrap().into();
-        let mut fluid = Fluid::try_from(self.substance.clone())
+        let mut fluid = Fluid::builder()
+            .substance(self.substance.clone())
+            .maybe_with_backend(self.custom_backend_name.clone())
+            .build()
             .unwrap()
             .in_state(inputs.0, inputs.1)
             .unwrap();
@@ -695,7 +701,9 @@ impl Clone for Fluid {
 
 impl PartialEq for Fluid {
     fn eq(&self, other: &Self) -> bool {
-        self.substance == other.substance && self.update_request == other.update_request
+        self.substance == other.substance
+            && self.backend_name() == other.backend_name()
+            && self.update_request == other.update_request
     }
 }
 
