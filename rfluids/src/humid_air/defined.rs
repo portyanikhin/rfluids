@@ -246,11 +246,11 @@ impl HumidAir {
 
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
-    /// # Args
+    /// # Arguments
     ///
-    /// - `input1` -- first input property.
-    /// - `input2` -- second input property.
-    /// - `input3` -- third input property.
+    /// - `input1` -- first input property
+    /// - `input2` -- second input property
+    /// - `input3` -- third input property
     ///
     /// # Errors
     ///
@@ -296,7 +296,7 @@ impl HumidAir {
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [`HumidAir::in_state`](crate::humid_air::HumidAir::in_state)
     pub fn update(
@@ -311,11 +311,11 @@ impl HumidAir {
 
     /// Returns a new instance in the specified thermodynamic state.
     ///
-    /// # Args
+    /// # Arguments
     ///
-    /// - `input1` -- first input property.
-    /// - `input2` -- second input property.
-    /// - `input3` -- third input property.
+    /// - `input1` -- first input property
+    /// - `input2` -- second input property
+    /// - `input3` -- third input property
     ///
     /// # Errors
     ///
@@ -361,7 +361,7 @@ impl HumidAir {
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [`HumidAir::update`](crate::humid_air::HumidAir::update)
     pub fn in_state(

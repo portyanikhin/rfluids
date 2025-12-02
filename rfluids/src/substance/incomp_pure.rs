@@ -15,7 +15,7 @@
 /// assert_eq!(IncompPure::try_from("H2O"), Ok(IncompPure::Water));
 /// ```
 ///
-/// # See also
+/// # See Also
 ///
 /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incompressibles.html)
 #[derive(

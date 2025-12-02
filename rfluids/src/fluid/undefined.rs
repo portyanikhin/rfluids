@@ -12,9 +12,9 @@ impl Fluid<Undefined> {
     /// This method provides advanced control over backend selection.
     /// For most use cases, prefer using [`From`]/[`TryFrom`] trait implementations instead.
     ///
-    /// # Args
+    /// # Arguments
     ///
-    /// - `substance` -- Substance for which to calculate properties
+    /// - `substance` -- substance for which to calculate properties
     /// - `with_backend` -- `CoolProp` backend to be used
     ///   (e.g., `"HEOS"`, `"INCOMP"`, `"REFPROP"`, `"IF97"`, etc.).
     ///   If provided, overrides the default one defined for the substance
@@ -50,11 +50,11 @@ impl Fluid<Undefined> {
     /// # See Also
     ///
     /// If you don't need to override the backend name, consider using:
-    /// - [`Fluid::from`] -- Simpler way to create [`Fluid`] from
+    /// - [`Fluid::from`] -- simpler way to create [`Fluid`] from
     ///   [`Pure`](crate::substance::Pure), [`IncompPure`](crate::substance::IncompPure),
     ///   [`PredefinedMix`](crate::substance::PredefinedMix),
     ///   or [`BinaryMix`](crate::substance::BinaryMix)
-    /// - [`Fluid::try_from`] -- For creating [`Fluid`] from any [`Substance`]
+    /// - [`Fluid::try_from`] -- for creating [`Fluid`] from any [`Substance`]
     ///   (including [`CustomMix`](crate::substance::CustomMix))
     #[builder]
     pub fn new(
@@ -93,10 +93,10 @@ impl Fluid<Undefined> {
     /// Updates the thermodynamic state and returns itself with
     /// [`Defined`](crate::state_variant::Defined) state variant.
     ///
-    /// # Args
+    /// # Arguments
     ///
-    /// - `input1` -- first input property.
-    /// - `input2` -- second input property.
+    /// - `input1` -- first input property
+    /// - `input2` -- second input property
     ///
     /// # Errors
     ///
@@ -139,7 +139,7 @@ impl Fluid<Undefined> {
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [`Fluid::update`](crate::fluid::Fluid::update)
     /// - [`Fluid::in_state`](crate::fluid::Fluid::in_state)

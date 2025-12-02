@@ -14,12 +14,12 @@ impl AbstractState {
     /// Creates and returns a new [`AbstractState`] instance
     /// with specified backend and fluid names.
     ///
-    /// # Args
+    /// # Arguments
     ///
     /// - `backend_name` -- name of the backend _(raw [`&str`](str)
-    ///   or [`BackendName::backend_name`](crate::substance::BackendName::backend_name))_.
+    ///   or [`BackendName::backend_name`](crate::substance::BackendName::backend_name))_
     /// - `fluid_names` -- names of the fluids separated by the `&` symbol or just a single
-    ///   fluid name _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_.
+    ///   fluid name _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_
     ///
     /// # Errors
     ///
@@ -54,7 +54,7 @@ impl AbstractState {
     /// assert!(mixture.is_ok());
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [CoolProp low-level API](https://coolprop.github.io/CoolProp/coolprop/LowLevelAPI.html)
     /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
@@ -84,10 +84,10 @@ impl AbstractState {
     /// For example, the `"HEOS"` backend uses mole fractions and the `"INCOMP"` backend --
     /// mass or volume fractions, depending on which substance is specified.
     ///
-    /// # Args
+    /// # Arguments
     ///
     /// - `fractions` -- fractions of the specified fluid
-    ///   **\[dimensionless, from 0 to 1 each\]**.
+    ///   **\[dimensionless, from 0 to 1 each\]**
     ///
     /// # Errors
     ///
@@ -133,12 +133,12 @@ impl AbstractState {
 
     /// Update the state of the fluid.
     ///
-    /// # Args
+    /// # Arguments
     ///
     /// - `input_pair_key` -- input pair key
-    ///   _(raw [`u8`] or [`FluidInputPair`](crate::io::FluidInputPair))_.
-    /// - `input1` -- value of the first input property **\[SI units\]**.
-    /// - `input2` -- value of the second input property **\[SI units\]**.
+    ///   _(raw [`u8`] or [`FluidInputPair`](crate::io::FluidInputPair))_
+    /// - `input1` -- value of the first input property **\[SI units\]**
+    /// - `input2` -- value of the second input property **\[SI units\]**
     ///
     /// # Errors
     ///
@@ -155,7 +155,7 @@ impl AbstractState {
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [`FluidInputPair`](crate::io::FluidInputPair)
     pub fn update(
@@ -179,13 +179,13 @@ impl AbstractState {
         Self::result((), error)
     }
 
-    /// Returns an output parameter value **\[SI units\]**.
+    /// Returns an output parameter value **\[SI units\]**
     ///
-    /// # Args
+    /// # Arguments
     ///
     /// - `key` -- output parameter key
     ///   _(raw [`u8`], [`FluidParam`](crate::io::FluidParam) or
-    ///   [`FluidTrivialParam`](crate::io::FluidTrivialParam))_.
+    ///   [`FluidTrivialParam`](crate::io::FluidTrivialParam))_
     ///
     /// # Errors
     ///
@@ -243,7 +243,7 @@ impl AbstractState {
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [`FluidParam`](crate::io::FluidParam)
     /// - [`FluidTrivialParam`](crate::io::FluidTrivialParam)
@@ -264,10 +264,10 @@ impl AbstractState {
 
     /// Specify the phase state for all further calculations.
     ///
-    /// # Args
+    /// # Arguments
     ///
     /// - `phase` -- phase state
-    ///   _(raw [`&str`](str) or [`Phase`](crate::io::Phase))_.
+    ///   _(raw [`&str`](str) or [`Phase`](crate::io::Phase))_
     ///
     /// # Errors
     ///
@@ -288,7 +288,7 @@ impl AbstractState {
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     /// - [`Phase`](crate::io::Phase)
@@ -323,7 +323,7 @@ impl AbstractState {
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     pub fn unspecify_phase(&mut self) {

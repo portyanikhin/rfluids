@@ -32,7 +32,7 @@ use super::try_from;
 /// assert_eq!(Phase::try_from(5.0), Ok(Phase::Gas));
 /// ```
 ///
-/// # See also
+/// # See Also
 ///
 /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
 #[derive(

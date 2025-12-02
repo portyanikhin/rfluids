@@ -49,7 +49,7 @@ use super::try_from;
 /// );
 /// ```
 ///
-/// # See also
+/// # See Also
 ///
 /// - [CoolProp fluids input/output parameters _(only those for which the value in the "Trivial" column is "False")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
 #[derive(
@@ -362,7 +362,7 @@ impl TryFrom<f64> for FluidParam {
 /// assert_eq!(FluidTrivialParam::try_from(15.0), Ok(FluidTrivialParam::TMax));
 /// ```
 ///
-/// # See also
+/// # See Also
 ///
 /// - [CoolProp fluids input/output parameters _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
 #[derive(

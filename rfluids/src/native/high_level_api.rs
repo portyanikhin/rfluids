@@ -13,18 +13,18 @@ pub struct CoolProp;
 impl CoolProp {
     /// Returns a value that depends on the thermodynamic state of the fluid.
     ///
-    /// # Args
+    /// # Arguments
     ///
     /// - `output_key` -- key of the output
-    ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_.
+    ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_
     /// - `input1_key` -- key of the first input property
-    ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_.
-    /// - `input1_value` -- value of the first input property **\[SI units\]**.
+    ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_
+    /// - `input1_value` -- value of the first input property **\[SI units\]**
     /// - `input2_key` -- key of the second input property
-    ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_.
-    /// - `input2_value` -- value of the second input property **\[SI units\]**.
+    ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_
+    /// - `input2_value` -- value of the second input property **\[SI units\]**
     /// - `fluid_name` -- name of the fluid
-    ///   _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_.
+    ///   _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_
     ///
     /// # Errors
     ///
@@ -80,7 +80,7 @@ impl CoolProp {
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [PropsSI function](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#propssi-function)
     /// - [PropsSI inputs/outputs](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
@@ -113,19 +113,19 @@ impl CoolProp {
 
     /// Returns a value that depends on the thermodynamic state of humid air.
     ///
-    /// # Args
+    /// # Arguments
     ///
     /// - `output_key` -- key of the output
-    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_.
+    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_
     /// - `input1_key` -- key of the first input property
-    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_.
-    /// - `input1_value` -- value of the first input property **\[SI units\]**.
+    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_
+    /// - `input1_value` -- value of the first input property **\[SI units\]**
     /// - `input2_key` -- key of the second input property
-    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_.
-    /// - `input2_value` -- value of the second input property **\[SI units\]**.
+    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_
+    /// - `input2_value` -- value of the second input property **\[SI units\]**
     /// - `input3_key` -- key of the third input property
-    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_.
-    /// - `input3_value` -- value of the third input property **\[SI units\]**.
+    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_
+    /// - `input3_value` -- value of the third input property **\[SI units\]**
     ///
     /// # Errors
     ///
@@ -145,7 +145,7 @@ impl CoolProp {
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [HAPropsSI function](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html)
     /// - [HAPropsSI inputs/outputs](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
@@ -177,12 +177,12 @@ impl CoolProp {
     /// Returns a value that doesn't depend on the thermodynamic state
     /// of the fluid _(trivial output)_.
     ///
-    /// # Args
+    /// # Arguments
     ///
     /// - `output_key` -- key of the _trivial_ output
-    ///   _(raw [`&str`](str) or [`FluidTrivialParam`](crate::io::FluidTrivialParam))_.
+    ///   _(raw [`&str`](str) or [`FluidTrivialParam`](crate::io::FluidTrivialParam))_
     /// - `fluid_name` -- name of the fluid
-    ///   _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_.
+    ///   _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_
     ///
     /// # Errors
     ///
@@ -211,7 +211,7 @@ impl CoolProp {
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [Props1SI function](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#trivial-inputs)
     /// - [Props1SI outputs _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
