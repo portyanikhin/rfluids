@@ -1,5 +1,5 @@
 use crate::{
-    fluid::{FluidFromCustomMixError, FluidOutputError, FluidStateError},
+    fluid::{FluidBuildError, FluidOutputError, FluidStateError},
     humid_air::{HumidAirOutputError, HumidAirStateError},
     io::AltitudeError,
     native::CoolPropError,
@@ -22,10 +22,9 @@ pub enum Error {
     #[error(transparent)]
     CustomMix(#[from] CustomMixError),
 
-    /// Error during creation of [`Fluid`](crate::fluid::Fluid)
-    /// from [`CustomMix`](crate::substance::CustomMix).
+    /// Error during building of the [`Fluid`](crate::fluid::Fluid).
     #[error(transparent)]
-    FluidFromCustomMix(#[from] FluidFromCustomMixError),
+    FluidBuild(#[from] FluidBuildError),
 
     /// Error during [`Fluid::update`](crate::fluid::Fluid::update)
     /// or [`Fluid::in_state`](crate::fluid::Fluid::in_state).
