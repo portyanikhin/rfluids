@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 /// `CoolProp` custom mixture.
 ///
-/// # See also
+/// # See Also
 ///
 /// - [Custom mixtures](https://coolprop.github.io/CoolProp/fluid_properties/Mixtures.html)
 #[derive(Clone, Debug, PartialEq)]
@@ -21,10 +21,10 @@ pub enum CustomMix {
 impl CustomMix {
     /// Creates and returns a new [`CustomMix::MoleBased`] instance.
     ///
-    /// # Args
+    /// # Arguments
     ///
     /// - `components` -- hash map of components and
-    ///   their _mole_ fractions **\[dimensionless, from 0 to 1\]**.
+    ///   their _mole_ fractions **\[dimensionless, from 0 to 1\]**
     ///
     /// # Errors
     ///
@@ -55,10 +55,10 @@ impl CustomMix {
 
     /// Creates and returns a new [`CustomMix::MassBased`] instance.
     ///
-    /// # Args
+    /// # Arguments
     ///
     /// - `components` -- hash map of components and
-    ///   their _mass_ fractions **\[dimensionless, from 0 to 1\]**.
+    ///   their _mass_ fractions **\[dimensionless, from 0 to 1\]**
     ///
     /// # Errors
     ///

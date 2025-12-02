@@ -11,15 +11,15 @@
 //!
 //! - [`Substance`] -- an enum representing different types of substances:
 //!
-//!     - [`Pure`] -- pure or pseudo-pure substances.
-//!     - [`IncompPure`] -- incompressible pure substances.
-//!     - [`PredefinedMix`] -- predefined mixtures.
+//!     - [`Pure`] -- pure or pseudo-pure substances
+//!     - [`IncompPure`] -- incompressible pure substances
+//!     - [`PredefinedMix`] -- predefined mixtures
 //!     - [`BinaryMix`] -- binary mixtures with specified fraction
 //!       _(mass-based or volume-based)_:
 //!
-//!         - [`BinaryMixKind`] -- binary mixture kinds.
+//!         - [`BinaryMixKind`] -- binary mixture kinds
 //!
-//!     - [`CustomMix`] -- custom mixtures.
+//!     - [`CustomMix`] -- custom mixtures
 //!
 //! Each substance type can be converted into the [`Substance`] enum
 //! using the standard [`From`]/[`Into`] traits.
@@ -46,11 +46,11 @@ mod pure;
 /// that can be used in the `CoolProp` library.
 /// Each variant corresponds to a specific type of substance:
 ///
-/// - [`Pure`] -- represents a pure or pseudo-pure substance.
-/// - [`IncompPure`] -- represents an incompressible pure substance.
-/// - [`PredefinedMix`] -- represents a predefined mixture.
-/// - [`BinaryMix`] -- represents an incompressible binary mixture (mass-based or volume-based).
-/// - [`CustomMix`] -- represents a custom mixture.
+/// - [`Pure`] -- represents a pure or pseudo-pure substance
+/// - [`IncompPure`] -- represents an incompressible pure substance
+/// - [`PredefinedMix`] -- represents a predefined mixture
+/// - [`BinaryMix`] -- represents an incompressible binary mixture (mass-based or volume-based)
+/// - [`CustomMix`] -- represents a custom mixture
 ///
 /// The `Substance` enum provides [`From`] implementations for each of its variants,
 /// allowing for easy conversion from the specific substance types to the `Substance` enum.
@@ -58,16 +58,12 @@ mod pure;
 pub enum Substance {
     /// Pure or pseudo-pure substance.
     Pure(Pure),
-
     /// Incompressible pure substance.
     IncompPure(IncompPure),
-
     /// Predefined mixture.
     PredefinedMix(PredefinedMix),
-
     /// Incompressible binary mixture _(mass-based or volume-based)_.
     BinaryMix(BinaryMix),
-
     /// Custom mixture.
     CustomMix(CustomMix),
 }

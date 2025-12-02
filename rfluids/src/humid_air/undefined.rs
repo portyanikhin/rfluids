@@ -17,11 +17,11 @@ impl HumidAir<Undefined> {
     /// Updates the thermodynamic state and returns itself with
     /// [`Defined`](crate::state_variant::Defined) state variant.
     ///
-    /// # Args
+    /// # Arguments
     ///
-    /// - `input1` -- first input property.
-    /// - `input2` -- second input property.
-    /// - `input3` -- third input property.
+    /// - `input1` -- first input property
+    /// - `input2` -- second input property
+    /// - `input3` -- third input property
     ///
     /// # Errors
     ///
@@ -67,7 +67,7 @@ impl HumidAir<Undefined> {
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [`HumidAir::update`](crate::humid_air::HumidAir::update)
     /// - [`HumidAir::in_state`](crate::humid_air::HumidAir::in_state)

@@ -15,7 +15,7 @@
 /// assert_eq!(HumidAirParam::try_from("Tdp"), Ok(HumidAirParam::TDew));
 /// ```
 ///
-/// # See also
+/// # See Also
 ///
 /// - [CoolProp humid air input/output parameters](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
 #[derive(

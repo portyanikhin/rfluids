@@ -15,7 +15,7 @@
 /// assert_eq!(Pure::try_from("H2O"), Ok(Pure::Water));
 /// ```
 ///
-/// # See also
+/// # See Also
 ///
 /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
 #[derive(

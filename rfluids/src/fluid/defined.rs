@@ -549,10 +549,10 @@ impl Fluid {
 
     /// Updates the thermodynamic state and returns a mutable reference to itself.
     ///
-    /// # Args
+    /// # Arguments
     ///
-    /// - `input1` -- first input property.
-    /// - `input2` -- second input property.
+    /// - `input1` -- first input property
+    /// - `input2` -- second input property
     ///
     /// # Errors
     ///
@@ -595,7 +595,7 @@ impl Fluid {
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [`Fluid::in_state`](crate::fluid::Fluid::in_state)
     pub fn update(&mut self, input1: FluidInput, input2: FluidInput) -> StateResult<&mut Self> {
@@ -605,10 +605,10 @@ impl Fluid {
 
     /// Returns a new instance in the specified thermodynamic state.
     ///
-    /// # Args
+    /// # Arguments
     ///
-    /// - `input1` -- first input property.
-    /// - `input2` -- second input property.
+    /// - `input1` -- first input property
+    /// - `input2` -- second input property
     ///
     /// # Errors
     ///
@@ -651,7 +651,7 @@ impl Fluid {
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     ///
-    /// # See also
+    /// # See Also
     ///
     /// - [`Fluid::update`](crate::fluid::Fluid::update)
     pub fn in_state(&self, input1: FluidInput, input2: FluidInput) -> StateResult<Self> {

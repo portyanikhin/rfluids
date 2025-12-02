@@ -18,7 +18,7 @@ use strum::EnumProperty;
 /// assert_eq!(BinaryMixKind::try_from("MPG"), Ok(BinaryMixKind::MPG));
 /// ```
 ///
-/// # See also
+/// # See Also
 ///
 /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incompressibles.html)
 #[derive(
@@ -256,9 +256,9 @@ impl BinaryMixKind {
 
     /// Creates and returns a new [`BinaryMix`] instance.
     ///
-    /// # Args
+    /// # Arguments
     ///
-    /// - `fraction` -- specified fraction **\[dimensionless, from 0 to 1\]**.
+    /// - `fraction` -- specified fraction **\[dimensionless, from 0 to 1\]**
     ///
     /// # Errors
     ///

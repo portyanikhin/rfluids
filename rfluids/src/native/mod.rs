@@ -7,8 +7,8 @@
 //!
 //! The main types provided by this module are:
 //!
-//! - [`CoolProp`] -- high-level API for simplified access to properties.
-//! - [`AbstractState`] -- low-level API for direct control and improved performance.
+//! - [`CoolProp`] -- high-level API for simplified access to properties
+//! - [`AbstractState`] -- low-level API for direct control and improved performance
 
 pub use high_level_api::CoolProp;
 pub use low_level_api::AbstractState;

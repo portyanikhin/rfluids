@@ -15,7 +15,7 @@
 /// assert_eq!(PredefinedMix::from_str("R444A"), Ok(PredefinedMix::R444A));
 /// ```
 ///
-/// # See also
+/// # See Also
 ///
 /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
 /// - [List of REFPROP-only refrigerant mixes which are not available in CoolProp yet](https://github.com/portyanikhin/rfluids/blob/main/rfluids/src/substance/refprop_refrigerants.txt)
