@@ -1,7 +1,5 @@
 // cSpell:disable
 
-use strum_macros::{AsRefStr, EnumString};
-
 /// `CoolProp` humid air input/output parameters.
 ///
 /// # Examples
@@ -20,7 +18,17 @@ use strum_macros::{AsRefStr, EnumString};
 /// # See also
 ///
 /// - [CoolProp humid air input/output parameters](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
-#[derive(AsRefStr, Clone, Copy, Debug, EnumString, Eq, Hash, PartialEq)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    PartialEq,
+    strum_macros::AsRefStr,
+    strum_macros::EnumString,
+    strum_macros::IntoStaticStr,
+)]
 #[strum(ascii_case_insensitive)]
 pub enum HumidAirParam {
     /// Wet-bulb temperature **\[K\]**.
@@ -174,12 +182,14 @@ mod tests {
     #[case(Vha, "Vha")]
     #[case(W, "W")]
     #[case(Z, "Z")]
-    fn as_ref(#[case] sut: HumidAirParam, #[case] expected: &str) {
+    fn as_str(#[case] sut: HumidAirParam, #[case] expected: &str) {
         // When
-        let res = sut.as_ref();
+        let str = sut.as_ref();
+        let static_str: &'static str = sut.into();
 
         // Then
-        assert_eq!(res, expected);
+        assert_eq!(str, expected);
+        assert_eq!(static_str, expected);
     }
 
     #[rstest]

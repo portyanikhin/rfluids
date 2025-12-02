@@ -1,9 +1,5 @@
 // cSpell:disable
 
-#[cfg(test)]
-use strum_macros::EnumIter;
-use strum_macros::{AsRefStr, EnumString};
-
 /// `CoolProp` pure or pseudo-pure substances.
 ///
 /// # Examples
@@ -22,9 +18,19 @@ use strum_macros::{AsRefStr, EnumString};
 /// # See also
 ///
 /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
-#[derive(AsRefStr, Clone, Copy, Debug, EnumString, Eq, Hash, PartialEq)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    PartialEq,
+    strum_macros::AsRefStr,
+    strum_macros::EnumString,
+    strum_macros::IntoStaticStr,
+)]
 #[strum(ascii_case_insensitive)]
-#[cfg_attr(test, derive(EnumIter))]
+#[cfg_attr(test, derive(strum_macros::EnumIter))]
 pub enum Pure {
     #[strum(to_string = "Acetone")]
     Acetone,
@@ -679,12 +685,14 @@ mod tests {
     #[case(trans2Butene, "trans-2-Butene")]
     #[case(Water, "Water")]
     #[case(Xenon, "Xenon")]
-    fn as_ref(#[case] sut: Pure, #[case] expected: &str) {
+    fn as_str(#[case] sut: Pure, #[case] expected: &str) {
         // When
-        let res = sut.as_ref();
+        let str = sut.as_ref();
+        let static_str: &'static str = sut.into();
 
         // Then
-        assert_eq!(res, expected);
+        assert_eq!(str, expected);
+        assert_eq!(static_str, expected);
     }
 
     #[rstest]
