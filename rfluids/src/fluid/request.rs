@@ -6,35 +6,25 @@ use crate::{
 use std::borrow::Cow;
 
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) struct FluidCreateRequest<'a> {
-    pub(crate) name: Cow<'a, str>,
-    pub(crate) backend_name: &'a str,
+pub(crate) struct FluidCreateRequest {
+    pub(crate) substance_name: Cow<'static, str>,
+    pub(crate) backend_name: Cow<'static, str>,
     pub(crate) fractions: Option<Vec<f64>>,
 }
 
-impl<'a> From<&'a Substance> for FluidCreateRequest<'a> {
-    fn from(value: &'a Substance) -> Self {
-        match value {
-            Substance::Pure(pure) => Self {
-                name: Cow::Borrowed(pure.as_ref()),
-                backend_name: pure.backend_name(),
-                fractions: None,
-            },
-            Substance::IncompPure(incomp_pure) => Self {
-                name: Cow::Borrowed(incomp_pure.as_ref()),
-                backend_name: incomp_pure.backend_name(),
-                fractions: None,
-            },
-            Substance::PredefinedMix(predefined_mix) => Self {
-                name: Cow::Borrowed(predefined_mix.as_ref()),
-                backend_name: predefined_mix.backend_name(),
-                fractions: None,
-            },
-            Substance::BinaryMix(binary_mix) => Self {
-                name: Cow::Borrowed(binary_mix.kind.as_ref()),
-                backend_name: binary_mix.kind.backend_name(),
-                fractions: Some(vec![binary_mix.fraction]),
-            },
+impl FluidCreateRequest {
+    #[must_use]
+    pub(crate) fn new(substance: &Substance, custom_backend_name: Option<String>) -> Self {
+        let (substance_name, fractions): (Cow<'static, str>, Option<Vec<f64>>) = match substance {
+            Substance::Pure(pure) => (Cow::Borrowed(pure.into()), None),
+            Substance::IncompPure(incomp_pure) => (Cow::Borrowed(incomp_pure.into()), None),
+            Substance::PredefinedMix(predefined_mix) => {
+                (Cow::Borrowed(predefined_mix.into()), None)
+            }
+            Substance::BinaryMix(binary_mix) => (
+                Cow::Borrowed(binary_mix.kind.into()),
+                Some(vec![binary_mix.fraction]),
+            ),
             Substance::CustomMix(custom_mix) => {
                 let mix = custom_mix.clone().into_mole_based();
                 let (components, fractions): (Vec<&str>, Vec<f64>) = mix
@@ -42,12 +32,15 @@ impl<'a> From<&'a Substance> for FluidCreateRequest<'a> {
                     .iter()
                     .map(|component| (component.0.as_ref(), component.1))
                     .unzip();
-                Self {
-                    name: Cow::Owned(components.join("&")),
-                    backend_name: mix.backend_name(),
-                    fractions: Some(fractions),
-                }
+                (Cow::Owned(components.join("&")), Some(fractions))
             }
+        };
+        let backend_name =
+            custom_backend_name.map_or_else(|| Cow::Borrowed(substance.backend_name()), Cow::Owned);
+        Self {
+            substance_name,
+            backend_name,
+            fractions,
         }
     }
 }
@@ -105,70 +98,101 @@ mod tests {
     mod create_request {
         use super::*;
         use crate::substance::*;
+        use rstest::*;
         use std::collections::HashMap;
 
-        #[test]
-        fn from_pure() {
+        #[rstest]
+        #[case(
+            Pure::R32,
+            None,
+            FluidCreateRequest {
+                substance_name: Cow::Borrowed("R32"),
+                backend_name: Cow::Borrowed("HEOS"),
+                fractions: None,
+            }
+        )]
+        #[case(
+            Pure::Water,
+            Some("IF97".to_string()),
+            FluidCreateRequest {
+                substance_name: Cow::Borrowed("Water"),
+                backend_name: Cow::Owned("IF97".to_string()),
+                fractions: None,
+            }
+        )]
+        #[case(
+            IncompPure::Water,
+            None,
+            FluidCreateRequest {
+                substance_name: Cow::Borrowed("Water"),
+                backend_name: Cow::Borrowed("INCOMP"),
+                fractions: None,
+            }
+        )]
+        #[case(
+            IncompPure::Water,
+            Some("CUSTOM_BACKEND".to_string()),
+            FluidCreateRequest {
+                substance_name: Cow::Borrowed("Water"),
+                backend_name: Cow::Owned("CUSTOM_BACKEND".to_string()),
+                fractions: None,
+            }
+        )]
+        #[case(
+            PredefinedMix::R444A,
+            None,
+            FluidCreateRequest {
+                substance_name: Cow::Borrowed("R444A.mix"),
+                backend_name: Cow::Borrowed("HEOS"),
+                fractions: None,
+            }
+        )]
+        #[case(
+            PredefinedMix::R444A,
+            Some("CUSTOM_BACKEND".to_string()),
+            FluidCreateRequest {
+                substance_name: Cow::Borrowed("R444A.mix"),
+                backend_name: Cow::Owned("CUSTOM_BACKEND".to_string()),
+                fractions: None,
+            }
+        )]
+        #[case(
+            BinaryMixKind::MPG.with_fraction(0.4).unwrap(),
+            None,
+            FluidCreateRequest {
+                substance_name: Cow::Borrowed("MPG"),
+                backend_name: Cow::Borrowed("INCOMP"),
+                fractions: Some(vec![0.4]),
+            }
+        )]
+        #[case(
+            BinaryMixKind::MPG.with_fraction(0.4).unwrap(),
+            Some("CUSTOM_BACKEND".to_string()),
+            FluidCreateRequest {
+                substance_name: Cow::Borrowed("MPG"),
+                backend_name: Cow::Owned("CUSTOM_BACKEND".to_string()),
+                fractions: Some(vec![0.4]),
+            }
+        )]
+        fn new(
+            #[case] substance: impl Into<Substance>,
+            #[case] backend_name: Option<String>,
+            #[case] expected: FluidCreateRequest,
+        ) {
             // Given
-            let r32 = Pure::R32;
-            let substance = Substance::from(r32);
+            let substance: Substance = substance.into();
 
             // When
-            let sut = FluidCreateRequest::from(&substance);
+            let sut = FluidCreateRequest::new(&substance, backend_name);
 
             // Then
-            assert_eq!(sut.name, Cow::Borrowed(r32.as_ref()));
-            assert_eq!(sut.backend_name, r32.backend_name());
-            assert!(sut.fractions.is_none());
+            assert_eq!(sut, expected);
         }
 
-        #[test]
-        fn from_incomp_pure() {
-            // Given
-            let water = IncompPure::Water;
-            let substance = Substance::from(water);
-
-            // When
-            let sut = FluidCreateRequest::from(&substance);
-
-            // Then
-            assert_eq!(sut.name, Cow::Borrowed(water.as_ref()));
-            assert_eq!(sut.backend_name, water.backend_name());
-            assert!(sut.fractions.is_none());
-        }
-
-        #[test]
-        fn from_predefined_mix() {
-            // Given
-            let r444a = PredefinedMix::R444A;
-            let substance = Substance::from(r444a);
-
-            // When
-            let sut = FluidCreateRequest::from(&substance);
-
-            // Then
-            assert_eq!(sut.name, Cow::Borrowed(r444a.as_ref()));
-            assert_eq!(sut.backend_name, r444a.backend_name());
-            assert!(sut.fractions.is_none());
-        }
-
-        #[test]
-        fn from_binary_mix() {
-            // Given
-            let propylene_glycol = BinaryMixKind::MPG.with_fraction(0.4).unwrap();
-            let substance = Substance::from(propylene_glycol);
-
-            // When
-            let sut = FluidCreateRequest::from(&substance);
-
-            // Then
-            assert_eq!(sut.name, Cow::Borrowed(BinaryMixKind::MPG.as_ref()));
-            assert_eq!(sut.backend_name, BinaryMixKind::MPG.backend_name());
-            assert_eq!(sut.fractions, Some(vec![0.4]));
-        }
-
-        #[test]
-        fn from_custom_mix() {
+        #[rstest]
+        #[case(None, Cow::Borrowed("HEOS"))]
+        #[case(Some("CUSTOM_BACKEND".to_string()), Cow::Owned("CUSTOM_BACKEND".to_string()))]
+        fn new_custom_mix(#[case] backend_name: Option<String>, #[case] expected: Cow<str>) {
             // Given
             let mix =
                 CustomMix::mole_based(HashMap::from([(Pure::Water, 0.8), (Pure::Ethanol, 0.2)]))
@@ -176,15 +200,11 @@ mod tests {
             let substance = Substance::from(mix.clone());
 
             // When
-            let sut = FluidCreateRequest::from(&substance);
+            let sut = FluidCreateRequest::new(&substance, backend_name);
 
             // Then
-            assert!(
-                [(Pure::Water, Pure::Ethanol), (Pure::Ethanol, Pure::Water)]
-                    .map(|x| Cow::Owned(format!("{}&{}", x.0.as_ref(), x.1.as_ref())))
-                    .contains(&sut.name)
-            );
-            assert_eq!(sut.backend_name, mix.backend_name());
+            assert!(["Water&Ethanol", "Ethanol&Water"].contains(&sut.substance_name.as_ref()));
+            assert_eq!(sut.backend_name, expected);
             assert!([Some(vec![0.8, 0.2]), Some(vec![0.2, 0.8])].contains(&sut.fractions));
         }
     }

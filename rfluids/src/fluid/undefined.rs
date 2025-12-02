@@ -1,8 +1,95 @@
-use super::{Fluid, StateResult};
-use crate::{io::FluidInput, state_variant::Undefined};
-use std::marker::PhantomData;
+use super::{Fluid, FluidBuildError, StateResult, request::FluidCreateRequest};
+use crate::{
+    io::FluidInput, native::AbstractState, state_variant::Undefined, substance::Substance,
+};
+use std::{collections::HashMap, marker::PhantomData};
 
+#[bon::bon]
 impl Fluid<Undefined> {
+    /// Builds a new [`Fluid`] instance
+    /// with [`Undefined`] state variant from any [`Substance`].
+    ///
+    /// This method provides advanced control over backend selection.
+    /// For most use cases, prefer using [`From`]/[`TryFrom`] trait implementations instead.
+    ///
+    /// # Args
+    ///
+    /// - `substance` -- Substance for which to calculate properties
+    /// - `with_backend` -- `CoolProp` backend to be used
+    ///   (e.g., `"HEOS"`, `"INCOMP"`, `"REFPROP"`, `"IF97"`, etc.).
+    ///   If provided, overrides the default one defined for the substance
+    ///
+    /// # Errors
+    ///
+    /// Returns [`FluidBuildError`] for invalid backend names
+    /// or unsupported custom mixtures.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::*;
+    ///
+    /// // Using default backend (HEOS for pure fluids)
+    /// let water = Fluid::builder()
+    ///     .substance(Pure::Water)
+    ///     .build()?;
+    /// assert_eq!(water.backend_name(), "HEOS");
+    ///
+    /// // Overriding backend (using IF97 instead of default HEOS)
+    /// let if97_water = Fluid::builder()
+    ///     .substance(Pure::Water)
+    ///     .with_backend("IF97")
+    ///     .build()?;
+    /// assert_eq!(if97_water.backend_name(), "IF97");
+    ///
+    /// // The two fluids aren't equal since they use different backends
+    /// assert_ne!(water, if97_water);
+    /// # Ok::<(), rfluids::Error>(())
+    /// ```
+    ///
+    /// # See Also
+    ///
+    /// If you don't need to override the backend name, consider using:
+    /// - [`Fluid::from`] -- Simpler way to create [`Fluid`] from
+    ///   [`Pure`](crate::substance::Pure), [`IncompPure`](crate::substance::IncompPure),
+    ///   [`PredefinedMix`](crate::substance::PredefinedMix),
+    ///   or [`BinaryMix`](crate::substance::BinaryMix)
+    /// - [`Fluid::try_from`] -- For creating [`Fluid`] from any [`Substance`]
+    ///   (including [`CustomMix`](crate::substance::CustomMix))
+    #[builder]
+    pub fn new(
+        /// Substance for which to calculate properties.
+        #[builder(into)]
+        substance: Substance,
+        /// `CoolProp` backend to be used
+        /// (e.g., `"HEOS"`, `"INCOMP"`, `"REFPROP"`, `"IF97"`, etc.).
+        /// If provided, overrides the default one defined for the substance.
+        #[builder(with = |backend_name: impl AsRef<str>| backend_name.as_ref().trim().to_string())]
+        with_backend: Option<String>,
+    ) -> Result<Self, FluidBuildError> {
+        let request = FluidCreateRequest::new(&substance, with_backend.clone());
+        let mut backend = AbstractState::new(&request.backend_name, request.substance_name)
+            .map_err(|err| {
+                if err.to_string().to_lowercase().contains("backend name") {
+                    FluidBuildError::InvalidBackendName(err)
+                } else {
+                    FluidBuildError::UnsupportedCustomMix(err)
+                }
+            })?;
+        if let Some(fractions) = request.fractions {
+            backend.set_fractions(&fractions).unwrap();
+        }
+        Ok(Self {
+            substance,
+            backend,
+            custom_backend_name: with_backend,
+            update_request: None,
+            outputs: HashMap::new(),
+            trivial_outputs: HashMap::new(),
+            state: PhantomData,
+        })
+    }
+
     /// Updates the thermodynamic state and returns itself with
     /// [`Defined`](crate::state_variant::Defined) state variant.
     ///
@@ -61,6 +148,7 @@ impl Fluid<Undefined> {
         Ok(Fluid {
             substance: self.substance,
             backend: self.backend,
+            custom_backend_name: self.custom_backend_name,
             update_request: self.update_request,
             outputs: self.outputs,
             trivial_outputs: self.trivial_outputs,
@@ -71,7 +159,11 @@ impl Fluid<Undefined> {
 
 impl Clone for Fluid<Undefined> {
     fn clone(&self) -> Self {
-        let mut fluid = Fluid::try_from(self.substance.clone()).unwrap();
+        let mut fluid = Fluid::builder()
+            .substance(self.substance.clone())
+            .maybe_with_backend(self.custom_backend_name.clone())
+            .build()
+            .unwrap();
         fluid.trivial_outputs.clone_from(&self.trivial_outputs);
         fluid
     }
@@ -79,7 +171,7 @@ impl Clone for Fluid<Undefined> {
 
 impl PartialEq for Fluid<Undefined> {
     fn eq(&self, other: &Self) -> bool {
-        self.substance == other.substance
+        self.substance == other.substance && self.backend_name() == other.backend_name()
     }
 }
 
