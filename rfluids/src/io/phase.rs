@@ -1,5 +1,4 @@
 use super::try_from;
-use strum_macros::{AsRefStr, EnumString, FromRepr};
 
 /// Phase states of fluids and mixtures.
 ///
@@ -36,7 +35,17 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// # See also
 ///
 /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
-#[derive(AsRefStr, Copy, Clone, Debug, EnumString, Eq, FromRepr, PartialEq)]
+#[derive(
+    Copy,
+    Clone,
+    Debug,
+    Eq,
+    PartialEq,
+    strum_macros::AsRefStr,
+    strum_macros::EnumString,
+    strum_macros::FromRepr,
+    strum_macros::IntoStaticStr,
+)]
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
 pub enum Phase {
@@ -157,12 +166,14 @@ mod tests {
     #[case(TwoPhase, "phase_twophase")]
     #[case(Unknown, "phase_unknown")]
     #[case(NotImposed, "phase_not_imposed")]
-    fn as_ref(#[case] sut: Phase, #[case] expected: &str) {
+    fn as_str(#[case] sut: Phase, #[case] expected: &str) {
         // When
-        let res = sut.as_ref();
+        let str = sut.as_ref();
+        let static_str: &'static str = sut.into();
 
         // Then
-        assert_eq!(res, expected);
+        assert_eq!(str, expected);
+        assert_eq!(static_str, expected);
     }
 
     #[rstest]

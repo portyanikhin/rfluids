@@ -1,7 +1,6 @@
 // cSpell:disable
 
 use super::try_from;
-use strum_macros::{AsRefStr, EnumString, FromRepr};
 
 /// `CoolProp` fluids input/output parameters.
 ///
@@ -53,7 +52,18 @@ use strum_macros::{AsRefStr, EnumString, FromRepr};
 /// # See also
 ///
 /// - [CoolProp fluids input/output parameters _(only those for which the value in the "Trivial" column is "False")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
-#[derive(AsRefStr, Clone, Copy, Debug, EnumString, Eq, FromRepr, Hash, PartialEq)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    PartialEq,
+    strum_macros::AsRefStr,
+    strum_macros::EnumString,
+    strum_macros::FromRepr,
+    strum_macros::IntoStaticStr,
+)]
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
 pub enum FluidParam {
@@ -355,7 +365,18 @@ impl TryFrom<f64> for FluidParam {
 /// # See also
 ///
 /// - [CoolProp fluids input/output parameters _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
-#[derive(AsRefStr, Clone, Copy, Debug, EnumString, Eq, FromRepr, Hash, PartialEq)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    Hash,
+    PartialEq,
+    strum_macros::AsRefStr,
+    strum_macros::EnumString,
+    strum_macros::FromRepr,
+    strum_macros::IntoStaticStr,
+)]
 #[strum(ascii_case_insensitive)]
 #[repr(u8)]
 pub enum FluidTrivialParam {
@@ -595,12 +616,14 @@ mod tests {
     #[case(PH, "PH")]
     #[case(ODP, "ODP")]
     #[case(Phase, "Phase")]
-    fn as_ref(#[case] sut: impl AsRef<str>, #[case] expected: &str) {
+    fn as_str(#[case] sut: impl AsRef<str> + Into<&'static str> + Copy, #[case] expected: &str) {
         // When
-        let res = sut.as_ref();
+        let str = sut.as_ref();
+        let static_str: &'static str = sut.into();
 
         // Then
-        assert_eq!(res, expected);
+        assert_eq!(str, expected);
+        assert_eq!(static_str, expected);
     }
 
     #[rstest]

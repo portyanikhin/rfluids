@@ -1,9 +1,5 @@
 // cSpell:disable
 
-#[cfg(test)]
-use strum_macros::EnumIter;
-use strum_macros::{AsRefStr, EnumString};
-
 /// `CoolProp` predefined mixtures.
 ///
 /// # Examples
@@ -23,9 +19,18 @@ use strum_macros::{AsRefStr, EnumString};
 ///
 /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
 /// - [List of REFPROP-only refrigerant mixes which are not available in CoolProp yet](https://github.com/portyanikhin/rfluids/blob/main/rfluids/src/substance/refprop_refrigerants.txt)
-#[derive(AsRefStr, Clone, Copy, Debug, EnumString, Eq, PartialEq)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    PartialEq,
+    strum_macros::AsRefStr,
+    strum_macros::EnumString,
+    strum_macros::IntoStaticStr,
+)]
 #[strum(ascii_case_insensitive)]
-#[cfg_attr(test, derive(EnumIter))]
+#[cfg_attr(test, derive(strum_macros::EnumIter))]
 pub enum PredefinedMix {
     #[strum(to_string = "Air.mix", serialize = "Air")]
     Air,
@@ -335,12 +340,14 @@ mod tests {
     #[case(R512A, "R512A.mix")]
     #[case(R513A, "R513A.mix")]
     #[case(TypicalNaturalGas, "TypicalNaturalGas.mix")]
-    fn as_ref(#[case] sut: PredefinedMix, #[case] expected: &str) {
+    fn as_str(#[case] sut: PredefinedMix, #[case] expected: &str) {
         // When
-        let res = sut.as_ref();
+        let str = sut.as_ref();
+        let static_str: &'static str = sut.into();
 
         // Then
-        assert_eq!(res, expected);
+        assert_eq!(str, expected);
+        assert_eq!(static_str, expected);
     }
 
     #[rstest]

@@ -2,9 +2,6 @@
 
 use std::str::FromStr;
 use strum::EnumProperty;
-#[cfg(test)]
-use strum_macros::EnumIter;
-use strum_macros::{AsRefStr, EnumProperty, EnumString};
 
 /// `CoolProp` incompressible binary mixtures _(mass-based or volume-based)_.
 ///
@@ -24,9 +21,19 @@ use strum_macros::{AsRefStr, EnumProperty, EnumString};
 /// # See also
 ///
 /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incompressibles.html)
-#[derive(AsRefStr, Clone, Copy, Debug, EnumProperty, EnumString, Eq, PartialEq)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    PartialEq,
+    strum_macros::AsRefStr,
+    strum_macros::EnumProperty,
+    strum_macros::EnumString,
+    strum_macros::IntoStaticStr,
+)]
 #[strum(ascii_case_insensitive)]
-#[cfg_attr(test, derive(EnumIter))]
+#[cfg_attr(test, derive(strum_macros::EnumIter))]
 pub enum BinaryMixKind {
     #[strum(to_string = "FRE", props(min_fraction = "0.19", max_fraction = "0.5"))]
     FRE,
@@ -488,12 +495,14 @@ mod tests {
     #[case(ZLC, "ZLC")]
     #[case(ZM, "ZM")]
     #[case(ZMC, "ZMC")]
-    fn as_ref(#[case] sut: BinaryMixKind, #[case] expected: &str) {
+    fn as_str(#[case] sut: BinaryMixKind, #[case] expected: &str) {
         // When
-        let res = sut.as_ref();
+        let str = sut.as_ref();
+        let static_str: &'static str = sut.into();
 
         // Then
-        assert_eq!(res, expected);
+        assert_eq!(str, expected);
+        assert_eq!(static_str, expected);
     }
 
     #[rstest]

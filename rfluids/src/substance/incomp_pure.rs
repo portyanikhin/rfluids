@@ -1,9 +1,5 @@
 // cSpell:disable
 
-#[cfg(test)]
-use strum_macros::EnumIter;
-use strum_macros::{AsRefStr, EnumString};
-
 /// `CoolProp` incompressible pure substances.
 ///
 /// # Examples
@@ -22,9 +18,18 @@ use strum_macros::{AsRefStr, EnumString};
 /// # See also
 ///
 /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incompressibles.html)
-#[derive(AsRefStr, Clone, Copy, Debug, EnumString, Eq, PartialEq)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Eq,
+    PartialEq,
+    strum_macros::AsRefStr,
+    strum_macros::EnumString,
+    strum_macros::IntoStaticStr,
+)]
 #[strum(ascii_case_insensitive)]
-#[cfg_attr(test, derive(EnumIter))]
+#[cfg_attr(test, derive(strum_macros::EnumIter))]
 pub enum IncompPure {
     #[strum(to_string = "AS10")]
     AS10,
@@ -274,12 +279,14 @@ mod tests {
     #[case(ZS40, "ZS40")]
     #[case(ZS45, "ZS45")]
     #[case(ZS55, "ZS55")]
-    fn as_ref(#[case] sut: IncompPure, #[case] expected: &str) {
+    fn as_str(#[case] sut: IncompPure, #[case] expected: &str) {
         // When
-        let res = sut.as_ref();
+        let str = sut.as_ref();
+        let static_str: &'static str = sut.into();
 
         // Then
-        assert_eq!(res, expected);
+        assert_eq!(str, expected);
+        assert_eq!(static_str, expected);
     }
 
     #[rstest]
