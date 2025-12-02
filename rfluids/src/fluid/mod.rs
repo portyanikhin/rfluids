@@ -2,7 +2,7 @@
 //!
 //! This module provides a comprehensive interface for calculating
 //! thermophysical and transport properties of various substances,
-//! including pure fluids and different mixtures (i.e., [`Substance`] or any of its subset).
+//! including pure fluids and different mixtures (i.e., [`Substance`] or any of its subsets)
 //!
 //! # Types
 //!
@@ -15,7 +15,7 @@
 //! The [`Fluid`] struct can be created from any [`Pure`], [`IncompPure`], [`PredefinedMix`]
 //! or [`BinaryMix`] using the [`From`]/[`Into`] traits; and from any [`Substance`]
 //! or [`CustomMix`] using the [`TryFrom`]/[`TryInto`] traits. This is due to the fact that
-//! [`CustomMix`] potentially can be unsupported by the `CoolProp`.
+//! [`CustomMix`] can potentially be unsupported by `CoolProp`.
 
 mod common;
 mod defined;
@@ -65,7 +65,7 @@ impl TryFrom<Substance> for Fluid<Undefined> {
     ///
     /// # Errors
     ///
-    /// For unsupported custom mixtures, a [`FluidBuildError`] is returned.
+    /// Returns a [`FluidBuildError`] for unsupported custom mixtures.
     ///
     /// # Examples
     ///
@@ -191,7 +191,7 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
     ///
     /// # Errors
     ///
-    /// For unsupported custom mixtures, a [`FluidBuildError`] is returned.
+    /// Returns a [`FluidBuildError`] for unsupported custom mixtures.
     ///
     /// # Examples
     ///

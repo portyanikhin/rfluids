@@ -28,7 +28,7 @@ impl CustomMix {
     ///
     /// # Errors
     ///
-    /// For invalid inputs, a [`CustomMixError`] is returned.
+    /// Returns a [`CustomMixError`] for invalid inputs.
     ///
     /// # Examples
     ///
@@ -62,7 +62,7 @@ impl CustomMix {
     ///
     /// # Errors
     ///
-    /// For invalid inputs, a [`CustomMixError`] is returned.
+    /// Returns a [`CustomMixError`] for invalid inputs.
     ///
     /// # Examples
     ///

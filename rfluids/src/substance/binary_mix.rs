@@ -262,9 +262,9 @@ impl BinaryMixKind {
     ///
     /// # Errors
     ///
-    /// For invalid fraction _(out of [[`min_fraction`](BinaryMixKind::min_fraction);
-    /// [`max_fraction`](BinaryMixKind::max_fraction)] range)_,
-    /// a [`BinaryMixError`] is returned.
+    /// Returns a [`BinaryMixError`] if the fraction is out of the valid range
+    /// [[`min_fraction`](BinaryMixKind::min_fraction);
+    /// [`max_fraction`](BinaryMixKind::max_fraction)].
     ///
     /// # Examples
     ///

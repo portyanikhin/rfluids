@@ -29,8 +29,8 @@ impl HumidAirInput {
     ///
     /// # Errors
     ///
-    /// For values out of possible range _\[-5 000; 10 000\] m_,
-    /// an [`AltitudeError`] will be returned.
+    /// Returns an [`AltitudeError`] if the value is out
+    /// of the valid range _\[-5 000; 10 000\] m_.
     pub fn altitude(value: f64) -> Result<Self, AltitudeError> {
         if !(-5_000.0..=10_000.0).contains(&value) {
             return Err(AltitudeError::OutOfRange(value));

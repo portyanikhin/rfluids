@@ -25,8 +25,8 @@ impl HumidAir<Undefined> {
     ///
     /// # Errors
     ///
-    /// For invalid inputs,
-    /// a [`HumidAirStateError`](crate::humid_air::HumidAirStateError) is returned.
+    /// Returns a [`HumidAirStateError`](crate::humid_air::HumidAirStateError)
+    /// for invalid inputs.
     ///
     /// # Examples
     ///
@@ -34,10 +34,10 @@ impl HumidAir<Undefined> {
     /// use rfluids::humid_air::StateResult;
     /// use rfluids::prelude::*;
     ///
-    /// // After creation the `HumidAir` instance has `Undefined` state variant
+    /// // After creation, the `HumidAir` instance has `Undefined` state variant
     /// let mut humid_air: HumidAir<Undefined> = HumidAir::new();
     ///
-    /// // Calling `in_state` method will move the initial value and
+    /// // Calling `in_state` will move the initial value and
     /// // perform conversion between `Undefined` and `Defined` state variants
     /// // (since `Defined` is the default state variant, it can be omitted)
     /// let mut humid_air: HumidAir = humid_air.in_state(
@@ -47,7 +47,7 @@ impl HumidAir<Undefined> {
     /// )?;
     ///
     /// // The `HumidAir` instance now has `Defined` state variant
-    /// // and it's thermodynamic state can be updated in place by calling `update` method
+    /// // and its thermodynamic state can be updated in place by calling `update`
     /// // (which returns a mutable reference to the instance)
     /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air.update(
     ///     HumidAirInput::pressure(202_650.0),
@@ -56,7 +56,7 @@ impl HumidAir<Undefined> {
     /// );
     /// assert!(same_humid_air_in_new_state.is_ok());
     ///
-    /// // Calling `in_state` method on `HumidAir<Defined>` will return
+    /// // Calling `in_state` on `HumidAir<Defined>` will return
     /// // a new instance in the specified thermodynamic state
     /// let new_humid_air: StateResult<HumidAir> = humid_air.in_state(
     ///     HumidAirInput::pressure(405_300.0),

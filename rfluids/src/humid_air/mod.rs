@@ -1,7 +1,7 @@
 //! Thermophysical and transport properties of humid air.
 //!
 //! This module provides a comprehensive interface for calculating
-//! thermophysical and transport properties of humid air by the [`HumidAir`] struct.
+//! thermophysical and transport properties of humid air through the [`HumidAir`] struct.
 
 mod common;
 mod defined;
