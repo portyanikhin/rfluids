@@ -1,4 +1,4 @@
-use super::{BinaryMixKind, CustomMix, IncompPure, PredefinedMix, Pure};
+use super::{BinaryMixKind, CustomMix, IncompPure, PredefinedMix, Pure, Substance};
 
 const HELMHOLTZ_EOS_BACKEND_NAME: &str = "HEOS";
 const INCOMP_BACKEND_NAME: &str = "INCOMP";
@@ -28,6 +28,18 @@ pub trait BackendName {
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     fn backend_name(&self) -> &'static str;
+}
+
+impl BackendName for Substance {
+    fn backend_name(&self) -> &'static str {
+        match self {
+            Substance::Pure(pure) => pure.backend_name(),
+            Substance::IncompPure(incomp_pure) => incomp_pure.backend_name(),
+            Substance::PredefinedMix(predefined_mix) => predefined_mix.backend_name(),
+            Substance::BinaryMix(binary_mix) => binary_mix.kind.backend_name(),
+            Substance::CustomMix(mix) => mix.backend_name(),
+        }
+    }
 }
 
 impl BackendName for Pure {
@@ -63,8 +75,30 @@ impl BackendName for CustomMix {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rstest::*;
     use std::collections::HashMap;
     use strum::IntoEnumIterator;
+
+    #[rstest]
+    #[case(Pure::Water, HELMHOLTZ_EOS_BACKEND_NAME)]
+    #[case(IncompPure::Water, INCOMP_BACKEND_NAME)]
+    #[case(PredefinedMix::R444A, HELMHOLTZ_EOS_BACKEND_NAME)]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), INCOMP_BACKEND_NAME)]
+    #[case(
+        CustomMix::mass_based(HashMap::from([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]))
+            .unwrap(),
+        HELMHOLTZ_EOS_BACKEND_NAME
+    )]
+    fn substance(#[case] value: impl Into<Substance>, #[case] expected: &str) {
+        // Given
+        let sut: Substance = value.into();
+
+        // When
+        let res = sut.backend_name();
+
+        // Then
+        assert_eq!(res, expected);
+    }
 
     #[test]
     fn pure() {
