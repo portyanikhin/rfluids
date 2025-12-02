@@ -14,8 +14,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn alpha0(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::Alpha0)
     }
@@ -24,8 +24,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn alphar(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::AlphaR)
     }
@@ -34,8 +34,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn bvirial(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::BVirial)
     }
@@ -44,8 +44,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn compressibility(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::Z)
     }
@@ -54,8 +54,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn conductivity(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::Conductivity)
     }
@@ -64,8 +64,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn cvirial(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::CVirial)
     }
@@ -75,8 +75,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn dalpha0_ddelta_const_tau(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::DAlpha0DDeltaConstTau)
     }
@@ -86,8 +86,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn d2alpha0_ddelta2_const_tau(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::D2Alpha0DDelta2ConstTau)
     }
@@ -97,8 +97,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn d3alpha0_ddelta3_const_tau(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::D3Alpha0DDelta3ConstTau)
     }
@@ -108,8 +108,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn dalpha0_dtau_const_delta(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::DAlpha0DTauConstDelta)
     }
@@ -119,8 +119,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn dalphar_ddelta_const_tau(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::DAlphaRDDeltaConstTau)
     }
@@ -130,8 +130,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn dalphar_dtau_const_delta(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::DAlphaRDTauConstDelta)
     }
@@ -141,8 +141,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn dbvirial_dt(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::DBVirialDT)
     }
@@ -152,8 +152,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn dcvirial_dt(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::DCVirialDT)
     }
@@ -164,8 +164,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn delta(&mut self) -> OutputResult<f64> {
         div(self.density(), self.critical_density())
     }
@@ -174,8 +174,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn density(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::DMass)
     }
@@ -184,8 +184,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn dynamic_viscosity(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::DynamicViscosity)
     }
@@ -194,8 +194,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn enthalpy(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::HMass)
     }
@@ -204,8 +204,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn entropy(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::SMass)
     }
@@ -214,8 +214,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn fundamental_derivative_of_gas_dynamics(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::FundamentalDerivativeOfGasDynamics)
     }
@@ -224,8 +224,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn gibbs_energy(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::GMass)
     }
@@ -234,8 +234,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn helmholtz_energy(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::HelmholtzMass)
     }
@@ -244,8 +244,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn ideal_gas_molar_specific_heat(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::Cp0Molar)
     }
@@ -254,8 +254,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn ideal_gas_specific_heat(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::Cp0Mass)
     }
@@ -264,8 +264,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn internal_energy(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::UMass)
     }
@@ -274,8 +274,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn isentropic_expansion_coefficient(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::IsentropicExpansionCoefficient)
     }
@@ -284,8 +284,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn isobaric_expansion_coefficient(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::IsobaricExpansionCoefficient)
     }
@@ -294,8 +294,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn isothermal_compressibility(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::IsothermalCompressibility)
     }
@@ -306,8 +306,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn kinematic_viscosity(&mut self) -> OutputResult<f64> {
         div(self.dynamic_viscosity(), self.density())
     }
@@ -316,8 +316,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn molar_density(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::DMolar)
     }
@@ -326,8 +326,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn molar_enthalpy(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::HMolar)
     }
@@ -336,8 +336,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn molar_entropy(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::SMolar)
     }
@@ -346,8 +346,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn molar_gibbs_energy(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::GMolar)
     }
@@ -356,8 +356,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn molar_helmholtz_energy(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::HelmholtzMolar)
     }
@@ -366,8 +366,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn molar_internal_energy(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::UMolar)
     }
@@ -376,8 +376,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn molar_specific_heat(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::CpMolar)
     }
@@ -386,8 +386,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn molar_specific_heat_const_volume(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::CvMolar)
     }
@@ -405,8 +405,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn phase_id_param(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::PIP)
     }
@@ -415,8 +415,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn prandtl(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::Prandtl)
     }
@@ -425,8 +425,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn pressure(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::P)
     }
@@ -435,8 +435,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn quality(&mut self) -> OutputResult<f64> {
         let key = FluidParam::Q;
         self.output(key)
@@ -447,8 +447,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn residual_molar_enthalpy(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::HMolarResidual)
     }
@@ -457,8 +457,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn residual_molar_entropy(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::SMolarResidual)
     }
@@ -467,8 +467,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn residual_molar_gibbs_energy(&mut self) -> OutputResult<f64> {
         self.output(FluidParam::GMolarResidual)
     }
@@ -477,8 +477,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn sound_speed(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::SoundSpeed)
     }
@@ -487,8 +487,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn specific_heat(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::CpMass)
     }
@@ -497,8 +497,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn specific_heat_const_volume(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::CvMass)
     }
@@ -508,8 +508,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn specific_volume(&mut self) -> OutputResult<f64> {
         self.density().map(|value| 1.0 / value)
     }
@@ -518,8 +518,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn surface_tension(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::SurfaceTension)
     }
@@ -530,8 +530,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn tau(&mut self) -> OutputResult<f64> {
         // Due to CoolProp bug
         div(self.critical_temperature(), self.temperature())
@@ -541,8 +541,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available or calculation fails.
     pub fn temperature(&mut self) -> OutputResult<f64> {
         self.positive_output(FluidParam::T)
     }
@@ -556,8 +556,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// For invalid/unsupported inputs or invalid state,
-    /// a [`FluidStateError`](crate::fluid::FluidStateError) is returned.
+    /// Returns a [`FluidStateError`](crate::fluid::FluidStateError)
+    /// for invalid/unsupported inputs or invalid state.
     ///
     /// # Examples
     ///
@@ -565,10 +565,10 @@ impl Fluid {
     /// use rfluids::fluid::StateResult;
     /// use rfluids::prelude::*;
     ///
-    /// // After creation the `Fluid` instance has `Undefined` state variant
+    /// // After creation, the `Fluid` instance has `Undefined` state variant
     /// let mut water: Fluid<Undefined> = Fluid::from(Pure::Water);
     ///
-    /// // Calling `in_state` method will move the initial value and
+    /// // Calling `in_state` will move the initial value and
     /// // perform conversion between `Undefined` and `Defined` state variants
     /// // (since `Defined` is the default state variant, it can be omitted)
     /// let mut water: Fluid = water.in_state(
@@ -577,7 +577,7 @@ impl Fluid {
     /// )?;
     ///
     /// // The `Fluid` instance now has `Defined` state variant
-    /// // and it's thermodynamic state can be updated in place by calling `update` method
+    /// // and its thermodynamic state can be updated in place by calling `update`
     /// // (which returns a mutable reference to the instance)
     /// let same_water_in_new_state: StateResult<&mut Fluid> = water.update(
     ///     FluidInput::pressure(202_650.0),
@@ -585,7 +585,7 @@ impl Fluid {
     /// );
     /// assert!(same_water_in_new_state.is_ok());
     ///
-    /// // Calling `in_state` method on `Fluid<Defined>` will return
+    /// // Calling `in_state` on `Fluid<Defined>` will return
     /// // a new instance in the specified thermodynamic state
     /// let new_water: StateResult<Fluid> = water.in_state(
     ///     FluidInput::pressure(405_300.0),
@@ -612,8 +612,8 @@ impl Fluid {
     ///
     /// # Errors
     ///
-    /// For invalid/unsupported inputs or invalid state,
-    /// a [`FluidStateError`](crate::fluid::FluidStateError) is returned.
+    /// Returns a [`FluidStateError`](crate::fluid::FluidStateError)
+    /// for invalid/unsupported inputs or invalid state.
     ///
     /// # Examples
     ///
@@ -621,10 +621,10 @@ impl Fluid {
     /// use rfluids::fluid::StateResult;
     /// use rfluids::prelude::*;
     ///
-    /// // After creation the `Fluid` instance has `Undefined` state variant
+    /// // After creation, the `Fluid` instance has `Undefined` state variant
     /// let mut water: Fluid<Undefined> = Fluid::from(Pure::Water);
     ///
-    /// // Calling `in_state` method will move the initial value and
+    /// // Calling `in_state` will move the initial value and
     /// // perform conversion between `Undefined` and `Defined` state variants
     /// // (since `Defined` is the default state variant, it can be omitted)
     /// let mut water: Fluid = water.in_state(
@@ -633,7 +633,7 @@ impl Fluid {
     /// )?;
     ///
     /// // The `Fluid` instance now has `Defined` state variant
-    /// // and it's thermodynamic state can be updated in place by calling `update` method
+    /// // and its thermodynamic state can be updated in place by calling `update`
     /// // (which returns a mutable reference to the instance)
     /// let same_water_in_new_state: StateResult<&mut Fluid> = water.update(
     ///     FluidInput::pressure(202_650.0),
@@ -641,7 +641,7 @@ impl Fluid {
     /// );
     /// assert!(same_water_in_new_state.is_ok());
     ///
-    /// // Calling `in_state` method on `Fluid<Defined>` will return
+    /// // Calling `in_state` on `Fluid<Defined>` will return
     /// // a new instance in the specified thermodynamic state
     /// let new_water: StateResult<Fluid> = water.in_state(
     ///     FluidInput::pressure(405_300.0),

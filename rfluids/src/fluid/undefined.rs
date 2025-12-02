@@ -21,7 +21,7 @@ impl Fluid<Undefined> {
     ///
     /// # Errors
     ///
-    /// Returns [`FluidBuildError`] for invalid backend names
+    /// Returns a [`FluidBuildError`] for invalid backend names
     /// or unsupported custom mixtures.
     ///
     /// # Examples
@@ -42,7 +42,7 @@ impl Fluid<Undefined> {
     ///     .build()?;
     /// assert_eq!(if97_water.backend_name(), "IF97");
     ///
-    /// // The two fluids aren't equal since they use different backends
+    /// // The two fluids are not equal since they use different backends
     /// assert_ne!(water, if97_water);
     /// # Ok::<(), rfluids::Error>(())
     /// ```
@@ -100,8 +100,8 @@ impl Fluid<Undefined> {
     ///
     /// # Errors
     ///
-    /// For invalid/unsupported inputs or invalid state,
-    /// a [`FluidStateError`](crate::fluid::FluidStateError) is returned.
+    /// Returns a [`FluidStateError`](crate::fluid::FluidStateError)
+    /// for invalid/unsupported inputs or invalid state.
     ///
     /// # Examples
     ///
@@ -109,10 +109,10 @@ impl Fluid<Undefined> {
     /// use rfluids::fluid::StateResult;
     /// use rfluids::prelude::*;
     ///
-    /// // After creation the `Fluid` instance has `Undefined` state variant
+    /// // After creation, the `Fluid` instance has `Undefined` state variant
     /// let mut water: Fluid<Undefined> = Fluid::from(Pure::Water);
     ///
-    /// // Calling `in_state` method will move the initial value and
+    /// // Calling `in_state` will move the initial value and
     /// // perform conversion between `Undefined` and `Defined` state variants
     /// // (since `Defined` is the default state variant, it can be omitted)
     /// let mut water: Fluid = water.in_state(
@@ -121,7 +121,7 @@ impl Fluid<Undefined> {
     /// )?;
     ///
     /// // The `Fluid` instance now has `Defined` state variant
-    /// // and it's thermodynamic state can be updated in place by calling `update` method
+    /// // and its thermodynamic state can be updated in place by calling `update`
     /// // (which returns a mutable reference to the instance)
     /// let same_water_in_new_state: StateResult<&mut Fluid> = water.update(
     ///     FluidInput::pressure(202_650.0),
@@ -129,7 +129,7 @@ impl Fluid<Undefined> {
     /// );
     /// assert!(same_water_in_new_state.is_ok());
     ///
-    /// // Calling `in_state` method on `Fluid<Defined>` will return
+    /// // Calling `in_state` on `Fluid<Defined>` will return
     /// // a new instance in the specified thermodynamic state
     /// let new_water: StateResult<Fluid> = water.in_state(
     ///     FluidInput::pressure(405_300.0),

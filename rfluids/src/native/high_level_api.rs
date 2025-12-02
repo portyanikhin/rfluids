@@ -28,7 +28,7 @@ impl CoolProp {
     ///
     /// # Errors
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// Returns a [`CoolPropError`] for invalid inputs.
     ///
     /// # Examples
     ///
@@ -129,7 +129,7 @@ impl CoolProp {
     ///
     /// # Errors
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// Returns a [`CoolPropError`] for invalid inputs.
     ///
     /// # Examples
     ///
@@ -186,7 +186,7 @@ impl CoolProp {
     ///
     /// # Errors
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// Returns a [`CoolPropError`] for invalid inputs.
     ///
     /// # Examples
     ///

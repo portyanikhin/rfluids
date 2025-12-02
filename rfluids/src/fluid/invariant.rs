@@ -29,8 +29,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn acentric_factor(&mut self) -> OutputResult<f64> {
         self.trivial_output(FluidTrivialParam::AcentricFactor)
     }
@@ -39,8 +39,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn critical_density(&mut self) -> OutputResult<f64> {
         let key = FluidTrivialParam::DMassCritical;
         // Due to CoolProp freeze
@@ -54,8 +54,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn critical_molar_density(&mut self) -> OutputResult<f64> {
         let key = FluidTrivialParam::DMolarCritical;
         // Due to CoolProp freeze
@@ -69,8 +69,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn critical_pressure(&mut self) -> OutputResult<f64> {
         let key = FluidTrivialParam::PCritical;
         // Due to CoolProp freeze
@@ -84,8 +84,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn critical_temperature(&mut self) -> OutputResult<f64> {
         let key = FluidTrivialParam::TCritical;
         // Due to CoolProp freeze
@@ -99,8 +99,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn flammability_hazard(&mut self) -> OutputResult<f64> {
         self.non_negative_trivial_output(FluidTrivialParam::FH)
     }
@@ -109,8 +109,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn freezing_temperature(&mut self) -> OutputResult<f64> {
         self.positive_trivial_output(FluidTrivialParam::TFreeze)
     }
@@ -119,8 +119,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn gwp20(&mut self) -> OutputResult<f64> {
         self.non_negative_trivial_output(FluidTrivialParam::GWP20)
     }
@@ -129,8 +129,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn gwp100(&mut self) -> OutputResult<f64> {
         self.non_negative_trivial_output(FluidTrivialParam::GWP100)
     }
@@ -139,8 +139,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn gwp500(&mut self) -> OutputResult<f64> {
         self.non_negative_trivial_output(FluidTrivialParam::GWP500)
     }
@@ -149,8 +149,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn health_hazard(&mut self) -> OutputResult<f64> {
         self.non_negative_trivial_output(FluidTrivialParam::HH)
     }
@@ -159,8 +159,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn max_pressure(&mut self) -> OutputResult<f64> {
         self.positive_trivial_output(FluidTrivialParam::PMax)
     }
@@ -175,8 +175,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn min_pressure(&mut self) -> OutputResult<f64> {
         self.positive_trivial_output(FluidTrivialParam::PMin)
     }
@@ -191,8 +191,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn molar_mass(&mut self) -> OutputResult<f64> {
         self.positive_trivial_output(FluidTrivialParam::MolarMass)
     }
@@ -201,8 +201,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn odp(&mut self) -> OutputResult<f64> {
         self.non_negative_trivial_output(FluidTrivialParam::ODP)
     }
@@ -211,8 +211,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn physical_hazard(&mut self) -> OutputResult<f64> {
         self.non_negative_trivial_output(FluidTrivialParam::PH)
     }
@@ -221,8 +221,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn reducing_density(&mut self) -> OutputResult<f64> {
         mul(self.reducing_molar_density(), self.molar_mass())
     }
@@ -231,8 +231,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn reducing_molar_density(&mut self) -> OutputResult<f64> {
         self.positive_trivial_output(FluidTrivialParam::DMolarReducing)
     }
@@ -241,8 +241,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn reducing_pressure(&mut self) -> OutputResult<f64> {
         self.positive_trivial_output(FluidTrivialParam::PReducing)
     }
@@ -251,8 +251,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn reducing_temperature(&mut self) -> OutputResult<f64> {
         self.positive_trivial_output(FluidTrivialParam::TReducing)
     }
@@ -261,8 +261,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn triple_pressure(&mut self) -> OutputResult<f64> {
         self.positive_trivial_output(FluidTrivialParam::PTriple)
     }
@@ -271,8 +271,8 @@ impl<S: StateVariant> Fluid<S> {
     ///
     /// # Errors
     ///
-    /// If it's not available for the specified substance,
-    /// a [`FluidOutputError`] is returned.
+    /// Returns a [`FluidOutputError`]
+    /// if the property is not available for the specified substance.
     pub fn triple_temperature(&mut self) -> OutputResult<f64> {
         self.positive_trivial_output(FluidTrivialParam::TTriple)
     }

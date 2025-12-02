@@ -12,8 +12,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn abs_humidity(&mut self) -> OutputResult<f64> {
         self.non_negative_output(HumidAirParam::W)
     }
@@ -24,8 +24,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn density(&mut self) -> OutputResult<f64> {
         self.specific_volume().map(|value| 1.0 / value)
     }
@@ -36,8 +36,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn density_da(&mut self) -> OutputResult<f64> {
         self.specific_volume_da().map(|value| 1.0 / value)
     }
@@ -46,8 +46,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn compressibility(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Z)
     }
@@ -56,8 +56,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn conductivity(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Conductivity)
     }
@@ -66,8 +66,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn dew_temperature(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::TDew)
     }
@@ -76,8 +76,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn dynamic_viscosity(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::DynamicViscosity)
     }
@@ -86,8 +86,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn enthalpy(&mut self) -> OutputResult<f64> {
         self.output(HumidAirParam::Hha)
     }
@@ -96,8 +96,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn enthalpy_da(&mut self) -> OutputResult<f64> {
         self.output(HumidAirParam::Hda)
     }
@@ -106,8 +106,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn entropy(&mut self) -> OutputResult<f64> {
         self.output(HumidAirParam::Sha)
     }
@@ -116,8 +116,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn entropy_da(&mut self) -> OutputResult<f64> {
         self.output(HumidAirParam::Sda)
     }
@@ -126,8 +126,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn pressure(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::P)
     }
@@ -136,8 +136,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn rel_humidity(&mut self) -> OutputResult<f64> {
         let key = HumidAirParam::R;
         self.output(key)
@@ -148,8 +148,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn specific_heat(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Cpha)
     }
@@ -158,8 +158,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn specific_heat_da(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Cpda)
     }
@@ -168,8 +168,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn specific_heat_const_volume(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Cvha)
     }
@@ -178,8 +178,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn specific_heat_const_volume_da(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Cvda)
     }
@@ -188,8 +188,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn specific_volume(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Vha)
     }
@@ -198,8 +198,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn specific_volume_da(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::Vda)
     }
@@ -208,8 +208,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn temperature(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::T)
     }
@@ -218,8 +218,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn water_mole_fraction(&mut self) -> OutputResult<f64> {
         self.non_negative_output(HumidAirParam::PsiW)
     }
@@ -228,8 +228,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn water_partial_pressure(&mut self) -> OutputResult<f64> {
         self.non_negative_output(HumidAirParam::Pw)
     }
@@ -238,8 +238,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// If it's not available or calculation is failed,
-    /// a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError) is returned.
+    /// Returns a [`HumidAirOutputError`](crate::humid_air::HumidAirOutputError)
+    /// if the property is not available or calculation fails.
     pub fn wet_bulb_temperature(&mut self) -> OutputResult<f64> {
         self.positive_output(HumidAirParam::TWetBulb)
     }
@@ -254,8 +254,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// For invalid inputs,
-    /// a [`HumidAirStateError`](crate::humid_air::HumidAirStateError) is returned.
+    /// Returns a [`HumidAirStateError`](crate::humid_air::HumidAirStateError)
+    /// for invalid inputs.
     ///
     /// # Examples
     ///
@@ -263,10 +263,10 @@ impl HumidAir {
     /// use rfluids::humid_air::StateResult;
     /// use rfluids::prelude::*;
     ///
-    /// // After creation the `HumidAir` instance has `Undefined` state variant
+    /// // After creation, the `HumidAir` instance has `Undefined` state variant
     /// let mut humid_air: HumidAir<Undefined> = HumidAir::new();
     ///
-    /// // Calling `in_state` method will move the initial value and
+    /// // Calling `in_state` will move the initial value and
     /// // perform conversion between `Undefined` and `Defined` state variants
     /// // (since `Defined` is the default state variant, it can be omitted)
     /// let mut humid_air: HumidAir = humid_air.in_state(
@@ -276,7 +276,7 @@ impl HumidAir {
     /// )?;
     ///
     /// // The `HumidAir` instance now has `Defined` state variant
-    /// // and it's thermodynamic state can be updated in place by calling `update` method
+    /// // and its thermodynamic state can be updated in place by calling `update`
     /// // (which returns a mutable reference to the instance)
     /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air.update(
     ///     HumidAirInput::pressure(202_650.0),
@@ -285,7 +285,7 @@ impl HumidAir {
     /// );
     /// assert!(same_humid_air_in_new_state.is_ok());
     ///
-    /// // Calling `in_state` method on `HumidAir<Defined>` will return
+    /// // Calling `in_state` on `HumidAir<Defined>` will return
     /// // a new instance in the specified thermodynamic state
     /// let new_humid_air: StateResult<HumidAir> = humid_air.in_state(
     ///     HumidAirInput::pressure(405_300.0),
@@ -319,8 +319,8 @@ impl HumidAir {
     ///
     /// # Errors
     ///
-    /// For invalid inputs,
-    /// a [`HumidAirStateError`](crate::humid_air::HumidAirStateError) is returned.
+    /// Returns a [`HumidAirStateError`](crate::humid_air::HumidAirStateError)
+    /// for invalid inputs.
     ///
     /// # Examples
     ///
@@ -328,10 +328,10 @@ impl HumidAir {
     /// use rfluids::humid_air::StateResult;
     /// use rfluids::prelude::*;
     ///
-    /// // After creation the `HumidAir` instance has `Undefined` state variant
+    /// // After creation, the `HumidAir` instance has `Undefined` state variant
     /// let mut humid_air: HumidAir<Undefined> = HumidAir::new();
     ///
-    /// // Calling `in_state` method will move the initial value and
+    /// // Calling `in_state` will move the initial value and
     /// // perform conversion between `Undefined` and `Defined` state variants
     /// // (since `Defined` is the default state variant, it can be omitted)
     /// let mut humid_air: HumidAir = humid_air.in_state(
@@ -341,7 +341,7 @@ impl HumidAir {
     /// )?;
     ///
     /// // The `HumidAir` instance now has `Defined` state variant
-    /// // and it's thermodynamic state can be updated in place by calling `update` method
+    /// // and its thermodynamic state can be updated in place by calling `update`
     /// // (which returns a mutable reference to the instance)
     /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air.update(
     ///     HumidAirInput::pressure(202_650.0),
@@ -350,7 +350,7 @@ impl HumidAir {
     /// );
     /// assert!(same_humid_air_in_new_state.is_ok());
     ///
-    /// // Calling `in_state` method on `HumidAir<Defined>` will return
+    /// // Calling `in_state` on `HumidAir<Defined>` will return
     /// // a new instance in the specified thermodynamic state
     /// let new_humid_air: StateResult<HumidAir> = humid_air.in_state(
     ///     HumidAirInput::pressure(405_300.0),

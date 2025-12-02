@@ -23,7 +23,7 @@ impl AbstractState {
     ///
     /// # Errors
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// Returns a [`CoolPropError`] for invalid inputs.
     ///
     /// # Examples
     ///
@@ -81,8 +81,9 @@ impl AbstractState {
     /// Set the fractions _(mole, mass or volume)_[^note].
     ///
     /// [^note]:  It will be defined automatically, depending on the specified backend.
-    /// For example, the `"HEOS"` backend uses mole fractions and the `"INCOMP"` backend --
-    /// mass or volume fractions, depending on which substance is specified.
+    /// For example, the `"HEOS"` backend uses mole fractions,
+    /// while the `"INCOMP"` backend uses mass or volume fractions,
+    /// depending on which substance is specified.
     ///
     /// # Arguments
     ///
@@ -91,7 +92,7 @@ impl AbstractState {
     ///
     /// # Errors
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// Returns a [`CoolPropError`] for invalid inputs.
     ///
     /// # Examples
     ///
@@ -142,7 +143,7 @@ impl AbstractState {
     ///
     /// # Errors
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// Returns a [`CoolPropError`] for invalid inputs.
     ///
     /// # Examples
     ///
@@ -189,8 +190,8 @@ impl AbstractState {
     ///
     /// # Errors
     ///
-    /// For non-trivial outputs with undefined state or invalid inputs,
-    /// a [`CoolPropError`] is returned.
+    /// Returns a [`CoolPropError`] for non-trivial outputs
+    /// with undefined state or invalid inputs.
     ///
     /// # Examples
     ///
@@ -271,7 +272,7 @@ impl AbstractState {
     ///
     /// # Errors
     ///
-    /// For invalid inputs, a [`CoolPropError`] is returned.
+    /// Returns a [`CoolPropError`] for invalid inputs.
     ///
     /// # Examples
     ///
