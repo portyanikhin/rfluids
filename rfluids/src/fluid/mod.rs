@@ -57,14 +57,14 @@ pub struct Fluid<S: StateVariant = Defined> {
 }
 
 impl TryFrom<Substance> for Fluid<Undefined> {
-    type Error = FluidFromCustomMixError;
+    type Error = FluidBuildError;
 
     /// Creates and returns a new [`Fluid`] instance
     /// with [`Undefined`] state variant from any [`Substance`].
     ///
     /// # Errors
     ///
-    /// For unsupported custom mixtures, a [`FluidFromCustomMixError`] is returned.
+    /// For unsupported custom mixtures, a [`FluidBuildError`] is returned.
     ///
     /// # Examples
     ///
@@ -175,14 +175,14 @@ impl From<BinaryMix> for Fluid<Undefined> {
 }
 
 impl TryFrom<CustomMix> for Fluid<Undefined> {
-    type Error = FluidFromCustomMixError;
+    type Error = FluidBuildError;
 
     /// Creates and returns a new [`Fluid`] instance
     /// with [`Undefined`] state variant from [`CustomMix`].
     ///
     /// # Errors
     ///
-    /// For unsupported custom mixtures, a [`FluidFromCustomMixError`] is returned.
+    /// For unsupported custom mixtures, a [`FluidBuildError`] is returned.
     ///
     /// # Examples
     ///
@@ -208,12 +208,16 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
     }
 }
 
-/// Error during creation of [`Fluid`] from [`CustomMix`].
+/// Error during building of the [`Fluid`].
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
-pub enum FluidFromCustomMixError {
+pub enum FluidBuildError {
+    /// Specified backend name is invalid.
+    #[error("Specified backend name is invalid! {0}")]
+    InvalidBackendName(CoolPropError),
+
     /// Specified custom mixture is not supported.
     #[error("Specified custom mixture is not supported! {0}")]
-    Unsupported(#[from] CoolPropError),
+    UnsupportedCustomMix(CoolPropError),
 }
 
 /// Error during [`Fluid::update`] or [`Fluid::in_state`].
