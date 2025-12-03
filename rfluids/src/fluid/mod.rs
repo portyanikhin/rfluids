@@ -226,7 +226,7 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
 pub enum FluidBuildError {
     /// Specified backend name is invalid.
     #[error("Specified backend name is invalid! {0}")]
-    InvalidBackendName(CoolPropError),
+    InvalidBackend(CoolPropError),
 
     /// Specified custom mixture is not supported.
     #[error("Specified custom mixture is not supported! {0}")]

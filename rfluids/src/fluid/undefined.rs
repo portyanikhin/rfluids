@@ -70,8 +70,8 @@ impl Fluid<Undefined> {
         let request = FluidCreateRequest::new(&substance, with_backend.clone());
         let mut backend = AbstractState::new(&request.backend_name, request.substance_name)
             .map_err(|err| {
-                if err.to_string().to_lowercase().contains("backend name") {
-                    FluidBuildError::InvalidBackendName(err)
+                if err.to_string().to_lowercase().contains("backend") {
+                    FluidBuildError::InvalidBackend(err)
                 } else {
                     FluidBuildError::UnsupportedCustomMix(err)
                 }
