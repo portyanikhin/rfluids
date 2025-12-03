@@ -1,9 +1,10 @@
 condense_wildcard_suffixes = true
+comment_width = 80
+doc_comment_code_block_width = 80
 error_on_line_overflow = true
 format_code_in_doc_comments = true
 format_macro_bodies = true
 format_macro_matchers = true
-format_strings = true
 group_imports = "StdExternalCrate"
 imports_granularity = "Crate"
 newline_style = "Unix"
