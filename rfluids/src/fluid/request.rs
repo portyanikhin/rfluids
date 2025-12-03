@@ -97,8 +97,6 @@ mod tests {
     use super::*;
 
     mod create_request {
-        use std::collections::HashMap;
-
         use rstest::*;
 
         use super::*;
@@ -197,9 +195,7 @@ mod tests {
         #[case(Some("CUSTOM_BACKEND".to_string()), Cow::Owned("CUSTOM_BACKEND".to_string()))]
         fn new_custom_mix(#[case] backend_name: Option<String>, #[case] expected: Cow<str>) {
             // Given
-            let mix =
-                CustomMix::mole_based(HashMap::from([(Pure::Water, 0.8), (Pure::Ethanol, 0.2)]))
-                    .unwrap();
+            let mix = CustomMix::mole_based([(Pure::Water, 0.8), (Pure::Ethanol, 0.2)]).unwrap();
             let substance = Substance::from(mix.clone());
 
             // When
