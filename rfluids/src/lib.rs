@@ -74,15 +74,13 @@
 //! (with ethanol _40 %_ mass fraction) at _200 kPa_ and _4 °C_:
 //!
 //! ```
-//! use std::collections::HashMap;
-//!
 //! use approx::assert_relative_eq;
 //! use rfluids::prelude::*;
 //!
-//! let mut mix = Fluid::try_from(CustomMix::mass_based(HashMap::from([
+//! let mut mix = Fluid::try_from(CustomMix::mass_based([
 //!     (Pure::Water, 0.6),
 //!     (Pure::Ethanol, 0.4),
-//! ]))?)?
+//! ])?)?
 //! .in_state(FluidInput::pressure(200e3), FluidInput::temperature(277.15))?;
 //! assert_relative_eq!(
 //!     mix.density()?,
