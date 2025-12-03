@@ -7,19 +7,21 @@
 //!
 //! # Types
 //!
-//! The core type for managing thermophysical and transport properties of
-//! substances is [`Fluid`]. It encompasses various state management features
-//! and property calculations. The [`Fluid`] struct is generic over the state
-//! variant ([`Defined`] or [`Undefined`]). Depending on the state variant, the
-//! [`Fluid`] instance has different functionality (e.g., with [`Undefined`]
-//! state variant it has only trivial properties available, but with [`Defined`]
-//! state variant it supports a full set of property calculations).
-//! The [`Fluid`] struct can be created from any [`Pure`], [`IncompPure`],
-//! [`PredefinedMix`] or [`BinaryMix`] using the [`From`]/[`Into`] traits; and
-//! from any [`Substance`] or [`CustomMix`] using the [`TryFrom`]/[`TryInto`]
-//! traits. This is due to the fact that [`CustomMix`] can potentially be
-//! unsupported by `CoolProp`. For advanced control over backend selection,
-//! use [`Fluid::builder`].
+//! The core type for managing thermophysical and transport properties
+//! of substances is [`Fluid`]. It encompasses various state
+//! management features and property calculations. The [`Fluid`]
+//! struct is generic over the state variant ([`Defined`] or
+//! [`Undefined`]). Depending on the state variant, the
+//! [`Fluid`] instance has different functionality
+//! (e.g., with [`Undefined`] state variant it has only trivial
+//! properties available, but with [`Defined`] state variant it
+//! supports a full set of property calculations). The [`Fluid`]
+//! struct can be created from any [`Pure`], [`IncompPure`],
+//! [`PredefinedMix`] or [`BinaryMix`] using the [`From`]/[`Into`]
+//! traits; and from any [`Substance`] or [`CustomMix`] using the
+//! [`TryFrom`]/[`TryInto`] traits. This is due to the fact that
+//! [`CustomMix`] can potentially be unsupported by `CoolProp`. For
+//! advanced control over backend selection, use [`Fluid::builder`].
 
 mod common;
 mod defined;
@@ -38,23 +40,24 @@ use crate::{
     substance::{BinaryMix, CustomMix, IncompPure, PredefinedMix, Pure, Substance},
 };
 
-/// Result type for operations that could fail while updating fluid state.
+/// Result type for operations that could fail
+/// while updating fluid state.
 pub type StateResult<T> = Result<T, FluidStateError>;
 
-/// Result type for operations that could fail while retrieving fluid
-/// properties.
+/// Result type for operations that could fail
+/// while retrieving fluid properties.
 pub type OutputResult<T> = Result<T, FluidOutputError>;
 
 /// Provider of thermophysical and transport properties of substances.
 ///
 /// It implements the [typestate pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
-/// and has one generic type parameter: `S` -- state variant _([`Defined`] or
-/// [`Undefined`])_.
+/// and has one generic type parameter: `S` -- state variant
+/// _([`Defined`] or [`Undefined`])_.
 ///
 /// Depending on `S`, the `Fluid` instance has different functionality
-/// (e.g., with [`Undefined`] state variant it has only trivial properties
-/// available, but with [`Defined`] state variant it supports a full set of
-/// property calculations).
+/// (e.g., with [`Undefined`] state variant it has only trivial
+/// properties available, but with [`Defined`] state variant it
+/// supports a full set of property calculations).
 #[derive(Debug)]
 pub struct Fluid<S: StateVariant = Defined> {
     substance: Substance,
@@ -175,7 +178,8 @@ impl From<BinaryMix> for Fluid<Undefined> {
     /// ```
     /// use rfluids::prelude::*;
     ///
-    /// let propylene_glycol = Fluid::from(BinaryMixKind::MPG.with_fraction(0.4)?);
+    /// let propylene_glycol =
+    ///     Fluid::from(BinaryMixKind::MPG.with_fraction(0.4)?);
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     ///
@@ -202,12 +206,16 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
     /// ```
     /// use rfluids::prelude::*;
     ///
-    /// let supported_mix =
-    ///     CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)])?;
+    /// let supported_mix = CustomMix::mass_based([
+    ///     (Pure::Water, 0.6),
+    ///     (Pure::Ethanol, 0.4),
+    /// ])?;
     /// assert!(Fluid::try_from(supported_mix).is_ok());
     ///
-    /// let unsupported_mix =
-    ///     CustomMix::mass_based([(Pure::Orthohydrogen, 0.6), (Pure::R32, 0.4)])?;
+    /// let unsupported_mix = CustomMix::mass_based([
+    ///     (Pure::Orthohydrogen, 0.6),
+    ///     (Pure::R32, 0.4),
+    /// ])?;
     /// assert!(Fluid::try_from(unsupported_mix).is_err());
     /// # Ok::<(), rfluids::Error>(())
     /// ```

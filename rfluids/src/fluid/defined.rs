@@ -71,7 +71,8 @@ impl Fluid {
     }
 
     /// Derivative of ideal gas Helmholtz energy contribution
-    /// with [`delta`](crate::fluid::Fluid::delta) **\[dimensionless\]**.
+    /// with [`delta`](crate::fluid::Fluid::delta)
+    /// **\[dimensionless\]**.
     ///
     /// # Errors
     ///
@@ -82,7 +83,8 @@ impl Fluid {
     }
 
     /// Second derivative of ideal gas Helmholtz energy contribution
-    /// with [`delta`](crate::fluid::Fluid::delta) **\[dimensionless\]**.
+    /// with [`delta`](crate::fluid::Fluid::delta)
+    /// **\[dimensionless\]**.
     ///
     /// # Errors
     ///
@@ -93,7 +95,8 @@ impl Fluid {
     }
 
     /// Third derivative of ideal gas Helmholtz energy contribution
-    /// with [`delta`](crate::fluid::Fluid::delta) **\[dimensionless\]**.
+    /// with [`delta`](crate::fluid::Fluid::delta)
+    /// **\[dimensionless\]**.
     ///
     /// # Errors
     ///
@@ -115,7 +118,8 @@ impl Fluid {
     }
 
     /// Derivative of residual Helmholtz energy contribution
-    /// with [`delta`](crate::fluid::Fluid::delta) **\[dimensionless\]**.
+    /// with [`delta`](crate::fluid::Fluid::delta)
+    /// **\[dimensionless\]**.
     ///
     /// # Errors
     ///
@@ -149,7 +153,8 @@ impl Fluid {
     }
 
     /// Derivative of third virial coefficient with
-    /// [`temperature`](crate::fluid::Fluid::temperature) **\[dimensionless\]**.
+    /// [`temperature`](crate::fluid::Fluid::temperature)
+    /// **\[dimensionless\]**.
     ///
     /// # Errors
     ///
@@ -241,7 +246,8 @@ impl Fluid {
         self.output(FluidParam::HelmholtzMass)
     }
 
-    /// Ideal gas molar specific heat at constant pressure **\[J/mol/K\]**.
+    /// Ideal gas molar specific heat at constant pressure
+    /// **\[J/mol/K\]**.
     ///
     /// # Errors
     ///
@@ -251,7 +257,8 @@ impl Fluid {
         self.positive_output(FluidParam::Cp0Molar)
     }
 
-    /// Ideal gas mass specific heat at constant pressure **\[J/kg/K\]**.
+    /// Ideal gas mass specific heat at constant pressure
+    /// **\[J/kg/K\]**.
     ///
     /// # Errors
     ///
@@ -302,8 +309,8 @@ impl Fluid {
     }
 
     /// Kinematic viscosity =
-    /// [`dynamic_viscosity`](crate::fluid::Fluid::dynamic_viscosity) /
-    /// [`density`](crate::fluid::Fluid::density) **\[m²/s\]**.
+    /// [`dynamic_viscosity`](crate::fluid::Fluid::dynamic_viscosity)
+    /// / [`density`](crate::fluid::Fluid::density) **\[m²/s\]**.
     ///
     /// # Errors
     ///
@@ -527,7 +534,8 @@ impl Fluid {
 
     /// Reciprocal reduced temperature =
     /// [`critical_temperature`](crate::fluid::Fluid::critical_temperature) /
-    /// [`temperature`](crate::fluid::Fluid::temperature) **\[dimensionless\]**.
+    /// [`temperature`](crate::fluid::Fluid::temperature)
+    /// **\[dimensionless\]**.
     ///
     /// # Errors
     ///

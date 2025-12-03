@@ -14,11 +14,13 @@ pub enum Error {
     #[error(transparent)]
     CoolProp(#[from] CoolPropError),
 
-    /// Error during creation of [`BinaryMix`](crate::substance::BinaryMix).
+    /// Error during creation of
+    /// [`BinaryMix`](crate::substance::BinaryMix).
     #[error(transparent)]
     BinaryMix(#[from] BinaryMixError),
 
-    /// Error during creation of [`CustomMix`](crate::substance::CustomMix).
+    /// Error during creation of
+    /// [`CustomMix`](crate::substance::CustomMix).
     #[error(transparent)]
     CustomMix(#[from] CustomMixError),
 
@@ -41,13 +43,15 @@ pub enum Error {
     #[error(transparent)]
     Altitude(#[from] AltitudeError),
 
-    /// Error during [`HumidAir::update`](crate::humid_air::HumidAir::update)
+    /// Error during
+    /// [`HumidAir::update`](crate::humid_air::HumidAir::update)
     /// or [`HumidAir::in_state`](crate::humid_air::HumidAir::in_state).
     #[error(transparent)]
     HumidAirState(#[from] HumidAirStateError),
 
     /// Error during calculation of the
-    /// [`HumidAir`](crate::humid_air::HumidAir) output parameter value.
+    /// [`HumidAir`](crate::humid_air::HumidAir)
+    /// output parameter value.
     #[error(transparent)]
     HumidAirOutput(#[from] HumidAirOutputError),
 }

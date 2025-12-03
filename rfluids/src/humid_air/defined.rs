@@ -83,7 +83,8 @@ impl HumidAir {
         self.positive_output(HumidAirParam::DynamicViscosity)
     }
 
-    /// Specific enthalpy per unit of humid air **\[J/kg humid air\]**.
+    /// Specific enthalpy per unit of humid air
+    /// **\[J/kg humid air\]**.
     ///
     /// # Errors
     ///
@@ -103,7 +104,8 @@ impl HumidAir {
         self.output(HumidAirParam::Hda)
     }
 
-    /// Specific entropy per unit of humid air **\[J/kg humid air/K\]**.
+    /// Specific entropy per unit of humid air
+    /// **\[J/kg humid air/K\]**.
     ///
     /// # Errors
     ///

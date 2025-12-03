@@ -12,18 +12,21 @@ use super::{
 pub struct CoolProp;
 
 impl CoolProp {
-    /// Returns a value that depends on the thermodynamic state of the fluid.
+    /// Returns a value that depends
+    /// on the thermodynamic state of the fluid.
     ///
     /// # Arguments
     ///
     /// - `output_key` -- key of the output _(raw [`&str`](str) or
     ///   [`FluidParam`](crate::io::FluidParam))_
-    /// - `input1_key` -- key of the first input property _(raw [`&str`](str) or
-    ///   [`FluidParam`](crate::io::FluidParam))_
-    /// - `input1_value` -- value of the first input property **\[SI units\]**
-    /// - `input2_key` -- key of the second input property _(raw [`&str`](str)
-    ///   or [`FluidParam`](crate::io::FluidParam))_
-    /// - `input2_value` -- value of the second input property **\[SI units\]**
+    /// - `input1_key` -- key of the first input property _(raw
+    ///   [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_
+    /// - `input1_value` -- value of the first input property **\[SI
+    ///   units\]**
+    /// - `input2_key` -- key of the second input property _(raw
+    ///   [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_
+    /// - `input2_value` -- value of the second input property **\[SI
+    ///   units\]**
     /// - `fluid_name` -- name of the fluid _(raw [`&str`](str) or
     ///   [`Substance`](crate::substance::Substance) subset)_
     ///
@@ -42,8 +45,13 @@ impl CoolProp {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::*;
     ///
-    /// let result = CoolProp::props_si("C", "P", 101_325.0, "Q", 1.0, "Water")?;
-    /// assert_relative_eq!(result, 2_079.937_085_633_241, max_relative = 1e-6);
+    /// let result =
+    ///     CoolProp::props_si("C", "P", 101_325.0, "Q", 1.0, "Water")?;
+    /// assert_relative_eq!(
+    ///     result,
+    ///     2_079.937_085_633_241,
+    ///     max_relative = 1e-6
+    /// );
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -57,16 +65,27 @@ impl CoolProp {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::*;
     ///
-    /// let result =
-    ///     CoolProp::props_si("V", "P", 100e3, "T", 253.15, "INCOMP::MPG-60%")?;
-    /// assert_relative_eq!(result, 0.139_073_910_539_388_47, max_relative = 1e-6);
+    /// let result = CoolProp::props_si(
+    ///     "V",
+    ///     "P",
+    ///     100e3,
+    ///     "T",
+    ///     253.15,
+    ///     "INCOMP::MPG-60%",
+    /// )?;
+    /// assert_relative_eq!(
+    ///     result,
+    ///     0.139_073_910_539_388_47,
+    ///     max_relative = 1e-6
+    /// );
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// ## Custom mixtures
     ///
-    /// To calculate the density **\[kg/m³\]** of ethanol aqueous solution
-    /// (with ethanol _40 %_ mass fraction) at _200 kPa_ and _4 °C_:
+    /// To calculate the density **\[kg/m³\]** of ethanol aqueous
+    /// solution (with ethanol _40 %_ mass fraction)
+    /// at _200 kPa_ and _4 °C_:
     ///
     /// ```
     /// use approx::assert_relative_eq;
@@ -80,7 +99,11 @@ impl CoolProp {
     ///     277.15,
     ///     "HEOS::Water[0.6]&Ethanol[0.4]",
     /// )?;
-    /// assert_relative_eq!(result, 859.529_660_279_914_7, max_relative = 1e-6);
+    /// assert_relative_eq!(
+    ///     result,
+    ///     859.529_660_279_914_7,
+    ///     max_relative = 1e-6
+    /// );
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -115,21 +138,28 @@ impl CoolProp {
         Self::result(value, &lock)
     }
 
-    /// Returns a value that depends on the thermodynamic state of humid air.
+    /// Returns a value that depends
+    /// on the thermodynamic state of humid air.
     ///
     /// # Arguments
     ///
     /// - `output_key` -- key of the output _(raw [`&str`](str) or
     ///   [`HumidAirParam`](crate::io::HumidAirParam))_
-    /// - `input1_key` -- key of the first input property _(raw [`&str`](str) or
+    /// - `input1_key` -- key of the first input property _(raw
+    ///   [`&str`](str) or
     ///   [`HumidAirParam`](crate::io::HumidAirParam))_
-    /// - `input1_value` -- value of the first input property **\[SI units\]**
-    /// - `input2_key` -- key of the second input property _(raw [`&str`](str)
-    ///   or [`HumidAirParam`](crate::io::HumidAirParam))_
-    /// - `input2_value` -- value of the second input property **\[SI units\]**
-    /// - `input3_key` -- key of the third input property _(raw [`&str`](str) or
+    /// - `input1_value` -- value of the first input property **\[SI
+    ///   units\]**
+    /// - `input2_key` -- key of the second input property _(raw
+    ///   [`&str`](str) or
     ///   [`HumidAirParam`](crate::io::HumidAirParam))_
-    /// - `input3_value` -- value of the third input property **\[SI units\]**
+    /// - `input2_value` -- value of the second input property **\[SI
+    ///   units\]**
+    /// - `input3_key` -- key of the third input property _(raw
+    ///   [`&str`](str) or
+    ///   [`HumidAirParam`](crate::io::HumidAirParam))_
+    /// - `input3_value` -- value of the third input property **\[SI
+    ///   units\]**
     ///
     /// # Errors
     ///
@@ -144,8 +174,14 @@ impl CoolProp {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::*;
     ///
-    /// let result = CoolProp::ha_props_si("B", "P", 100e3, "T", 303.15, "R", 0.5)?;
-    /// assert_relative_eq!(result, 295.120_036_536_265_6, max_relative = 1e-6);
+    /// let result = CoolProp::ha_props_si(
+    ///     "B", "P", 100e3, "T", 303.15, "R", 0.5,
+    /// )?;
+    /// assert_relative_eq!(
+    ///     result,
+    ///     295.120_036_536_265_6,
+    ///     max_relative = 1e-6
+    /// );
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -178,12 +214,13 @@ impl CoolProp {
         Self::result(value, &lock)
     }
 
-    /// Returns a value that doesn't depend on the thermodynamic state
-    /// of the fluid _(trivial output)_.
+    /// Returns a value that doesn't depend
+    /// on the thermodynamic state of the fluid _(trivial output)_.
     ///
     /// # Arguments
     ///
-    /// - `output_key` -- key of the _trivial_ output _(raw [`&str`](str) or
+    /// - `output_key` -- key of the _trivial_ output _(raw
+    ///   [`&str`](str) or
     ///   [`FluidTrivialParam`](crate::io::FluidTrivialParam))_
     /// - `fluid_name` -- name of the fluid _(raw [`&str`](str) or
     ///   [`Substance`](crate::substance::Substance) subset)_

@@ -24,8 +24,9 @@ impl CustomMix {
     ///
     /// # Arguments
     ///
-    /// - `components` -- any type convertible into a hash map of components and
-    ///   their _mole_ fractions **\[dimensionless, from 0 to 1\]**
+    /// - `components` -- any type convertible into a hash map of
+    ///   components and their _mole_ fractions **\[dimensionless,
+    ///   from 0 to 1\]**
     ///
     /// # Errors
     ///
@@ -39,12 +40,16 @@ impl CustomMix {
     /// use rfluids::prelude::*;
     ///
     /// assert!(
-    ///     CustomMix::mole_based([(Pure::Water, 0.8), (Pure::Ethanol, 0.2),])
-    ///         .is_ok()
+    ///     CustomMix::mole_based([
+    ///         (Pure::Water, 0.8),
+    ///         (Pure::Ethanol, 0.2),
+    ///     ])
+    ///     .is_ok()
     /// );
     ///
     /// assert!(
-    ///     CustomMix::mole_based([(Pure::R32, 0.7), (Pure::R125, 0.3),]).is_ok()
+    ///     CustomMix::mole_based([(Pure::R32, 0.7), (Pure::R125, 0.3),])
+    ///         .is_ok()
     /// );
     /// ```
     pub fn mole_based(components: impl Into<HashMap<Pure, f64>>) -> Result<Self, CustomMixError> {
@@ -57,8 +62,9 @@ impl CustomMix {
     ///
     /// # Arguments
     ///
-    /// - `components` -- any type convertible into a hash map of components and
-    ///   their _mass_ fractions **\[dimensionless, from 0 to 1\]**
+    /// - `components` -- any type convertible into a hash map of
+    ///   components and their _mass_ fractions **\[dimensionless,
+    ///   from 0 to 1\]**
     ///
     /// # Errors
     ///
@@ -72,12 +78,16 @@ impl CustomMix {
     /// use rfluids::prelude::*;
     ///
     /// assert!(
-    ///     CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4),])
-    ///         .is_ok()
+    ///     CustomMix::mass_based([
+    ///         (Pure::Water, 0.6),
+    ///         (Pure::Ethanol, 0.4),
+    ///     ])
+    ///     .is_ok()
     /// );
     ///
     /// assert!(
-    ///     CustomMix::mass_based([(Pure::R32, 0.5), (Pure::R125, 0.5),]).is_ok()
+    ///     CustomMix::mass_based([(Pure::R32, 0.5), (Pure::R125, 0.5),])
+    ///         .is_ok()
     /// );
     /// ```
     pub fn mass_based(components: impl Into<HashMap<Pure, f64>>) -> Result<Self, CustomMixError> {
@@ -96,13 +106,21 @@ impl CustomMix {
     ///
     /// use rfluids::prelude::*;
     ///
-    /// let mole_based_mix =
-    ///     CustomMix::mole_based([(Pure::Water, 0.8), (Pure::Ethanol, 0.2)])?;
-    /// assert_eq!(mole_based_mix.clone().into_mole_based(), mole_based_mix);
+    /// let mole_based_mix = CustomMix::mole_based([
+    ///     (Pure::Water, 0.8),
+    ///     (Pure::Ethanol, 0.2),
+    /// ])?;
+    /// assert_eq!(
+    ///     mole_based_mix.clone().into_mole_based(),
+    ///     mole_based_mix
+    /// );
     ///
     /// let mass_based_mix =
     ///     CustomMix::mass_based([(Pure::R32, 0.5), (Pure::R125, 0.5)])?;
-    /// assert_ne!(mass_based_mix.clone().into_mole_based(), mass_based_mix);
+    /// assert_ne!(
+    ///     mass_based_mix.clone().into_mole_based(),
+    ///     mass_based_mix
+    /// );
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     #[must_use]
