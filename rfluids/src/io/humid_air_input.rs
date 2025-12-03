@@ -24,7 +24,8 @@ impl HumidAirInput {
 
     /// Altitude above sea level **\[m\]**.
     ///
-    /// **NB.** It will be converted to the [`pressure`](Self::pressure)
+    /// **NB.** It will be converted to the
+    /// [`pressure`](Self::pressure)
     /// _(according to ASHRAE Fundamentals Handbook)_,
     /// since there is no specific [`HumidAirParam`] for this.
     ///
@@ -70,7 +71,8 @@ impl HumidAirInput {
         }
     }
 
-    /// Specific enthalpy per unit of humid air **\[J/kg humid air\]**.
+    /// Specific enthalpy per unit of humid air
+    /// **\[J/kg humid air\]**.
     #[must_use]
     pub fn enthalpy(value: f64) -> Self {
         Self {
@@ -88,7 +90,8 @@ impl HumidAirInput {
         }
     }
 
-    /// Specific entropy per unit of humid air **\[J/kg humid air/K\]**.
+    /// Specific entropy per unit of humid air
+    /// **\[J/kg humid air/K\]**.
     #[must_use]
     pub fn entropy(value: f64) -> Self {
         Self {

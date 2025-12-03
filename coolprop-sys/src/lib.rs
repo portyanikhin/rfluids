@@ -26,8 +26,8 @@
 //! ```
 //!
 //! 🎁 It comes with native `CoolProp` dynamic libraries for supported
-//! platforms. The library required for your platform will be automatically
-//! copied to the target directory during build.
+//! platforms. The library required for your platform will be
+//! automatically copied to the target directory during build.
 //!
 //! #### License
 //!

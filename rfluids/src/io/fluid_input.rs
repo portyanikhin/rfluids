@@ -1,6 +1,7 @@
 use super::{FluidParam, Input};
 
-/// [`Fluid`](crate::fluid::Fluid) input parameter with specified value.
+/// [`Fluid`](crate::fluid::Fluid) input parameter
+/// with specified value.
 ///
 /// # Examples
 ///
@@ -104,7 +105,8 @@ impl FluidInput {
 
     /// Specific volume **\[m³/kg\]**.
     ///
-    /// **NB.** It will be converted to the [`density`](Self::density),
+    /// **NB.** It will be converted to the
+    /// [`density`](Self::density),
     /// since there is no specific [`FluidParam`] for this.
     #[must_use]
     pub fn specific_volume(value: f64) -> Self {

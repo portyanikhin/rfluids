@@ -18,7 +18,10 @@ use super::try_from;
 ///     FluidParam::from_str("conductivity"),
 ///     Ok(FluidParam::Conductivity)
 /// );
-/// assert_eq!(FluidParam::try_from("L"), Ok(FluidParam::Conductivity));
+/// assert_eq!(
+///     FluidParam::try_from("L"),
+///     Ok(FluidParam::Conductivity)
+/// );
 /// ```
 ///
 /// Conversion between [`u8`]:
@@ -27,7 +30,10 @@ use super::try_from;
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(u8::from(FluidParam::Conductivity), 52);
-/// assert_eq!(FluidParam::try_from(52), Ok(FluidParam::Conductivity));
+/// assert_eq!(
+///     FluidParam::try_from(52),
+///     Ok(FluidParam::Conductivity)
+/// );
 /// ```
 ///
 /// Conversion between [`f64`]:
@@ -35,7 +41,10 @@ use super::try_from;
 /// ```
 /// use rfluids::prelude::*;
 ///
-/// assert_eq!(FluidParam::try_from(52.0), Ok(FluidParam::Conductivity));
+/// assert_eq!(
+///     FluidParam::try_from(52.0),
+///     Ok(FluidParam::Conductivity)
+/// );
 /// ```
 ///
 /// Conversion between [`FluidInputPair`](crate::io::FluidInputPair):
@@ -113,7 +122,8 @@ pub enum FluidParam {
     #[strum(to_string = "Cpmolar")]
     CpMolar = 27,
 
-    /// Ideal gas molar specific heat at constant pressure **\[J/mol/K\]**.
+    /// Ideal gas molar specific heat at constant pressure
+    /// **\[J/mol/K\]**.
     #[strum(to_string = "Cp0molar")]
     Cp0Molar = 28,
 
@@ -173,7 +183,8 @@ pub enum FluidParam {
     #[strum(to_string = "Cpmass", serialize = "C")]
     CpMass = 42,
 
-    /// Ideal gas mass specific heat at constant pressure **\[J/kg/K\]**.
+    /// Ideal gas mass specific heat at constant pressure
+    /// **\[J/kg/K\]**.
     #[strum(to_string = "Cp0mass")]
     Cp0Mass = 43,
 
@@ -364,7 +375,10 @@ impl TryFrom<f64> for FluidParam {
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(u8::from(FluidTrivialParam::TMax), 15);
-/// assert_eq!(FluidTrivialParam::try_from(15), Ok(FluidTrivialParam::TMax));
+/// assert_eq!(
+///     FluidTrivialParam::try_from(15),
+///     Ok(FluidTrivialParam::TMax)
+/// );
 /// ```
 ///
 /// Conversion between [`f64`]:
@@ -474,12 +488,14 @@ pub enum FluidTrivialParam {
     DipoleMoment = 18,
 
     /// Minimum fraction _(mole, mass or volume)_ value
-    /// for incompressible mixtures **\[dimensionless, from 0 to 1\]**.
+    /// for incompressible mixtures **\[dimensionless, from 0 to
+    /// 1\]**.
     #[strum(to_string = "fraction_min")]
     MinFraction = 74,
 
     /// Maximum fraction _(mole, mass or volume)_ value
-    /// for incompressible mixtures **\[dimensionless, from 0 to 1\]**.
+    /// for incompressible mixtures
+    /// **\[dimensionless, from 0 to 1\]**.
     #[strum(to_string = "fraction_max")]
     MaxFraction = 75,
 

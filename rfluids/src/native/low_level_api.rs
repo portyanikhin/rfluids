@@ -19,8 +19,8 @@ impl AbstractState {
     ///
     /// - `backend_name` -- name of the backend _(raw [`&str`](str) or
     ///   [`BackendName::backend_name`](crate::substance::BackendName::backend_name))_
-    /// - `fluid_names` -- names of the fluids separated by the `&` symbol or
-    ///   just a single fluid name _(raw [`&str`](str) or
+    /// - `fluid_names` -- names of the fluids separated by the `&`
+    ///   symbol or just a single fluid name _(raw [`&str`](str) or
     ///   [`Substance`](crate::substance::Substance) subset)_
     ///
     /// # Errors
@@ -82,15 +82,16 @@ impl AbstractState {
 
     /// Set the fractions _(mole, mass or volume)_[^note].
     ///
-    /// [^note]:  It will be defined automatically, depending on the specified backend.
+    /// [^note]:  It will be defined automatically,
+    /// depending on the specified backend.
     /// For example, the `"HEOS"` backend uses mole fractions,
     /// while the `"INCOMP"` backend uses mass or volume fractions,
     /// depending on which substance is specified.
     ///
     /// # Arguments
     ///
-    /// - `fractions` -- fractions of the specified fluid **\[dimensionless,
-    ///   from 0 to 1 each\]**
+    /// - `fractions` -- fractions of the specified fluid
+    ///   **\[dimensionless, from 0 to 1 each\]**
     ///
     /// # Errors
     ///
@@ -140,8 +141,10 @@ impl AbstractState {
     ///
     /// - `input_pair_key` -- input pair key _(raw [`u8`] or
     ///   [`FluidInputPair`](crate::io::FluidInputPair))_
-    /// - `input1` -- value of the first input property **\[SI units\]**
-    /// - `input2` -- value of the second input property **\[SI units\]**
+    /// - `input1` -- value of the first input property **\[SI
+    ///   units\]**
+    /// - `input2` -- value of the second input property **\[SI
+    ///   units\]**
     ///
     /// # Errors
     ///
@@ -209,7 +212,11 @@ impl AbstractState {
     /// let mut water = AbstractState::new("HEOS", "Water")?;
     /// water.update(FluidInputPair::PQ, 101_325.0, 1.0)?;
     /// let result = water.keyed_output(FluidParam::CpMass)?;
-    /// assert_relative_eq!(result, 2_079.937_085_633_241, max_relative = 1e-6);
+    /// assert_relative_eq!(
+    ///     result,
+    ///     2_079.937_085_633_241,
+    ///     max_relative = 1e-6
+    /// );
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -226,15 +233,21 @@ impl AbstractState {
     /// let mut propylene_glycol = AbstractState::new("INCOMP", "MPG")?;
     /// propylene_glycol.set_fractions(&[0.6])?;
     /// propylene_glycol.update(FluidInputPair::PT, 100e3, 253.15)?;
-    /// let result = propylene_glycol.keyed_output(FluidParam::DynamicViscosity)?;
-    /// assert_relative_eq!(result, 0.139_073_910_539_388_47, max_relative = 1e-6);
+    /// let result = propylene_glycol
+    ///     .keyed_output(FluidParam::DynamicViscosity)?;
+    /// assert_relative_eq!(
+    ///     result,
+    ///     0.139_073_910_539_388_47,
+    ///     max_relative = 1e-6
+    /// );
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
     /// ## Custom mixtures
     ///
-    /// To calculate the density **\[kg/m³\]** of ethanol aqueous solution
-    /// (with ethanol _20 %_ mole fraction) at _200 kPa_ and _4 °C_:
+    /// To calculate the density **\[kg/m³\]** of ethanol aqueous
+    /// solution (with ethanol _20 %_ mole fraction) at _200 kPa_
+    /// and _4 °C_:
     ///
     /// ```
     /// use approx::assert_relative_eq;
@@ -244,7 +257,11 @@ impl AbstractState {
     /// mixture.set_fractions(&[0.8, 0.2])?;
     /// mixture.update(FluidInputPair::PT, 200e3, 277.15)?;
     /// let result = mixture.keyed_output(FluidParam::DMass)?;
-    /// assert_relative_eq!(result, 883.882_635_377_379_6, max_relative = 1e-6);
+    /// assert_relative_eq!(
+    ///     result,
+    ///     883.882_635_377_379_6,
+    ///     max_relative = 1e-6
+    /// );
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -285,7 +302,8 @@ impl AbstractState {
     ///
     /// let mut water = AbstractState::new("HEOS", "Water")?;
     /// water.specify_phase(Phase::Liquid)?;
-    /// let mut result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
+    /// let mut result =
+    ///     water.update(FluidInputPair::PT, 101_325.0, 293.15);
     /// assert!(result.is_ok());
     /// water.specify_phase(Phase::Gas)?;
     /// result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
@@ -321,7 +339,8 @@ impl AbstractState {
     ///
     /// let mut water = AbstractState::new("HEOS", "Water")?;
     /// water.specify_phase(Phase::Gas)?;
-    /// let mut result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
+    /// let mut result =
+    ///     water.update(FluidInputPair::PT, 101_325.0, 293.15);
     /// assert!(result.is_err());
     /// water.unspecify_phase();
     /// result = water.update(FluidInputPair::PT, 101_325.0, 293.15);

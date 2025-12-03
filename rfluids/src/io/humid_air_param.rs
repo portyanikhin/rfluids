@@ -13,7 +13,10 @@
 ///
 /// assert_eq!(HumidAirParam::TDew.as_ref(), "D");
 /// assert_eq!(HumidAirParam::from_str("D"), Ok(HumidAirParam::TDew));
-/// assert_eq!(HumidAirParam::try_from("Tdp"), Ok(HumidAirParam::TDew));
+/// assert_eq!(
+///     HumidAirParam::try_from("Tdp"),
+///     Ok(HumidAirParam::TDew)
+/// );
 /// ```
 ///
 /// # See Also
@@ -86,7 +89,8 @@ pub enum HumidAirParam {
     )]
     Hda,
 
-    /// Specific enthalpy per unit of humid air **\[J/kg humid air\]**.
+    /// Specific enthalpy per unit of humid air
+    /// **\[J/kg humid air\]**.
     #[strum(to_string = "Hha", serialize = "H_ha")]
     Hha,
 
@@ -129,7 +133,8 @@ pub enum HumidAirParam {
     )]
     Sda,
 
-    /// Specific entropy per unit of humid air **\[J/kg humid air/K\]**.
+    /// Specific entropy per unit of humid air
+    /// **\[J/kg humid air/K\]**.
     #[strum(to_string = "Sha", serialize = "S_ha")]
     Sha,
 

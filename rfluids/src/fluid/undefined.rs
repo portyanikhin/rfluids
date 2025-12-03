@@ -17,9 +17,10 @@ impl Fluid<Undefined> {
     /// # Arguments
     ///
     /// - `substance` -- substance for which to calculate properties
-    /// - `with_backend` -- `CoolProp` backend to be used (e.g., `"HEOS"`,
-    ///   `"INCOMP"`, `"REFPROP"`, `"IF97"`, etc.). If provided, overrides the
-    ///   default one defined for the substance
+    /// - `with_backend` -- `CoolProp` backend to be used (e.g.,
+    ///   `"HEOS"`, `"INCOMP"`, `"REFPROP"`, `"IF97"`, etc.). If
+    ///   provided, overrides the default one defined for the
+    ///   substance
     ///
     /// # Errors
     ///
@@ -49,14 +50,16 @@ impl Fluid<Undefined> {
     ///
     /// # See Also
     ///
-    /// If you don't need to override the backend name, consider using:
+    /// If you don't need to override the backend name, consider
+    /// using:
     /// - [`Fluid::from`] -- simpler way to create [`Fluid`] from
     ///   [`Pure`](crate::substance::Pure),
     ///   [`IncompPure`](crate::substance::IncompPure),
     ///   [`PredefinedMix`](crate::substance::PredefinedMix), or
     ///   [`BinaryMix`](crate::substance::BinaryMix)
-    /// - [`Fluid::try_from`] -- for creating [`Fluid`] from any [`Substance`]
-    ///   (including [`CustomMix`](crate::substance::CustomMix))
+    /// - [`Fluid::try_from`] -- for creating [`Fluid`] from any
+    ///   [`Substance`] (including
+    ///   [`CustomMix`](crate::substance::CustomMix))
     #[builder]
     pub fn new(
         /// Substance for which to calculate properties.
@@ -64,7 +67,8 @@ impl Fluid<Undefined> {
         substance: Substance,
         /// `CoolProp` backend to be used
         /// (e.g., `"HEOS"`, `"INCOMP"`, `"REFPROP"`, `"IF97"`, etc.).
-        /// If provided, overrides the default one defined for the substance.
+        /// If provided, overrides the default one defined for the
+        /// substance.
         #[builder(with = |backend_name: impl AsRef<str>| backend_name.as_ref().trim().to_string())]
         with_backend: Option<String>,
     ) -> Result<Self, FluidBuildError> {

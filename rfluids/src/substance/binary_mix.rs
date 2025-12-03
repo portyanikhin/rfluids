@@ -4,7 +4,8 @@ use std::str::FromStr;
 
 use strum::EnumProperty;
 
-/// `CoolProp` incompressible binary mixtures _(mass-based or volume-based)_.
+/// `CoolProp` incompressible binary mixtures
+/// _(mass-based or volume-based)_.
 ///
 /// # Examples
 ///
@@ -16,8 +17,14 @@ use strum::EnumProperty;
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(BinaryMixKind::MPG.as_ref(), "MPG");
-/// assert_eq!(BinaryMixKind::from_str("MPG"), Ok(BinaryMixKind::MPG));
-/// assert_eq!(BinaryMixKind::try_from("MPG"), Ok(BinaryMixKind::MPG));
+/// assert_eq!(
+///     BinaryMixKind::from_str("MPG"),
+///     Ok(BinaryMixKind::MPG)
+/// );
+/// assert_eq!(
+///     BinaryMixKind::try_from("MPG"),
+///     Ok(BinaryMixKind::MPG)
+/// );
 /// ```
 ///
 /// # See Also
@@ -260,11 +267,13 @@ impl BinaryMixKind {
     ///
     /// # Arguments
     ///
-    /// - `fraction` -- specified fraction **\[dimensionless, from 0 to 1\]**
+    /// - `fraction` -- specified fraction **\[dimensionless, from 0
+    ///   to 1\]**
     ///
     /// # Errors
     ///
-    /// Returns a [`BinaryMixError`] if the fraction is out of the valid range
+    /// Returns a [`BinaryMixError`] if the fraction
+    /// is out of the valid range
     /// [[`min_fraction`](BinaryMixKind::min_fraction);
     /// [`max_fraction`](BinaryMixKind::max_fraction)].
     ///
@@ -291,7 +300,8 @@ impl BinaryMixKind {
     }
 }
 
-/// [`BinaryMixKind`] with specified fraction _(mass-based or volume-based)_.
+/// [`BinaryMixKind`] with specified fraction
+/// _(mass-based or volume-based)_.
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct BinaryMix {
