@@ -269,6 +269,7 @@ pub enum FluidOutputError {
 mod tests {
     use super::*;
     use crate::substance::*;
+    use rstest::*;
     use strum::IntoEnumIterator;
 
     #[test]
@@ -343,7 +344,7 @@ mod tests {
         assert!(res.is_ok());
     }
 
-    #[test]
+    #[rstest]
     fn try_from_unsupported_custom_mix() {
         // Given
         let unsupported_mix =
@@ -353,6 +354,6 @@ mod tests {
         let res = Fluid::try_from(unsupported_mix);
 
         // Then
-        assert!(res.is_err());
+        assert!(matches!(res, Err(FluidBuildError::UnsupportedCustomMix(_))));
     }
 }
