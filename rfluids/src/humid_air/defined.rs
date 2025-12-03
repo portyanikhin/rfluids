@@ -249,7 +249,7 @@ impl HumidAir {
         self.positive_output(HumidAirParam::TWetBulb)
     }
 
-    /// Updates the thermodynamic state
+    /// Updates the thermodynamic state in place
     /// and returns a mutable reference to itself.
     ///
     /// # Arguments

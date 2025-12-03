@@ -548,7 +548,7 @@ impl Fluid {
         self.positive_output(FluidParam::T)
     }
 
-    /// Updates the thermodynamic state
+    /// Updates the thermodynamic state in place
     /// and returns a mutable reference to itself.
     ///
     /// # Arguments

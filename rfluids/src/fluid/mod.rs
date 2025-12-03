@@ -18,7 +18,8 @@
 //! [`PredefinedMix`] or [`BinaryMix`] using the [`From`]/[`Into`] traits; and
 //! from any [`Substance`] or [`CustomMix`] using the [`TryFrom`]/[`TryInto`]
 //! traits. This is due to the fact that [`CustomMix`] can potentially be
-//! unsupported by `CoolProp`.
+//! unsupported by `CoolProp`. For advanced control over backend selection,
+//! use [`Fluid::builder`].
 
 mod common;
 mod defined;
