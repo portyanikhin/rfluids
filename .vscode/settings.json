@@ -1,0 +1,31 @@
+{
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer"
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  "rust-analyzer.check.command": "clippy",
+  "rust-analyzer.diagnostics.styleLints.enable": true,
+  "rust-analyzer.rustfmt.extraArgs": ["+nightly"],
+  "cSpell.words": [
+    "clippy",
+    "DCMAKE",
+    "DCOOLPROP",
+    "dtolnay",
+    "Dwarnings",
+    "dylib",
+    "INCOMP",
+    "msrv",
+    "Portyanikhin",
+    "repr",
+    "rfluids",
+    "rstest",
+    "rustc",
+    "taiki",
+    "trunc",
+    "unspecify"
+  ]
+}
