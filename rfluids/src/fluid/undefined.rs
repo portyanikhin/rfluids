@@ -297,11 +297,8 @@ mod tests {
     #[rstest]
     fn builder_unsupported_custom_mix() {
         // Given
-        let unsupported_mix = CustomMix::mass_based(HashMap::from([
-            (Pure::Orthohydrogen, 0.6),
-            (Pure::R32, 0.4),
-        ]))
-        .unwrap();
+        let unsupported_mix =
+            CustomMix::mass_based([(Pure::Orthohydrogen, 0.6), (Pure::R32, 0.4)]).unwrap();
 
         // When
         let res = Fluid::builder()

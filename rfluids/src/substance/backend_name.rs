@@ -10,8 +10,6 @@ pub trait BackendName {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
-    ///
     /// use rfluids::prelude::*;
     ///
     /// assert_eq!(Pure::Water.backend_name(), "HEOS");
@@ -19,11 +17,8 @@ pub trait BackendName {
     /// assert_eq!(PredefinedMix::R444A.backend_name(), "HEOS");
     /// assert_eq!(BinaryMixKind::MPG.backend_name(), "INCOMP");
     /// assert_eq!(
-    ///     CustomMix::mass_based(HashMap::from([
-    ///         (Pure::Water, 0.6),
-    ///         (Pure::Ethanol, 0.4),
-    ///     ]))?
-    ///     .backend_name(),
+    ///     CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4),])?
+    ///         .backend_name(),
     ///     "HEOS"
     /// );
     /// # Ok::<(), rfluids::Error>(())
@@ -75,8 +70,6 @@ impl BackendName for CustomMix {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
-
     use rstest::*;
     use strum::IntoEnumIterator;
 
@@ -88,7 +81,7 @@ mod tests {
     #[case(PredefinedMix::R444A, HELMHOLTZ_EOS_BACKEND_NAME)]
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), INCOMP_BACKEND_NAME)]
     #[case(
-        CustomMix::mass_based(HashMap::from([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]))
+        CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)])
             .unwrap(),
         HELMHOLTZ_EOS_BACKEND_NAME
     )]
@@ -150,8 +143,7 @@ mod tests {
     #[test]
     fn custom_mix() {
         // Given
-        let mix = CustomMix::mass_based(HashMap::from([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]))
-            .unwrap();
+        let mix = CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]).unwrap();
 
         // When
         let res = mix.backend_name();

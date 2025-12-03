@@ -79,25 +79,21 @@ impl TryFrom<Substance> for Fluid<Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
-    ///
     /// use rfluids::prelude::*;
     ///
     /// let water = Substance::from(Pure::Water);
     /// assert!(Fluid::try_from(water).is_ok());
     ///
-    /// let supported_mix =
-    ///     Substance::from(CustomMix::mass_based(HashMap::from([
-    ///         (Pure::Water, 0.6),
-    ///         (Pure::Ethanol, 0.4),
-    ///     ]))?);
+    /// let supported_mix = Substance::from(CustomMix::mass_based([
+    ///     (Pure::Water, 0.6),
+    ///     (Pure::Ethanol, 0.4),
+    /// ])?);
     /// assert!(Fluid::try_from(supported_mix).is_ok());
     ///
-    /// let unsupported_mix =
-    ///     Substance::from(CustomMix::mass_based(HashMap::from([
-    ///         (Pure::Orthohydrogen, 0.6),
-    ///         (Pure::R32, 0.4),
-    ///     ]))?);
+    /// let unsupported_mix = Substance::from(CustomMix::mass_based([
+    ///     (Pure::Orthohydrogen, 0.6),
+    ///     (Pure::R32, 0.4),
+    /// ])?);
     /// assert!(Fluid::try_from(unsupported_mix).is_err());
     /// # Ok::<(), rfluids::Error>(())
     /// ```
@@ -204,20 +200,14 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
-    ///
     /// use rfluids::prelude::*;
     ///
-    /// let supported_mix = CustomMix::mass_based(HashMap::from([
-    ///     (Pure::Water, 0.6),
-    ///     (Pure::Ethanol, 0.4),
-    /// ]))?;
+    /// let supported_mix =
+    ///     CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)])?;
     /// assert!(Fluid::try_from(supported_mix).is_ok());
     ///
-    /// let unsupported_mix = CustomMix::mass_based(HashMap::from([
-    ///     (Pure::Orthohydrogen, 0.6),
-    ///     (Pure::R32, 0.4),
-    /// ]))?;
+    /// let unsupported_mix =
+    ///     CustomMix::mass_based([(Pure::Orthohydrogen, 0.6), (Pure::R32, 0.4)])?;
     /// assert!(Fluid::try_from(unsupported_mix).is_err());
     /// # Ok::<(), rfluids::Error>(())
     /// ```
@@ -345,8 +335,7 @@ mod tests {
     #[test]
     fn try_from_supported_custom_mix() {
         // Given
-        let supported_mix =
-            CustomMix::mass_based(HashMap::from([(Pure::R32, 0.7), (Pure::R134a, 0.3)])).unwrap();
+        let supported_mix = CustomMix::mass_based([(Pure::R32, 0.7), (Pure::R134a, 0.3)]).unwrap();
 
         // When
         let res = Fluid::try_from(supported_mix);
@@ -359,7 +348,7 @@ mod tests {
     fn try_from_unsupported_custom_mix() {
         // Given
         let unsupported_mix =
-            CustomMix::mole_based(HashMap::from([(Pure::Xenon, 0.1), (Pure::R22, 0.9)])).unwrap();
+            CustomMix::mole_based([(Pure::Xenon, 0.1), (Pure::R22, 0.9)]).unwrap();
 
         // When
         let res = Fluid::try_from(unsupported_mix);
