@@ -1,6 +1,7 @@
+use std::collections::HashSet;
+
 use super::HumidAirStateError;
 use crate::io::HumidAirInput;
-use std::collections::HashSet;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) struct HumidAirUpdateRequest(
@@ -29,9 +30,10 @@ impl TryFrom<(HumidAirInput, HumidAirInput, HumidAirInput)> for HumidAirUpdateRe
 
 #[cfg(test)]
 mod tests {
+    use rstest::*;
+
     use super::*;
     use crate::io::HumidAirParam;
-    use rstest::*;
 
     #[test]
     fn try_from_valid_inputs() {

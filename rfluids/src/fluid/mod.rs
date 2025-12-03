@@ -2,20 +2,23 @@
 //!
 //! This module provides a comprehensive interface for calculating
 //! thermophysical and transport properties of various substances,
-//! including pure fluids and different mixtures (i.e., [`Substance`] or any of its subsets)
+//! including pure fluids and different mixtures
+//! (i.e., [`Substance`] or any of its subsets).
 //!
 //! # Types
 //!
-//! The core type for managing thermophysical and transport properties of substances is [`Fluid`].
-//! It encompasses various state management features and property calculations.
-//! The [`Fluid`] struct is generic over the state variant ([`Defined`] or [`Undefined`]).
-//! Depending on the state variant, the [`Fluid`] instance has different functionality
-//! (e.g., with [`Undefined`] state variant it has only trivial properties available,
-//! but with [`Defined`] state variant it supports a full set of property calculations).
-//! The [`Fluid`] struct can be created from any [`Pure`], [`IncompPure`], [`PredefinedMix`]
-//! or [`BinaryMix`] using the [`From`]/[`Into`] traits; and from any [`Substance`]
-//! or [`CustomMix`] using the [`TryFrom`]/[`TryInto`] traits. This is due to the fact that
-//! [`CustomMix`] can potentially be unsupported by `CoolProp`.
+//! The core type for managing thermophysical and transport properties of
+//! substances is [`Fluid`]. It encompasses various state management features
+//! and property calculations. The [`Fluid`] struct is generic over the state
+//! variant ([`Defined`] or [`Undefined`]). Depending on the state variant, the
+//! [`Fluid`] instance has different functionality (e.g., with [`Undefined`]
+//! state variant it has only trivial properties available, but with [`Defined`]
+//! state variant it supports a full set of property calculations).
+//! The [`Fluid`] struct can be created from any [`Pure`], [`IncompPure`],
+//! [`PredefinedMix`] or [`BinaryMix`] using the [`From`]/[`Into`] traits; and
+//! from any [`Substance`] or [`CustomMix`] using the [`TryFrom`]/[`TryInto`]
+//! traits. This is due to the fact that [`CustomMix`] can potentially be
+//! unsupported by `CoolProp`.
 
 mod common;
 mod defined;
@@ -23,29 +26,34 @@ mod invariant;
 mod request;
 mod undefined;
 
+use std::{collections::HashMap, fmt::Debug, marker::PhantomData};
+
+use request::FluidUpdateRequest;
+
 use crate::{
     io::{FluidParam, FluidTrivialParam},
     native::{AbstractState, CoolPropError},
     state_variant::{Defined, StateVariant, Undefined},
     substance::{BinaryMix, CustomMix, IncompPure, PredefinedMix, Pure, Substance},
 };
-use request::FluidUpdateRequest;
-use std::{collections::HashMap, fmt::Debug, marker::PhantomData};
 
 /// Result type for operations that could fail while updating fluid state.
 pub type StateResult<T> = Result<T, FluidStateError>;
 
-/// Result type for operations that could fail while retrieving fluid properties.
+/// Result type for operations that could fail while retrieving fluid
+/// properties.
 pub type OutputResult<T> = Result<T, FluidOutputError>;
 
 /// Provider of thermophysical and transport properties of substances.
 ///
 /// It implements the [typestate pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
-/// and has one generic type parameter: `S` -- state variant _([`Defined`] or [`Undefined`])_.
+/// and has one generic type parameter: `S` -- state variant _([`Defined`] or
+/// [`Undefined`])_.
 ///
 /// Depending on `S`, the `Fluid` instance has different functionality
-/// (e.g., with [`Undefined`] state variant it has only trivial properties available,
-/// but with [`Defined`] state variant it supports a full set of property calculations).
+/// (e.g., with [`Undefined`] state variant it has only trivial properties
+/// available, but with [`Defined`] state variant it supports a full set of
+/// property calculations).
 #[derive(Debug)]
 pub struct Fluid<S: StateVariant = Defined> {
     substance: Substance,
@@ -70,26 +78,25 @@ impl TryFrom<Substance> for Fluid<Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::prelude::*;
     /// use std::collections::HashMap;
+    ///
+    /// use rfluids::prelude::*;
     ///
     /// let water = Substance::from(Pure::Water);
     /// assert!(Fluid::try_from(water).is_ok());
     ///
-    /// let supported_mix = Substance::from(
-    ///     CustomMix::mass_based(HashMap::from([
+    /// let supported_mix =
+    ///     Substance::from(CustomMix::mass_based(HashMap::from([
     ///         (Pure::Water, 0.6),
     ///         (Pure::Ethanol, 0.4),
-    ///     ]))?,
-    /// );
+    ///     ]))?);
     /// assert!(Fluid::try_from(supported_mix).is_ok());
     ///
-    /// let unsupported_mix = Substance::from(
-    ///     CustomMix::mass_based(HashMap::from([
+    /// let unsupported_mix =
+    ///     Substance::from(CustomMix::mass_based(HashMap::from([
     ///         (Pure::Orthohydrogen, 0.6),
     ///         (Pure::R32, 0.4),
-    ///     ]))?,
-    /// );
+    ///     ]))?);
     /// assert!(Fluid::try_from(unsupported_mix).is_err());
     /// # Ok::<(), rfluids::Error>(())
     /// ```
@@ -196,8 +203,9 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::prelude::*;
     /// use std::collections::HashMap;
+    ///
+    /// use rfluids::prelude::*;
     ///
     /// let supported_mix = CustomMix::mass_based(HashMap::from([
     ///     (Pure::Water, 0.6),
@@ -244,7 +252,8 @@ pub enum FluidStateError {
     #[error("Input values must be finite!")]
     InvalidInputValue,
 
-    /// Failed to update the fluid state due to unsupported inputs or invalid state.
+    /// Failed to update the fluid state
+    /// due to unsupported inputs or invalid state.
     #[error("Failed to update the fluid state! {0}")]
     UpdateFailed(#[from] CoolPropError),
 }
@@ -267,10 +276,11 @@ pub enum FluidOutputError {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::substance::*;
     use rstest::*;
     use strum::IntoEnumIterator;
+
+    use super::*;
+    use crate::substance::*;
 
     #[test]
     fn from_each_pure() {

@@ -8,6 +8,7 @@
 ///
 /// ```
 /// use std::str::FromStr;
+///
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(IncompPure::Water.as_ref(), "Water");
@@ -214,9 +215,11 @@ pub enum IncompPure {
 
 #[cfg(test)]
 mod tests {
-    use super::{IncompPure::*, *};
-    use rstest::*;
     use std::str::FromStr;
+
+    use rstest::*;
+
+    use super::{IncompPure::*, *};
 
     #[rstest]
     #[case(AS10, "AS10")]

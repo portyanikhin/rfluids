@@ -8,6 +8,7 @@
 ///
 /// ```
 /// use std::str::FromStr;
+///
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(Pure::Water.as_ref(), "Water");
@@ -534,9 +535,11 @@ pub enum Pure {
 
 #[cfg(test)]
 mod tests {
-    use super::{Pure::*, *};
-    use rstest::*;
     use std::str::FromStr;
+
+    use rstest::*;
+
+    use super::{Pure::*, *};
 
     #[rstest]
     #[case(Acetone, "Acetone")]

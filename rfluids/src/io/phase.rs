@@ -8,6 +8,7 @@ use super::try_from;
 ///
 /// ```
 /// use std::str::FromStr;
+///
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(Phase::Liquid.as_ref(), "phase_liquid");
@@ -52,7 +53,8 @@ pub enum Phase {
     /// Liquid _([`P`](crate::io::FluidParam::P) <
     /// [`PCritical`](crate::io::FluidTrivialParam::PCritical) &
     /// [`T`](crate::io::FluidParam::T) <
-    /// [`TCritical`](crate::io::FluidTrivialParam::TCritical); above saturation)_.
+    /// [`TCritical`](crate::io::FluidTrivialParam::TCritical);
+    /// above saturation)_.
     #[strum(to_string = "phase_liquid", serialize = "liquid")]
     Liquid = 0,
 
@@ -99,14 +101,16 @@ pub enum Phase {
     /// Gas _([`P`](crate::io::FluidParam::P) <
     /// [`PCritical`](crate::io::FluidTrivialParam::PCritical) &
     /// [`T`](crate::io::FluidParam::T) <
-    /// [`TCritical`](crate::io::FluidTrivialParam::TCritical); below saturation)_.
+    /// [`TCritical`](crate::io::FluidTrivialParam::TCritical);
+    /// below saturation)_.
     #[strum(to_string = "phase_gas", serialize = "gas")]
     Gas = 5,
 
     /// Two-phase fluid _([`P`](crate::io::FluidParam::P) <
     /// [`PCritical`](crate::io::FluidTrivialParam::PCritical) &
     /// [`T`](crate::io::FluidParam::T) <
-    /// [`TCritical`](crate::io::FluidTrivialParam::TCritical); mixed liquid/gas)_.
+    /// [`TCritical`](crate::io::FluidTrivialParam::TCritical);
+    /// mixed liquid/gas)_.
     #[strum(
         to_string = "phase_twophase",
         serialize = "phase_two_phase",
@@ -152,9 +156,11 @@ impl TryFrom<f64> for Phase {
 
 #[cfg(test)]
 mod tests {
-    use super::{Phase::*, *};
-    use rstest::*;
     use std::str::FromStr;
+
+    use rstest::*;
+
+    use super::{Phase::*, *};
 
     #[rstest]
     #[case(Liquid, "phase_liquid")]

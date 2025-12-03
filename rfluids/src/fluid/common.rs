@@ -1,9 +1,10 @@
+use std::{collections::HashMap, hash::Hash};
+
 use super::{FluidOutputError, OutputResult};
 use crate::{
     io::{FluidParam, FluidTrivialParam},
     native::{AbstractState, CoolPropError},
 };
-use std::{collections::HashMap, hash::Hash};
 
 pub(crate) fn cached_output<K>(
     cache: &mut HashMap<K, OutputResult<f64>>,
@@ -54,8 +55,9 @@ pub(crate) fn guard(key: Param, value: f64, ok: fn(f64) -> bool) -> OutputResult
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use rstest::*;
+
+    use super::*;
 
     #[rstest]
     #[case(

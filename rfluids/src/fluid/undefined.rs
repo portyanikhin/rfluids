@@ -1,8 +1,9 @@
+use std::{collections::HashMap, marker::PhantomData};
+
 use super::{Fluid, FluidBuildError, StateResult, request::FluidCreateRequest};
 use crate::{
     io::FluidInput, native::AbstractState, state_variant::Undefined, substance::Substance,
 };
-use std::{collections::HashMap, marker::PhantomData};
 
 #[bon::bon]
 impl Fluid<Undefined> {
@@ -10,14 +11,15 @@ impl Fluid<Undefined> {
     /// with [`Undefined`] state variant from any [`Substance`].
     ///
     /// This method provides advanced control over backend selection.
-    /// For most use cases, prefer using [`From`]/[`TryFrom`] trait implementations instead.
+    /// For most use cases, prefer using [`From`]/[`TryFrom`] trait
+    /// implementations instead.
     ///
     /// # Arguments
     ///
     /// - `substance` -- substance for which to calculate properties
-    /// - `with_backend` -- `CoolProp` backend to be used
-    ///   (e.g., `"HEOS"`, `"INCOMP"`, `"REFPROP"`, `"IF97"`, etc.).
-    ///   If provided, overrides the default one defined for the substance
+    /// - `with_backend` -- `CoolProp` backend to be used (e.g., `"HEOS"`,
+    ///   `"INCOMP"`, `"REFPROP"`, `"IF97"`, etc.). If provided, overrides the
+    ///   default one defined for the substance
     ///
     /// # Errors
     ///
@@ -30,9 +32,7 @@ impl Fluid<Undefined> {
     /// use rfluids::prelude::*;
     ///
     /// // Using default backend (HEOS for pure fluids)
-    /// let water = Fluid::builder()
-    ///     .substance(Pure::Water)
-    ///     .build()?;
+    /// let water = Fluid::builder().substance(Pure::Water).build()?;
     /// assert_eq!(water.backend_name(), "HEOS");
     ///
     /// // Overriding backend (using IF97 instead of default HEOS)
@@ -51,9 +51,10 @@ impl Fluid<Undefined> {
     ///
     /// If you don't need to override the backend name, consider using:
     /// - [`Fluid::from`] -- simpler way to create [`Fluid`] from
-    ///   [`Pure`](crate::substance::Pure), [`IncompPure`](crate::substance::IncompPure),
-    ///   [`PredefinedMix`](crate::substance::PredefinedMix),
-    ///   or [`BinaryMix`](crate::substance::BinaryMix)
+    ///   [`Pure`](crate::substance::Pure),
+    ///   [`IncompPure`](crate::substance::IncompPure),
+    ///   [`PredefinedMix`](crate::substance::PredefinedMix), or
+    ///   [`BinaryMix`](crate::substance::BinaryMix)
     /// - [`Fluid::try_from`] -- for creating [`Fluid`] from any [`Substance`]
     ///   (including [`CustomMix`](crate::substance::CustomMix))
     #[builder]
@@ -106,8 +107,7 @@ impl Fluid<Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::fluid::StateResult;
-    /// use rfluids::prelude::*;
+    /// use rfluids::{fluid::StateResult, prelude::*};
     ///
     /// // After creation, the `Fluid` instance has `Undefined` state variant
     /// let mut water: Fluid<Undefined> = Fluid::from(Pure::Water);
@@ -177,13 +177,14 @@ impl PartialEq for Fluid<Undefined> {
 
 #[cfg(test)]
 mod tests {
+    use rstest::*;
+
     use super::*;
     use crate::{
         fluid::FluidStateError,
         substance::*,
         test::{SutFactory, test_output},
     };
-    use rstest::*;
 
     struct Context {
         pressure: FluidInput,

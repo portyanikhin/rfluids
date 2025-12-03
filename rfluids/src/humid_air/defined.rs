@@ -1,11 +1,12 @@
 // cSpell:disable
 
+use std::marker::PhantomData;
+
 use super::{
     HumidAir, OutputResult, StateResult,
     common::{cached_output, guard},
 };
 use crate::io::{HumidAirInput, HumidAirParam};
-use std::marker::PhantomData;
 
 impl HumidAir {
     /// Absolute humidity **\[kg water/kg dry air\]**.
@@ -144,7 +145,8 @@ impl HumidAir {
             .and_then(|value| guard(key, value, |x| (0.0..=1.0).contains(&x)))
     }
 
-    /// Specific heat at constant pressure per unit of humid air **\[J/kg humid air/K\]**.
+    /// Specific heat at constant pressure per unit of humid air
+    /// **\[J/kg humid air/K\]**.
     ///
     /// # Errors
     ///
@@ -154,7 +156,8 @@ impl HumidAir {
         self.positive_output(HumidAirParam::Cpha)
     }
 
-    /// Specific heat at constant pressure per unit of dry air **\[J/kg dry air/K\]**.
+    /// Specific heat at constant pressure per unit of dry air
+    /// **\[J/kg dry air/K\]**.
     ///
     /// # Errors
     ///
@@ -164,7 +167,8 @@ impl HumidAir {
         self.positive_output(HumidAirParam::Cpda)
     }
 
-    /// Specific heat at constant volume per unit of humid air **\[J/kg humid air/K\]**.
+    /// Specific heat at constant volume per unit of humid air
+    /// **\[J/kg humid air/K\]**.
     ///
     /// # Errors
     ///
@@ -174,7 +178,8 @@ impl HumidAir {
         self.positive_output(HumidAirParam::Cvha)
     }
 
-    /// Specific heat at constant volume per unit of dry air **\[J/kg dry air/K\]**.
+    /// Specific heat at constant volume per unit of dry air
+    /// **\[J/kg dry air/K\]**.
     ///
     /// # Errors
     ///
@@ -244,7 +249,8 @@ impl HumidAir {
         self.positive_output(HumidAirParam::TWetBulb)
     }
 
-    /// Updates the thermodynamic state and returns a mutable reference to itself.
+    /// Updates the thermodynamic state
+    /// and returns a mutable reference to itself.
     ///
     /// # Arguments
     ///
@@ -260,8 +266,7 @@ impl HumidAir {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::humid_air::StateResult;
-    /// use rfluids::prelude::*;
+    /// use rfluids::{humid_air::StateResult, prelude::*};
     ///
     /// // After creation, the `HumidAir` instance has `Undefined` state variant
     /// let mut humid_air: HumidAir<Undefined> = HumidAir::new();
@@ -278,11 +283,12 @@ impl HumidAir {
     /// // The `HumidAir` instance now has `Defined` state variant
     /// // and its thermodynamic state can be updated in place by calling `update`
     /// // (which returns a mutable reference to the instance)
-    /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air.update(
-    ///     HumidAirInput::pressure(202_650.0),
-    ///     HumidAirInput::temperature(313.15),
-    ///     HumidAirInput::rel_humidity(0.75),
-    /// );
+    /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air
+    ///     .update(
+    ///         HumidAirInput::pressure(202_650.0),
+    ///         HumidAirInput::temperature(313.15),
+    ///         HumidAirInput::rel_humidity(0.75),
+    ///     );
     /// assert!(same_humid_air_in_new_state.is_ok());
     ///
     /// // Calling `in_state` on `HumidAir<Defined>` will return
@@ -325,8 +331,7 @@ impl HumidAir {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::humid_air::StateResult;
-    /// use rfluids::prelude::*;
+    /// use rfluids::{humid_air::StateResult, prelude::*};
     ///
     /// // After creation, the `HumidAir` instance has `Undefined` state variant
     /// let mut humid_air: HumidAir<Undefined> = HumidAir::new();
@@ -343,11 +348,12 @@ impl HumidAir {
     /// // The `HumidAir` instance now has `Defined` state variant
     /// // and its thermodynamic state can be updated in place by calling `update`
     /// // (which returns a mutable reference to the instance)
-    /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air.update(
-    ///     HumidAirInput::pressure(202_650.0),
-    ///     HumidAirInput::temperature(313.15),
-    ///     HumidAirInput::rel_humidity(0.75),
-    /// );
+    /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air
+    ///     .update(
+    ///         HumidAirInput::pressure(202_650.0),
+    ///         HumidAirInput::temperature(313.15),
+    ///         HumidAirInput::rel_humidity(0.75),
+    ///     );
     /// assert!(same_humid_air_in_new_state.is_ok());
     ///
     /// // Calling `in_state` on `HumidAir<Defined>` will return
@@ -407,12 +413,13 @@ impl PartialEq for HumidAir {
 
 #[cfg(test)]
 mod tests {
+    use rstest::*;
+
     use super::*;
     use crate::{
         humid_air::HumidAirStateError,
         test::{SutFactory, test_output},
     };
-    use rstest::*;
 
     struct Context {
         altitude: HumidAirInput,

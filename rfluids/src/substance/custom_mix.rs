@@ -1,6 +1,7 @@
+use std::collections::HashMap;
+
 use super::{BackendName, Pure};
 use crate::{io::FluidTrivialParam::MolarMass, native::AbstractState};
-use std::collections::HashMap;
 
 /// `CoolProp` custom mixture.
 ///
@@ -23,8 +24,8 @@ impl CustomMix {
     ///
     /// # Arguments
     ///
-    /// - `components` -- hash map of components and
-    ///   their _mole_ fractions **\[dimensionless, from 0 to 1\]**
+    /// - `components` -- hash map of components and their _mole_ fractions
+    ///   **\[dimensionless, from 0 to 1\]**
     ///
     /// # Errors
     ///
@@ -33,20 +34,25 @@ impl CustomMix {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::prelude::*;
     /// use std::collections::HashMap;
     ///
-    /// assert!(CustomMix::mole_based(HashMap::from([
-    ///     (Pure::Water, 0.8),
-    ///     (Pure::Ethanol, 0.2),
-    /// ]))
-    /// .is_ok());
+    /// use rfluids::prelude::*;
     ///
-    /// assert!(CustomMix::mole_based(HashMap::from([
-    ///     (Pure::R32, 0.7),
-    ///     (Pure::R125, 0.3),
-    /// ]))
-    /// .is_ok());
+    /// assert!(
+    ///     CustomMix::mole_based(HashMap::from([
+    ///         (Pure::Water, 0.8),
+    ///         (Pure::Ethanol, 0.2),
+    ///     ]))
+    ///     .is_ok()
+    /// );
+    ///
+    /// assert!(
+    ///     CustomMix::mole_based(HashMap::from([
+    ///         (Pure::R32, 0.7),
+    ///         (Pure::R125, 0.3),
+    ///     ]))
+    ///     .is_ok()
+    /// );
     /// ```
     pub fn mole_based(components: HashMap<Pure, f64>) -> Result<Self, CustomMixError> {
         Self::validate(&components)?;
@@ -57,8 +63,8 @@ impl CustomMix {
     ///
     /// # Arguments
     ///
-    /// - `components` -- hash map of components and
-    ///   their _mass_ fractions **\[dimensionless, from 0 to 1\]**
+    /// - `components` -- hash map of components and their _mass_ fractions
+    ///   **\[dimensionless, from 0 to 1\]**
     ///
     /// # Errors
     ///
@@ -67,20 +73,25 @@ impl CustomMix {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::prelude::*;
     /// use std::collections::HashMap;
     ///
-    /// assert!(CustomMix::mass_based(HashMap::from([
-    ///     (Pure::Water, 0.6),
-    ///     (Pure::Ethanol, 0.4),
-    /// ]))
-    /// .is_ok());
+    /// use rfluids::prelude::*;
     ///
-    /// assert!(CustomMix::mass_based(HashMap::from([
-    ///     (Pure::R32, 0.5),
-    ///     (Pure::R125, 0.5),
-    /// ]))
-    /// .is_ok());
+    /// assert!(
+    ///     CustomMix::mass_based(HashMap::from([
+    ///         (Pure::Water, 0.6),
+    ///         (Pure::Ethanol, 0.4),
+    ///     ]))
+    ///     .is_ok()
+    /// );
+    ///
+    /// assert!(
+    ///     CustomMix::mass_based(HashMap::from([
+    ///         (Pure::R32, 0.5),
+    ///         (Pure::R125, 0.5),
+    ///     ]))
+    ///     .is_ok()
+    /// );
     /// ```
     pub fn mass_based(components: HashMap<Pure, f64>) -> Result<Self, CustomMixError> {
         Self::validate(&components)?;
@@ -93,8 +104,9 @@ impl CustomMix {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::prelude::*;
     /// use std::collections::HashMap;
+    ///
+    /// use rfluids::prelude::*;
     ///
     /// let mole_based_mix = CustomMix::mole_based(HashMap::from([
     ///     (Pure::Water, 0.8),
@@ -175,9 +187,10 @@ pub enum CustomMixError {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use approx::relative_eq;
     use rstest::*;
+
+    use super::*;
 
     #[rstest]
     #[case(HashMap::from([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]))]
@@ -195,21 +208,21 @@ mod tests {
     #[rstest]
     #[case(HashMap::from([(Pure::Water, 0.6)]), CustomMixError::NotEnoughComponents)]
     #[case(
-            HashMap::from([(Pure::Water, 0.5), (Pure::Water, 0.5)]),
-            CustomMixError::NotEnoughComponents
-        )]
+        HashMap::from([(Pure::Water, 0.5), (Pure::Water, 0.5)]),
+        CustomMixError::NotEnoughComponents
+    )]
     #[case(
-            HashMap::from([(Pure::R32, -0.5), (Pure::R125, 0.5)]),
-            CustomMixError::InvalidFraction
-        )]
+        HashMap::from([(Pure::R32, -0.5), (Pure::R125, 0.5)]),
+        CustomMixError::InvalidFraction
+    )]
     #[case(
-            HashMap::from([(Pure::R32, 1.5), (Pure::R125, 0.5)]),
-            CustomMixError::InvalidFraction
-        )]
+        HashMap::from([(Pure::R32, 1.5), (Pure::R125, 0.5)]),
+        CustomMixError::InvalidFraction
+    )]
     #[case(
-            HashMap::from([(Pure::R32, 0.4), (Pure::R125, 0.4)]),
-            CustomMixError::InvalidFractionsSum
-        )]
+        HashMap::from([(Pure::R32, 0.4), (Pure::R125, 0.4)]),
+        CustomMixError::InvalidFractionsSum
+    )]
     fn new_invalid_components(
         #[case] components: HashMap<Pure, f64>,
         #[case] expected: CustomMixError,

@@ -8,6 +8,7 @@
 ///
 /// ```
 /// use std::str::FromStr;
+///
 /// use rfluids::io::HumidAirParam;
 ///
 /// assert_eq!(HumidAirParam::TDew.as_ref(), "D");
@@ -41,7 +42,8 @@ pub enum HumidAirParam {
     )]
     TWetBulb,
 
-    /// Specific heat at constant pressure per unit of dry air **\[J/kg dry air/K\]**.
+    /// Specific heat at constant pressure per unit of dry air
+    /// **\[J/kg dry air/K\]**.
     #[strum(
         to_string = "C",
         serialize = "Cp",
@@ -50,15 +52,18 @@ pub enum HumidAirParam {
     )]
     Cpda,
 
-    /// Specific heat at constant pressure per unit of humid air **\[J/kg humid air/K\]**.
+    /// Specific heat at constant pressure per unit of humid air
+    /// **\[J/kg humid air/K\]**.
     #[strum(to_string = "Cha", serialize = "Cpha", serialize = "Cp_ha")]
     Cpha,
 
-    /// Specific heat at constant volume per unit of dry air **\[J/kg dry air/K\]**.
+    /// Specific heat at constant volume per unit of dry air
+    /// **\[J/kg dry air/K\]**.
     #[strum(to_string = "CV", serialize = "Cvda", serialize = "Cv_da")]
     Cvda,
 
-    /// Specific heat at constant volume per unit of humid air **\[J/kg humid air/K\]**.
+    /// Specific heat at constant volume per unit of humid air
+    /// **\[J/kg humid air/K\]**.
     #[strum(to_string = "CVha", serialize = "Cv_ha")]
     Cvha,
 
@@ -156,9 +161,11 @@ pub enum HumidAirParam {
 
 #[cfg(test)]
 mod tests {
-    use super::{HumidAirParam::*, *};
-    use rstest::*;
     use std::str::FromStr;
+
+    use rstest::*;
+
+    use super::{HumidAirParam::*, *};
 
     #[rstest]
     #[case(TWetBulb, "B")]

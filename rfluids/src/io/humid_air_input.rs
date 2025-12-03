@@ -1,6 +1,7 @@
 use super::{HumidAirParam, Input};
 
-/// [`HumidAir`](crate::humid_air::HumidAir) input parameter with specified value.
+/// [`HumidAir`](crate::humid_air::HumidAir) input parameter
+/// with specified value.
 ///
 /// # Examples
 ///
@@ -42,7 +43,8 @@ impl HumidAirInput {
 
     /// Mass density per unit of humid air **\[kg humid air/m³\]**.
     ///
-    /// **NB.** It will be converted to the [`specific_volume`](Self::specific_volume),
+    /// **NB.** It will be converted to the
+    /// [`specific_volume`](Self::specific_volume),
     /// since there is no specific [`HumidAirParam`] for this.
     #[must_use]
     pub fn density(value: f64) -> Self {
@@ -51,7 +53,8 @@ impl HumidAirInput {
 
     /// Mass density per unit of dry air **\[kg dry air/m³\]**.
     ///
-    /// **NB.** It will be converted to the [`specific_volume_da`](Self::specific_volume_da),
+    /// **NB.** It will be converted to the
+    /// [`specific_volume_da`](Self::specific_volume_da),
     /// since there is no specific [`HumidAirParam`] for this.
     #[must_use]
     pub fn density_da(value: f64) -> Self {
@@ -186,9 +189,10 @@ pub enum AltitudeError {
 
 #[cfg(test)]
 mod tests {
+    use rstest::*;
+
     use super::*;
     use crate::test::{assert_relative_eq, test_input};
-    use rstest::*;
 
     test_input!(abs_humidity, key: HumidAirParam::W);
     test_input!(density, key: HumidAirParam::Vha, reciprocal);

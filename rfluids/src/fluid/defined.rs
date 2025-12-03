@@ -137,7 +137,8 @@ impl Fluid {
     }
 
     /// Derivative of second virial coefficient
-    /// with [`temperature`](crate::fluid::Fluid::temperature) **\[dimensionless\]**.
+    /// with [`temperature`](crate::fluid::Fluid::temperature)
+    /// **\[dimensionless\]**.
     ///
     /// # Errors
     ///
@@ -547,7 +548,8 @@ impl Fluid {
         self.positive_output(FluidParam::T)
     }
 
-    /// Updates the thermodynamic state and returns a mutable reference to itself.
+    /// Updates the thermodynamic state
+    /// and returns a mutable reference to itself.
     ///
     /// # Arguments
     ///
@@ -562,8 +564,7 @@ impl Fluid {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::fluid::StateResult;
-    /// use rfluids::prelude::*;
+    /// use rfluids::{fluid::StateResult, prelude::*};
     ///
     /// // After creation, the `Fluid` instance has `Undefined` state variant
     /// let mut water: Fluid<Undefined> = Fluid::from(Pure::Water);
@@ -618,8 +619,7 @@ impl Fluid {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::fluid::StateResult;
-    /// use rfluids::prelude::*;
+    /// use rfluids::{fluid::StateResult, prelude::*};
     ///
     /// // After creation, the `Fluid` instance has `Undefined` state variant
     /// let mut water: Fluid<Undefined> = Fluid::from(Pure::Water);
@@ -709,6 +709,8 @@ impl PartialEq for Fluid {
 
 #[cfg(test)]
 mod tests {
+    use rstest::*;
+
     use super::*;
     use crate::{
         Undefined,
@@ -716,7 +718,6 @@ mod tests {
         substance::*,
         test::{SutFactory, assert_relative_eq, test_output},
     };
-    use rstest::*;
 
     struct Context {
         pressure: FluidInput,

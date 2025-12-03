@@ -1,6 +1,7 @@
 // cSpell:disable
 
 use std::str::FromStr;
+
 use strum::EnumProperty;
 
 /// `CoolProp` incompressible binary mixtures _(mass-based or volume-based)_.
@@ -11,6 +12,7 @@ use strum::EnumProperty;
 ///
 /// ```
 /// use std::str::FromStr;
+///
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(BinaryMixKind::MPG.as_ref(), "MPG");
@@ -316,9 +318,10 @@ pub enum BinaryMixError {
 
 #[cfg(test)]
 mod tests {
-    use super::{BinaryMixKind::*, *};
     use rstest::*;
     use strum::IntoEnumIterator;
+
+    use super::{BinaryMixKind::*, *};
 
     #[rstest]
     #[case(FRE, 0.19, 0.5)]

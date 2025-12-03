@@ -26,9 +26,9 @@
 //! cargo add rfluids
 //! ```
 //!
-//! 🎁 It comes with native `CoolProp` dynamic libraries for supported platforms.
-//! The library required for your platform will be automatically copied
-//! to the target directory during build.
+//! 🎁 It comes with native `CoolProp` dynamic libraries for supported
+//! platforms. The library required for your platform will be automatically
+//! copied to the target directory during build.
 //!
 //! ## Examples
 //!
@@ -41,10 +41,8 @@
 //! use approx::assert_relative_eq;
 //! use rfluids::prelude::*;
 //!
-//! let mut water_vapor = Fluid::from(Pure::Water).in_state(
-//!    FluidInput::pressure(101_325.0),
-//!    FluidInput::quality(1.0),
-//! )?;
+//! let mut water_vapor = Fluid::from(Pure::Water)
+//!     .in_state(FluidInput::pressure(101_325.0), FluidInput::quality(1.0))?;
 //! assert_relative_eq!(
 //!     water_vapor.specific_heat()?,
 //!     2_079.937_085_633_241,
@@ -62,10 +60,8 @@
 //!
 //! let mut propylene_glycol = Fluid::from(
 //!     BinaryMixKind::MPG.with_fraction(0.6)?,
-//! ).in_state(
-//!     FluidInput::pressure(100e3),
-//!     FluidInput::temperature(253.15),
-//! )?;
+//! )
+//! .in_state(FluidInput::pressure(100e3), FluidInput::temperature(253.15))?;
 //! assert_relative_eq!(
 //!     propylene_glycol.dynamic_viscosity()?,
 //!     0.139_073_910_539_388_78,
@@ -74,23 +70,20 @@
 //! # Ok::<(), rfluids::Error>(())
 //! ```
 //!
-//! Density **\[kg/m³\]** of ethanol aqueous solution (with ethanol _40 %_ mass fraction)
-//! at _200 kPa_ and _4 °C_:
+//! Density **\[kg/m³\]** of ethanol aqueous solution
+//! (with ethanol _40 %_ mass fraction) at _200 kPa_ and _4 °C_:
 //!
 //! ```
-//! use approx::assert_relative_eq;
-//! use rfluids::prelude::*;
 //! use std::collections::HashMap;
 //!
-//! let mut mix = Fluid::try_from(
-//!     CustomMix::mass_based(HashMap::from([
-//!         (Pure::Water, 0.6),
-//!         (Pure::Ethanol, 0.4),
-//!     ]))?
-//! )?.in_state(
-//!     FluidInput::pressure(200e3),
-//!     FluidInput::temperature(277.15),
-//! )?;
+//! use approx::assert_relative_eq;
+//! use rfluids::prelude::*;
+//!
+//! let mut mix = Fluid::try_from(CustomMix::mass_based(HashMap::from([
+//!     (Pure::Water, 0.6),
+//!     (Pure::Ethanol, 0.4),
+//! ]))?)?
+//! .in_state(FluidInput::pressure(200e3), FluidInput::temperature(277.15))?;
 //! assert_relative_eq!(
 //!     mix.density()?,
 //!     883.392_277_162_775_9,
@@ -120,7 +113,8 @@
 //! ```
 //!
 //! [`Fluid`](crate::fluid::Fluid) and [`HumidAir`](crate::humid_air::HumidAir)
-//! implement the [`PartialEq`] trait. Equality is checked by the thermodynamic state:
+//! implement the [`PartialEq`] trait. Equality is checked
+//! by the thermodynamic state:
 //!
 //! ```
 //! use rfluids::prelude::*;
@@ -163,9 +157,6 @@
     clippy::missing_panics_doc
 )]
 
-pub use error::*;
-pub use state_variant::*;
-
 mod error;
 pub mod fluid;
 pub mod humid_air;
@@ -177,3 +168,6 @@ mod state_variant;
 pub mod substance;
 #[cfg(test)]
 mod test;
+
+pub use error::*;
+pub use state_variant::*;

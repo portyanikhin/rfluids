@@ -13,7 +13,7 @@ macro_rules! assert_relative_eq {
 pub(crate) use assert_relative_eq;
 
 macro_rules! test_input {
-    ($name:ident, key: $type:ident::$key:ident) => {
+    ($name:ident,key: $type:ident:: $key:ident) => {
         #[test]
         fn $name() {
             // Given
@@ -27,7 +27,7 @@ macro_rules! test_input {
             assert_eq!(value, 42.0);
         }
     };
-    ($name:ident, key: $type:ident::$key:ident, reciprocal) => {
+    ($name:ident,key: $type:ident:: $key:ident,reciprocal) => {
         #[test]
         fn $name() {
             // Given

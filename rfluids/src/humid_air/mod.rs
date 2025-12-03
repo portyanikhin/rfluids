@@ -1,7 +1,8 @@
 //! Thermophysical and transport properties of humid air.
 //!
 //! This module provides a comprehensive interface for calculating
-//! thermophysical and transport properties of humid air through the [`HumidAir`] struct.
+//! thermophysical and transport properties of humid air
+//! through the [`HumidAir`] struct.
 
 mod common;
 mod defined;
@@ -9,18 +10,21 @@ mod invariant;
 mod request;
 mod undefined;
 
+use std::{collections::HashMap, marker::PhantomData};
+
+use request::HumidAirUpdateRequest;
+
 use crate::{
     io::HumidAirParam,
     native::CoolPropError,
     state_variant::{Defined, StateVariant},
 };
-use request::HumidAirUpdateRequest;
-use std::{collections::HashMap, marker::PhantomData};
 
 /// Result type for operations that could fail while updating humid air state.
 pub type StateResult<T> = Result<T, HumidAirStateError>;
 
-/// Result type for operations that could fail while retrieving humid air properties.
+/// Result type for operations that could fail while retrieving humid air
+/// properties.
 pub type OutputResult<T> = Result<T, HumidAirOutputError>;
 
 /// Provider of thermophysical and transport properties of humid air.

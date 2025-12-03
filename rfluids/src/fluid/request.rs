@@ -1,9 +1,10 @@
+use std::borrow::Cow;
+
 use super::FluidStateError;
 use crate::{
     io::{FluidInput, FluidInputPair, FluidParam},
     substance::{BackendName, Substance},
 };
-use std::borrow::Cow;
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct FluidCreateRequest {
@@ -96,10 +97,12 @@ mod tests {
     use super::*;
 
     mod create_request {
+        use std::collections::HashMap;
+
+        use rstest::*;
+
         use super::*;
         use crate::substance::*;
-        use rstest::*;
-        use std::collections::HashMap;
 
         #[rstest]
         #[case(
@@ -210,9 +213,10 @@ mod tests {
     }
 
     mod update_request {
+        use rstest::*;
+
         use super::*;
         use crate::test::assert_relative_eq;
-        use rstest::*;
 
         #[test]
         fn into_inputs() {

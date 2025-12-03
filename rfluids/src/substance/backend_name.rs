@@ -10,8 +10,9 @@ pub trait BackendName {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::prelude::*;
     /// use std::collections::HashMap;
+    ///
+    /// use rfluids::prelude::*;
     ///
     /// assert_eq!(Pure::Water.backend_name(), "HEOS");
     /// assert_eq!(IncompPure::Water.backend_name(), "INCOMP");
@@ -74,10 +75,12 @@ impl BackendName for CustomMix {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use rstest::*;
     use std::collections::HashMap;
+
+    use rstest::*;
     use strum::IntoEnumIterator;
+
+    use super::*;
 
     #[rstest]
     #[case(Pure::Water, HELMHOLTZ_EOS_BACKEND_NAME)]

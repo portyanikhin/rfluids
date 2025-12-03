@@ -1,4 +1,4 @@
-﻿//! Raw FFI bindings to `CoolProp`.
+//! Raw FFI bindings to `CoolProp`.
 //!
 //! # See Also
 //!

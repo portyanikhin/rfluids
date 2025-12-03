@@ -10,10 +10,14 @@ use super::try_from;
 ///
 /// ```
 /// use std::str::FromStr;
+///
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(FluidParam::Conductivity.as_ref(), "conductivity");
-/// assert_eq!(FluidParam::from_str("conductivity"), Ok(FluidParam::Conductivity));
+/// assert_eq!(
+///     FluidParam::from_str("conductivity"),
+///     Ok(FluidParam::Conductivity)
+/// );
 /// assert_eq!(FluidParam::try_from("L"), Ok(FluidParam::Conductivity));
 /// ```
 ///
@@ -80,13 +84,15 @@ pub enum FluidParam {
     Q = 21,
 
     /// Reciprocal reduced temperature =
-    /// [`TCritical`](FluidTrivialParam::TCritical)/[`T`](FluidParam::T)
+    /// [`TCritical`](FluidTrivialParam::TCritical)/
+    /// [`T`](FluidParam::T)
     /// **\[dimensionless\]**.
     #[strum(to_string = "Tau")]
     Tau = 22,
 
     /// Reduced density =
-    /// [`DMass`](FluidParam::DMass)/[`DMassCritical`](FluidTrivialParam::DMassCritical)
+    /// [`DMass`](FluidParam::DMass)/
+    /// [`DMassCritical`](FluidTrivialParam::DMassCritical)
     /// **\[dimensionless\]**.
     #[strum(to_string = "Delta")]
     Delta = 23,
@@ -338,11 +344,18 @@ impl TryFrom<f64> for FluidParam {
 ///
 /// ```
 /// use std::str::FromStr;
+///
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(FluidTrivialParam::TMin.as_ref(), "T_min");
-/// assert_eq!(FluidTrivialParam::from_str("T_min"), Ok(FluidTrivialParam::TMin));
-/// assert_eq!(FluidTrivialParam::try_from("T_min"), Ok(FluidTrivialParam::TMin));
+/// assert_eq!(
+///     FluidTrivialParam::from_str("T_min"),
+///     Ok(FluidTrivialParam::TMin)
+/// );
+/// assert_eq!(
+///     FluidTrivialParam::try_from("T_min"),
+///     Ok(FluidTrivialParam::TMin)
+/// );
 /// ```
 ///
 /// Conversion between [`u8`]:
@@ -359,7 +372,10 @@ impl TryFrom<f64> for FluidParam {
 /// ```
 /// use rfluids::prelude::*;
 ///
-/// assert_eq!(FluidTrivialParam::try_from(15.0), Ok(FluidTrivialParam::TMax));
+/// assert_eq!(
+///     FluidTrivialParam::try_from(15.0),
+///     Ok(FluidTrivialParam::TMax)
+/// );
 /// ```
 ///
 /// # See Also
@@ -524,9 +540,11 @@ impl TryFrom<f64> for FluidTrivialParam {
 
 #[cfg(test)]
 mod tests {
-    use super::{FluidParam::*, FluidTrivialParam::*, *};
-    use rstest::*;
     use std::{fmt::Debug, str::FromStr};
+
+    use rstest::*;
+
+    use super::{FluidParam::*, FluidTrivialParam::*, *};
 
     #[rstest]
     #[case(GasConstant, "gas_constant")]

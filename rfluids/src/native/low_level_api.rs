@@ -1,8 +1,9 @@
+use core::ffi::{c_char, c_long};
+
 use super::{
     CoolPropError, Result,
     common::{COOLPROP, ErrorBuffer, const_ptr_c_char},
 };
-use core::ffi::{c_char, c_long};
 
 /// `CoolProp` thread safe low-level API.
 #[derive(Debug)]
@@ -16,10 +17,11 @@ impl AbstractState {
     ///
     /// # Arguments
     ///
-    /// - `backend_name` -- name of the backend _(raw [`&str`](str)
-    ///   or [`BackendName::backend_name`](crate::substance::BackendName::backend_name))_
-    /// - `fluid_names` -- names of the fluids separated by the `&` symbol or just a single
-    ///   fluid name _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_
+    /// - `backend_name` -- name of the backend _(raw [`&str`](str) or
+    ///   [`BackendName::backend_name`](crate::substance::BackendName::backend_name))_
+    /// - `fluid_names` -- names of the fluids separated by the `&` symbol or
+    ///   just a single fluid name _(raw [`&str`](str) or
+    ///   [`Substance`](crate::substance::Substance) subset)_
     ///
     /// # Errors
     ///
@@ -87,8 +89,8 @@ impl AbstractState {
     ///
     /// # Arguments
     ///
-    /// - `fractions` -- fractions of the specified fluid
-    ///   **\[dimensionless, from 0 to 1 each\]**
+    /// - `fractions` -- fractions of the specified fluid **\[dimensionless,
+    ///   from 0 to 1 each\]**
     ///
     /// # Errors
     ///
@@ -136,8 +138,8 @@ impl AbstractState {
     ///
     /// # Arguments
     ///
-    /// - `input_pair_key` -- input pair key
-    ///   _(raw [`u8`] or [`FluidInputPair`](crate::io::FluidInputPair))_
+    /// - `input_pair_key` -- input pair key _(raw [`u8`] or
+    ///   [`FluidInputPair`](crate::io::FluidInputPair))_
     /// - `input1` -- value of the first input property **\[SI units\]**
     /// - `input2` -- value of the second input property **\[SI units\]**
     ///
@@ -184,8 +186,8 @@ impl AbstractState {
     ///
     /// # Arguments
     ///
-    /// - `key` -- output parameter key
-    ///   _(raw [`u8`], [`FluidParam`](crate::io::FluidParam) or
+    /// - `key` -- output parameter key _(raw [`u8`],
+    ///   [`FluidParam`](crate::io::FluidParam) or
     ///   [`FluidTrivialParam`](crate::io::FluidTrivialParam))_
     ///
     /// # Errors
@@ -197,7 +199,8 @@ impl AbstractState {
     ///
     /// ## Pure fluids
     ///
-    /// To calculate the specific heat **\[J/kg/K\]** of saturated water vapor at _1 atm_:
+    /// To calculate the specific heat **\[J/kg/K\]**
+    /// of saturated water vapor at _1 atm_:
     ///
     /// ```
     /// use approx::assert_relative_eq;
@@ -212,8 +215,9 @@ impl AbstractState {
     ///
     /// ## Incompressible binary mixtures
     ///
-    /// To calculate the dynamic viscosity **\[Pa·s\]** of propylene glycol aqueous solution
-    /// with _60 %_ mass fraction at _100 kPa_ and _-20 °C_:
+    /// To calculate the dynamic viscosity **\[Pa·s\]**
+    /// of propylene glycol aqueous solution with _60 %_ mass fraction
+    /// at _100 kPa_ and _-20 °C_:
     ///
     /// ```
     /// use approx::assert_relative_eq;
@@ -267,8 +271,8 @@ impl AbstractState {
     ///
     /// # Arguments
     ///
-    /// - `phase` -- phase state
-    ///   _(raw [`&str`](str) or [`Phase`](crate::io::Phase))_
+    /// - `phase` -- phase state _(raw [`&str`](str) or
+    ///   [`Phase`](crate::io::Phase))_
     ///
     /// # Errors
     ///
@@ -307,7 +311,8 @@ impl AbstractState {
         Self::result((), error)
     }
 
-    /// Unspecify the phase state and go back to calculating it based on the inputs.
+    /// Unspecify the phase state
+    /// and go back to calculating it based on the inputs.
     ///
     /// # Examples
     ///
@@ -375,13 +380,14 @@ impl Drop for AbstractState {
 
 #[cfg(test)]
 mod tests {
+    use rayon::prelude::*;
+    use rstest::*;
+
     use super::*;
     use crate::{
         io::{FluidInputPair, FluidParam, Phase},
         test::assert_relative_eq,
     };
-    use rayon::prelude::*;
-    use rstest::*;
 
     #[test]
     fn thread_safety() {

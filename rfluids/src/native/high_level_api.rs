@@ -1,11 +1,12 @@
 // cSpell:disable
 
+use core::ffi::c_char;
+use std::sync::MutexGuard;
+
 use super::{
     CoolPropError, Result,
     common::{COOLPROP, MessageBuffer, const_ptr_c_char},
 };
-use core::ffi::c_char;
-use std::sync::MutexGuard;
 
 /// `CoolProp` thread safe high-level API.
 pub struct CoolProp;
@@ -15,16 +16,16 @@ impl CoolProp {
     ///
     /// # Arguments
     ///
-    /// - `output_key` -- key of the output
-    ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_
-    /// - `input1_key` -- key of the first input property
-    ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_
+    /// - `output_key` -- key of the output _(raw [`&str`](str) or
+    ///   [`FluidParam`](crate::io::FluidParam))_
+    /// - `input1_key` -- key of the first input property _(raw [`&str`](str) or
+    ///   [`FluidParam`](crate::io::FluidParam))_
     /// - `input1_value` -- value of the first input property **\[SI units\]**
-    /// - `input2_key` -- key of the second input property
-    ///   _(raw [`&str`](str) or [`FluidParam`](crate::io::FluidParam))_
+    /// - `input2_key` -- key of the second input property _(raw [`&str`](str)
+    ///   or [`FluidParam`](crate::io::FluidParam))_
     /// - `input2_value` -- value of the second input property **\[SI units\]**
-    /// - `fluid_name` -- name of the fluid
-    ///   _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_
+    /// - `fluid_name` -- name of the fluid _(raw [`&str`](str) or
+    ///   [`Substance`](crate::substance::Substance) subset)_
     ///
     /// # Errors
     ///
@@ -34,7 +35,8 @@ impl CoolProp {
     ///
     /// ## Pure fluids
     ///
-    /// To calculate the specific heat **\[J/kg/K\]** of saturated water vapor at _1 atm_:
+    /// To calculate the specific heat **\[J/kg/K\]**
+    /// of saturated water vapor at _1 atm_:
     ///
     /// ```
     /// use approx::assert_relative_eq;
@@ -47,14 +49,16 @@ impl CoolProp {
     ///
     /// ## Incompressible binary mixtures
     ///
-    /// To calculate the dynamic viscosity **\[Pa·s\]** of propylene glycol aqueous solution
-    /// with _60 %_ mass fraction at _100 kPa_ and _-20 °C_:
+    /// To calculate the dynamic viscosity **\[Pa·s\]**
+    /// of propylene glycol aqueous solution with _60 %_ mass fraction
+    /// at _100 kPa_ and _-20 °C_:
     ///
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::*;
     ///
-    /// let result = CoolProp::props_si("V", "P", 100e3, "T", 253.15, "INCOMP::MPG-60%")?;
+    /// let result =
+    ///     CoolProp::props_si("V", "P", 100e3, "T", 253.15, "INCOMP::MPG-60%")?;
     /// assert_relative_eq!(result, 0.139_073_910_539_388_47, max_relative = 1e-6);
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
@@ -115,16 +119,16 @@ impl CoolProp {
     ///
     /// # Arguments
     ///
-    /// - `output_key` -- key of the output
-    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_
-    /// - `input1_key` -- key of the first input property
-    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_
+    /// - `output_key` -- key of the output _(raw [`&str`](str) or
+    ///   [`HumidAirParam`](crate::io::HumidAirParam))_
+    /// - `input1_key` -- key of the first input property _(raw [`&str`](str) or
+    ///   [`HumidAirParam`](crate::io::HumidAirParam))_
     /// - `input1_value` -- value of the first input property **\[SI units\]**
-    /// - `input2_key` -- key of the second input property
-    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_
+    /// - `input2_key` -- key of the second input property _(raw [`&str`](str)
+    ///   or [`HumidAirParam`](crate::io::HumidAirParam))_
     /// - `input2_value` -- value of the second input property **\[SI units\]**
-    /// - `input3_key` -- key of the third input property
-    ///   _(raw [`&str`](str) or [`HumidAirParam`](crate::io::HumidAirParam))_
+    /// - `input3_key` -- key of the third input property _(raw [`&str`](str) or
+    ///   [`HumidAirParam`](crate::io::HumidAirParam))_
     /// - `input3_value` -- value of the third input property **\[SI units\]**
     ///
     /// # Errors
@@ -179,10 +183,10 @@ impl CoolProp {
     ///
     /// # Arguments
     ///
-    /// - `output_key` -- key of the _trivial_ output
-    ///   _(raw [`&str`](str) or [`FluidTrivialParam`](crate::io::FluidTrivialParam))_
-    /// - `fluid_name` -- name of the fluid
-    ///   _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_
+    /// - `output_key` -- key of the _trivial_ output _(raw [`&str`](str) or
+    ///   [`FluidTrivialParam`](crate::io::FluidTrivialParam))_
+    /// - `fluid_name` -- name of the fluid _(raw [`&str`](str) or
+    ///   [`Substance`](crate::substance::Substance) subset)_
     ///
     /// # Errors
     ///
@@ -256,9 +260,10 @@ impl CoolProp {
 
 #[cfg(test)]
 mod tests {
+    use rayon::prelude::*;
+
     use super::*;
     use crate::test::assert_relative_eq;
-    use rayon::prelude::*;
 
     #[test]
     fn props_si_thread_safety() {

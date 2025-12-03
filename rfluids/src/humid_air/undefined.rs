@@ -1,6 +1,7 @@
+use std::{collections::HashMap, marker::PhantomData};
+
 use super::{HumidAir, StateResult};
 use crate::{io::HumidAirInput, state_variant::Undefined};
-use std::{collections::HashMap, marker::PhantomData};
 
 impl HumidAir<Undefined> {
     /// Creates and returns a new [`HumidAir`] instance
@@ -31,8 +32,7 @@ impl HumidAir<Undefined> {
     /// # Examples
     ///
     /// ```
-    /// use rfluids::humid_air::StateResult;
-    /// use rfluids::prelude::*;
+    /// use rfluids::{humid_air::StateResult, prelude::*};
     ///
     /// // After creation, the `HumidAir` instance has `Undefined` state variant
     /// let mut humid_air: HumidAir<Undefined> = HumidAir::new();
@@ -49,11 +49,12 @@ impl HumidAir<Undefined> {
     /// // The `HumidAir` instance now has `Defined` state variant
     /// // and its thermodynamic state can be updated in place by calling `update`
     /// // (which returns a mutable reference to the instance)
-    /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air.update(
-    ///     HumidAirInput::pressure(202_650.0),
-    ///     HumidAirInput::temperature(313.15),
-    ///     HumidAirInput::rel_humidity(0.75),
-    /// );
+    /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air
+    ///     .update(
+    ///         HumidAirInput::pressure(202_650.0),
+    ///         HumidAirInput::temperature(313.15),
+    ///         HumidAirInput::rel_humidity(0.75),
+    ///     );
     /// assert!(same_humid_air_in_new_state.is_ok());
     ///
     /// // Calling `in_state` on `HumidAir<Defined>` will return
@@ -106,9 +107,10 @@ impl PartialEq for HumidAir<Undefined> {
 
 #[cfg(test)]
 mod tests {
+    use rstest::*;
+
     use super::*;
     use crate::{humid_air::HumidAirStateError, io::HumidAirInput};
-    use rstest::*;
 
     struct Context {
         altitude: HumidAirInput,

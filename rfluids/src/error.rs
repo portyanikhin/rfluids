@@ -36,7 +36,8 @@ pub enum Error {
     #[error(transparent)]
     FluidOutput(#[from] FluidOutputError),
 
-    /// Error during [`HumidAirInput::altitude`](crate::io::HumidAirInput::altitude).
+    /// Error during
+    /// [`HumidAirInput::altitude`](crate::io::HumidAirInput::altitude).
     #[error(transparent)]
     Altitude(#[from] AltitudeError),
 

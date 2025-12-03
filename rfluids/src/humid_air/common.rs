@@ -1,6 +1,7 @@
+use std::collections::HashMap;
+
 use super::{HumidAirOutputError, OutputResult, request::HumidAirUpdateRequest};
 use crate::{io::HumidAirParam, native::CoolProp};
-use std::collections::HashMap;
 
 pub(crate) fn cached_output(
     cache: &mut HashMap<HumidAirParam, OutputResult<f64>>,
@@ -37,8 +38,9 @@ pub(crate) fn guard(key: HumidAirParam, value: f64, ok: fn(f64) -> bool) -> Outp
 
 #[cfg(test)]
 pub(crate) mod tests {
-    use super::*;
     use rstest::*;
+
+    use super::*;
 
     #[rstest]
     #[case(
