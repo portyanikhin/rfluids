@@ -258,6 +258,61 @@ mod tests {
     }
 
     #[rstest]
+    fn builder(ctx: Context) {
+        // Given
+        let Context { water, .. } = ctx;
+
+        // When
+        let default = Fluid::builder().substance(water).build().unwrap();
+        let custom = Fluid::builder()
+            .substance(water)
+            .with_backend("IF97")
+            .build()
+            .unwrap();
+
+        // Then
+        assert_eq!(default.substance(), &Substance::from(water));
+        assert_eq!(default.backend_name(), "HEOS");
+        assert_eq!(custom.substance(), &Substance::from(water));
+        assert_eq!(custom.backend_name(), "IF97");
+        assert_ne!(default, custom);
+    }
+
+    #[rstest]
+    fn builder_invalid_backend(ctx: Context) {
+        // Given
+        let Context { water, .. } = ctx;
+
+        // When
+        let res = Fluid::builder()
+            .substance(water)
+            .with_backend("Hello, World!")
+            .build();
+
+        // Then
+        assert!(matches!(res, Err(FluidBuildError::InvalidBackend(_))));
+    }
+
+    #[rstest]
+    fn builder_unsupported_custom_mix() {
+        // Given
+        let unsupported_mix = CustomMix::mass_based(HashMap::from([
+            (Pure::Orthohydrogen, 0.6),
+            (Pure::R32, 0.4),
+        ]))
+        .unwrap();
+
+        // When
+        let res = Fluid::builder()
+            .substance(unsupported_mix)
+            .with_backend("HEOS")
+            .build();
+
+        // Then
+        assert!(matches!(res, Err(FluidBuildError::UnsupportedCustomMix(_))));
+    }
+
+    #[rstest]
     fn in_state_same_inputs(ctx: Context) {
         // Given
         let Context {
