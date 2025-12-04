@@ -7,7 +7,7 @@ use crate::{
     io::{FluidInput, FluidTrivialParam},
     ops::mul,
     state_variant::StateVariant,
-    substance::{BackendName, Substance},
+    substance::{DefaultBackendName, Substance},
 };
 
 impl<S: StateVariant> Fluid<S> {
@@ -20,7 +20,7 @@ impl<S: StateVariant> Fluid<S> {
     /// `CoolProp` backend name.
     #[must_use]
     pub fn backend_name(&self) -> &str {
-        self.custom_backend_name.as_deref().unwrap_or_else(|| self.substance.backend_name())
+        self.custom_backend_name.as_deref().unwrap_or_else(|| self.substance.default_backend_name())
     }
 
     /// Acentric factor **\[dimensionless\]**.

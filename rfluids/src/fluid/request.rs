@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use super::FluidStateError;
 use crate::{
     io::{FluidInput, FluidInputPair, FluidParam},
-    substance::{BackendName, Substance},
+    substance::{DefaultBackendName, Substance},
 };
 
 #[derive(Clone, Debug, PartialEq)]
@@ -35,8 +35,8 @@ impl FluidCreateRequest {
                 (Cow::Owned(components.join("&")), Some(fractions))
             }
         };
-        let backend_name =
-            custom_backend_name.map_or_else(|| Cow::Borrowed(substance.backend_name()), Cow::Owned);
+        let backend_name = custom_backend_name
+            .map_or_else(|| Cow::Borrowed(substance.default_backend_name()), Cow::Owned);
         Self { substance_name, backend_name, fractions }
     }
 }

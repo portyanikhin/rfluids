@@ -7,7 +7,7 @@ pub use crate::{
     native::{AbstractState, CoolProp},
     state_variant::*,
     substance::{
-        BackendName, BinaryMix, BinaryMixKind, CustomMix, IncompPure, PredefinedMix, Pure,
+        BinaryMix, BinaryMixKind, CustomMix, DefaultBackendName, IncompPure, PredefinedMix, Pure,
         Substance,
     },
 };

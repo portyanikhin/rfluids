@@ -3,66 +3,66 @@ use super::{BinaryMixKind, CustomMix, IncompPure, PredefinedMix, Pure, Substance
 const HELMHOLTZ_EOS_BACKEND_NAME: &str = "HEOS";
 const INCOMP_BACKEND_NAME: &str = "INCOMP";
 
-/// `CoolProp` backend name.
-pub trait BackendName {
-    /// Returns `CoolProp` backend name.
+/// Default `CoolProp` backend name for a [`Substance`].
+pub trait DefaultBackendName {
+    /// Returns default `CoolProp` backend name for this [`Substance`].
     ///
     /// # Examples
     ///
     /// ```
     /// use rfluids::prelude::*;
     ///
-    /// assert_eq!(Pure::Water.backend_name(), "HEOS");
-    /// assert_eq!(IncompPure::Water.backend_name(), "INCOMP");
-    /// assert_eq!(PredefinedMix::R444A.backend_name(), "HEOS");
-    /// assert_eq!(BinaryMixKind::MPG.backend_name(), "INCOMP");
+    /// assert_eq!(Pure::Water.default_backend_name(), "HEOS");
+    /// assert_eq!(IncompPure::Water.default_backend_name(), "INCOMP");
+    /// assert_eq!(PredefinedMix::R444A.default_backend_name(), "HEOS");
+    /// assert_eq!(BinaryMixKind::MPG.default_backend_name(), "INCOMP");
     /// assert_eq!(
-    ///     CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4),])?.backend_name(),
+    ///     CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4),])?.default_backend_name(),
     ///     "HEOS"
     /// );
     /// # Ok::<(), rfluids::Error>(())
     /// ```
-    fn backend_name(&self) -> &'static str;
+    fn default_backend_name(&self) -> &'static str;
 }
 
-impl BackendName for Substance {
-    fn backend_name(&self) -> &'static str {
+impl DefaultBackendName for Substance {
+    fn default_backend_name(&self) -> &'static str {
         match self {
-            Substance::Pure(pure) => pure.backend_name(),
-            Substance::IncompPure(incomp_pure) => incomp_pure.backend_name(),
-            Substance::PredefinedMix(predefined_mix) => predefined_mix.backend_name(),
-            Substance::BinaryMix(binary_mix) => binary_mix.kind.backend_name(),
-            Substance::CustomMix(mix) => mix.backend_name(),
+            Substance::Pure(pure) => pure.default_backend_name(),
+            Substance::IncompPure(incomp_pure) => incomp_pure.default_backend_name(),
+            Substance::PredefinedMix(predefined_mix) => predefined_mix.default_backend_name(),
+            Substance::BinaryMix(binary_mix) => binary_mix.kind.default_backend_name(),
+            Substance::CustomMix(mix) => mix.default_backend_name(),
         }
     }
 }
 
-impl BackendName for Pure {
-    fn backend_name(&self) -> &'static str {
+impl DefaultBackendName for Pure {
+    fn default_backend_name(&self) -> &'static str {
         HELMHOLTZ_EOS_BACKEND_NAME
     }
 }
 
-impl BackendName for IncompPure {
-    fn backend_name(&self) -> &'static str {
+impl DefaultBackendName for IncompPure {
+    fn default_backend_name(&self) -> &'static str {
         INCOMP_BACKEND_NAME
     }
 }
 
-impl BackendName for PredefinedMix {
-    fn backend_name(&self) -> &'static str {
+impl DefaultBackendName for PredefinedMix {
+    fn default_backend_name(&self) -> &'static str {
         HELMHOLTZ_EOS_BACKEND_NAME
     }
 }
 
-impl BackendName for BinaryMixKind {
-    fn backend_name(&self) -> &'static str {
+impl DefaultBackendName for BinaryMixKind {
+    fn default_backend_name(&self) -> &'static str {
         INCOMP_BACKEND_NAME
     }
 }
 
-impl BackendName for CustomMix {
-    fn backend_name(&self) -> &'static str {
+impl DefaultBackendName for CustomMix {
+    fn default_backend_name(&self) -> &'static str {
         HELMHOLTZ_EOS_BACKEND_NAME
     }
 }
@@ -89,7 +89,7 @@ mod tests {
         let sut: Substance = value.into();
 
         // When
-        let res = sut.backend_name();
+        let res = sut.default_backend_name();
 
         // Then
         assert_eq!(res, expected);
@@ -99,7 +99,7 @@ mod tests {
     fn pure() {
         for substance in Pure::iter() {
             // When
-            let res = substance.backend_name();
+            let res = substance.default_backend_name();
 
             // Then
             assert_eq!(res, HELMHOLTZ_EOS_BACKEND_NAME);
@@ -110,7 +110,7 @@ mod tests {
     fn incomp_pure() {
         for substance in IncompPure::iter() {
             // When
-            let res = substance.backend_name();
+            let res = substance.default_backend_name();
 
             // Then
             assert_eq!(res, INCOMP_BACKEND_NAME);
@@ -121,7 +121,7 @@ mod tests {
     fn predefined_mix() {
         for substance in PredefinedMix::iter() {
             // When
-            let res = substance.backend_name();
+            let res = substance.default_backend_name();
 
             // Then
             assert_eq!(res, HELMHOLTZ_EOS_BACKEND_NAME);
@@ -132,7 +132,7 @@ mod tests {
     fn binary_mix_kind() {
         for substance in BinaryMixKind::iter() {
             // When
-            let res = substance.backend_name();
+            let res = substance.default_backend_name();
 
             // Then
             assert_eq!(res, INCOMP_BACKEND_NAME);
@@ -145,7 +145,7 @@ mod tests {
         let mix = CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]).unwrap();
 
         // When
-        let res = mix.backend_name();
+        let res = mix.default_backend_name();
 
         // Then
         assert_eq!(res, HELMHOLTZ_EOS_BACKEND_NAME);
