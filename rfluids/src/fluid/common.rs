@@ -15,11 +15,7 @@ pub(crate) fn cached_output<K>(
 where
     K: Into<u8> + Eq + Hash + Copy,
 {
-    match cache
-        .entry(key)
-        .or_insert_with(|| backend.keyed_output(key).map_err(f))
-        .as_ref()
-    {
+    match cache.entry(key).or_insert_with(|| backend.keyed_output(key).map_err(f)).as_ref() {
         Ok(&x) => Ok(x),
         Err(e) => Err(e.clone()),
     }

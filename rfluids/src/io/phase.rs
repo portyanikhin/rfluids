@@ -124,11 +124,7 @@ pub enum Phase {
     Unknown = 7,
 
     /// `CoolProp` to determine phase.
-    #[strum(
-        to_string = "phase_not_imposed",
-        serialize = "not_imposed",
-        serialize = "NotImposed"
-    )]
+    #[strum(to_string = "phase_not_imposed", serialize = "not_imposed", serialize = "NotImposed")]
     NotImposed = 8,
 }
 

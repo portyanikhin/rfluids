@@ -12,14 +12,8 @@
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(PredefinedMix::R444A.as_ref(), "R444A.mix");
-/// assert_eq!(
-///     PredefinedMix::from_str("R444A.mix"),
-///     Ok(PredefinedMix::R444A)
-/// );
-/// assert_eq!(
-///     PredefinedMix::from_str("R444A"),
-///     Ok(PredefinedMix::R444A)
-/// );
+/// assert_eq!(PredefinedMix::from_str("R444A.mix"), Ok(PredefinedMix::R444A));
+/// assert_eq!(PredefinedMix::from_str("R444A"), Ok(PredefinedMix::R444A));
 /// ```
 ///
 /// # See Also

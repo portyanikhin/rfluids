@@ -22,10 +22,9 @@ impl FluidCreateRequest {
             Substance::PredefinedMix(predefined_mix) => {
                 (Cow::Borrowed(predefined_mix.into()), None)
             }
-            Substance::BinaryMix(binary_mix) => (
-                Cow::Borrowed(binary_mix.kind.into()),
-                Some(vec![binary_mix.fraction]),
-            ),
+            Substance::BinaryMix(binary_mix) => {
+                (Cow::Borrowed(binary_mix.kind.into()), Some(vec![binary_mix.fraction]))
+            }
             Substance::CustomMix(custom_mix) => {
                 let mix = custom_mix.clone().into_mole_based();
                 let (components, fractions): (Vec<&str>, Vec<f64>) = mix
@@ -38,11 +37,7 @@ impl FluidCreateRequest {
         };
         let backend_name =
             custom_backend_name.map_or_else(|| Cow::Borrowed(substance.backend_name()), Cow::Owned);
-        Self {
-            substance_name,
-            backend_name,
-            fractions,
-        }
+        Self { substance_name, backend_name, fractions }
     }
 }
 
@@ -57,14 +52,8 @@ impl From<FluidUpdateRequest> for (FluidInput, FluidInput) {
     fn from(request: FluidUpdateRequest) -> Self {
         let keys: (FluidParam, FluidParam) = request.input_pair.into();
         (
-            FluidInput {
-                key: keys.0,
-                value: request.value1,
-            },
-            FluidInput {
-                key: keys.1,
-                value: request.value2,
-            },
+            FluidInput { key: keys.0, value: request.value1 },
+            FluidInput { key: keys.1, value: request.value2 },
         )
     }
 }
@@ -84,11 +73,7 @@ impl TryFrom<(FluidInput, FluidInput)> for FluidUpdateRequest {
             } else {
                 (inputs.1.value, inputs.0.value)
             };
-        Ok(Self {
-            input_pair,
-            value1,
-            value2,
-        })
+        Ok(Self { input_pair, value1, value2 })
     }
 }
 
@@ -259,10 +244,7 @@ mod tests {
             let res = FluidUpdateRequest::try_from((input, input));
 
             // Then
-            assert_eq!(
-                res,
-                Err(FluidStateError::InvalidInputPair(input.key, input.key))
-            );
+            assert_eq!(res, Err(FluidStateError::InvalidInputPair(input.key, input.key)));
         }
 
         #[rstest]

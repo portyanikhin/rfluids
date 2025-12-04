@@ -17,11 +17,7 @@ pub trait BackendName {
     /// assert_eq!(PredefinedMix::R444A.backend_name(), "HEOS");
     /// assert_eq!(BinaryMixKind::MPG.backend_name(), "INCOMP");
     /// assert_eq!(
-    ///     CustomMix::mass_based([
-    ///         (Pure::Water, 0.6),
-    ///         (Pure::Ethanol, 0.4),
-    ///     ])?
-    ///     .backend_name(),
+    ///     CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4),])?.backend_name(),
     ///     "HEOS"
     /// );
     /// # Ok::<(), rfluids::Error>(())

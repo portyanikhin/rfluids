@@ -14,14 +14,8 @@ use super::try_from;
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(FluidParam::Conductivity.as_ref(), "conductivity");
-/// assert_eq!(
-///     FluidParam::from_str("conductivity"),
-///     Ok(FluidParam::Conductivity)
-/// );
-/// assert_eq!(
-///     FluidParam::try_from("L"),
-///     Ok(FluidParam::Conductivity)
-/// );
+/// assert_eq!(FluidParam::from_str("conductivity"), Ok(FluidParam::Conductivity));
+/// assert_eq!(FluidParam::try_from("L"), Ok(FluidParam::Conductivity));
 /// ```
 ///
 /// Conversion between [`u8`]:
@@ -30,10 +24,7 @@ use super::try_from;
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(u8::from(FluidParam::Conductivity), 52);
-/// assert_eq!(
-///     FluidParam::try_from(52),
-///     Ok(FluidParam::Conductivity)
-/// );
+/// assert_eq!(FluidParam::try_from(52), Ok(FluidParam::Conductivity));
 /// ```
 ///
 /// Conversion between [`f64`]:
@@ -41,10 +32,7 @@ use super::try_from;
 /// ```
 /// use rfluids::prelude::*;
 ///
-/// assert_eq!(
-///     FluidParam::try_from(52.0),
-///     Ok(FluidParam::Conductivity)
-/// );
+/// assert_eq!(FluidParam::try_from(52.0), Ok(FluidParam::Conductivity));
 /// ```
 ///
 /// Conversion between [`FluidInputPair`](crate::io::FluidInputPair):
@@ -56,10 +44,7 @@ use super::try_from;
 ///     <(FluidParam, FluidParam)>::from(FluidInputPair::PT),
 ///     (FluidParam::P, FluidParam::T)
 /// );
-/// assert_eq!(
-///     FluidInputPair::try_from((FluidParam::T, FluidParam::P)),
-///     Ok(FluidInputPair::PT)
-/// );
+/// assert_eq!(FluidInputPair::try_from((FluidParam::T, FluidParam::P)), Ok(FluidInputPair::PT));
 /// ```
 ///
 /// # See Also
@@ -92,17 +77,13 @@ pub enum FluidParam {
     #[strum(to_string = "Q")]
     Q = 21,
 
-    /// Reciprocal reduced temperature =
-    /// [`TCritical`](FluidTrivialParam::TCritical)/
-    /// [`T`](FluidParam::T)
-    /// **\[dimensionless\]**.
+    /// Reciprocal reduced temperature = [`TCritical`](FluidTrivialParam::TCritical)
+    /// [`T`](FluidParam::T) **\[dimensionless\]**.
     #[strum(to_string = "Tau")]
     Tau = 22,
 
-    /// Reduced density =
-    /// [`DMass`](FluidParam::DMass)/
-    /// [`DMassCritical`](FluidTrivialParam::DMassCritical)
-    /// **\[dimensionless\]**.
+    /// Reduced density = [`DMass`](FluidParam::DMass)/
+    /// [`DMassCritical`](FluidTrivialParam::DMassCritical) **\[dimensionless\]**.
     #[strum(to_string = "Delta")]
     Delta = 23,
 
@@ -122,8 +103,7 @@ pub enum FluidParam {
     #[strum(to_string = "Cpmolar")]
     CpMolar = 27,
 
-    /// Ideal gas molar specific heat at constant pressure
-    /// **\[J/mol/K\]**.
+    /// Ideal gas molar specific heat at constant pressure **\[J/mol/K\]**.
     #[strum(to_string = "Cp0molar")]
     Cp0Molar = 28,
 
@@ -183,8 +163,7 @@ pub enum FluidParam {
     #[strum(to_string = "Cpmass", serialize = "C")]
     CpMass = 42,
 
-    /// Ideal gas mass specific heat at constant pressure
-    /// **\[J/kg/K\]**.
+    /// Ideal gas mass specific heat at constant pressure **\[J/kg/K\]**.
     #[strum(to_string = "Cp0mass")]
     Cp0Mass = 43,
 
@@ -233,11 +212,7 @@ pub enum FluidParam {
     Prandtl = 54,
 
     /// Sound speed **\[m/s\]**.
-    #[strum(
-        to_string = "speed_sound",
-        serialize = "speed_of_sound",
-        serialize = "A"
-    )]
+    #[strum(to_string = "speed_sound", serialize = "speed_of_sound", serialize = "A")]
     SoundSpeed = 55,
 
     /// Isothermal compressibility **\[1/Pa\]**.
@@ -302,13 +277,11 @@ pub enum FluidParam {
     #[strum(to_string = "Cvirial")]
     CVirial = 69,
 
-    /// Derivative of second virial coefficient
-    /// with [`T`](FluidParam::T) **\[dimensionless\]**.
+    /// Derivative of second virial coefficient with [`T`](FluidParam::T) **\[dimensionless\]**.
     #[strum(to_string = "dBvirial_dT")]
     DBVirialDT = 70,
 
-    /// Derivative of third virial coefficient
-    /// with [`T`](FluidParam::T) **\[dimensionless\]**.
+    /// Derivative of third virial coefficient with [`T`](FluidParam::T) **\[dimensionless\]**.
     #[strum(to_string = "dCvirial_dT")]
     DCVirialDT = 71,
 
@@ -359,14 +332,8 @@ impl TryFrom<f64> for FluidParam {
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(FluidTrivialParam::TMin.as_ref(), "T_min");
-/// assert_eq!(
-///     FluidTrivialParam::from_str("T_min"),
-///     Ok(FluidTrivialParam::TMin)
-/// );
-/// assert_eq!(
-///     FluidTrivialParam::try_from("T_min"),
-///     Ok(FluidTrivialParam::TMin)
-/// );
+/// assert_eq!(FluidTrivialParam::from_str("T_min"), Ok(FluidTrivialParam::TMin));
+/// assert_eq!(FluidTrivialParam::try_from("T_min"), Ok(FluidTrivialParam::TMin));
 /// ```
 ///
 /// Conversion between [`u8`]:
@@ -375,10 +342,7 @@ impl TryFrom<f64> for FluidParam {
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(u8::from(FluidTrivialParam::TMax), 15);
-/// assert_eq!(
-///     FluidTrivialParam::try_from(15),
-///     Ok(FluidTrivialParam::TMax)
-/// );
+/// assert_eq!(FluidTrivialParam::try_from(15), Ok(FluidTrivialParam::TMax));
 /// ```
 ///
 /// Conversion between [`f64`]:
@@ -386,10 +350,7 @@ impl TryFrom<f64> for FluidParam {
 /// ```
 /// use rfluids::prelude::*;
 ///
-/// assert_eq!(
-///     FluidTrivialParam::try_from(15.0),
-///     Ok(FluidTrivialParam::TMax)
-/// );
+/// assert_eq!(FluidTrivialParam::try_from(15.0), Ok(FluidTrivialParam::TMax));
 /// ```
 ///
 /// # See Also
@@ -487,14 +448,12 @@ pub enum FluidTrivialParam {
     #[strum(to_string = "dipole_moment")]
     DipoleMoment = 18,
 
-    /// Minimum fraction _(mole, mass or volume)_ value
-    /// for incompressible mixtures **\[dimensionless, from 0 to
-    /// 1\]**.
+    /// Minimum fraction _(mole, mass or volume)_ value for incompressible mixtures
+    /// **\[dimensionless, from 0 to 1\]**.
     #[strum(to_string = "fraction_min")]
     MinFraction = 74,
 
-    /// Maximum fraction _(mole, mass or volume)_ value
-    /// for incompressible mixtures
+    /// Maximum fraction _(mole, mass or volume)_ value for incompressible mixtures
     /// **\[dimensionless, from 0 to 1\]**.
     #[strum(to_string = "fraction_max")]
     MaxFraction = 75,
@@ -621,10 +580,7 @@ mod tests {
     #[case(IsothermalCompressibility, "isothermal_compressibility")]
     #[case(IsobaricExpansionCoefficient, "isobaric_expansion_coefficient")]
     #[case(IsentropicExpansionCoefficient, "isentropic_expansion_coefficient")]
-    #[case(
-        FundamentalDerivativeOfGasDynamics,
-        "fundamental_derivative_of_gas_dynamics"
-    )]
+    #[case(FundamentalDerivativeOfGasDynamics, "fundamental_derivative_of_gas_dynamics")]
     #[case(AlphaR, "alphar")]
     #[case(DAlphaRDTauConstDelta, "dalphar_dtau_constdelta")]
     #[case(DAlphaRDDeltaConstTau, "dalphar_ddelta_consttau")]

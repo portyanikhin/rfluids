@@ -22,23 +22,14 @@ fn setup_src_dir() -> PathBuf {
     let src_dir = PathBuf::from("lib")
         .canonicalize()
         .expect("Unable to canonicalize CoolProp directory path!");
-    println!(
-        "cargo:rustc-link-search=native={}",
-        src_dir.to_str().unwrap()
-    );
+    println!("cargo:rustc-link-search=native={}", src_dir.to_str().unwrap());
     src_dir
 }
 
 fn setup_target_dir() -> PathBuf {
     let target_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
-    println!(
-        "cargo:rustc-link-search=native={}",
-        target_dir.to_str().unwrap()
-    );
-    println!(
-        "cargo:rustc-link-arg=-Wl,-rpath,{}",
-        target_dir.to_str().unwrap()
-    );
+    println!("cargo:rustc-link-search=native={}", target_dir.to_str().unwrap());
+    println!("cargo:rustc-link-arg=-Wl,-rpath,{}", target_dir.to_str().unwrap());
     target_dir
 }
 

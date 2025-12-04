@@ -20,19 +20,13 @@ pub(crate) struct ErrorBuffer {
 
 impl ErrorBuffer {
     pub fn blank() -> Self {
-        Self {
-            code: &mut 0,
-            message: MessageBuffer::blank(),
-        }
+        Self { code: &mut 0, message: MessageBuffer::blank() }
     }
 }
 
 impl Default for ErrorBuffer {
     fn default() -> Self {
-        Self {
-            code: &mut 0,
-            message: MessageBuffer::default(),
-        }
+        Self { code: &mut 0, message: MessageBuffer::default() }
     }
 }
 
@@ -50,12 +44,7 @@ pub(crate) struct MessageBuffer {
 
 impl MessageBuffer {
     fn with_capacity(capacity: c_int) -> Self {
-        Self {
-            capacity,
-            buffer: CString::new(" ".repeat(capacity as usize))
-                .unwrap()
-                .into_raw(),
-        }
+        Self { capacity, buffer: CString::new(" ".repeat(capacity as usize)).unwrap().into_raw() }
     }
 
     pub fn blank() -> Self {

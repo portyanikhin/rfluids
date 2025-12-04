@@ -26,9 +26,8 @@
 //! cargo add rfluids
 //! ```
 //!
-//! 🎁 It comes with native `CoolProp` dynamic libraries for supported
-//! platforms. The library required for your platform will be
-//! automatically copied to the target directory during build.
+//! 🎁 It comes with native `CoolProp` dynamic libraries for supported platforms. The library
+//! required for your platform will be automatically copied to the target directory during build.
 //!
 //! ## Examples
 //!
@@ -41,31 +40,21 @@
 //! use approx::assert_relative_eq;
 //! use rfluids::prelude::*;
 //!
-//! let mut water_vapor = Fluid::from(Pure::Water).in_state(
-//!     FluidInput::pressure(101_325.0),
-//!     FluidInput::quality(1.0),
-//! )?;
-//! assert_relative_eq!(
-//!     water_vapor.specific_heat()?,
-//!     2_079.937_085_633_241,
-//!     max_relative = 1e-6
-//! );
+//! let mut water_vapor = Fluid::from(Pure::Water)
+//!     .in_state(FluidInput::pressure(101_325.0), FluidInput::quality(1.0))?;
+//! assert_relative_eq!(water_vapor.specific_heat()?, 2_079.937_085_633_241, max_relative = 1e-6);
 //! # Ok::<(), rfluids::Error>(())
 //! ```
 //!
-//! Dynamic viscosity **\[Pa·s\]** of propylene glycol aqueous
-//! solution with _60 %_ mass fraction at _100 kPa_ and _-20 °C_:
+//! Dynamic viscosity **\[Pa·s\]** of propylene glycol aqueous solution
+//! with _60 %_ mass fraction at _100 kPa_ and _-20 °C_:
 //!
 //! ```
 //! use approx::assert_relative_eq;
 //! use rfluids::prelude::*;
 //!
-//! let mut propylene_glycol =
-//!     Fluid::from(BinaryMixKind::MPG.with_fraction(0.6)?)
-//!         .in_state(
-//!             FluidInput::pressure(100e3),
-//!             FluidInput::temperature(253.15),
-//!         )?;
+//! let mut propylene_glycol = Fluid::from(BinaryMixKind::MPG.with_fraction(0.6)?)
+//!     .in_state(FluidInput::pressure(100e3), FluidInput::temperature(253.15))?;
 //! assert_relative_eq!(
 //!     propylene_glycol.dynamic_viscosity()?,
 //!     0.139_073_910_539_388_78,
@@ -81,24 +70,15 @@
 //! use approx::assert_relative_eq;
 //! use rfluids::prelude::*;
 //!
-//! let mut mix = Fluid::try_from(CustomMix::mass_based([
-//!     (Pure::Water, 0.6),
-//!     (Pure::Ethanol, 0.4),
-//! ])?)?
-//! .in_state(
-//!     FluidInput::pressure(200e3),
-//!     FluidInput::temperature(277.15),
-//! )?;
-//! assert_relative_eq!(
-//!     mix.density()?,
-//!     883.392_277_162_775_9,
-//!     max_relative = 1e-6
-//! );
+//! let mut mix =
+//!     Fluid::try_from(CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)])?)?
+//!         .in_state(FluidInput::pressure(200e3), FluidInput::temperature(277.15))?;
+//! assert_relative_eq!(mix.density()?, 883.392_277_162_775_9, max_relative = 1e-6);
 //! # Ok::<(), rfluids::Error>(())
 //! ```
 //!
-//! Wet-bulb temperature **\[K\]** of humid air
-//! at _300 m_ above sea level, _30 °C_ and _50 %_ relative humidity:
+//! Wet-bulb temperature **\[K\]** of humid air at _300 m_ above sea level,
+//! _30 °C_ and _50 %_ relative humidity:
 //!
 //! ```
 //! use approx::assert_relative_eq;
@@ -117,10 +97,8 @@
 //! # Ok::<(), rfluids::Error>(())
 //! ```
 //!
-//! [`Fluid`](crate::fluid::Fluid) and
-//! [`HumidAir`](crate::humid_air::HumidAir) implement the
-//! [`PartialEq`] trait. Equality is checked
-//! by the thermodynamic state:
+//! [`Fluid`](crate::fluid::Fluid) and [`HumidAir`](crate::humid_air::HumidAir)
+//! implement the [`PartialEq`] trait. Equality is checked by the thermodynamic state:
 //!
 //! ```
 //! use rfluids::prelude::*;

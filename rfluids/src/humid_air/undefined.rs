@@ -4,15 +4,10 @@ use super::{HumidAir, StateResult};
 use crate::{io::HumidAirInput, state_variant::Undefined};
 
 impl HumidAir<Undefined> {
-    /// Creates and returns a new [`HumidAir`] instance
-    /// with [`Undefined`] state variant.
+    /// Creates and returns a new [`HumidAir`] instance with [`Undefined`] state variant.
     #[must_use]
     pub fn new() -> Self {
-        HumidAir {
-            update_request: None,
-            outputs: HashMap::new(),
-            state: PhantomData,
-        }
+        HumidAir { update_request: None, outputs: HashMap::new(), state: PhantomData }
     }
 
     /// Updates the thermodynamic state and returns itself with
@@ -26,8 +21,7 @@ impl HumidAir<Undefined> {
     ///
     /// # Errors
     ///
-    /// Returns a [`HumidAirStateError`](crate::humid_air::HumidAirStateError)
-    /// for invalid inputs.
+    /// Returns a [`HumidAirStateError`](crate::humid_air::HumidAirStateError) for invalid inputs.
     ///
     /// # Examples
     ///
@@ -49,12 +43,11 @@ impl HumidAir<Undefined> {
     /// // The `HumidAir` instance now has `Defined` state variant
     /// // and its thermodynamic state can be updated in place by calling `update`
     /// // (which returns a mutable reference to the instance)
-    /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air
-    ///     .update(
-    ///         HumidAirInput::pressure(202_650.0),
-    ///         HumidAirInput::temperature(313.15),
-    ///         HumidAirInput::rel_humidity(0.75),
-    ///     );
+    /// let same_humid_air_in_new_state: StateResult<&mut HumidAir> = humid_air.update(
+    ///     HumidAirInput::pressure(202_650.0),
+    ///     HumidAirInput::temperature(313.15),
+    ///     HumidAirInput::rel_humidity(0.75),
+    /// );
     /// assert!(same_humid_air_in_new_state.is_ok());
     ///
     /// // Calling `in_state` on `HumidAir<Defined>` will return
@@ -146,12 +139,7 @@ mod tests {
     #[rstest]
     fn in_state_valid_inputs(ctx: Context) {
         // Given
-        let Context {
-            altitude,
-            temperature,
-            rel_humidity,
-            ..
-        } = ctx;
+        let Context { altitude, temperature, rel_humidity, .. } = ctx;
         let sut = HumidAir::new();
 
         // When
@@ -164,32 +152,20 @@ mod tests {
     #[rstest]
     fn in_state_same_inputs(ctx: Context) {
         // Given
-        let Context {
-            altitude,
-            pressure,
-            rel_humidity,
-            ..
-        } = ctx;
+        let Context { altitude, pressure, rel_humidity, .. } = ctx;
         let sut = HumidAir::new();
 
         // When
         let res = sut.in_state(altitude, pressure, rel_humidity);
 
         // Then
-        assert!(matches!(
-            res,
-            Err(HumidAirStateError::InvalidInputs(_, _, _))
-        ));
+        assert!(matches!(res, Err(HumidAirStateError::InvalidInputs(_, _, _))));
     }
 
     #[rstest]
     fn in_state_invalid_inputs(ctx: Context) {
         // Given
-        let Context {
-            temperature,
-            rel_humidity,
-            ..
-        } = ctx;
+        let Context { temperature, rel_humidity, .. } = ctx;
         let infinite_pressure = HumidAirInput::pressure(f64::INFINITY);
         let sut = HumidAir::new();
 

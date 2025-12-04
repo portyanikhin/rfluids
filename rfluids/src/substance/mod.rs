@@ -1,24 +1,20 @@
 //! `CoolProp` substances.
 //!
-//! Provides types and functionality for working
-//! with `CoolProp` substances.
+//! Provides types and functionality for working with `CoolProp` substances.
 //!
-//! This module defines various substance types that
-//! can be used with `CoolProp`, including pure substances
-//! and different types of mixtures.
+//! This module defines various substance types that can be used with `CoolProp`,
+//! including pure substances and different types of mixtures.
 //!
 //! # Types
 //!
 //! The main types provided by this module are:
 //!
-//! - [`Substance`] -- an enum representing different types of
-//!   substances:
+//! - [`Substance`] -- an enum representing different types of substances:
 //!
 //!     - [`Pure`] -- pure or pseudo-pure substances
 //!     - [`IncompPure`] -- incompressible pure substances
 //!     - [`PredefinedMix`] -- predefined mixtures
-//!     - [`BinaryMix`] -- binary mixtures with specified fraction
-//!       _(mass-based or volume-based)_:
+//!     - [`BinaryMix`] -- binary mixtures with specified fraction _(mass-based or volume-based)_:
 //!
 //!         - [`BinaryMixKind`] -- binary mixture kinds
 //!
@@ -45,20 +41,17 @@ pub use pure::*;
 
 /// `CoolProp` substance.
 ///
-/// This enum represents different types of substances
-/// that can be used in `CoolProp`.
+/// This enum represents different types of substances that can be used in `CoolProp`.
 /// Each variant corresponds to a specific type of substance:
 ///
 /// - [`Pure`] -- represents a pure or pseudo-pure substance
 /// - [`IncompPure`] -- represents an incompressible pure substance
 /// - [`PredefinedMix`] -- represents a predefined mixture
-/// - [`BinaryMix`] -- represents an incompressible binary mixture
-///   _(mass-based or volume-based)_
+/// - [`BinaryMix`] -- represents an incompressible binary mixture _(mass-based or volume-based)_
 /// - [`CustomMix`] -- represents a custom mixture
 ///
-/// The `Substance` enum provides [`From`] implementations for each of
-/// its variants, allowing for easy conversion from the specific
-/// substance types to the `Substance` enum.
+/// `Substance` enum provides [`From`] implementations for each of its variants,
+/// allowing for easy conversion from specific substance types to the `Substance` enum.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Substance {
     /// Pure or pseudo-pure substance.

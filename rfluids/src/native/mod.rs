@@ -1,17 +1,14 @@
 //! Implementation of the `CoolProp` native API.
 //!
-//! This module provides Rust bindings and high-level abstractions
-//! for interacting with the `CoolProp` thermophysical
-//! and transport properties library.
+//! This module provides Rust bindings and high-level abstractions for interacting
+//! with the `CoolProp` thermophysical and transport properties library.
 //!
 //! # Types
 //!
 //! The main types provided by this module are:
 //!
-//! - [`CoolProp`] -- high-level API for simplified access to
-//!   properties
-//! - [`AbstractState`] -- low-level API for direct control and
-//!   improved performance
+//! - [`CoolProp`] -- high-level API for simplified access to properties
+//! - [`AbstractState`] -- low-level API for direct control and improved performance
 
 mod common;
 mod high_level_api;

@@ -1,7 +1,6 @@
 use super::{FluidParam, Input};
 
-/// [`Fluid`](crate::fluid::Fluid) input parameter
-/// with specified value.
+/// [`Fluid`](crate::fluid::Fluid) input parameter with specified value.
 ///
 /// # Examples
 ///
@@ -16,97 +15,66 @@ impl FluidInput {
     /// Mass density **\[kg/m³\]**.
     #[must_use]
     pub fn density(value: f64) -> Self {
-        Self {
-            key: FluidParam::DMass,
-            value,
-        }
+        Self { key: FluidParam::DMass, value }
     }
 
     /// Mass specific enthalpy **\[J/kg\]**.
     #[must_use]
     pub fn enthalpy(value: f64) -> Self {
-        Self {
-            key: FluidParam::HMass,
-            value,
-        }
+        Self { key: FluidParam::HMass, value }
     }
 
     /// Mass specific entropy **\[J/kg/K\]**.
     #[must_use]
     pub fn entropy(value: f64) -> Self {
-        Self {
-            key: FluidParam::SMass,
-            value,
-        }
+        Self { key: FluidParam::SMass, value }
     }
 
     /// Mass specific internal energy **\[J/kg\]**.
     #[must_use]
     pub fn internal_energy(value: f64) -> Self {
-        Self {
-            key: FluidParam::UMass,
-            value,
-        }
+        Self { key: FluidParam::UMass, value }
     }
 
     /// Molar density **\[mol/m³\]**.
     #[must_use]
     pub fn molar_density(value: f64) -> Self {
-        Self {
-            key: FluidParam::DMolar,
-            value,
-        }
+        Self { key: FluidParam::DMolar, value }
     }
 
     /// Molar specific enthalpy **\[J/mol\]**.
     #[must_use]
     pub fn molar_enthalpy(value: f64) -> Self {
-        Self {
-            key: FluidParam::HMolar,
-            value,
-        }
+        Self { key: FluidParam::HMolar, value }
     }
 
     /// Molar specific entropy **\[J/mol/K\]**.
     #[must_use]
     pub fn molar_entropy(value: f64) -> Self {
-        Self {
-            key: FluidParam::SMolar,
-            value,
-        }
+        Self { key: FluidParam::SMolar, value }
     }
 
     /// Molar specific internal energy **\[J/mol\]**.
     #[must_use]
     pub fn molar_internal_energy(value: f64) -> Self {
-        Self {
-            key: FluidParam::UMolar,
-            value,
-        }
+        Self { key: FluidParam::UMolar, value }
     }
 
     /// Pressure **\[Pa\]**.
     #[must_use]
     pub fn pressure(value: f64) -> Self {
-        Self {
-            key: FluidParam::P,
-            value,
-        }
+        Self { key: FluidParam::P, value }
     }
 
     /// Vapor quality **\[dimensionless, from 0 to 1\]**.
     #[must_use]
     pub fn quality(value: f64) -> Self {
-        Self {
-            key: FluidParam::Q,
-            value,
-        }
+        Self { key: FluidParam::Q, value }
     }
 
     /// Specific volume **\[m³/kg\]**.
     ///
-    /// **NB.** It will be converted to the
-    /// [`density`](Self::density),
+    /// **NB.** It will be converted to the [`density`](Self::density),
     /// since there is no specific [`FluidParam`] for this.
     #[must_use]
     pub fn specific_volume(value: f64) -> Self {
@@ -116,10 +84,7 @@ impl FluidInput {
     /// Temperature **\[K\]**.
     #[must_use]
     pub fn temperature(value: f64) -> Self {
-        Self {
-            key: FluidParam::T,
-            value,
-        }
+        Self { key: FluidParam::T, value }
     }
 }
 

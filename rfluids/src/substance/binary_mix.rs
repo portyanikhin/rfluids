@@ -4,8 +4,7 @@ use std::str::FromStr;
 
 use strum::EnumProperty;
 
-/// `CoolProp` incompressible binary mixtures
-/// _(mass-based or volume-based)_.
+/// `CoolProp` incompressible binary mixtures _(mass-based or volume-based)_.
 ///
 /// # Examples
 ///
@@ -17,14 +16,8 @@ use strum::EnumProperty;
 /// use rfluids::prelude::*;
 ///
 /// assert_eq!(BinaryMixKind::MPG.as_ref(), "MPG");
-/// assert_eq!(
-///     BinaryMixKind::from_str("MPG"),
-///     Ok(BinaryMixKind::MPG)
-/// );
-/// assert_eq!(
-///     BinaryMixKind::try_from("MPG"),
-///     Ok(BinaryMixKind::MPG)
-/// );
+/// assert_eq!(BinaryMixKind::from_str("MPG"), Ok(BinaryMixKind::MPG));
+/// assert_eq!(BinaryMixKind::try_from("MPG"), Ok(BinaryMixKind::MPG));
 /// ```
 ///
 /// # See Also
@@ -47,22 +40,13 @@ pub enum BinaryMixKind {
     #[strum(to_string = "FRE", props(min_fraction = "0.19", max_fraction = "0.5"))]
     FRE,
 
-    #[strum(
-        to_string = "IceEA",
-        props(min_fraction = "0.05", max_fraction = "0.35")
-    )]
+    #[strum(to_string = "IceEA", props(min_fraction = "0.05", max_fraction = "0.35"))]
     IceEA,
 
-    #[strum(
-        to_string = "IceNA",
-        props(min_fraction = "0.05", max_fraction = "0.35")
-    )]
+    #[strum(to_string = "IceNA", props(min_fraction = "0.05", max_fraction = "0.35"))]
     IceNA,
 
-    #[strum(
-        to_string = "IcePG",
-        props(min_fraction = "0.05", max_fraction = "0.35")
-    )]
+    #[strum(to_string = "IcePG", props(min_fraction = "0.05", max_fraction = "0.35"))]
     IcePG,
 
     #[strum(to_string = "LiBr", props(min_fraction = "0.0", max_fraction = "0.75"))]
@@ -71,19 +55,13 @@ pub enum BinaryMixKind {
     #[strum(to_string = "MAM", props(min_fraction = "0.0", max_fraction = "0.3"))]
     MAM,
 
-    #[strum(
-        to_string = "MAM2",
-        props(min_fraction = "0.078", max_fraction = "0.236")
-    )]
+    #[strum(to_string = "MAM2", props(min_fraction = "0.078", max_fraction = "0.236"))]
     MAM2,
 
     #[strum(to_string = "MCA", props(min_fraction = "0.0", max_fraction = "0.3"))]
     MCA,
 
-    #[strum(
-        to_string = "MCA2",
-        props(min_fraction = "0.09", max_fraction = "0.294")
-    )]
+    #[strum(to_string = "MCA2", props(min_fraction = "0.09", max_fraction = "0.294"))]
     MCA2,
 
     #[strum(to_string = "MEA", props(min_fraction = "0.0", max_fraction = "0.6"))]
@@ -101,25 +79,16 @@ pub enum BinaryMixKind {
     #[strum(to_string = "MGL", props(min_fraction = "0.0", max_fraction = "0.6"))]
     MGL,
 
-    #[strum(
-        to_string = "MGL2",
-        props(min_fraction = "0.195", max_fraction = "0.63")
-    )]
+    #[strum(to_string = "MGL2", props(min_fraction = "0.195", max_fraction = "0.63"))]
     MGL2,
 
-    #[strum(
-        to_string = "MITSW",
-        props(min_fraction = "0.0", max_fraction = "0.12")
-    )]
+    #[strum(to_string = "MITSW", props(min_fraction = "0.0", max_fraction = "0.12"))]
     MITSW,
 
     #[strum(to_string = "MKA", props(min_fraction = "0.0", max_fraction = "0.45"))]
     MKA,
 
-    #[strum(
-        to_string = "MKA2",
-        props(min_fraction = "0.11", max_fraction = "0.41")
-    )]
+    #[strum(to_string = "MKA2", props(min_fraction = "0.11", max_fraction = "0.41"))]
     MKA2,
 
     #[strum(to_string = "MKC", props(min_fraction = "0.0", max_fraction = "0.4"))]
@@ -137,19 +106,13 @@ pub enum BinaryMixKind {
     #[strum(to_string = "MMA", props(min_fraction = "0.0", max_fraction = "0.6"))]
     MMA,
 
-    #[strum(
-        to_string = "MMA2",
-        props(min_fraction = "0.078", max_fraction = "0.474")
-    )]
+    #[strum(to_string = "MMA2", props(min_fraction = "0.078", max_fraction = "0.474"))]
     MMA2,
 
     #[strum(to_string = "MMG", props(min_fraction = "0.0", max_fraction = "0.3"))]
     MMG,
 
-    #[strum(
-        to_string = "MMG2",
-        props(min_fraction = "0.0", max_fraction = "0.205")
-    )]
+    #[strum(to_string = "MMG2", props(min_fraction = "0.0", max_fraction = "0.205"))]
     MMG2,
 
     #[strum(to_string = "MNA", props(min_fraction = "0.0", max_fraction = "0.23"))]
@@ -161,37 +124,22 @@ pub enum BinaryMixKind {
     #[strum(to_string = "MPG", props(min_fraction = "0.0", max_fraction = "0.6"))]
     MPG,
 
-    #[strum(
-        to_string = "MPG2",
-        props(min_fraction = "0.15", max_fraction = "0.57")
-    )]
+    #[strum(to_string = "MPG2", props(min_fraction = "0.15", max_fraction = "0.57"))]
     MPG2,
 
-    #[strum(
-        to_string = "VCA",
-        props(min_fraction = "0.147", max_fraction = "0.299")
-    )]
+    #[strum(to_string = "VCA", props(min_fraction = "0.147", max_fraction = "0.299"))]
     VCA,
 
-    #[strum(
-        to_string = "VKC",
-        props(min_fraction = "0.128", max_fraction = "0.389")
-    )]
+    #[strum(to_string = "VKC", props(min_fraction = "0.128", max_fraction = "0.389"))]
     VKC,
 
     #[strum(to_string = "VMA", props(min_fraction = "0.1", max_fraction = "0.9"))]
     VMA,
 
-    #[strum(
-        to_string = "VMG",
-        props(min_fraction = "0.072", max_fraction = "0.206")
-    )]
+    #[strum(to_string = "VMG", props(min_fraction = "0.072", max_fraction = "0.206"))]
     VMG,
 
-    #[strum(
-        to_string = "VNA",
-        props(min_fraction = "0.07", max_fraction = "0.231")
-    )]
+    #[strum(to_string = "VNA", props(min_fraction = "0.07", max_fraction = "0.231"))]
     VNA,
 
     #[strum(to_string = "AEG", props(min_fraction = "0.1", max_fraction = "0.6"))]
@@ -267,13 +215,11 @@ impl BinaryMixKind {
     ///
     /// # Arguments
     ///
-    /// - `fraction` -- specified fraction **\[dimensionless, from 0
-    ///   to 1\]**
+    /// - `fraction` -- specified fraction **\[dimensionless, from 0 to 1\]**
     ///
     /// # Errors
     ///
-    /// Returns a [`BinaryMixError`] if the fraction
-    /// is out of the valid range
+    /// Returns a [`BinaryMixError`] if the fraction is out of the valid range
     /// [[`min_fraction`](BinaryMixKind::min_fraction);
     /// [`max_fraction`](BinaryMixKind::max_fraction)].
     ///
@@ -293,15 +239,11 @@ impl BinaryMixKind {
                 max: self.max_fraction(),
             });
         }
-        Ok(BinaryMix {
-            kind: self,
-            fraction,
-        })
+        Ok(BinaryMix { kind: self, fraction })
     }
 }
 
-/// [`BinaryMixKind`] with specified fraction
-/// _(mass-based or volume-based)_.
+/// [`BinaryMixKind`] with specified fraction _(mass-based or volume-based)_.
 #[derive(Clone, Copy, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct BinaryMix {
@@ -404,18 +346,10 @@ mod tests {
             let max = kind.max_fraction();
 
             // When
-            let BinaryMix {
-                kind: kind1,
-                fraction: fraction1,
-            } = kind.with_fraction(min).unwrap();
-            let BinaryMix {
-                kind: kind2,
-                fraction: fraction2,
-            } = kind.with_fraction(average).unwrap();
-            let BinaryMix {
-                kind: kind3,
-                fraction: fraction3,
-            } = kind.with_fraction(max).unwrap();
+            let BinaryMix { kind: kind1, fraction: fraction1 } = kind.with_fraction(min).unwrap();
+            let BinaryMix { kind: kind2, fraction: fraction2 } =
+                kind.with_fraction(average).unwrap();
+            let BinaryMix { kind: kind3, fraction: fraction3 } = kind.with_fraction(max).unwrap();
 
             // Then
             assert_eq!(kind1, kind);

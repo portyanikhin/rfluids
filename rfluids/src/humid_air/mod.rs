@@ -1,8 +1,7 @@
 //! Thermophysical and transport properties of humid air.
 //!
-//! This module provides a comprehensive interface for calculating
-//! thermophysical and transport properties of humid air
-//! through the [`HumidAir`] struct.
+//! This module provides a comprehensive interface for calculating thermophysical
+//! and transport properties of humid air through the [`HumidAir`] struct.
 
 mod common;
 mod defined;
@@ -20,12 +19,10 @@ use crate::{
     state_variant::{Defined, StateVariant},
 };
 
-/// Result type for operations that could fail
-/// while updating humid air state.
+/// Result type for operations that could fail while updating humid air state.
 pub type StateResult<T> = Result<T, HumidAirStateError>;
 
-/// Result type for operations that could fail
-/// while retrieving humid air properties.
+/// Result type for operations that could fail while retrieving humid air properties.
 pub type OutputResult<T> = Result<T, HumidAirOutputError>;
 
 /// Provider of thermophysical and transport properties of humid air.
@@ -34,8 +31,7 @@ pub type OutputResult<T> = Result<T, HumidAirOutputError>;
 /// and has one generic type parameter: `S` -- state variant
 /// _([`Defined`] or [`Undefined`](crate::state_variant::Undefined))_.
 ///
-/// Depending on `S`, the `HumidAir`
-/// instance has different functionality.
+/// Depending on `S`, the `HumidAir` instance has different functionality.
 #[derive(Debug)]
 pub struct HumidAir<S: StateVariant = Defined> {
     update_request: Option<HumidAirUpdateRequest>,
@@ -55,8 +51,7 @@ pub enum HumidAirStateError {
     InvalidInputValue,
 }
 
-/// Error during calculation
-/// of the [`HumidAir`] output parameter value.
+/// Error during calculation of the [`HumidAir`] output parameter value.
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 pub enum HumidAirOutputError {
     /// Specified output parameter is not available.

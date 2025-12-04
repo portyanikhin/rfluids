@@ -1,7 +1,6 @@
 use super::{HumidAirParam, Input};
 
-/// [`HumidAir`](crate::humid_air::HumidAir) input parameter
-/// with specified value.
+/// [`HumidAir`](crate::humid_air::HumidAir) input parameter with specified value.
 ///
 /// # Examples
 ///
@@ -16,16 +15,12 @@ impl HumidAirInput {
     /// Absolute humidity **\[kg water/kg dry air\]**.
     #[must_use]
     pub fn abs_humidity(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::W,
-            value,
-        }
+        Self { key: HumidAirParam::W, value }
     }
 
     /// Altitude above sea level **\[m\]**.
     ///
-    /// **NB.** It will be converted to the
-    /// [`pressure`](Self::pressure)
+    /// **NB.** It will be converted to the [`pressure`](Self::pressure)
     /// _(according to ASHRAE Fundamentals Handbook)_,
     /// since there is no specific [`HumidAirParam`] for this.
     ///
@@ -37,15 +32,12 @@ impl HumidAirInput {
         if !(-5_000.0..=10_000.0).contains(&value) {
             return Err(AltitudeError::OutOfRange(value));
         }
-        Ok(Self::pressure(
-            101_325.0 * (1.0 - 2.255_77e-5 * value).powf(5.255_9),
-        ))
+        Ok(Self::pressure(101_325.0 * (1.0 - 2.255_77e-5 * value).powf(5.255_9)))
     }
 
     /// Mass density per unit of humid air **\[kg humid air/m³\]**.
     ///
-    /// **NB.** It will be converted to the
-    /// [`specific_volume`](Self::specific_volume),
+    /// **NB.** It will be converted to the [`specific_volume`](Self::specific_volume),
     /// since there is no specific [`HumidAirParam`] for this.
     #[must_use]
     pub fn density(value: f64) -> Self {
@@ -54,8 +46,7 @@ impl HumidAirInput {
 
     /// Mass density per unit of dry air **\[kg dry air/m³\]**.
     ///
-    /// **NB.** It will be converted to the
-    /// [`specific_volume_da`](Self::specific_volume_da),
+    /// **NB.** It will be converted to the [`specific_volume_da`](Self::specific_volume_da),
     /// since there is no specific [`HumidAirParam`] for this.
     #[must_use]
     pub fn density_da(value: f64) -> Self {
@@ -65,120 +56,79 @@ impl HumidAirInput {
     /// Dew-point temperature **\[K\]**.
     #[must_use]
     pub fn dew_temperature(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::TDew,
-            value,
-        }
+        Self { key: HumidAirParam::TDew, value }
     }
 
-    /// Specific enthalpy per unit of humid air
-    /// **\[J/kg humid air\]**.
+    /// Specific enthalpy per unit of humid air **\[J/kg humid air\]**.
     #[must_use]
     pub fn enthalpy(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::Hha,
-            value,
-        }
+        Self { key: HumidAirParam::Hha, value }
     }
 
     /// Specific enthalpy per unit of dry air **\[J/kg dry air\]**.
     #[must_use]
     pub fn enthalpy_da(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::Hda,
-            value,
-        }
+        Self { key: HumidAirParam::Hda, value }
     }
 
-    /// Specific entropy per unit of humid air
-    /// **\[J/kg humid air/K\]**.
+    /// Specific entropy per unit of humid air **\[J/kg humid air/K\]**.
     #[must_use]
     pub fn entropy(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::Sha,
-            value,
-        }
+        Self { key: HumidAirParam::Sha, value }
     }
 
     /// Specific entropy per unit of dry air **\[J/kg dry air/K\]**.
     #[must_use]
     pub fn entropy_da(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::Sda,
-            value,
-        }
+        Self { key: HumidAirParam::Sda, value }
     }
 
     /// Pressure **\[Pa\]**.
     #[must_use]
     pub fn pressure(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::P,
-            value,
-        }
+        Self { key: HumidAirParam::P, value }
     }
 
     /// Relative humidity **\[dimensionless, from 0 to 1\]**.
     #[must_use]
     pub fn rel_humidity(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::R,
-            value,
-        }
+        Self { key: HumidAirParam::R, value }
     }
 
     /// Specific volume per unit of humid air **\[m³/kg humid air\]**.
     #[must_use]
     pub fn specific_volume(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::Vha,
-            value,
-        }
+        Self { key: HumidAirParam::Vha, value }
     }
 
     /// Specific volume per unit of dry air **\[m³/kg dry air\]**.
     #[must_use]
     pub fn specific_volume_da(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::Vda,
-            value,
-        }
+        Self { key: HumidAirParam::Vda, value }
     }
 
     /// Dry-bulb temperature **\[K\]**.
     #[must_use]
     pub fn temperature(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::T,
-            value,
-        }
+        Self { key: HumidAirParam::T, value }
     }
 
     /// Water mole fraction **\[mol water/mol humid air\]**.
     #[must_use]
     pub fn water_mole_fraction(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::PsiW,
-            value,
-        }
+        Self { key: HumidAirParam::PsiW, value }
     }
 
     /// Partial pressure of water vapor **\[Pa\]**.
     #[must_use]
     pub fn water_partial_pressure(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::Pw,
-            value,
-        }
+        Self { key: HumidAirParam::Pw, value }
     }
 
     /// Wet-bulb temperature **\[K\]**.
     #[must_use]
     pub fn wet_bulb_temperature(value: f64) -> Self {
-        Self {
-            key: HumidAirParam::TWetBulb,
-            value,
-        }
+        Self { key: HumidAirParam::TWetBulb, value }
     }
 }
 

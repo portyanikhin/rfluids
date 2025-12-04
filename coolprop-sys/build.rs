@@ -18,7 +18,5 @@ fn main() {
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .generate()
         .expect("Unable to generate bindings!");
-    bindings
-        .write_to_file(target_dir.join("bindings.rs"))
-        .expect("Unable to write bindings!");
+    bindings.write_to_file(target_dir.join("bindings.rs")).expect("Unable to write bindings!");
 }

@@ -7,25 +7,20 @@ use crate::{
 
 #[bon::bon]
 impl Fluid<Undefined> {
-    /// Builds a new [`Fluid`] instance
-    /// with [`Undefined`] state variant from any [`Substance`].
+    /// Builds a new [`Fluid`] instance with [`Undefined`] state variant from any [`Substance`].
     ///
     /// This method provides advanced control over backend selection.
-    /// For most use cases, prefer using [`From`]/[`TryFrom`] trait
-    /// implementations instead.
+    /// For most use cases, prefer using [`From`]/[`TryFrom`] trait implementations instead.
     ///
     /// # Arguments
     ///
     /// - `substance` -- substance for which to calculate properties
-    /// - `with_backend` -- `CoolProp` backend to be used (e.g.,
-    ///   `"HEOS"`, `"INCOMP"`, `"REFPROP"`, `"IF97"`, etc.). If
-    ///   provided, overrides the default one defined for the
-    ///   substance
+    /// - `with_backend` -- `CoolProp` backend to be used (e.g., `"HEOS"`, `"INCOMP"`, `"REFPROP"`,
+    ///   `"IF97"`, etc.). If provided, overrides the default one defined for the substance
     ///
     /// # Errors
     ///
-    /// Returns a [`FluidBuildError`] for invalid backend names
-    /// or unsupported custom mixtures.
+    /// Returns a [`FluidBuildError`] for invalid backend names or unsupported custom mixtures.
     ///
     /// # Examples
     ///
@@ -37,10 +32,7 @@ impl Fluid<Undefined> {
     /// assert_eq!(water.backend_name(), "HEOS");
     ///
     /// // Overriding backend (using IF97 instead of default HEOS)
-    /// let if97_water = Fluid::builder()
-    ///     .substance(Pure::Water)
-    ///     .with_backend("IF97")
-    ///     .build()?;
+    /// let if97_water = Fluid::builder().substance(Pure::Water).with_backend("IF97").build()?;
     /// assert_eq!(if97_water.backend_name(), "IF97");
     ///
     /// // The two fluids are not equal since they use different backends
@@ -52,23 +44,19 @@ impl Fluid<Undefined> {
     ///
     /// If you don't need to override the backend name, consider
     /// using:
-    /// - [`Fluid::from`] -- simpler way to create [`Fluid`] from
-    ///   [`Pure`](crate::substance::Pure),
+    /// - [`Fluid::from`] -- simpler way to create [`Fluid`] from [`Pure`](crate::substance::Pure),
     ///   [`IncompPure`](crate::substance::IncompPure),
     ///   [`PredefinedMix`](crate::substance::PredefinedMix), or
     ///   [`BinaryMix`](crate::substance::BinaryMix)
-    /// - [`Fluid::try_from`] -- for creating [`Fluid`] from any
-    ///   [`Substance`] (including
+    /// - [`Fluid::try_from`] -- for creating [`Fluid`] from any [`Substance`] (including
     ///   [`CustomMix`](crate::substance::CustomMix))
     #[builder]
     pub fn new(
         /// Substance for which to calculate properties.
         #[builder(into)]
         substance: Substance,
-        /// `CoolProp` backend to be used
-        /// (e.g., `"HEOS"`, `"INCOMP"`, `"REFPROP"`, `"IF97"`, etc.).
-        /// If provided, overrides the default one defined for the
-        /// substance.
+        /// `CoolProp` backend to be used (e.g., `"HEOS"`, `"INCOMP"`, `"REFPROP"`, `"IF97"`,
+        /// etc.). If provided, overrides the default one defined for the substance.
         #[builder(with = |backend_name: impl AsRef<str>| backend_name.as_ref().trim().to_string())]
         with_backend: Option<String>,
     ) -> Result<Self, FluidBuildError> {
@@ -119,26 +107,20 @@ impl Fluid<Undefined> {
     /// // Calling `in_state` will move the initial value and
     /// // perform conversion between `Undefined` and `Defined` state variants
     /// // (since `Defined` is the default state variant, it can be omitted)
-    /// let mut water: Fluid = water.in_state(
-    ///     FluidInput::pressure(101_325.0),
-    ///     FluidInput::temperature(293.15),
-    /// )?;
+    /// let mut water: Fluid =
+    ///     water.in_state(FluidInput::pressure(101_325.0), FluidInput::temperature(293.15))?;
     ///
     /// // The `Fluid` instance now has `Defined` state variant
     /// // and its thermodynamic state can be updated in place by calling `update`
     /// // (which returns a mutable reference to the instance)
-    /// let same_water_in_new_state: StateResult<&mut Fluid> = water.update(
-    ///     FluidInput::pressure(202_650.0),
-    ///     FluidInput::temperature(313.15),
-    /// );
+    /// let same_water_in_new_state: StateResult<&mut Fluid> =
+    ///     water.update(FluidInput::pressure(202_650.0), FluidInput::temperature(313.15));
     /// assert!(same_water_in_new_state.is_ok());
     ///
     /// // Calling `in_state` on `Fluid<Defined>` will return
     /// // a new instance in the specified thermodynamic state
-    /// let new_water: StateResult<Fluid> = water.in_state(
-    ///     FluidInput::pressure(405_300.0),
-    ///     FluidInput::temperature(353.15),
-    /// );
+    /// let new_water: StateResult<Fluid> =
+    ///     water.in_state(FluidInput::pressure(405_300.0), FluidInput::temperature(353.15));
     /// assert!(new_water.is_ok());
     /// # Ok::<(), rfluids::Error>(())
     /// ```
@@ -269,11 +251,7 @@ mod tests {
 
         // When
         let default = Fluid::builder().substance(water).build().unwrap();
-        let custom = Fluid::builder()
-            .substance(water)
-            .with_backend("IF97")
-            .build()
-            .unwrap();
+        let custom = Fluid::builder().substance(water).with_backend("IF97").build().unwrap();
 
         // Then
         assert_eq!(default.substance(), &Substance::from(water));
@@ -289,10 +267,7 @@ mod tests {
         let Context { water, .. } = ctx;
 
         // When
-        let res = Fluid::builder()
-            .substance(water)
-            .with_backend("Hello, World!")
-            .build();
+        let res = Fluid::builder().substance(water).with_backend("Hello, World!").build();
 
         // Then
         assert!(matches!(res, Err(FluidBuildError::InvalidBackend(_))));
@@ -305,10 +280,7 @@ mod tests {
             CustomMix::mass_based([(Pure::Orthohydrogen, 0.6), (Pure::R32, 0.4)]).unwrap();
 
         // When
-        let res = Fluid::builder()
-            .substance(unsupported_mix)
-            .with_backend("HEOS")
-            .build();
+        let res = Fluid::builder().substance(unsupported_mix).with_backend("HEOS").build();
 
         // Then
         assert!(matches!(res, Err(FluidBuildError::UnsupportedCustomMix(_))));
@@ -317,30 +289,20 @@ mod tests {
     #[rstest]
     fn in_state_same_inputs(ctx: Context) {
         // Given
-        let Context {
-            pressure, water, ..
-        } = ctx;
+        let Context { pressure, water, .. } = ctx;
         let sut = ctx.sut(water);
 
         // When
         let res = sut.in_state(pressure, pressure);
 
         // Then
-        assert_eq!(
-            res,
-            Err(FluidStateError::InvalidInputPair(
-                pressure.key,
-                pressure.key
-            ))
-        );
+        assert_eq!(res, Err(FluidStateError::InvalidInputPair(pressure.key, pressure.key)));
     }
 
     #[rstest]
     fn in_state_invalid_inputs(ctx: Context) {
         // Given
-        let Context {
-            temperature, water, ..
-        } = ctx;
+        let Context { temperature, water, .. } = ctx;
         let infinite_pressure = FluidInput::pressure(f64::INFINITY);
         let sut = ctx.sut(water);
 
@@ -354,9 +316,7 @@ mod tests {
     #[rstest]
     fn in_state_invalid_state(ctx: Context) {
         // Given
-        let Context {
-            temperature, water, ..
-        } = ctx;
+        let Context { temperature, water, .. } = ctx;
         let negative_pressure = FluidInput::pressure(-1.0);
         let sut = ctx.sut(water);
 
