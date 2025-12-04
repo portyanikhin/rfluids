@@ -1,7 +1,5 @@
+comment_width = 100
 condense_wildcard_suffixes = true
-comment_width = 70
-doc_comment_code_block_width = 70
-error_on_line_overflow = true
 format_code_in_doc_comments = true
 format_macro_bodies = true
 format_macro_matchers = true
@@ -13,5 +11,6 @@ normalize_doc_attributes = true
 reorder_impl_items = true
 style_edition = "2024"
 use_field_init_shorthand = true
+use_small_heuristics = "Max"
 use_try_shorthand = true
 wrap_comments = true
