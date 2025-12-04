@@ -25,16 +25,16 @@
 
 #![allow(missing_docs, non_camel_case_types)]
 
-mod backend_name;
 mod binary_mix;
 mod custom_mix;
+mod default_backend_name;
 mod incomp_pure;
 mod predefined_mix;
 mod pure;
 
-pub use backend_name::*;
 pub use binary_mix::*;
 pub use custom_mix::*;
+pub use default_backend_name::*;
 pub use incomp_pure::*;
 pub use predefined_mix::*;
 pub use pure::*;
