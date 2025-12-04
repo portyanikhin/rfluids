@@ -12,14 +12,20 @@ pub trait DefaultBackendName {
     /// ```
     /// use rfluids::prelude::*;
     ///
-    /// assert_eq!(Pure::Water.default_backend_name(), "HEOS");
-    /// assert_eq!(IncompPure::Water.default_backend_name(), "INCOMP");
-    /// assert_eq!(PredefinedMix::R444A.default_backend_name(), "HEOS");
-    /// assert_eq!(BinaryMixKind::MPG.default_backend_name(), "INCOMP");
-    /// assert_eq!(
-    ///     CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4),])?.default_backend_name(),
-    ///     "HEOS"
-    /// );
+    /// let water = Pure::Water;
+    /// assert_eq!(water.default_backend_name(), "HEOS");
+    ///
+    /// let incomp_water = IncompPure::Water;
+    /// assert_eq!(incomp_water.default_backend_name(), "INCOMP");
+    ///
+    /// let r444a = PredefinedMix::R444A;
+    /// assert_eq!(r444a.default_backend_name(), "HEOS");
+    ///
+    /// let propylene_glycol = BinaryMixKind::MPG;
+    /// assert_eq!(propylene_glycol.default_backend_name(), "INCOMP");
+    ///
+    /// let custom_mix = CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)])?;
+    /// assert_eq!(custom_mix.default_backend_name(), "HEOS");
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     fn default_backend_name(&self) -> &'static str;

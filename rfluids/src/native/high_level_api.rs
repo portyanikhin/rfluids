@@ -41,8 +41,8 @@ impl CoolProp {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::*;
     ///
-    /// let result = CoolProp::props_si("C", "P", 101_325.0, "Q", 1.0, "Water")?;
-    /// assert_relative_eq!(result, 2_079.937_085_633_241, max_relative = 1e-6);
+    /// let res = CoolProp::props_si("C", "P", 101_325.0, "Q", 1.0, "Water")?;
+    /// assert_relative_eq!(res, 2_079.937_085_633_241, max_relative = 1e-6);
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -55,8 +55,8 @@ impl CoolProp {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::*;
     ///
-    /// let result = CoolProp::props_si("V", "P", 100e3, "T", 253.15, "INCOMP::MPG-60%")?;
-    /// assert_relative_eq!(result, 0.139_073_910_539_388_47, max_relative = 1e-6);
+    /// let res = CoolProp::props_si("V", "P", 100e3, "T", 253.15, "INCOMP::MPG-60%")?;
+    /// assert_relative_eq!(res, 0.139_073_910_539_388_47, max_relative = 1e-6);
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -69,8 +69,8 @@ impl CoolProp {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::*;
     ///
-    /// let result = CoolProp::props_si("D", "P", 200e3, "T", 277.15, "HEOS::Water[0.6]&Ethanol[0.4]")?;
-    /// assert_relative_eq!(result, 859.529_660_279_914_7, max_relative = 1e-6);
+    /// let res = CoolProp::props_si("D", "P", 200e3, "T", 277.15, "HEOS::Water[0.6]&Ethanol[0.4]")?;
+    /// assert_relative_eq!(res, 859.529_660_279_914_7, max_relative = 1e-6);
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -102,7 +102,7 @@ impl CoolProp {
                 const_ptr_c_char!(fluid_name.as_ref().trim()),
             )
         };
-        Self::result(value, &lock)
+        Self::res(value, &lock)
     }
 
     /// Returns a value that depends on the thermodynamic state of humid air.
@@ -134,8 +134,8 @@ impl CoolProp {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::*;
     ///
-    /// let result = CoolProp::ha_props_si("B", "P", 100e3, "T", 303.15, "R", 0.5)?;
-    /// assert_relative_eq!(result, 295.120_036_536_265_6, max_relative = 1e-6);
+    /// let res = CoolProp::ha_props_si("B", "P", 100e3, "T", 303.15, "R", 0.5)?;
+    /// assert_relative_eq!(res, 295.120_036_536_265_6, max_relative = 1e-6);
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -165,7 +165,7 @@ impl CoolProp {
                 input3_value,
             )
         };
-        Self::result(value, &lock)
+        Self::res(value, &lock)
     }
 
     /// Returns a value that doesn't depend on the thermodynamic state of the fluid
@@ -190,8 +190,8 @@ impl CoolProp {
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::*;
     ///
-    /// let result = CoolProp::props1_si("Tcrit", "Water")?;
-    /// assert_relative_eq!(result, 647.096, max_relative = 1e-6);
+    /// let res = CoolProp::props1_si("Tcrit", "Water")?;
+    /// assert_relative_eq!(res, 647.096, max_relative = 1e-6);
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -200,8 +200,8 @@ impl CoolProp {
     /// ```
     /// use rfluids::prelude::*;
     ///
-    /// let result = CoolProp::props1_si("GWP100", "R32")?;
-    /// assert_eq!(result, 675.0);
+    /// let res = CoolProp::props1_si("GWP100", "R32")?;
+    /// assert_eq!(res, 675.0);
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -219,10 +219,10 @@ impl CoolProp {
                 const_ptr_c_char!(fluid_name.as_ref().trim()),
             )
         };
-        Self::result(value, &lock)
+        Self::res(value, &lock)
     }
 
-    fn result(value: f64, lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> Result<f64> {
+    fn res(value: f64, lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> Result<f64> {
         if !value.is_finite() {
             let message = Self::get_error_message(lock);
             return Err(CoolPropError(message.unwrap_or("Unknown error".into())));
@@ -239,8 +239,8 @@ impl CoolProp {
                 message.capacity,
             )
         };
-        let result: String = message.into();
-        if result.trim().is_empty() { None } else { Some(result) }
+        let res: String = message.into();
+        if res.trim().is_empty() { None } else { Some(res) }
     }
 }
 
@@ -385,24 +385,24 @@ mod tests {
     }
 
     #[test]
-    fn result_valid() {
+    fn res_valid() {
         // Given
         let valid = 42.0;
 
         // When
-        let res = CoolProp::result(valid, &COOLPROP.lock().unwrap());
+        let res = CoolProp::res(valid, &COOLPROP.lock().unwrap());
 
         // Then
         assert!(res.is_ok());
     }
 
     #[test]
-    fn result_invalid() {
+    fn res_invalid() {
         // Given
         let invalid = f64::NAN;
 
         // When
-        let res = CoolProp::result(invalid, &COOLPROP.lock().unwrap());
+        let res = CoolProp::res(invalid, &COOLPROP.lock().unwrap());
 
         // Then
         assert_eq!(res.unwrap_err().to_string(), "Unknown error");

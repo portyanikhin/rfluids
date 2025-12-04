@@ -76,7 +76,7 @@ impl AbstractState {
                 c_long::from(error.message.capacity),
             )
         };
-        Self::result(Self { ptr }, error)
+        Self::res(Self { ptr }, error)
     }
 
     /// Set the fractions _(mole, mass or volume)_[^note].
@@ -101,8 +101,8 @@ impl AbstractState {
     /// use rfluids::prelude::*;
     ///
     /// let mut propylene_glycol = AbstractState::new("INCOMP", "MPG")?;
-    /// let result = propylene_glycol.set_fractions(&[0.6]);
-    /// assert!(result.is_ok());
+    /// let res = propylene_glycol.set_fractions(&[0.6]);
+    /// assert!(res.is_ok());
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -112,8 +112,8 @@ impl AbstractState {
     /// use rfluids::prelude::*;
     ///
     /// let mut mixture = AbstractState::new("HEOS", "Water&Ethanol")?;
-    /// let result = mixture.set_fractions(&[0.8, 0.2]);
-    /// assert!(result.is_ok());
+    /// let res = mixture.set_fractions(&[0.8, 0.2]);
+    /// assert!(res.is_ok());
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     pub fn set_fractions(&mut self, fractions: &[f64]) -> Result<()> {
@@ -128,7 +128,7 @@ impl AbstractState {
                 c_long::from(error.message.capacity),
             );
         }
-        Self::result((), error)
+        Self::res((), error)
     }
 
     /// Update the state of the fluid.
@@ -150,8 +150,8 @@ impl AbstractState {
     /// use rfluids::prelude::*;
     ///
     /// let mut water = AbstractState::new("HEOS", "Water")?;
-    /// let result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
-    /// assert!(result.is_ok());
+    /// let res = water.update(FluidInputPair::PT, 101_325.0, 293.15);
+    /// assert!(res.is_ok());
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -176,7 +176,7 @@ impl AbstractState {
                 c_long::from(error.message.capacity),
             );
         }
-        Self::result((), error)
+        Self::res((), error)
     }
 
     /// Returns an output parameter value **\[SI units\]**
@@ -202,8 +202,8 @@ impl AbstractState {
     ///
     /// let mut water = AbstractState::new("HEOS", "Water")?;
     /// water.update(FluidInputPair::PQ, 101_325.0, 1.0)?;
-    /// let result = water.keyed_output(FluidParam::CpMass)?;
-    /// assert_relative_eq!(result, 2_079.937_085_633_241, max_relative = 1e-6);
+    /// let res = water.keyed_output(FluidParam::CpMass)?;
+    /// assert_relative_eq!(res, 2_079.937_085_633_241, max_relative = 1e-6);
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -219,8 +219,8 @@ impl AbstractState {
     /// let mut propylene_glycol = AbstractState::new("INCOMP", "MPG")?;
     /// propylene_glycol.set_fractions(&[0.6])?;
     /// propylene_glycol.update(FluidInputPair::PT, 100e3, 253.15)?;
-    /// let result = propylene_glycol.keyed_output(FluidParam::DynamicViscosity)?;
-    /// assert_relative_eq!(result, 0.139_073_910_539_388_47, max_relative = 1e-6);
+    /// let res = propylene_glycol.keyed_output(FluidParam::DynamicViscosity)?;
+    /// assert_relative_eq!(res, 0.139_073_910_539_388_47, max_relative = 1e-6);
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -236,8 +236,8 @@ impl AbstractState {
     /// let mut mixture = AbstractState::new("HEOS", "Water&Ethanol")?;
     /// mixture.set_fractions(&[0.8, 0.2])?;
     /// mixture.update(FluidInputPair::PT, 200e3, 277.15)?;
-    /// let result = mixture.keyed_output(FluidParam::DMass)?;
-    /// assert_relative_eq!(result, 883.882_635_377_379_6, max_relative = 1e-6);
+    /// let res = mixture.keyed_output(FluidParam::DMass)?;
+    /// assert_relative_eq!(res, 883.882_635_377_379_6, max_relative = 1e-6);
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -277,11 +277,11 @@ impl AbstractState {
     ///
     /// let mut water = AbstractState::new("HEOS", "Water")?;
     /// water.specify_phase(Phase::Liquid)?;
-    /// let mut result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
-    /// assert!(result.is_ok());
+    /// let mut res = water.update(FluidInputPair::PT, 101_325.0, 293.15);
+    /// assert!(res.is_ok());
     /// water.specify_phase(Phase::Gas)?;
-    /// result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
-    /// assert!(result.is_err());
+    /// res = water.update(FluidInputPair::PT, 101_325.0, 293.15);
+    /// assert!(res.is_err());
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -300,7 +300,7 @@ impl AbstractState {
                 c_long::from(error.message.capacity),
             );
         }
-        Self::result((), error)
+        Self::res((), error)
     }
 
     /// Unspecify the phase state and go back to calculating it based on the inputs.
@@ -312,11 +312,11 @@ impl AbstractState {
     ///
     /// let mut water = AbstractState::new("HEOS", "Water")?;
     /// water.specify_phase(Phase::Gas)?;
-    /// let mut result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
-    /// assert!(result.is_err());
+    /// let mut res = water.update(FluidInputPair::PT, 101_325.0, 293.15);
+    /// assert!(res.is_err());
     /// water.unspecify_phase();
-    /// result = water.update(FluidInputPair::PT, 101_325.0, 293.15);
-    /// assert!(result.is_ok());
+    /// res = water.update(FluidInputPair::PT, 101_325.0, 293.15);
+    /// assert!(res.is_ok());
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
@@ -335,13 +335,13 @@ impl AbstractState {
         }
     }
 
-    fn result<T>(value: T, error: ErrorBuffer) -> Result<T> {
+    fn res<T>(value: T, error: ErrorBuffer) -> Result<T> {
         let error_message: String = error.into();
         if error_message.trim().is_empty() { Ok(value) } else { Err(CoolPropError(error_message)) }
     }
 
     fn keyed_output_result(key: u8, value: f64, error: ErrorBuffer) -> Result<f64> {
-        Self::result((), error)?;
+        Self::res((), error)?;
         if !value.is_finite() {
             return Err(CoolPropError(format!(
                 "Unable to get the output with key '{key}' due to invalid or undefined state!",
