@@ -95,8 +95,10 @@ assert_relative_eq!(
 );
 ```
 
-[`Fluid`](crate::fluid::Fluid) and [`HumidAir`](crate::humid_air::HumidAir)
-implement the [`PartialEq`] trait. Equality is checked by the thermodynamic state:
+[`Fluid`](https://docs.rs/rfluids/latest/rfluids/fluid/struct.Fluid.html)
+and [`HumidAir`](https://docs.rs/rfluids/latest/rfluids/humid_air/struct.HumidAir.html)
+implement the [`PartialEq`](https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html) trait.
+Equality is checked by the thermodynamic state:
 
 ```rust
 use rfluids::prelude::*;
