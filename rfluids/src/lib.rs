@@ -124,6 +124,28 @@
 //! # Ok::<(), rfluids::Error>(())
 //! ```
 //!
+//! You can also specify a `CoolProp` backend for [`Fluid`](crate::fluid::Fluid)
+//! instead of the default one using [`Fluid::builder`](crate::fluid::Fluid::builder):
+//!
+//! ```
+//! use rfluids::prelude::*;
+//!
+//! let mut water = Fluid::from(Pure::Water)
+//!     .in_state(FluidInput::pressure(101_325.0), FluidInput::temperature(293.15))?;
+//! let mut if97_water = Fluid::builder()
+//!     .substance(Pure::Water)
+//!     .with_backend("IF97")
+//!     .build()?
+//!     .in_state(FluidInput::pressure(101_325.0), FluidInput::temperature(293.15))?;
+//!
+//! // Fluids with different backends are never equal
+//! assert_ne!(water, if97_water);
+//!
+//! // Different backends may yield slightly different results for the same property
+//! assert!((water.specific_heat()? - if97_water.specific_heat()?).abs() > 1e-6);
+//! # Ok::<(), rfluids::Error>(())
+//! ```
+//!
 //! #### License
 //!
 //! <sup>

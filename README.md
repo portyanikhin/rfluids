@@ -123,6 +123,29 @@ another_humid_air.update(
 assert_ne!(humid_air, another_humid_air);
 ```
 
+You can also specify a `CoolProp` backend for
+[`Fluid`](https://docs.rs/rfluids/latest/rfluids/fluid/struct.Fluid.html)
+instead of the default one using
+[`Fluid::builder`](https://docs.rs/rfluids/latest/rfluids/fluid/struct.Fluid.html#method.builder):
+
+```rust
+use rfluids::prelude::*;
+
+let mut water = Fluid::from(Pure::Water)
+    .in_state(FluidInput::pressure(101_325.0), FluidInput::temperature(293.15))?;
+let mut if97_water = Fluid::builder()
+    .substance(Pure::Water)
+    .with_backend("IF97")
+    .build()?
+    .in_state(FluidInput::pressure(101_325.0), FluidInput::temperature(293.15))?;
+
+// Same fluids with different backends are never equal
+assert_ne!(water, if97_water);
+
+// Different backends may yield slightly different results for the same property
+assert!((water.specific_heat()? - if97_water.specific_heat()?).abs() > 1e-6);
+```
+
 #### License
 
 <sup>
