@@ -210,15 +210,8 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
 
 /// Error during building of the [`Fluid`].
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
-pub enum FluidBuildError {
-    /// Specified backend name is invalid.
-    #[error("Specified backend name is invalid! {0}")]
-    InvalidBackend(CoolPropError),
-
-    /// Specified custom mixture is not supported.
-    #[error("Specified custom mixture is not supported! {0}")]
-    UnsupportedCustomMix(CoolPropError),
-}
+#[error("Unable to build fluid! {0}")]
+pub struct FluidBuildError(#[from] CoolPropError);
 
 /// Error during [`Fluid::update`] or [`Fluid::in_state`].
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
@@ -254,7 +247,6 @@ pub enum FluidOutputError {
 
 #[cfg(test)]
 mod tests {
-    use rstest::*;
     use strum::IntoEnumIterator;
 
     use super::*;
@@ -330,7 +322,7 @@ mod tests {
         assert!(res.is_ok());
     }
 
-    #[rstest]
+    #[test]
     fn try_from_unsupported_custom_mix() {
         // Given
         let unsupported_mix =
@@ -340,6 +332,6 @@ mod tests {
         let res = Fluid::try_from(unsupported_mix);
 
         // Then
-        assert!(matches!(res, Err(FluidBuildError::UnsupportedCustomMix(_))));
+        assert!(res.is_err());
     }
 }

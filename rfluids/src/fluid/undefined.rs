@@ -61,14 +61,7 @@ impl Fluid<Undefined> {
         with_backend: Option<String>,
     ) -> Result<Self, FluidBuildError> {
         let request = FluidCreateRequest::new(&substance, with_backend.clone());
-        let mut backend = AbstractState::new(&request.backend_name, request.substance_name)
-            .map_err(|err| {
-                if err.to_string().to_lowercase().contains("backend") {
-                    FluidBuildError::InvalidBackend(err)
-                } else {
-                    FluidBuildError::UnsupportedCustomMix(err)
-                }
-            })?;
+        let mut backend = AbstractState::new(&request.backend_name, request.substance_name)?;
         if let Some(fractions) = request.fractions {
             backend.set_fractions(&fractions).unwrap();
         }
@@ -270,10 +263,10 @@ mod tests {
         let res = Fluid::builder().substance(water).with_backend("Hello, World!").build();
 
         // Then
-        assert!(matches!(res, Err(FluidBuildError::InvalidBackend(_))));
+        assert!(res.is_err());
     }
 
-    #[rstest]
+    #[test]
     fn builder_unsupported_custom_mix() {
         // Given
         let unsupported_mix =
@@ -283,7 +276,7 @@ mod tests {
         let res = Fluid::builder().substance(unsupported_mix).with_backend("HEOS").build();
 
         // Then
-        assert!(matches!(res, Err(FluidBuildError::UnsupportedCustomMix(_))));
+        assert!(res.is_err());
     }
 
     #[rstest]
