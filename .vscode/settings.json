@@ -17,15 +17,20 @@
     "dtolnay",
     "Dwarnings",
     "dylib",
+    "IAPWS",
     "INCOMP",
+    "Kwong",
     "msrv",
     "Portyanikhin",
     "repr",
     "rfluids",
     "rstest",
     "rustc",
+    "SAFT",
     "taiki",
     "trunc",
-    "unspecify"
+    "TTSE",
+    "unspecify",
+    "VTPR"
   ]
 }
