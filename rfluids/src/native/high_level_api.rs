@@ -78,8 +78,8 @@ impl CoolProp {
     ///
     /// # See Also
     ///
-    /// - [PropsSI Function](https://coolprop.org/coolprop/HighLevelAPI.html#propssi-function)
-    /// - [PropsSI Inputs/Outputs](https://coolprop.org/coolprop/HighLevelAPI.html#parameter-table)
+    /// - [`PropsSI` Function](https://coolprop.org/coolprop/HighLevelAPI.html#propssi-function)
+    /// - [`PropsSI` Inputs/Outputs](https://coolprop.org/coolprop/HighLevelAPI.html#parameter-table)
     /// - [Pure and Pseudo-Pure Substances](https://coolprop.org/fluid_properties/PurePseudoPure.html)
     /// - [Incompressible Substances](https://coolprop.org/fluid_properties/Incompressibles.html)
     /// - [Predefined Mixtures](https://coolprop.org/coolprop/HighLevelAPI.html#predefined-mixtures)
@@ -143,8 +143,8 @@ impl CoolProp {
     ///
     /// # See Also
     ///
-    /// - [HAPropsSI Function](https://coolprop.org/fluid_properties/HumidAir.html)
-    /// - [HAPropsSI Inputs/Outputs](https://coolprop.org/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
+    /// - [`HAPropsSI` Function](https://coolprop.org/fluid_properties/HumidAir.html)
+    /// - [`HAPropsSI` Inputs/Outputs](https://coolprop.org/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
     /// - [`HumidAirParam`](crate::io::HumidAirParam)
     pub fn ha_props_si(
         output_key: impl AsRef<str>,
@@ -209,8 +209,8 @@ impl CoolProp {
     ///
     /// # See Also
     ///
-    /// - [Props1SI Function](https://coolprop.org/coolprop/HighLevelAPI.html#trivial-inputs)
-    /// - [Props1SI Outputs](https://coolprop.org/coolprop/HighLevelAPI.html#parameter-table)
+    /// - [`Props1SI` Function](https://coolprop.org/coolprop/HighLevelAPI.html#trivial-inputs)
+    /// - [`Props1SI` Outputs](https://coolprop.org/coolprop/HighLevelAPI.html#parameter-table)
     /// - [`FluidTrivialParam`](crate::io::FluidTrivialParam)
     /// - [`Substance`](crate::substance::Substance)
     pub fn props1_si(output_key: impl AsRef<str>, fluid_name: impl AsRef<str>) -> Result<f64> {
