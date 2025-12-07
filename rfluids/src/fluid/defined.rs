@@ -592,7 +592,7 @@ impl Fluid {
     pub fn in_state(&self, input1: FluidInput, input2: FluidInput) -> StateResult<Self> {
         let mut fluid = Fluid::builder()
             .substance(self.substance.clone())
-            .maybe_with_backend(self.custom_backend_name.clone())
+            .maybe_with_backend(self.requested_backend)
             .build()
             .unwrap()
             .in_state(input1, input2)?;
@@ -621,7 +621,7 @@ impl Clone for Fluid {
         let inputs: (FluidInput, FluidInput) = self.update_request.unwrap().into();
         let mut fluid = Fluid::builder()
             .substance(self.substance.clone())
-            .maybe_with_backend(self.custom_backend_name.clone())
+            .maybe_with_backend(self.requested_backend)
             .build()
             .unwrap()
             .in_state(inputs.0, inputs.1)
@@ -635,7 +635,7 @@ impl Clone for Fluid {
 impl PartialEq for Fluid {
     fn eq(&self, other: &Self) -> bool {
         self.substance == other.substance
-            && self.backend_name() == other.backend_name()
+            && self.backend() == other.backend()
             && self.update_request == other.update_request
     }
 }

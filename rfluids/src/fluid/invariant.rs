@@ -1,5 +1,6 @@
 use super::{
     Fluid, FluidOutputError, OutputResult, StateResult,
+    backend::{Backend, DefaultBackend},
     common::{cached_output, guard},
     request::FluidUpdateRequest,
 };
@@ -7,7 +8,7 @@ use crate::{
     io::{FluidInput, FluidTrivialParam},
     ops::mul,
     state_variant::StateVariant,
-    substance::{DefaultBackendName, Substance},
+    substance::Substance,
 };
 
 impl<S: StateVariant> Fluid<S> {
@@ -17,10 +18,10 @@ impl<S: StateVariant> Fluid<S> {
         &self.substance
     }
 
-    /// `CoolProp` backend name.
+    /// Specified `CoolProp` backend.
     #[must_use]
-    pub fn backend_name(&self) -> &str {
-        self.custom_backend_name.as_deref().unwrap_or_else(|| self.substance.default_backend_name())
+    pub fn backend(&self) -> Backend {
+        self.requested_backend.unwrap_or_else(|| self.substance.default_backend())
     }
 
     /// Acentric factor **\[dimensionless\]**.

@@ -1,9 +1,12 @@
 use std::borrow::Cow;
 
-use super::FluidStateError;
+use super::{
+    FluidStateError,
+    backend::{Backend, DefaultBackend},
+};
 use crate::{
     io::{FluidInput, FluidInputPair, FluidParam},
-    substance::{DefaultBackendName, Substance},
+    substance::Substance,
 };
 
 #[derive(Clone, Debug, PartialEq)]
@@ -15,7 +18,7 @@ pub(crate) struct FluidCreateRequest {
 
 impl FluidCreateRequest {
     #[must_use]
-    pub(crate) fn new(substance: &Substance, custom_backend_name: Option<String>) -> Self {
+    pub(crate) fn new(substance: &Substance, backend: Option<Backend>) -> Self {
         let (substance_name, fractions): (Cow<'static, str>, Option<Vec<f64>>) = match substance {
             Substance::Pure(pure) => (Cow::Borrowed(pure.into()), None),
             Substance::IncompPure(incomp_pure) => (Cow::Borrowed(incomp_pure.into()), None),
@@ -35,8 +38,7 @@ impl FluidCreateRequest {
                 (Cow::Owned(components.join("&")), Some(fractions))
             }
         };
-        let backend_name = custom_backend_name
-            .map_or_else(|| Cow::Borrowed(substance.default_backend_name()), Cow::Owned);
+        let backend_name = backend.unwrap_or_else(|| substance.default_backend()).name();
         Self { substance_name, backend_name, fractions }
     }
 }
@@ -85,7 +87,7 @@ mod tests {
         use rstest::*;
 
         use super::*;
-        use crate::substance::*;
+        use crate::{fluid::backend::*, substance::*};
 
         #[rstest]
         #[case(
@@ -99,10 +101,10 @@ mod tests {
         )]
         #[case(
             Pure::Water,
-            Some("IF97".to_string()),
+            Some(BaseBackend::If97.into()),
             FluidCreateRequest {
                 substance_name: Cow::Borrowed("Water"),
-                backend_name: Cow::Owned("IF97".to_string()),
+                backend_name: Cow::Borrowed("IF97"),
                 fractions: None,
             }
         )]
@@ -117,10 +119,10 @@ mod tests {
         )]
         #[case(
             IncompPure::Water,
-            Some("CUSTOM_BACKEND".to_string()),
+            Some(BaseBackend::Heos.with(TabularMethod::Ttse)),
             FluidCreateRequest {
                 substance_name: Cow::Borrowed("Water"),
-                backend_name: Cow::Owned("CUSTOM_BACKEND".to_string()),
+                backend_name: Cow::Owned("TTSE&HEOS".to_string()),
                 fractions: None,
             }
         )]
@@ -135,10 +137,10 @@ mod tests {
         )]
         #[case(
             PredefinedMix::R444A,
-            Some("CUSTOM_BACKEND".to_string()),
+            Some(BaseBackend::Pr.into()),
             FluidCreateRequest {
                 substance_name: Cow::Borrowed("R444A.mix"),
-                backend_name: Cow::Owned("CUSTOM_BACKEND".to_string()),
+                backend_name: Cow::Borrowed("PR"),
                 fractions: None,
             }
         )]
@@ -153,23 +155,23 @@ mod tests {
         )]
         #[case(
             BinaryMixKind::MPG.with_fraction(0.4).unwrap(),
-            Some("CUSTOM_BACKEND".to_string()),
+            Some(BaseBackend::Heos.with(TabularMethod::Bicubic)),
             FluidCreateRequest {
                 substance_name: Cow::Borrowed("MPG"),
-                backend_name: Cow::Owned("CUSTOM_BACKEND".to_string()),
+                backend_name: Cow::Owned("BICUBIC&HEOS".to_string()),
                 fractions: Some(vec![0.4]),
             }
         )]
         fn new(
             #[case] substance: impl Into<Substance>,
-            #[case] backend_name: Option<String>,
+            #[case] backend: Option<Backend>,
             #[case] expected: FluidCreateRequest,
         ) {
             // Given
             let substance: Substance = substance.into();
 
             // When
-            let sut = FluidCreateRequest::new(&substance, backend_name);
+            let sut = FluidCreateRequest::new(&substance, backend);
 
             // Then
             assert_eq!(sut, expected);
@@ -177,14 +179,17 @@ mod tests {
 
         #[rstest]
         #[case(None, Cow::Borrowed("HEOS"))]
-        #[case(Some("CUSTOM_BACKEND".to_string()), Cow::Owned("CUSTOM_BACKEND".to_string()))]
-        fn new_custom_mix(#[case] backend_name: Option<String>, #[case] expected: Cow<str>) {
+        #[case(
+            Some(BaseBackend::Refprop.with(TabularMethod::Ttse)),
+            Cow::Owned("TTSE&REFPROP".to_string())
+        )]
+        fn new_custom_mix(#[case] backend: Option<Backend>, #[case] expected: Cow<str>) {
             // Given
             let mix = CustomMix::mole_based([(Pure::Water, 0.8), (Pure::Ethanol, 0.2)]).unwrap();
             let substance = Substance::from(mix.clone());
 
             // When
-            let sut = FluidCreateRequest::new(&substance, backend_name);
+            let sut = FluidCreateRequest::new(&substance, backend);
 
             // Then
             assert!(["Water&Ethanol", "Ethanol&Water"].contains(&sut.substance_name.as_ref()));

@@ -27,6 +27,7 @@ mod undefined;
 
 use std::{collections::HashMap, fmt::Debug, marker::PhantomData};
 
+use backend::Backend;
 use request::FluidUpdateRequest;
 
 use crate::{
@@ -54,7 +55,7 @@ pub type OutputResult<T> = Result<T, FluidOutputError>;
 pub struct Fluid<S: StateVariant = Defined> {
     substance: Substance,
     backend: AbstractState,
-    custom_backend_name: Option<String>,
+    requested_backend: Option<Backend>,
     update_request: Option<FluidUpdateRequest>,
     outputs: HashMap<FluidParam, OutputResult<f64>>,
     trivial_outputs: HashMap<FluidTrivialParam, OutputResult<f64>>,
