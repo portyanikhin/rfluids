@@ -2,6 +2,8 @@
 //!
 //! This module provides a comprehensive interface for calculating thermophysical
 //! and transport properties of humid air through the [`HumidAir`] struct.
+//!
+//! Properties are calculated in accordance with **ASHRAE RP-1485**.
 
 mod common;
 mod defined;
@@ -32,6 +34,8 @@ pub type OutputResult<T> = Result<T, HumidAirOutputError>;
 /// _([`Defined`] or [`Undefined`](crate::state_variant::Undefined))_.
 ///
 /// Depending on `S`, the `HumidAir` instance has different functionality.
+///
+/// Properties are calculated in accordance with **ASHRAE RP-1485**.
 ///
 /// # See Also
 ///
