@@ -36,8 +36,8 @@ impl CustomMix {
     /// ```
     /// use rfluids::prelude::*;
     ///
-    /// let mole_based_mix = CustomMix::mole_based([(Pure::Water, 0.8), (Pure::Ethanol, 0.2)]);
-    /// assert!(mole_based_mix.is_ok());
+    /// let mole_based = CustomMix::mole_based([(Pure::Water, 0.8), (Pure::Ethanol, 0.2)]);
+    /// assert!(mole_based.is_ok());
     /// ```
     pub fn mole_based(components: impl Into<HashMap<Pure, f64>>) -> Result<Self, CustomMixError> {
         let components = components.into();
@@ -61,8 +61,8 @@ impl CustomMix {
     /// ```
     /// use rfluids::prelude::*;
     ///
-    /// let mass_based_mix = CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]);
-    /// assert!(mass_based_mix.is_ok());
+    /// let mass_based = CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)]);
+    /// assert!(mass_based.is_ok());
     /// ```
     pub fn mass_based(components: impl Into<HashMap<Pure, f64>>) -> Result<Self, CustomMixError> {
         let components = components.into();
@@ -77,11 +77,11 @@ impl CustomMix {
     /// ```
     /// use rfluids::prelude::*;
     ///
-    /// let mole_based_mix = CustomMix::mole_based([(Pure::Water, 0.8), (Pure::Ethanol, 0.2)])?;
-    /// assert_eq!(mole_based_mix.clone().into_mole_based(), mole_based_mix);
+    /// let mole_based = CustomMix::mole_based([(Pure::Water, 0.8), (Pure::Ethanol, 0.2)])?;
+    /// assert_eq!(mole_based.clone().into_mole_based(), mole_based);
     ///
-    /// let mass_based_mix = CustomMix::mass_based([(Pure::R32, 0.5), (Pure::R125, 0.5)])?;
-    /// assert_ne!(mass_based_mix.clone().into_mole_based(), mass_based_mix);
+    /// let mass_based = CustomMix::mass_based([(Pure::R32, 0.5), (Pure::R125, 0.5)])?;
+    /// assert_ne!(mass_based.clone().into_mole_based(), mass_based);
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     #[must_use]
