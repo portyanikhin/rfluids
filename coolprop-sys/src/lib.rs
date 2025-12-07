@@ -35,6 +35,8 @@
 //! <a href="https://github.com/portyanikhin/rfluids/blob/main/LICENSE">MIT License</a>.
 //! </sup>
 
+use std::sync::{LazyLock, Mutex};
+
 pub mod bindings;
 
 /// `CoolProp` dynamic library absolute path.
@@ -48,3 +50,37 @@ pub const COOLPROP_PATH: &str = coolprop_sys_linux_x86_64::COOLPROP_PATH;
 pub const COOLPROP_PATH: &str = coolprop_sys_macos_x86_64::COOLPROP_PATH;
 #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
 pub const COOLPROP_PATH: &str = coolprop_sys_macos_aarch64::COOLPROP_PATH;
+
+/// Global instance of the `CoolProp` dynamic library.
+///
+/// Provides thread-safe access to a single `CoolProp` instance across the entire application.
+/// The library is loaded lazily on first access using [`LazyLock`].
+///
+/// Access to the library is protected by a [`Mutex`], ensuring thread safety.
+/// To use the library, acquire the lock:
+///
+/// ```no_run
+/// use coolprop_sys::COOLPROP;
+///
+/// let coolprop = COOLPROP.lock().unwrap();
+/// // Use CoolProp methods here
+/// ```
+///
+/// # Panics
+///
+/// Panics on initialization if the `CoolProp` dynamic library cannot be loaded
+/// (e.g., if the library file is missing or corrupted).
+///
+/// # Safety
+///
+/// Internally uses `unsafe` to load the dynamic library via FFI.
+/// Safety is ensured because:
+/// - The library is loaded from the verified [`COOLPROP_PATH`]
+/// - Loading occurs once during initialization
+/// - All subsequent accesses work with the already loaded library
+pub static COOLPROP: LazyLock<Mutex<bindings::CoolProp>> = LazyLock::new(|| {
+    Mutex::new(
+        unsafe { bindings::CoolProp::new(COOLPROP_PATH) }
+            .expect("Unable to load CoolProp dynamic library!"),
+    )
+});
