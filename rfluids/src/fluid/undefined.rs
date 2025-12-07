@@ -1,6 +1,6 @@
 use std::{collections::HashMap, marker::PhantomData};
 
-use super::{Fluid, FluidBuildError, StateResult, request::FluidCreateRequest};
+use super::{Fluid, FluidBuildError, StateResult, backend::Backend, request::FluidCreateRequest};
 use crate::{
     io::FluidInput, native::AbstractState, state_variant::Undefined, substance::Substance,
 };
@@ -15,8 +15,8 @@ impl Fluid<Undefined> {
     /// # Arguments
     ///
     /// - `substance` -- substance for which to calculate properties
-    /// - `with_backend` -- `CoolProp` backend to be used (e.g., `"HEOS"`, `"INCOMP"`, `"REFPROP"`,
-    ///   `"IF97"`, etc.). If provided, overrides the default one defined for the substance
+    /// - `with_backend` -- `CoolProp` backend to be used ([`Backend`]). If provided, overrides the
+    ///   default one defined for the substance
     ///
     /// # Errors
     ///
@@ -29,11 +29,12 @@ impl Fluid<Undefined> {
     ///
     /// // Using default backend (HEOS for pure fluids)
     /// let water = Fluid::builder().substance(Pure::Water).build()?;
-    /// assert_eq!(water.backend_name(), "HEOS");
+    /// assert_eq!(water.backend().name(), "HEOS");
     ///
     /// // Overriding backend (using IF97 instead of default HEOS)
-    /// let if97_water = Fluid::builder().substance(Pure::Water).with_backend("IF97").build()?;
-    /// assert_eq!(if97_water.backend_name(), "IF97");
+    /// let if97_water =
+    ///     Fluid::builder().substance(Pure::Water).with_backend(BaseBackend::If97).build()?;
+    /// assert_eq!(if97_water.backend().name(), "IF97");
     ///
     /// // The two fluids are not equal since they use different backends
     /// assert_ne!(water, if97_water);
@@ -55,12 +56,12 @@ impl Fluid<Undefined> {
         /// Substance for which to calculate properties.
         #[builder(into)]
         substance: Substance,
-        /// `CoolProp` backend to be used (e.g., `"HEOS"`, `"INCOMP"`, `"REFPROP"`, `"IF97"`,
-        /// etc.). If provided, overrides the default one defined for the substance.
-        #[builder(with = |backend_name: impl AsRef<str>| backend_name.as_ref().trim().to_string())]
-        with_backend: Option<String>,
+        /// `CoolProp` backend to be used ([`Backend`]).
+        /// If provided, overrides the default one defined for the substance.
+        #[builder(into)]
+        with_backend: Option<Backend>,
     ) -> Result<Self, FluidBuildError> {
-        let request = FluidCreateRequest::new(&substance, with_backend.clone());
+        let request = FluidCreateRequest::new(&substance, with_backend);
         let mut backend = AbstractState::new(&request.backend_name, request.substance_name)?;
         if let Some(fractions) = request.fractions {
             backend.set_fractions(&fractions).unwrap();
@@ -68,7 +69,7 @@ impl Fluid<Undefined> {
         Ok(Self {
             substance,
             backend,
-            custom_backend_name: with_backend,
+            requested_backend: with_backend,
             update_request: None,
             outputs: HashMap::new(),
             trivial_outputs: HashMap::new(),
@@ -127,7 +128,7 @@ impl Fluid<Undefined> {
         Ok(Fluid {
             substance: self.substance,
             backend: self.backend,
-            custom_backend_name: self.custom_backend_name,
+            requested_backend: self.requested_backend,
             update_request: self.update_request,
             outputs: self.outputs,
             trivial_outputs: self.trivial_outputs,
@@ -140,7 +141,7 @@ impl Clone for Fluid<Undefined> {
     fn clone(&self) -> Self {
         let mut fluid = Fluid::builder()
             .substance(self.substance.clone())
-            .maybe_with_backend(self.custom_backend_name.clone())
+            .maybe_with_backend(self.requested_backend)
             .build()
             .unwrap();
         fluid.trivial_outputs.clone_from(&self.trivial_outputs);
@@ -150,7 +151,7 @@ impl Clone for Fluid<Undefined> {
 
 impl PartialEq for Fluid<Undefined> {
     fn eq(&self, other: &Self) -> bool {
-        self.substance == other.substance && self.backend_name() == other.backend_name()
+        self.substance == other.substance && self.backend() == other.backend()
     }
 }
 
@@ -160,7 +161,7 @@ mod tests {
 
     use super::*;
     use crate::{
-        fluid::FluidStateError,
+        fluid::{FluidStateError, backend::BaseBackend},
         substance::*,
         test::{SutFactory, test_output},
     };
@@ -244,23 +245,24 @@ mod tests {
 
         // When
         let default = Fluid::builder().substance(water).build().unwrap();
-        let custom = Fluid::builder().substance(water).with_backend("IF97").build().unwrap();
+        let custom =
+            Fluid::builder().substance(water).with_backend(BaseBackend::If97).build().unwrap();
 
         // Then
         assert_eq!(default.substance(), &Substance::from(water));
-        assert_eq!(default.backend_name(), "HEOS");
+        assert_eq!(default.backend(), BaseBackend::Heos.into());
         assert_eq!(custom.substance(), &Substance::from(water));
-        assert_eq!(custom.backend_name(), "IF97");
+        assert_eq!(custom.backend(), BaseBackend::If97.into());
         assert_ne!(default, custom);
     }
 
     #[rstest]
     fn builder_invalid_backend(ctx: Context) {
         // Given
-        let Context { water, .. } = ctx;
+        let Context { r32, .. } = ctx;
 
         // When
-        let res = Fluid::builder().substance(water).with_backend("Hello, World!").build();
+        let res = Fluid::builder().substance(r32).with_backend(BaseBackend::If97).build();
 
         // Then
         assert!(res.is_err());
@@ -273,7 +275,8 @@ mod tests {
             CustomMix::mass_based([(Pure::Orthohydrogen, 0.6), (Pure::R32, 0.4)]).unwrap();
 
         // When
-        let res = Fluid::builder().substance(unsupported_mix).with_backend("HEOS").build();
+        let res =
+            Fluid::builder().substance(unsupported_mix).with_backend(BaseBackend::Heos).build();
 
         // Then
         assert!(res.is_err());

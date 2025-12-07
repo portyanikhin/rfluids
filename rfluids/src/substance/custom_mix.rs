@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 
-use super::{DefaultBackendName, Pure};
-use crate::{io::FluidTrivialParam::MolarMass, native::AbstractState};
+use super::Pure;
+use crate::{
+    fluid::backend::DefaultBackend, io::FluidTrivialParam::MolarMass, native::AbstractState,
+};
 
 /// `CoolProp` custom mixture.
 ///
@@ -125,7 +127,7 @@ impl CustomMix {
     }
 
     fn molar_mass(component: Pure) -> f64 {
-        AbstractState::new(component.default_backend_name(), component.as_ref())
+        AbstractState::new(component.default_backend().name(), component.as_ref())
             .unwrap()
             .keyed_output(MolarMass)
             .unwrap()
