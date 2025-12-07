@@ -1,7 +1,7 @@
 //! Prelude imports.
 
 pub use crate::{
-    fluid::Fluid,
+    fluid::{Fluid, backend::*},
     humid_air::HumidAir,
     io::{FluidInput, FluidInputPair, FluidParam, FluidTrivialParam, HumidAirInput, Input, Phase},
     native::{AbstractState, CoolProp},

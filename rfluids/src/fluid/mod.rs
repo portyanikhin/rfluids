@@ -18,6 +18,7 @@
 //! that [`CustomMix`] can potentially be unsupported by `CoolProp`.
 //! For advanced control over backend selection, use [`Fluid::builder`].
 
+pub mod backend;
 mod common;
 mod defined;
 mod invariant;
