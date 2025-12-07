@@ -18,7 +18,7 @@ impl AbstractState {
     /// # Arguments
     ///
     /// - `backend_name` -- name of the backend _(raw [`&str`](str) or
-    ///   [`DefaultBackendName::default_backend_name`](crate::substance::DefaultBackendName::default_backend_name))_
+    ///   [`Backend::name`](crate::fluid::backend::Backend::name))_
     /// - `fluid_names` -- names of the fluids separated by the `&` symbol or just a single fluid
     ///   name _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_
     ///
@@ -57,10 +57,10 @@ impl AbstractState {
     ///
     /// # See Also
     ///
-    /// - [CoolProp low-level API](https://coolprop.github.io/CoolProp/coolprop/LowLevelAPI.html)
-    /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
-    /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incomps.html)
-    /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
+    /// - [CoolProp Low-Level API](https://coolprop.org/coolprop/LowLevelAPI.html)
+    /// - [Pure and Pseudo-Pure Substances](https://coolprop.org/fluid_properties/PurePseudoPure.html)
+    /// - [Incompressible Substances](https://coolprop.org/fluid_properties/Incompressibles.html)
+    /// - [Predefined Mixtures](https://coolprop.org/coolprop/HighLevelAPI.html#predefined-mixtures)
     /// - [`Substance`](crate::substance::Substance)
     pub fn new(
         backend_name: impl AsRef<str>,
@@ -287,7 +287,7 @@ impl AbstractState {
     ///
     /// # See Also
     ///
-    /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
+    /// - [Imposing the Phase (Optional)](https://coolprop.org/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     /// - [`Phase`](crate::io::Phase)
     pub fn specify_phase(&mut self, phase: impl AsRef<str>) -> Result<()> {
         let error = ErrorBuffer::default();
@@ -322,7 +322,7 @@ impl AbstractState {
     ///
     /// # See Also
     ///
-    /// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
+    /// - [Imposing the Phase (Optional)](https://coolprop.org/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     pub fn unspecify_phase(&mut self) {
         let error = ErrorBuffer::blank();
         unsafe {

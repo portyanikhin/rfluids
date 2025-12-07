@@ -18,7 +18,7 @@
 ///
 /// # See Also
 ///
-/// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incompressibles.html)
+/// - [Incompressible Substances](https://coolprop.org/fluid_properties/Incompressibles.html)
 #[derive(
     Clone,
     Copy,

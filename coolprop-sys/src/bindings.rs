@@ -2,7 +2,7 @@
 //!
 //! # See Also
 //!
-//! - [`CoolPropLib.h` reference](https://coolprop.github.io/CoolProp/_static/doxygen/html/_cool_prop_lib_8h.html)
+//! - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
 
 #![allow(
     dead_code,

@@ -1,5 +1,5 @@
 ﻿// List of REFPROP-only refrigerants which are not available in CoolProp yet.
-// https://coolprop.github.io/CoolProp/coolprop/REFPROP.html
+// https://coolprop.org/coolprop/REFPROP.html
 
 #[strum(to_string = "R401A.mix", serialize = "R401A")]
 R401A,

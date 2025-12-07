@@ -9,7 +9,7 @@ use crate::{
 ///
 /// # See Also
 ///
-/// - [Custom mixtures](https://coolprop.github.io/CoolProp/fluid_properties/Mixtures.html)
+/// - [Custom Mixtures](https://coolprop.org/fluid_properties/Mixtures.html)
 #[derive(Clone, Debug, PartialEq)]
 pub enum CustomMix {
     /// Mole-based mixture _(with mole fractions)_.

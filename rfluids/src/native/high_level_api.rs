@@ -76,11 +76,11 @@ impl CoolProp {
     ///
     /// # See Also
     ///
-    /// - [PropsSI function](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#propssi-function)
-    /// - [PropsSI inputs/outputs](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
-    /// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
-    /// - [Incompressible substances](https://coolprop.github.io/CoolProp/fluid_properties/Incomps.html)
-    /// - [Predefined mixtures](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#predefined-mixtures)
+    /// - [PropsSI Function](https://coolprop.org/coolprop/HighLevelAPI.html#propssi-function)
+    /// - [PropsSI Inputs/Outputs](https://coolprop.org/coolprop/HighLevelAPI.html#parameter-table)
+    /// - [Pure and Pseudo-Pure Substances](https://coolprop.org/fluid_properties/PurePseudoPure.html)
+    /// - [Incompressible Substances](https://coolprop.org/fluid_properties/Incompressibles.html)
+    /// - [Predefined Mixtures](https://coolprop.org/coolprop/HighLevelAPI.html#predefined-mixtures)
     /// - [`FluidParam`](crate::io::FluidParam)
     /// - [`Substance`](crate::substance::Substance)
     pub fn props_si(
@@ -141,8 +141,8 @@ impl CoolProp {
     ///
     /// # See Also
     ///
-    /// - [HAPropsSI function](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html)
-    /// - [HAPropsSI inputs/outputs](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
+    /// - [HAPropsSI Function](https://coolprop.org/fluid_properties/HumidAir.html)
+    /// - [HAPropsSI Inputs/Outputs](https://coolprop.org/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
     /// - [`HumidAirParam`](crate::io::HumidAirParam)
     pub fn ha_props_si(
         output_key: impl AsRef<str>,
@@ -207,8 +207,8 @@ impl CoolProp {
     ///
     /// # See Also
     ///
-    /// - [Props1SI function](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#trivial-inputs)
-    /// - [Props1SI outputs _(only those for which the value in the "Trivial" column is "True")_](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#parameter-table)
+    /// - [Props1SI Function](https://coolprop.org/coolprop/HighLevelAPI.html#trivial-inputs)
+    /// - [Props1SI Outputs](https://coolprop.org/coolprop/HighLevelAPI.html#parameter-table)
     /// - [`FluidTrivialParam`](crate::io::FluidTrivialParam)
     /// - [`Substance`](crate::substance::Substance)
     pub fn props1_si(output_key: impl AsRef<str>, fluid_name: impl AsRef<str>) -> Result<f64> {

@@ -18,7 +18,7 @@
 ///
 /// # See Also
 ///
-/// - [CoolProp humid air input/output parameters](https://coolprop.github.io/CoolProp/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
+/// - [CoolProp Humid Air Input/Output Parameters](https://coolprop.org/fluid_properties/HumidAir.html#table-of-inputs-outputs-to-hapropssi)
 #[derive(
     Clone,
     Copy,
