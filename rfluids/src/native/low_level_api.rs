@@ -1,8 +1,10 @@
 use core::ffi::{c_char, c_long};
 
+use coolprop_sys::COOLPROP;
+
 use super::{
     CoolPropError, Result,
-    common::{COOLPROP, ErrorBuffer, const_ptr_c_char},
+    common::{ErrorBuffer, const_ptr_c_char},
 };
 
 /// `CoolProp` thread safe low-level API.

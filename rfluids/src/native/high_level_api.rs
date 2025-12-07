@@ -3,9 +3,11 @@
 use core::ffi::c_char;
 use std::sync::MutexGuard;
 
+use coolprop_sys::COOLPROP;
+
 use super::{
     CoolPropError, Result,
-    common::{COOLPROP, MessageBuffer, const_ptr_c_char},
+    common::{MessageBuffer, const_ptr_c_char},
 };
 
 /// `CoolProp` thread safe high-level API.

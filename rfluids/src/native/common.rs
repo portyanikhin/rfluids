@@ -1,16 +1,5 @@
 use core::ffi::{c_char, c_int, c_long};
-use std::{
-    ffi::CString,
-    sync::{LazyLock, Mutex},
-};
-
-pub(crate) static COOLPROP: LazyLock<Mutex<coolprop_sys::bindings::CoolProp>> =
-    LazyLock::new(|| {
-        Mutex::new(
-            unsafe { coolprop_sys::bindings::CoolProp::new(coolprop_sys::COOLPROP_PATH) }
-                .expect("Unable to load CoolProp dynamic library!"),
-        )
-    });
+use std::ffi::CString;
 
 #[derive(Debug)]
 pub(crate) struct ErrorBuffer {
