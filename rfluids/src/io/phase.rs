@@ -35,7 +35,7 @@ use super::try_from;
 ///
 /// # See Also
 ///
-/// - [Imposing the phase (optional)](https://coolprop.github.io/CoolProp/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
+/// - [Imposing the Phase (Optional)](https://coolprop.org/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
 #[derive(
     Copy,
     Clone,

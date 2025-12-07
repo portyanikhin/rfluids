@@ -27,7 +27,7 @@ pub type OutputResult<T> = Result<T, HumidAirOutputError>;
 
 /// Provider of thermophysical and transport properties of humid air.
 ///
-/// It implements the [typestate pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
+/// It implements the [Typestate Pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
 /// and has one generic type parameter: `S` -- state variant
 /// _([`Defined`] or [`Undefined`](crate::state_variant::Undefined))_.
 ///

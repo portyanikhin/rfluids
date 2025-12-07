@@ -18,7 +18,7 @@
 ///
 /// # See Also
 ///
-/// - [Pure and pseudo-pure substances](https://coolprop.github.io/CoolProp/fluid_properties/PurePseudoPure.html)
+/// - [Pure and Pseudo-Pure Substances](https://coolprop.org/fluid_properties/PurePseudoPure.html)
 #[derive(
     Clone,
     Copy,

@@ -6,7 +6,7 @@
 [<img alt="CI" src="https://img.shields.io/github/actions/workflow/status/portyanikhin/rfluids/ci.yml?style=for-the-badge&logo=githubactions&logoColor=ffffff&label=ci&labelColor=555555" height="22">](https://github.com/portyanikhin/rfluids/actions/workflows/ci.yml)
 [<img alt="codecov" src="https://img.shields.io/codecov/c/github/portyanikhin/rfluids?style=for-the-badge&logo=codecov&label=codecov&labelColor=555555" height="22">](https://app.codecov.io/gh/portyanikhin/rfluids)
 
-🦀 Rusty [CoolProp](https://coolprop.github.io/CoolProp/) wrapper.
+🦀 Rusty [CoolProp](https://coolprop.org) wrapper.
 
 ## Supported platforms
 

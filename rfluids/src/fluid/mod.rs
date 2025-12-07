@@ -45,7 +45,7 @@ pub type OutputResult<T> = Result<T, FluidOutputError>;
 
 /// Provider of thermophysical and transport properties of substances.
 ///
-/// It implements the [typestate pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
+/// It implements the [Typestate Pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
 /// and has one generic type parameter: `S` -- state variant _([`Defined`] or [`Undefined`])_.
 ///
 /// Depending on `S`, the `Fluid` instance has different functionality
