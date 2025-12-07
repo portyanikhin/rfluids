@@ -217,8 +217,61 @@ impl Fluid {
         self.output(FluidParam::HelmholtzMass)
     }
 
-    /// Ideal gas molar specific heat at constant pressure
-    /// **\[J/mol/K\]**.
+    /// Ideal gas mass specific enthalpy **\[J/kg\]**.
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`FluidOutputError`] if the property is not available or calculation fails.
+    pub fn ideal_gas_enthalpy(&mut self) -> OutputResult<f64> {
+        self.output(FluidParam::HMassIdealGas)
+    }
+
+    /// Ideal gas mass specific entropy **\[J/kg/K\]**.
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`FluidOutputError`] if the property is not available or calculation fails.
+    pub fn ideal_gas_entropy(&mut self) -> OutputResult<f64> {
+        self.output(FluidParam::SMassIdealGas)
+    }
+
+    /// Ideal gas mass specific internal energy **\[J/kg\]**.
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`FluidOutputError`] if the property is not available or calculation fails.
+    pub fn ideal_gas_internal_energy(&mut self) -> OutputResult<f64> {
+        self.output(FluidParam::UMassIdealGas)
+    }
+
+    /// Ideal gas molar specific enthalpy **\[J/mol\]**.
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`FluidOutputError`] if the property is not available or calculation fails.
+    pub fn ideal_gas_molar_enthalpy(&mut self) -> OutputResult<f64> {
+        self.output(FluidParam::HMolarIdealGas)
+    }
+
+    /// Ideal gas molar specific entropy **\[J/mol/K\]**.
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`FluidOutputError`] if the property is not available or calculation fails.
+    pub fn ideal_gas_molar_entropy(&mut self) -> OutputResult<f64> {
+        self.output(FluidParam::SMolarIdealGas)
+    }
+
+    /// Ideal gas molar specific internal energy **\[J/mol\]**.
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`FluidOutputError`] if the property is not available or calculation fails.
+    pub fn ideal_gas_molar_internal_energy(&mut self) -> OutputResult<f64> {
+        self.output(FluidParam::UMolarIdealGas)
+    }
+
+    /// Ideal gas molar specific heat at constant pressure **\[J/mol/K\]**.
     ///
     /// # Errors
     ///
@@ -227,8 +280,7 @@ impl Fluid {
         self.positive_output(FluidParam::Cp0Molar)
     }
 
-    /// Ideal gas mass specific heat at constant pressure
-    /// **\[J/kg/K\]**.
+    /// Ideal gas mass specific heat at constant pressure **\[J/kg/K\]**.
     ///
     /// # Errors
     ///
@@ -731,6 +783,12 @@ mod tests {
     test_output!(fundamental_derivative_of_gas_dynamics, water: 3.515_654_313_772_814_5, pg: Err);
     test_output!(gibbs_energy, water: -2_900.779_588_748_779, pg: Err);
     test_output!(helmholtz_energy, water: -3_002.286_575_534_692, pg: Err);
+    test_output!(ideal_gas_enthalpy, water: 2.538_662_662_202_245e6, pg: Err);
+    test_output!(ideal_gas_entropy, water: 3_609.691_555_818_461, pg: Err);
+    test_output!(ideal_gas_internal_energy, water: 2.403_368_645_844_752e6, pg: Err);
+    test_output!(ideal_gas_molar_enthalpy, water: 45_734.688_221_166_92, pg: Err);
+    test_output!(ideal_gas_molar_entropy, water: 65.029_560_775_406_54, pg: Err);
+    test_output!(ideal_gas_molar_internal_energy, water: 43_297.330_257_690_29, pg: Err);
     test_output!(ideal_gas_molar_specific_heat, water: 33.565_699_649_260_64, pg: Err);
     test_output!(ideal_gas_specific_heat, water: 1_863.180_700_351_537, pg: Err);
     test_output!(internal_energy, water: 83_905.793_863_876_88);
