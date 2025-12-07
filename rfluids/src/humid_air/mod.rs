@@ -32,6 +32,10 @@ pub type OutputResult<T> = Result<T, HumidAirOutputError>;
 /// _([`Defined`] or [`Undefined`](crate::state_variant::Undefined))_.
 ///
 /// Depending on `S`, the `HumidAir` instance has different functionality.
+///
+/// # See Also
+///
+/// - [Humid Air Properties](https://coolprop.org/fluid_properties/HumidAir.html)
 #[derive(Debug)]
 pub struct HumidAir<S: StateVariant = Defined> {
     update_request: Option<HumidAirUpdateRequest>,

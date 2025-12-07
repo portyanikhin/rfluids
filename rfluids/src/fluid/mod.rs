@@ -51,6 +51,10 @@ pub type OutputResult<T> = Result<T, FluidOutputError>;
 /// Depending on `S`, the `Fluid` instance has different functionality
 /// (e.g., with [`Undefined`] state variant it has only trivial properties available,
 /// but with [`Defined`] state variant it supports a full set of property calculations).
+///
+/// # See Also
+///
+/// - [Fluid Properties](https://coolprop.org/fluid_properties/index.html)
 #[derive(Debug)]
 pub struct Fluid<S: StateVariant = Defined> {
     substance: Substance,
