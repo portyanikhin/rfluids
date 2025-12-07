@@ -259,7 +259,7 @@ impl AbstractState {
                 c_long::from(error.message.capacity),
             )
         };
-        Self::keyed_output_result(key, value, error)
+        Self::keyed_output_res(key, value, error)
     }
 
     /// Specify the phase state for all further calculations.
@@ -342,7 +342,7 @@ impl AbstractState {
         if error_message.trim().is_empty() { Ok(value) } else { Err(CoolPropError(error_message)) }
     }
 
-    fn keyed_output_result(key: u8, value: f64, error: ErrorBuffer) -> Result<f64> {
+    fn keyed_output_res(key: u8, value: f64, error: ErrorBuffer) -> Result<f64> {
         Self::res((), error)?;
         if !value.is_finite() {
             return Err(CoolPropError(format!(
