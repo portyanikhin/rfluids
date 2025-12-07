@@ -30,11 +30,13 @@
 //! ```
 
 mod base;
+mod default;
 mod tabular;
 
 use std::borrow::Cow;
 
 pub use base::*;
+pub use default::*;
 pub use tabular::*;
 
 /// `CoolProp` backend.
