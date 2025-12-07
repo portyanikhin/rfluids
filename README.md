@@ -135,7 +135,7 @@ let mut water = Fluid::from(Pure::Water)
     .in_state(FluidInput::pressure(101_325.0), FluidInput::temperature(293.15))?;
 let mut if97_water = Fluid::builder()
     .substance(Pure::Water)
-    .with_backend("IF97")
+    .with_backend(BaseBackend::If97)
     .build()?
     .in_state(FluidInput::pressure(101_325.0), FluidInput::temperature(293.15))?;
 
