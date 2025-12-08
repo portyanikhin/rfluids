@@ -9,6 +9,7 @@ use super::{
     CoolPropError, Result,
     common::{MessageBuffer, const_ptr_c_char},
 };
+use crate::io::Phase;
 
 /// `CoolProp` thread safe high-level API.
 pub struct CoolProp;
@@ -224,10 +225,77 @@ impl CoolProp {
         Self::res(value, &lock)
     }
 
+    /// Returns a phase state as a raw [`String`] depending on the thermodynamic state of the fluid.
+    ///
+    /// # Arguments
+    ///
+    /// - `input1_key` -- key of the first input property _(raw [`&str`](str) or
+    ///   [`FluidParam`](crate::io::FluidParam))_
+    /// - `input1_value` -- value of the first input property **\[SI units\]**
+    /// - `input2_key` -- key of the second input property _(raw [`&str`](str) or
+    ///   [`FluidParam`](crate::io::FluidParam))_
+    /// - `input2_value` -- value of the second input property **\[SI units\]**
+    /// - `fluid_name` -- name of the fluid _(raw [`&str`](str) or
+    ///   [`Substance`](crate::substance::Substance) subset)_
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`CoolPropError`] for invalid inputs.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::*;
+    ///
+    /// let res = CoolProp::phase_si("P", 101_325.0, "T", 293.15, "Water")?;
+    /// assert_eq!(res, "liquid");
+    ///
+    /// let res = CoolProp::phase_si("P", 101_325.0, "Q", 1.0, "Water")?;
+    /// assert_eq!(res, "twophase");
+    ///
+    /// let res = CoolProp::phase_si("P", 101_325.0, "T", 373.15, "Water")?;
+    /// assert_eq!(res, "gas");
+    /// # Ok::<(), rfluids::native::CoolPropError>(())
+    /// ```
+    ///
+    /// # See Also
+    ///
+    /// - [`PhaseSI` Function](https://coolprop.org/coolprop/HighLevelAPI.html#phasesi-function)
+    /// - [`PhaseSI` Inputs/Outputs](https://coolprop.org/coolprop/HighLevelAPI.html#parameter-table)
+    /// - [Pure and Pseudo-Pure Substances](https://coolprop.org/fluid_properties/PurePseudoPure.html)
+    /// - [Predefined Mixtures](https://coolprop.org/coolprop/HighLevelAPI.html#predefined-mixtures)
+    /// - [`FluidParam`](crate::io::FluidParam)
+    /// - [`Substance`](crate::substance::Substance)
+    /// - [`Phase`](crate::io::Phase)
+    pub fn phase_si(
+        input1_key: impl AsRef<str>,
+        input1_value: f64,
+        input2_key: impl AsRef<str>,
+        input2_value: f64,
+        fluid_name: impl AsRef<str>,
+    ) -> Result<String> {
+        // Emulate `PhaseSI` call since its handle is broken: it always returns 1 status code
+        // and writes errors to the output buffer without a way to detect them
+        let value = Self::props_si(
+            "Phase",
+            input1_key,
+            input1_value,
+            input2_key,
+            input2_value,
+            fluid_name,
+        )?;
+        let res = Phase::try_from(value)
+            .unwrap_or(Phase::Unknown)
+            .as_ref()
+            .replace("phase_", "")
+            .replace("two_phase", "twophase");
+        Ok(res)
+    }
+
     fn res(value: f64, lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> Result<f64> {
         if !value.is_finite() {
-            let message = Self::get_error_message(lock);
-            return Err(CoolPropError(message.unwrap_or("Unknown error".into())));
+            let error_message = Self::get_error_message(lock);
+            return Err(CoolPropError(error_message.unwrap_or("Unknown error".into())));
         }
         Ok(value)
     }
@@ -383,6 +451,55 @@ mod tests {
             "Unable to use input parameter [T] in Props1SI for fluid Water; \
             error was Input pair variable is invalid and output(s) are non-trivial; \
             cannot do state update : PropsSI(\"T\",\"\",0,\"\",0,\"Water\")"
+        );
+    }
+
+    #[test]
+    fn phase_si_thread_safety() {
+        // Given
+        let substance = "Water";
+        let pressure_range = 101_000..101_500;
+        let quality = 0.0;
+
+        // When
+        let res: Vec<Result<String>> = pressure_range
+            .into_par_iter()
+            .map(move |p| CoolProp::phase_si("P", p.into(), "Q", quality, substance))
+            .collect();
+
+        // Then
+        assert!(res.iter().all(Result::is_ok));
+    }
+
+    #[test]
+    fn phase_si_water_in_standard_conditions() {
+        // Given
+        let substance = "Water";
+        let pressure = 101_325.0;
+        let temperature = 293.15;
+
+        // When
+        let res = CoolProp::phase_si("P", pressure, "T", temperature, substance).unwrap();
+
+        // Then
+        assert_eq!(res, "liquid");
+    }
+
+    #[test]
+    fn phase_si_invalid_input() {
+        // Given
+        let substance = "Water";
+        let pressure = 101_325.0;
+        let negative_quality = -1.0;
+
+        // When
+        let res = CoolProp::phase_si("P", pressure, "Q", negative_quality, substance);
+
+        // Then
+        assert_eq!(
+            res.unwrap_err().to_string(),
+            "Input vapor quality [Q] must be between 0 and 1 : \
+            PropsSI(\"Phase\",\"P\",101325,\"Q\",-1,\"Water\")"
         );
     }
 
