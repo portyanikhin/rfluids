@@ -1,4 +1,4 @@
-//! Prelude imports.
+//! Convenient re-exports of commonly used types and traits.
 
 pub use crate::{
     fluid::{Fluid, backend::*},
