@@ -1,6 +1,5 @@
 // cSpell:disable
 
-use core::ffi::c_char;
 use std::sync::MutexGuard;
 
 use coolprop_sys::COOLPROP;

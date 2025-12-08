@@ -1,4 +1,4 @@
-use core::ffi::{c_char, c_long};
+use core::ffi::c_long;
 
 use coolprop_sys::COOLPROP;
 
