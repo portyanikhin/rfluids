@@ -4,7 +4,38 @@
 //! [<img alt="CI" src="https://img.shields.io/github/actions/workflow/status/portyanikhin/rfluids/ci.yml?style=for-the-badge&logo=githubactions&logoColor=ffffff&label=ci&labelColor=555555" height="22">](https://github.com/portyanikhin/rfluids/actions/workflows/ci.yml)
 //! [<img alt="codecov" src="https://img.shields.io/codecov/c/github/portyanikhin/rfluids?style=for-the-badge&logo=codecov&label=codecov&labelColor=555555" height="22">](https://app.codecov.io/gh/portyanikhin/rfluids)
 //!
-//! 🦀 Rusty [CoolProp](https://coolprop.org) wrapper.
+//! 🦀 Rusty [`CoolProp`](https://coolprop.org) wrapper
+//!
+//! ## Overview
+//!
+//! `rfluids` provides a safe, idiomatic Rust interface to [`CoolProp`](https://coolprop.org) ---
+//! a comprehensive C++ library for thermophysical property calculations.
+//! Built with type safety and ergonomics in mind, it enables precise fluid property
+//! calculations for engineering and scientific applications.
+//!
+//! ### Key Features
+//!
+//! - **Rich substance library**: pure fluids, incompressible fluids, predefined mixtures, binary
+//!   mixtures, and custom mass- or volume-based mixtures
+//! - **Comprehensive property calculations**: thermodynamic (e.g., density, enthalpy, entropy,
+//!   etc.) and transport properties (e.g., viscosity, thermal conductivity, etc.)
+//! - **Psychrometric calculations**: based on **ASHRAE RP-1485** standard
+//! - **Flexible backends**: choose between `HEOS`, `IF97`, and other `CoolProp` backends, which
+//!   determine the underlying equation of state or calculation method used for thermophysical
+//!   property calculations
+//! - **Type-safe API**: leverages Rust's type system with the [Typestate Pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
+//!   to prevent invalid operations at compile time
+//! - **Zero configuration**: includes pre-compiled `CoolProp` dynamic libraries for all supported
+//!   platforms
+//!
+//! ### Modules
+//!
+//! - [`fluid`](crate::fluid) -- thermophysical properties of substances (pure fluids and mixtures)
+//! - [`humid_air`](crate::humid_air) -- thermophysical properties of _**real**_ humid air
+//! - [`substance`](crate::substance) -- types representing `CoolProp` substances
+//! - [`io`](crate::io) -- input/output parameter types for fluid and humid air calculations
+//! - [`native`](crate::native) -- low-level and high-level `CoolProp` API bindings
+//! - [`prelude`](crate::prelude) -- convenient re-exports of commonly used types and traits
 //!
 //! ## Supported platforms
 //!
