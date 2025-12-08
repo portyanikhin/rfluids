@@ -1,12 +1,12 @@
-//! Thermophysical and transport properties of substances.
+//! Thermophysical properties of substances.
 //!
-//! This module provides a comprehensive interface for calculating thermophysical
+//! This module provides a comprehensive interface for calculating thermodynamic
 //! and transport properties of various substances, including pure fluids and different mixtures
 //! (i.e., [`Substance`] or any of its subsets).
 //!
 //! # Types
 //!
-//! The core type for managing thermophysical and transport properties of substances is [`Fluid`].
+//! The core type for managing thermophysical properties of substances is [`Fluid`].
 //! It encompasses various state management features and property calculations.
 //! The [`Fluid`] struct is generic over the state variant ([`Defined`] or [`Undefined`]).
 //! Depending on the state variant, the [`Fluid`] instance has different functionality
@@ -43,7 +43,7 @@ pub type StateResult<T> = Result<T, FluidStateError>;
 /// Result type for operations that could fail while retrieving fluid properties.
 pub type OutputResult<T> = Result<T, FluidOutputError>;
 
-/// Provider of thermophysical and transport properties of substances.
+/// Provider of thermophysical properties of substances.
 ///
 /// It implements the [Typestate Pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
 /// and has one generic type parameter: `S` -- state variant _([`Defined`] or [`Undefined`])_.

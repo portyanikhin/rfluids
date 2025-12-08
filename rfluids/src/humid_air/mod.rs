@@ -1,7 +1,7 @@
-//! Thermophysical and transport properties of humid air.
+//! Thermophysical properties of _**real**_ humid air.
 //!
-//! This module provides a comprehensive interface for calculating thermophysical
-//! and transport properties of humid air through the [`HumidAir`] struct.
+//! This module provides a comprehensive interface for calculating thermophysical properties of
+//! _**real**_ humid air through the [`HumidAir`] struct.
 //!
 //! Properties are calculated in accordance with **ASHRAE RP-1485**.
 
@@ -27,7 +27,7 @@ pub type StateResult<T> = Result<T, HumidAirStateError>;
 /// Result type for operations that could fail while retrieving humid air properties.
 pub type OutputResult<T> = Result<T, HumidAirOutputError>;
 
-/// Provider of thermophysical and transport properties of humid air.
+/// Provider of thermophysical properties of _**real**_ humid air.
 ///
 /// It implements the [Typestate Pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
 /// and has one generic type parameter: `S` -- state variant

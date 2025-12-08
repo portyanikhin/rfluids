@@ -1,7 +1,7 @@
 //! Implementation of the `CoolProp` native API.
 //!
 //! This module provides Rust bindings and high-level abstractions for interacting
-//! with the `CoolProp` thermophysical and transport properties library.
+//! with the `CoolProp` thermophysical properties library.
 //!
 //! # Types
 //!
