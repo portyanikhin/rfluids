@@ -78,6 +78,10 @@ pub const COOLPROP_PATH: &str = coolprop_sys_macos_aarch64::COOLPROP_PATH;
 /// - The library is loaded from the verified [`COOLPROP_PATH`]
 /// - Loading occurs once during initialization
 /// - All subsequent accesses work with the already loaded library
+///
+/// # See Also
+///
+/// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
 pub static COOLPROP: LazyLock<Mutex<bindings::CoolProp>> = LazyLock::new(|| {
     Mutex::new(
         unsafe { bindings::CoolProp::new(COOLPROP_PATH) }
