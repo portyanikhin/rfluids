@@ -13,6 +13,7 @@
 mod common;
 mod high_level_api;
 mod low_level_api;
+mod utils;
 
 pub use high_level_api::CoolProp;
 pub use low_level_api::AbstractState;
