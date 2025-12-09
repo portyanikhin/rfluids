@@ -5,8 +5,8 @@ use std::sync::MutexGuard;
 use coolprop_sys::COOLPROP;
 
 use super::{
-    CoolPropError, Result,
-    common::{MessageBuffer, const_ptr_c_char},
+    Result,
+    common::{const_ptr_c_char, get_error},
 };
 use crate::io::Phase;
 
@@ -293,23 +293,9 @@ impl CoolProp {
 
     fn res(value: f64, lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> Result<f64> {
         if !value.is_finite() {
-            let error_message = Self::get_error_message(lock);
-            return Err(CoolPropError(error_message.unwrap_or("Unknown error".into())));
+            return Err(get_error(lock));
         }
         Ok(value)
-    }
-
-    fn get_error_message(lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> Option<String> {
-        let message = MessageBuffer::default();
-        let _unused = unsafe {
-            lock.get_global_param_string(
-                const_ptr_c_char!("errstring"),
-                message.buffer,
-                message.capacity,
-            )
-        };
-        let res: String = message.into();
-        if res.trim().is_empty() { None } else { Some(res) }
     }
 }
 

@@ -1,5 +1,7 @@
 use core::ffi::{c_char, c_int, c_long};
-use std::ffi::CString;
+use std::{ffi::CString, sync::MutexGuard};
+
+use super::CoolPropError;
 
 #[derive(Debug)]
 pub(crate) struct ErrorBuffer {
@@ -32,7 +34,7 @@ pub(crate) struct MessageBuffer {
 }
 
 impl MessageBuffer {
-    fn with_capacity(capacity: c_int) -> Self {
+    pub fn with_capacity(capacity: c_int) -> Self {
         Self { capacity, buffer: CString::new(" ".repeat(capacity as usize)).unwrap().into_raw() }
     }
 
@@ -51,6 +53,19 @@ impl From<MessageBuffer> for String {
     fn from(value: MessageBuffer) -> Self {
         unsafe { CString::from_raw(value.buffer).into_string().unwrap() }
     }
+}
+
+pub(crate) fn get_error(lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> CoolPropError {
+    let message = MessageBuffer::default();
+    let _unused = unsafe {
+        lock.get_global_param_string(
+            const_ptr_c_char!("errstring"),
+            message.buffer,
+            message.capacity,
+        )
+    };
+    let res: String = message.into();
+    CoolPropError(if res.trim().is_empty() { "Unknown error".into() } else { res })
 }
 
 macro_rules! const_ptr_c_char {
