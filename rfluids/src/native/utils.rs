@@ -110,6 +110,55 @@ impl CoolProp {
         let res: String = res.into();
         if status != 1 || res.trim().is_empty() { None } else { Some(res) }
     }
+
+    /// Returns a string parameter for a specific fluid from `CoolProp`.
+    ///
+    /// Returns [`None`] if the input is invalid or the value could not be retrieved.
+    ///
+    /// # Arguments
+    ///
+    /// - `fluid_name` -- name of the fluid _(raw [`&str`](str) or
+    ///   [`Substance`](crate::substance::Substance) subset)_
+    /// - `param` -- fluid parameter key _(raw [`&str`](str))_
+    ///
+    /// Known parameter keys:
+    ///
+    /// - `"aliases"` -- list of aliases for the fluid _(comma-separated)_
+    /// - `"CAS"` -- CAS number
+    /// - `"ASHRAE34"` -- ASHRAE standard 34 safety rating
+    /// - `"REFPROP_name"` -- name of the fluid used in `REFPROP`
+    /// - `"BibTeX-XXX"` -- BibTeX key, where `XXX` is one of the following:
+    ///     - `EOS` -- equation of state reference
+    ///     - `CP0` -- ideal gas heat capacity equation reference
+    ///     - `CONDUCTIVITY` -- thermal conductivity equation reference
+    ///     - `MELTING_LINE` -- melting line equation reference
+    ///     - `SURFACE_TENSION` -- surface tension equation reference
+    ///     - `VISCOSITY` -- viscosity equation reference
+    /// - `"pure"` -- `"true"` if the fluid is pure, `"false"` otherwise
+    /// - `"formula"` -- chemical formula of the fluid in LaTeX form _(if available)_
+    ///
+    /// # See Also
+    ///
+    /// - [CoolProp High-Level API](https://coolprop.org/coolprop/HighLevelAPI.html)
+    /// - [Fluid Information](https://coolprop.org/coolprop/HighLevelAPI.html#fluid-information)
+    /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
+    pub fn get_fluid_param_string(
+        fluid_name: impl AsRef<str>,
+        param: impl AsRef<str>,
+    ) -> Option<String> {
+        let res = MessageBuffer::default();
+        let lock = COOLPROP.lock().unwrap();
+        let status = unsafe {
+            lock.get_fluid_param_string(
+                const_ptr_c_char!(fluid_name.as_ref().trim()),
+                const_ptr_c_char!(param.as_ref().trim()),
+                res.buffer,
+                res.capacity,
+            )
+        };
+        let res: String = res.into();
+        if status != 1 || res.trim().is_empty() { None } else { Some(res) }
+    }
 }
 
 #[cfg(test)]
@@ -117,6 +166,7 @@ mod tests {
     use rstest::*;
 
     use super::*;
+    use crate::substance::Pure;
 
     #[test]
     fn get_debug_level() {
@@ -159,6 +209,33 @@ mod tests {
     fn get_global_param_string(#[case] param: &str, #[case] is_some: bool) {
         // When
         let res = CoolProp::get_global_param_string(param);
+
+        // Then
+        assert_eq!(res.is_some(), is_some);
+    }
+
+    #[rstest]
+    #[case("aliases", true)]
+    #[case("CAS", true)]
+    #[case("ASHRAE34", true)]
+    #[case("REFPROP_name", true)]
+    #[case("BibTeX-EOS", true)]
+    #[case("BibTeX-CP0", false)]
+    #[case("BibTeX-CONDUCTIVITY", true)]
+    #[case("BibTeX-MELTING_LINE", true)]
+    #[case("BibTeX-SURFACE_TENSION", true)]
+    #[case("BibTeX-VISCOSITY", true)]
+    #[case("pure", true)]
+    #[case("formula", true)]
+    #[case("", false)]
+    #[case(" ", false)]
+    #[case("Hello, World!", false)]
+    fn get_fluid_param_string(#[case] param: &str, #[case] is_some: bool) {
+        // Given
+        let fluid = Pure::Water;
+
+        // When
+        let res = CoolProp::get_fluid_param_string(fluid, param);
 
         // Then
         assert_eq!(res.is_some(), is_some);
