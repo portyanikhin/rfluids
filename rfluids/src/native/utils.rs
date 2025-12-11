@@ -159,7 +159,7 @@ impl CoolProp {
     /// - [Substance Information](https://coolprop.org/coolprop/HighLevelAPI.html#fluid-information)
     /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
     /// - [`SubstanceParam`](crate::io::SubstanceParam)
-    pub fn get_fluid_param_string(
+    pub fn get_substance_param(
         substance_name: impl AsRef<str>,
         param: impl AsRef<str>,
     ) -> Option<String> {
@@ -256,12 +256,12 @@ mod tests {
     #[case("", false)]
     #[case(" ", false)]
     #[case("Hello, World!", false)]
-    fn get_fluid_param_string(#[case] param: &str, #[case] is_some: bool) {
+    fn get_substance_param(#[case] param: &str, #[case] is_some: bool) {
         // Given
-        let fluid = Pure::Water;
+        let substance = Pure::Water;
 
         // When
-        let res = CoolProp::get_fluid_param_string(fluid, param);
+        let res = CoolProp::get_substance_param(substance, param);
 
         // Then
         assert_eq!(res.is_some(), is_some);
