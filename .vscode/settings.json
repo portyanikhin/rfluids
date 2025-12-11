@@ -7,6 +7,9 @@
   "[toml]": {
     "editor.defaultFormatter": "tamasfe.even-better-toml"
   },
+  "[cpp]": {
+    "editor.defaultFormatter": "xaver.clang-format"
+  },
   "rust-analyzer.check.command": "clippy",
   "rust-analyzer.diagnostics.styleLints.enable": true,
   "rust-analyzer.rustfmt.extraArgs": ["+nightly"],
