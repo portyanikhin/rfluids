@@ -110,7 +110,7 @@ impl CoolProp {
     /// - [CoolProp High-Level API](https://coolprop.org/coolprop/HighLevelAPI.html)
     /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
     /// - [`GlobalParam`](crate::io::GlobalParam)
-    pub fn get_global_param_string(param: impl AsRef<str>) -> Option<String> {
+    pub fn get_global_param(param: impl AsRef<str>) -> Option<String> {
         let param = param.as_ref().trim();
         let capacity = if ["version", "gitrevision", "HOME", "REFPROP_version"].contains(&param) {
             100
@@ -232,9 +232,9 @@ mod tests {
     #[case("", false)]
     #[case(" ", false)]
     #[case("Hello, World!", false)]
-    fn get_global_param_string(#[case] param: impl AsRef<str>, #[case] is_some: bool) {
+    fn get_global_param(#[case] param: impl AsRef<str>, #[case] is_some: bool) {
         // When
-        let res = CoolProp::get_global_param_string(param);
+        let res = CoolProp::get_global_param(param);
 
         // Then
         assert_eq!(res.is_some(), is_some);
