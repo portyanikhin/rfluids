@@ -181,7 +181,7 @@ mod tests {
     use rstest::*;
 
     use super::*;
-    use crate::substance::Pure;
+    use crate::{io::GlobalParam::*, substance::Pure};
 
     #[test]
     fn get_debug_level() {
@@ -203,22 +203,34 @@ mod tests {
     }
 
     #[rstest]
+    #[case(Version, true)]
+    #[case(GitRevision, true)]
+    #[case(HomePath, true)]
+    #[case(PureList, true)]
+    #[case(IncompPureList, true)]
+    #[case(BinaryMixList, true)]
+    #[case(PredefinedMixList, true)]
+    #[case(CubicList, true)]
+    #[case(MixBinaryPairsList, true)]
+    #[case(ParamList, true)]
+    #[case(CubicJsonSchema, true)]
+    #[case(PcSaftJsonSchema, true)]
     #[case("version", true)]
     #[case("gitrevision", true)]
+    #[case("HOME", true)]
     #[case("fluids_list", true)]
     #[case("incompressible_list_pure", true)]
     #[case("incompressible_list_solution", true)]
+    #[case("predefined_mixtures", true)]
+    #[case("cubic_fluids_list", true)]
     #[case("mixture_binary_pairs_list", true)]
     #[case("parameter_list", true)]
-    #[case("predefined_mixtures", true)]
-    #[case("HOME", true)]
     #[case("cubic_fluids_schema", true)]
-    #[case("cubic_fluids_list", true)]
     #[case("pcsaft_fluids_schema", true)]
     #[case("", false)]
     #[case(" ", false)]
     #[case("Hello, World!", false)]
-    fn get_global_param_string(#[case] param: &str, #[case] is_some: bool) {
+    fn get_global_param_string(#[case] param: impl AsRef<str>, #[case] is_some: bool) {
         // When
         let res = CoolProp::get_global_param_string(param);
 
