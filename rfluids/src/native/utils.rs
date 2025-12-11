@@ -5,6 +5,9 @@ use super::{
     common::{MessageBuffer, const_ptr_c_char},
 };
 
+const MIN_DEBUG_LEVEL: u8 = 0;
+const MAX_DEBUG_LEVEL: u8 = 10;
+
 impl CoolProp {
     /// Returns the current `CoolProp` debug level.
     ///
@@ -16,7 +19,7 @@ impl CoolProp {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
     /// use rfluids::prelude::*;
     ///
     /// // By default, debugging output is disabled
@@ -28,8 +31,9 @@ impl CoolProp {
     ///
     /// - [`CoolProp::set_debug_level`](Self::set_debug_level)
     #[must_use]
-    pub fn get_debug_level() -> i32 {
-        unsafe { COOLPROP.lock().unwrap().get_debug_level() }
+    pub fn get_debug_level() -> u8 {
+        let level = unsafe { COOLPROP.lock().unwrap().get_debug_level() };
+        level.clamp(MIN_DEBUG_LEVEL.into(), MAX_DEBUG_LEVEL.into()) as u8
     }
 
     /// Sets the `CoolProp` debug level.
@@ -46,7 +50,7 @@ impl CoolProp {
     ///
     /// # Examples
     ///
-    /// ```
+    /// ```no_run
     /// use rfluids::prelude::*;
     ///
     /// // Set maximum verbosity
@@ -61,8 +65,13 @@ impl CoolProp {
     /// # See Also
     ///
     /// - [`CoolProp::get_debug_level`](Self::get_debug_level)
-    pub fn set_debug_level(level: i32) {
-        unsafe { COOLPROP.lock().unwrap().set_debug_level(level) }
+    pub fn set_debug_level(level: u8) {
+        unsafe {
+            COOLPROP
+                .lock()
+                .unwrap()
+                .set_debug_level(level.clamp(MIN_DEBUG_LEVEL, MAX_DEBUG_LEVEL).into());
+        }
     }
 
     /// Returns a global string parameter from `CoolProp`.
@@ -180,20 +189,17 @@ mod tests {
         let res = CoolProp::get_debug_level();
 
         // Then
-        assert_eq!(res, 0);
+        assert_eq!(res, MIN_DEBUG_LEVEL);
     }
 
-    #[rstest]
-    #[case(3)]
-    #[case(-42)]
-    #[case(0)]
-    fn set_debug_level(#[case] value: i32) {
+    #[test]
+    fn set_debug_level() {
         // When
-        CoolProp::set_debug_level(value);
+        CoolProp::set_debug_level(MIN_DEBUG_LEVEL);
         let res = CoolProp::get_debug_level();
 
         // Then
-        assert_eq!(res, value);
+        assert_eq!(res, MIN_DEBUG_LEVEL);
     }
 
     #[rstest]
