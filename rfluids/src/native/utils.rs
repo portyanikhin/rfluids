@@ -71,30 +71,36 @@ impl CoolProp {
     ///
     /// # Arguments
     ///
-    /// - `param` -- global parameter key _(raw [`&str`](str))_
+    /// - `param` -- global parameter key _(raw [`&str`](str) or
+    ///   [`GlobalParam`](crate::io::GlobalParam))_
     ///
     /// Known parameter keys:
     ///
     /// - `"version"` -- `CoolProp` library version
-    /// - `"gitrevision"` -- `git` commit hash of the library build
+    /// - `"gitrevision"` -- `git` commit hash of the `CoolProp` build
     /// - `"HOME"` -- `CoolProp` home directory path
     /// - `"REFPROP_version"` -- `REFPROP` version, if available
     /// - `"errstring"` -- pending error message
     /// - `"warnstring"` -- pending warning message
-    /// - `"fluids_list"` -- list of all available pure and pseudo-pure fluids _(comma-separated)_
-    /// - `"incompressible_list_pure"` -- list of pure incompressible fluids _(comma-separated)_
-    /// - `"incompressible_list_solution"` -- list of incompressible mixtures _(comma-separated)_
-    /// - `"predefined_mixtures"` -- list of predefined mixtures _(comma-separated)_
-    /// - `"cubic_fluids_list"` -- list of fluids with cubic EOS _(comma-separated)_
+    /// - `"fluids_list"` -- list of all available pure and pseudo-pure substances
+    ///   _(comma-separated)_
+    /// - `"incompressible_list_pure"` -- list of all available pure incompressible substances
+    ///   _(comma-separated)_
+    /// - `"incompressible_list_solution"` -- list of all available incompressible binary mixtures
+    ///   _(comma-separated)_
+    /// - `"predefined_mixtures"` -- list of all available predefined mixtures _(comma-separated)_
+    /// - `"cubic_fluids_list"` -- list of all substances for which a cubic EOS is applicable
+    ///   _(comma-separated)_
     /// - `"mixture_binary_pairs_list"` -- list of binary pairs for mixtures _(comma-separated)_
     /// - `"parameter_list"` -- list of all available fluid parameters _(comma-separated)_
-    /// - `"cubic_fluids_schema"` -- JSON schema for fluids with cubic EOS
-    /// - `"pcsaft_fluids_schema"` -- JSON schema for PC-SAFT fluids
+    /// - `"cubic_fluids_schema"` -- JSON schema for substances with cubic EOS
+    /// - `"pcsaft_fluids_schema"` -- JSON schema for substances with PC-SAFT EOS
     ///
     /// # See Also
     ///
     /// - [CoolProp High-Level API](https://coolprop.org/coolprop/HighLevelAPI.html)
     /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
+    /// - [`GlobalParam`](crate::io::GlobalParam)
     pub fn get_global_param_string(param: impl AsRef<str>) -> Option<String> {
         let param = param.as_ref().trim();
         let capacity = if ["version", "gitrevision", "HOME", "REFPROP_version"].contains(&param) {
