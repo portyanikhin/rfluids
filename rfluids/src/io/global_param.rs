@@ -1,4 +1,22 @@
-/// `CoolProp` global parameter.
+/// `CoolProp` global parameters.
+///
+/// # Examples
+///
+/// Conversion between [`&str`](str):
+///
+/// ```
+/// use std::str::FromStr;
+///
+/// use rfluids::prelude::*;
+///
+/// assert_eq!(GlobalParam::Version.as_ref(), "version");
+/// assert_eq!(GlobalParam::from_str("version"), Ok(GlobalParam::Version));
+/// assert_eq!(GlobalParam::try_from("VERSION"), Ok(GlobalParam::Version));
+/// ```
+///
+/// # See Also
+///
+/// - [CoolProp High-Level API](https://coolprop.org/coolprop/HighLevelAPI.html)
 #[derive(
     Clone,
     Copy,
