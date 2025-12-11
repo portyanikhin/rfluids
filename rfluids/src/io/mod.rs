@@ -25,6 +25,7 @@ mod humid_air_input;
 mod humid_air_param;
 mod input;
 mod phase;
+mod substance_param;
 
 pub use fluid_input::*;
 pub use fluid_input_pair::*;
@@ -34,6 +35,7 @@ pub use humid_air_input::*;
 pub use humid_air_param::*;
 pub use input::*;
 pub use phase::*;
+pub use substance_param::*;
 
 pub(crate) fn try_from<T: TryFrom<u8, Error = strum::ParseError>>(
     value: f64,

@@ -126,22 +126,23 @@ impl CoolProp {
         if status != 1 || res.trim().is_empty() { None } else { Some(res) }
     }
 
-    /// Returns a string parameter for a specific fluid from `CoolProp`.
+    /// Returns a string parameter for a specific substance from `CoolProp`.
     ///
     /// Returns [`None`] if the input is invalid or the value could not be retrieved.
     ///
     /// # Arguments
     ///
-    /// - `fluid_name` -- name of the fluid _(raw [`&str`](str) or
+    /// - `substance_name` -- name of the substance _(raw [`&str`](str) or
     ///   [`Substance`](crate::substance::Substance) subset)_
-    /// - `param` -- fluid parameter key _(raw [`&str`](str))_
+    /// - `param` -- substance parameter key _(raw [`&str`](str) or
+    ///   [`SubstanceParam`](crate::io::SubstanceParam))_
     ///
     /// Known parameter keys:
     ///
-    /// - `"aliases"` -- list of aliases for the fluid _(comma-separated)_
+    /// - `"aliases"` -- list of aliases for the substance _(comma-separated)_
     /// - `"CAS"` -- CAS number
-    /// - `"ASHRAE34"` -- ASHRAE standard 34 safety rating
-    /// - `"REFPROP_name"` -- name of the fluid used in `REFPROP`
+    /// - `"ASHRAE34"` -- ASHRAE Standard 34 safety rating
+    /// - `"REFPROP_name"` -- substance name used in `REFPROP`
     /// - `"BibTeX-XXX"` -- BibTeX key, where `XXX` is one of the following:
     ///     - `EOS` -- equation of state reference
     ///     - `CP0` -- ideal gas heat capacity equation reference
@@ -149,23 +150,24 @@ impl CoolProp {
     ///     - `MELTING_LINE` -- melting line equation reference
     ///     - `SURFACE_TENSION` -- surface tension equation reference
     ///     - `VISCOSITY` -- viscosity equation reference
-    /// - `"pure"` -- `"true"` if the fluid is pure, `"false"` otherwise
-    /// - `"formula"` -- chemical formula of the fluid in LaTeX form _(if available)_
+    /// - `"pure"` -- `"true"` if the substance is pure, `"false"` otherwise
+    /// - `"formula"` -- chemical formula of the substance in LaTeX form _(if available)_
     ///
     /// # See Also
     ///
     /// - [CoolProp High-Level API](https://coolprop.org/coolprop/HighLevelAPI.html)
-    /// - [Fluid Information](https://coolprop.org/coolprop/HighLevelAPI.html#fluid-information)
+    /// - [Substance Information](https://coolprop.org/coolprop/HighLevelAPI.html#fluid-information)
     /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
+    /// - [`SubstanceParam`](crate::io::SubstanceParam)
     pub fn get_fluid_param_string(
-        fluid_name: impl AsRef<str>,
+        substance_name: impl AsRef<str>,
         param: impl AsRef<str>,
     ) -> Option<String> {
         let res = MessageBuffer::default();
         let lock = COOLPROP.lock().unwrap();
         let status = unsafe {
             lock.get_fluid_param_string(
-                const_ptr_c_char!(fluid_name.as_ref().trim()),
+                const_ptr_c_char!(substance_name.as_ref().trim()),
                 const_ptr_c_char!(param.as_ref().trim()),
                 res.buffer,
                 res.capacity,
