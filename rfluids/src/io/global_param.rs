@@ -121,7 +121,7 @@ mod tests {
     #[case(ParamList, "parameter_list")]
     #[case(CubicJsonSchema, "cubic_fluids_schema")]
     #[case(PcSaftJsonSchema, "pcsaft_fluids_schema")]
-    fn as_str(#[case] sut: impl AsRef<str> + Into<&'static str> + Copy, #[case] expected: &str) {
+    fn as_str(#[case] sut: GlobalParam, #[case] expected: &str) {
         // When
         let str = sut.as_ref();
         let static_str: &'static str = sut.into();
