@@ -20,6 +20,7 @@
 mod fluid_input;
 mod fluid_input_pair;
 mod fluid_param;
+mod global_param;
 mod humid_air_input;
 mod humid_air_param;
 mod input;
@@ -28,6 +29,7 @@ mod phase;
 pub use fluid_input::*;
 pub use fluid_input_pair::*;
 pub use fluid_param::*;
+pub use global_param::*;
 pub use humid_air_input::*;
 pub use humid_air_param::*;
 pub use input::*;
