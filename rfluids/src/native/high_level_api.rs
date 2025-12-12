@@ -509,6 +509,6 @@ mod tests {
         let res = CoolProp::res(invalid, &COOLPROP.lock().unwrap());
 
         // Then
-        assert_eq!(res.unwrap_err().to_string(), "Unknown error");
+        assert_eq!(res.unwrap_err().to_string(), "Unknown CoolProp error");
     }
 }
