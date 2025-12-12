@@ -2,6 +2,7 @@ use core::ffi::{c_char, c_int, c_long};
 use std::{ffi::CString, sync::MutexGuard};
 
 use super::CoolPropError;
+use crate::io::GlobalParam;
 
 #[derive(Debug)]
 pub(crate) struct ErrorBuffer {
@@ -59,7 +60,7 @@ pub(crate) fn get_error(lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> 
     let message = MessageBuffer::default();
     let _unused = unsafe {
         lock.get_global_param_string(
-            const_ptr_c_char!("errstring"),
+            const_ptr_c_char!(GlobalParam::PendingError.as_ref()),
             message.buffer,
             message.capacity,
         )
