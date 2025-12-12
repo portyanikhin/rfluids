@@ -23,5 +23,32 @@ pub use low_level_api::AbstractState;
 #[error("{0}")]
 pub struct CoolPropError(pub(crate) String);
 
+impl Default for CoolPropError {
+    fn default() -> Self {
+        Self("Unknown CoolProp error".into())
+    }
+}
+
 /// A type alias for results returned by `CoolProp` native API.
 pub type Result<T> = std::result::Result<T, CoolPropError>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    mod coolprop_error {
+        use super::*;
+
+        #[test]
+        fn default() {
+            // Given
+            let sut = CoolPropError::default();
+
+            // When
+            let res = sut.to_string();
+
+            // Then
+            assert_eq!(res, "Unknown CoolProp error");
+        }
+    }
+}
