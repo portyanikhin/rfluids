@@ -1,8 +1,8 @@
 use coolprop_sys::COOLPROP;
 
 use super::{
-    CoolProp,
-    common::{MessageBuffer, const_ptr_c_char},
+    CoolProp, Result,
+    common::{MessageBuffer, const_ptr_c_char, get_error},
 };
 
 const MIN_DEBUG_LEVEL: u8 = 0;
@@ -176,6 +176,152 @@ impl CoolProp {
         let res: String = res.into();
         if status != 1 || res.trim().is_empty() { None } else { Some(res) }
     }
+
+    /// Sets a configuration key-value pair in `CoolProp`.
+    ///
+    /// Configuration keys control various aspects of `CoolProp` behavior (e.g., path settings,
+    /// property limits checking, gas constant normalization, etc.).
+    ///
+    /// # Arguments
+    ///
+    /// - `key` -- configuration key name _(raw [`&str`](str))_
+    /// - `value` -- configuration value _(raw [`bool`], [`f64`], [`String`], or [`&str`](str),
+    ///   automatically converted to [`ConfigValue`])_
+    ///
+    /// Known configuration keys:
+    ///
+    /// - **Calculation Behavior:**
+    ///     - `"ASSUME_CRITICAL_POINT_STABLE"` -- if `true`, evaluation of the stability of critical
+    ///       point will be skipped and point will be assumed to be stable. _Default: `false`_
+    ///     - `"CRITICAL_SPLINES_ENABLED"` -- if `true`, the critical splines will be used in the
+    ///       near-vicinity of the critical point. _Default: `true`_
+    ///     - `"CRITICAL_WITHIN_1UK"` -- if `true`, any temperature within `1 uK` of the critical
+    ///       temperature will be considered to be **AT** the critical point. _Default: `true`_
+    ///     - `"DONT_CHECK_PROPERTY_LIMITS"` -- if `true`, when possible, `CoolProp` will skip
+    ///       checking whether values are inside the property limits. _Default: `false`_
+    ///     - `"ENABLE_SUPERANCILLARIES"` -- if `true`, the superancillary functions will be used
+    ///       for VLE of pure fluids. _Default: `true`_
+    ///     - `"HENRYS_LAW_TO_GENERATE_VLE_GUESSES"` -- if `true`, when doing water-based mixture
+    ///       dewpoint calculations, use Henry’s Law to generate guesses for liquid-phase
+    ///       composition. _Default: `false`_
+    ///     - `"NORMALIZE_GAS_CONSTANTS"` -- if `true`, for mixtures, the molar gas constant _(R)_
+    ///       will be set to the CODATA value. _Default: `true`_
+    ///     - `"OVERWRITE_BINARY_INTERACTION"` -- if `true`, and a pair of binary interaction pairs
+    ///       to be added is already there, rather than not adding the binary interaction pair _(and
+    ///       probably throwing an exception)_, overwrite it. _Default: `false`_
+    ///     - `"OVERWRITE_DEPARTURE_FUNCTION"` -- if `true`, and a departure function to be added is
+    ///       already there, rather than not adding the departure function _(and probably throwing
+    ///       an exception)_, overwrite it. _Default: `false`_
+    ///     - `"OVERWRITE_FLUIDS"` -- if `true`, and a fluid is added to the fluids library that is
+    ///       already there, rather than not adding the fluid _(and probably throwing an
+    ///       exception)_, overwrite it. _Default: `false`_
+    ///     - `"PHASE_ENVELOPE_STARTING_PRESSURE_PA"` -- starting pressure in `Pa` for phase
+    ///       envelope construction. _Default: `100.0`_
+    ///     - `"R_U_CODATA"` -- the value for the ideal gas constant in `J/mol/K` according to
+    ///       CODATA 2022. This value is used to harmonize all the ideal gas constants. This is
+    ///       especially important in the critical region. _Default: `8.314_462_618_153_24`_
+    ///     - `"SPINODAL_MINIMUM_DELTA"` -- the minimal delta to be used in tracing out the
+    ///       spinodal; make sure that the EOS has a spinodal at this value of `delta=rho/rho_r`.
+    ///       _Default: `0.5`_
+    ///     - `"USE_GUESSES_IN_PROPSSI"` -- if `true`, calls to the vectorized versions of `PropsSI`
+    ///       use the previous state as guess value while looping over the input vectors, only makes
+    ///       sense when working with a single fluid and with points that are not too far from each
+    ///       other. _Default: `false`_
+    ///
+    /// - **`REFPROP` Integration:**
+    ///     - `"ALTERNATIVE_REFPROP_PATH"` -- an alternative path to be provided to the directory
+    ///       that contains `REFPROP`’s fluids and mixtures directories. If provided, the `SETPATH`
+    ///       function will be called with this directory prior to calling any `REFPROP` functions.
+    ///       _Default: `""`_
+    ///     - `"ALTERNATIVE_REFPROP_LIBRARY_PATH"` -- an alternative path to the shared library
+    ///       file. If provided, it will be used to load `REFPROP`. _Default: `""`_
+    ///     - `"ALTERNATIVE_REFPROP_HMX_BNC_PATH"` -- an alternative path to the `HMX.BNC` file. If
+    ///       provided, it will be passed into `REFPROP`’s `SETUP` or `SETMIX` routines. _Default:
+    ///       `""`_
+    ///     - `"REFPROP_DONT_ESTIMATE_INTERACTION_PARAMETERS"` --  if `true`, if the binary
+    ///       interaction parameters in `REFPROP` are estimated, throw an error rather than silently
+    ///       continuing. _Default: `false`_
+    ///     - `"REFPROP_IGNORE_ERROR_ESTIMATED_INTERACTION_PARAMETERS"` -- if `true`, if the binary
+    ///       interaction parameters in `REFPROP` are unable to be estimated, silently continue
+    ///       rather than failing. _Default: `false`
+    ///     - `"REFPROP_USE_GERG"` -- if `true`, rather than using the highly-accurate pure fluid
+    ///       equations of state, use the pure-fluid EOS from `GERG-2008`. _Default: `false`_
+    ///     - `"REFPROP_USE_PENGROBINSON"` --  if `true`, rather than using the highly-accurate pure
+    ///       fluid equations of state, use the Peng-Robinson EOS. _Default: `false`_
+    ///
+    /// - **Miscellaneous:**
+    ///     - `"ALTERNATIVE_TABLES_DIRECTORY"` -- if provided, this path will be the root directory
+    ///       for the tabular data. Otherwise, `${HOME}/.CoolProp/Tables` is used. _Default: `""`_
+    ///     - `"FLOAT_PUNCTUATION"` -- the first character of this string will be used as the
+    ///       separator between the number fraction. _Default: `"."`_
+    ///     - `"LIST_STRING_DELIMITER"` -- the delimiter to be used when converting a list of
+    ///       strings to a string. _Default: `","`_
+    ///     - `"MAXIMUM_TABLE_DIRECTORY_SIZE_IN_GB"` -- the maximum allowed size of the directory
+    ///       that is used to store tabular data. _Default: `1.0`_
+    ///     - `"SAVE_RAW_TABLES"` -- if `true`, the raw, uncompressed tables will also be written to
+    ///       file. _Default: `false`_
+    ///     - `"VTPR_ALWAYS_RELOAD_LIBRARY"` -- if `true`, the library will always be reloaded, no
+    ///       matter what is currently loaded. _Default: `false`_
+    ///     - `"VTPR_UNIFAC_PATH"` -- the path to the directory containing the UNIFAC JSON files.
+    ///       Should be slash terminated. _Default: `""`_
+    ///
+    /// # Errors
+    ///
+    /// Returns [`CoolPropError`](crate::native::CoolPropError)
+    /// if the configuration key/value is invalid or the value could not be set.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use rfluids::prelude::*;
+    ///
+    /// // Set configuration values of different types
+    /// assert!(CoolProp::set_config("DONT_CHECK_PROPERTY_LIMITS", true).is_ok());
+    /// assert!(CoolProp::set_config("PHASE_ENVELOPE_STARTING_PRESSURE_PA", 1e5).is_ok());
+    /// assert!(CoolProp::set_config("ALTERNATIVE_REFPROP_PATH", "/path/to/refprop").is_ok());
+    ///
+    /// // Attempt to set invalid configuration values
+    /// assert!(CoolProp::set_config("DONT_CHECK_PROPERTY_LIMITS", "yes").is_err());
+    /// assert!(CoolProp::set_config("PHASE_ENVELOPE_STARTING_PRESSURE_PA", "1e5").is_err());
+    /// assert!(CoolProp::set_config("ALTERNATIVE_REFPROP_PATH", true).is_err());
+    ///
+    /// // Attempt to set non-existing configuration key
+    /// assert!(CoolProp::set_config("NON_EXISTING_KEY", "value").is_ok()); // CoolProp ignores nonexistent keys
+    /// ```
+    ///
+    /// # Notes
+    ///
+    /// - Configuration variables can also be set via environment variables by prefixing the key
+    ///   name with `COOLPROP_` _(e.g., `COOLPROP_DONT_CHECK_PROPERTY_LIMITS`)_
+    /// - Configuration changes affect all subsequent `CoolProp` operations
+    ///
+    /// # See Also
+    ///
+    /// - [`CoolProp` Configuration](https://coolprop.org/coolprop/Configuration.html)
+    /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
+    /// - [`ConfigValue`]
+    pub fn set_config(key: impl AsRef<str>, value: impl Into<ConfigValue>) -> Result<()> {
+        let key = key.as_ref().trim();
+        let value = value.into();
+        set_config(key, value)
+    }
+}
+
+fn set_config(key: &str, value: ConfigValue) -> Result<()> {
+    let lock = COOLPROP.lock().unwrap();
+    match value {
+        ConfigValue::Bool(val) => unsafe {
+            lock.set_config_bool(const_ptr_c_char!(key), val);
+        },
+        ConfigValue::Float(val) => unsafe {
+            lock.set_config_double(const_ptr_c_char!(key), val);
+        },
+        ConfigValue::String(val) => unsafe {
+            lock.set_config_string(const_ptr_c_char!(key), const_ptr_c_char!(val.trim()));
+        },
+    }
+    let error = get_error(&lock);
+    error.map_or(Ok(()), Err)
 }
 
 /// `CoolProp` configuration value.
