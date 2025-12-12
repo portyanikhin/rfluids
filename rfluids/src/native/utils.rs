@@ -112,10 +112,10 @@ impl CoolProp {
     /// - [`GlobalParam`](crate::io::GlobalParam)
     pub fn get_global_param(param: impl AsRef<str>) -> Option<String> {
         let param = param.as_ref().trim();
-        let capacity = if ["version", "gitrevision", "HOME", "REFPROP_version"].contains(&param) {
-            100
-        } else {
-            30_000
+        let capacity = match param {
+            "version" | "gitrevision" | "HOME" | "REFPROP_version" => 100,
+            "errstring" | "warnstring" => 500,
+            _ => 30_000,
         };
         let res = MessageBuffer::with_capacity(capacity);
         let lock = COOLPROP.lock().unwrap();
