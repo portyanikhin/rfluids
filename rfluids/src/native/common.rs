@@ -56,7 +56,9 @@ impl From<MessageBuffer> for String {
     }
 }
 
-pub(crate) fn get_error(lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> CoolPropError {
+pub(crate) fn get_error(
+    lock: &MutexGuard<coolprop_sys::bindings::CoolProp>,
+) -> Option<CoolPropError> {
     let message = MessageBuffer::default();
     let _unused = unsafe {
         lock.get_global_param_string(
@@ -66,7 +68,7 @@ pub(crate) fn get_error(lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> 
         )
     };
     let res: String = message.into();
-    CoolPropError(if res.trim().is_empty() { "Unknown error".into() } else { res })
+    if res.trim().is_empty() { None } else { Some(CoolPropError(res)) }
 }
 
 macro_rules! const_ptr_c_char {
