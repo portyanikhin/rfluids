@@ -293,7 +293,7 @@ impl CoolProp {
 
     fn res(value: f64, lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> Result<f64> {
         if !value.is_finite() {
-            return Err(get_error(lock));
+            return Err(get_error(lock).unwrap_or_default());
         }
         Ok(value)
     }
