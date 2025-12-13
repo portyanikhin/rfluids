@@ -105,6 +105,15 @@ impl CoolProp {
     /// - `"cubic_fluids_schema"` -- JSON schema for substances with cubic EOS
     /// - `"pcsaft_fluids_schema"` -- JSON schema for substances with PC-SAFT EOS
     ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::*;
+    ///
+    /// let coolprop_version = CoolProp::get_global_param("version");
+    /// assert!(coolprop_version.is_some());
+    /// ```
+    ///
     /// # See Also
     ///
     /// - [CoolProp High-Level API](https://coolprop.org/coolprop/HighLevelAPI.html)
@@ -152,6 +161,15 @@ impl CoolProp {
     ///     - `VISCOSITY` -- viscosity equation reference
     /// - `"pure"` -- `"true"` if the substance is pure, `"false"` otherwise
     /// - `"formula"` -- chemical formula of the substance in LaTeX form _(if available)_
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::*;
+    ///
+    /// let water_formula = CoolProp::get_substance_param("Water", "formula");
+    /// assert_eq!(water_formula, Some("H_{2}O_{1}".to_string()));
+    /// ```
     ///
     /// # See Also
     ///
