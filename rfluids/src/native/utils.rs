@@ -363,7 +363,10 @@ mod tests {
     use rstest::*;
 
     use super::*;
-    use crate::{io::GlobalParam::*, substance::Pure};
+    use crate::{
+        io::{GlobalParam::*, SubstanceParam::*},
+        substance::Pure,
+    };
 
     #[test]
     fn get_debug_level() {
@@ -425,6 +428,18 @@ mod tests {
     }
 
     #[rstest]
+    #[case(Aliases, true)]
+    #[case(Cas, true)]
+    #[case(Ashrae34, true)]
+    #[case(RefpropName, true)]
+    #[case(BibtexEos, true)]
+    #[case(BibtexCp0, false)]
+    #[case(BibtexConductivity, true)]
+    #[case(BibtexMeltingLine, true)]
+    #[case(BibtexSurfaceTension, true)]
+    #[case(BibtexViscosity, true)]
+    #[case(IsPure, true)]
+    #[case(Formula, true)]
     #[case("aliases", true)]
     #[case("CAS", true)]
     #[case("ASHRAE34", true)]
@@ -440,7 +455,7 @@ mod tests {
     #[case("", false)]
     #[case(" ", false)]
     #[case("Hello, World!", false)]
-    fn get_substance_param(#[case] param: &str, #[case] is_some: bool) {
+    fn get_substance_param(#[case] param: impl AsRef<str>, #[case] is_some: bool) {
         // Given
         let substance = Pure::Water;
 
