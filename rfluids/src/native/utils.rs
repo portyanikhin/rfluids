@@ -182,12 +182,19 @@ impl CoolProp {
         substance_name: impl AsRef<str>,
         param: impl AsRef<str>,
     ) -> Option<String> {
-        let res = MessageBuffer::default();
+        let substance_name = substance_name.as_ref().trim();
+        let param = param.as_ref().trim();
+        let capacity = match param {
+            "pure" => 5,
+            "CAS" | "ASHRAE34" | "REFPROP_name" => 100,
+            _ => 500,
+        };
+        let res = MessageBuffer::with_capacity(capacity);
         let lock = COOLPROP.lock().unwrap();
         let status = unsafe {
             lock.get_fluid_param_string(
-                const_ptr_c_char!(substance_name.as_ref().trim()),
-                const_ptr_c_char!(param.as_ref().trim()),
+                const_ptr_c_char!(substance_name),
+                const_ptr_c_char!(param),
                 res.buffer,
                 res.capacity,
             )
