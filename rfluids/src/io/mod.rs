@@ -17,6 +17,7 @@
 //! - [`HumidAirInput`] -- humid air input parameter with specified value
 //! - [`Phase`] -- phase state of the fluid
 
+mod config;
 mod fluid_input;
 mod fluid_input_pair;
 mod fluid_param;
@@ -27,6 +28,7 @@ mod input;
 mod phase;
 mod substance_param;
 
+pub use config::*;
 pub use fluid_input::*;
 pub use fluid_input_pair::*;
 pub use fluid_param::*;

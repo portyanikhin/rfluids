@@ -4,10 +4,10 @@ pub use crate::{
     fluid::{Fluid, backend::*},
     humid_air::HumidAir,
     io::{
-        FluidInput, FluidInputPair, FluidParam, FluidTrivialParam, GlobalParam, HumidAirInput,
-        Input, Phase, SubstanceParam,
+        ConfigValue, FluidInput, FluidInputPair, FluidParam, FluidTrivialParam, GlobalParam,
+        HumidAirInput, Input, Phase, SubstanceParam,
     },
-    native::{AbstractState, ConfigValue, CoolProp},
+    native::{AbstractState, CoolProp},
     state_variant::*,
     substance::{BinaryMix, BinaryMixKind, CustomMix, IncompPure, PredefinedMix, Pure, Substance},
 };
