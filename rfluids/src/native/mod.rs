@@ -17,7 +17,6 @@ mod utils;
 
 pub use high_level_api::CoolProp;
 pub use low_level_api::AbstractState;
-pub use utils::ConfigValue;
 
 /// `CoolProp` internal error.
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]

@@ -4,6 +4,7 @@ use super::{
     CoolProp, Result,
     common::{MessageBuffer, const_ptr_c_char, get_error},
 };
+use crate::io::ConfigValue;
 
 const MIN_DEBUG_LEVEL: u8 = 0;
 const MAX_DEBUG_LEVEL: u8 = 10;
@@ -325,6 +326,7 @@ impl CoolProp {
     }
 }
 
+// Code coverage trick
 fn set_config(key: &str, value: ConfigValue) -> Result<()> {
     let lock = COOLPROP.lock().unwrap();
     match value {
@@ -340,40 +342,6 @@ fn set_config(key: &str, value: ConfigValue) -> Result<()> {
     }
     let error = get_error(&lock);
     error.map_or(Ok(()), Err)
-}
-
-/// `CoolProp` configuration value.
-#[derive(Clone, Debug, PartialEq)]
-pub enum ConfigValue {
-    /// Boolean value.
-    Bool(bool),
-    /// Floating-point value.
-    Float(f64),
-    /// String value.
-    String(String),
-}
-
-impl From<bool> for ConfigValue {
-    fn from(value: bool) -> Self {
-        ConfigValue::Bool(value)
-    }
-}
-impl From<f64> for ConfigValue {
-    fn from(value: f64) -> Self {
-        ConfigValue::Float(value)
-    }
-}
-
-impl From<String> for ConfigValue {
-    fn from(value: String) -> Self {
-        ConfigValue::String(value)
-    }
-}
-
-impl From<&str> for ConfigValue {
-    fn from(value: &str) -> Self {
-        Self::from(value.to_string())
-    }
 }
 
 #[cfg(test)]
