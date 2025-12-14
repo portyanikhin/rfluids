@@ -216,13 +216,17 @@ impl CoolProp {
     /// Sets a configuration key-value pair in `CoolProp`.
     ///
     /// Configuration keys control various aspects of `CoolProp` behavior (e.g., path settings,
-    /// property limits checking, gas constant normalization, etc.).
+    /// `REFPROP` integration, calculation behavior, etc.).
+    ///
+    /// The `value` argument can accept owned values [`bool`], [`f64`]) which are copied,
+    /// or borrowed string references ([`&str`](str), [`&String`](String)) which must remain valid
+    /// for the duration of the call.
     ///
     /// # Arguments
     ///
     /// - `key` -- configuration key name _(raw [`&str`](str))_
-    /// - `value` -- configuration value _(raw [`bool`], [`f64`], [`String`], or [`&str`](str),
-    ///   automatically converted to [`ConfigValue`])_
+    /// - `value` -- configuration value _(raw [`bool`], [`f64`], [`&str`](str), or
+    ///   [`&String`](String), automatically converted to [`ConfigValue`])_
     ///
     /// Known configuration keys:
     ///
