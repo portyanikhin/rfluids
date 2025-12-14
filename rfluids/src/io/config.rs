@@ -333,129 +333,191 @@ impl<'a> From<&'a String> for ConfigValue<'a> {
 
 #[cfg(test)]
 mod tests {
-    use std::str::FromStr;
+    use super::*;
 
-    use rstest::*;
+    mod key {
+        use std::str::FromStr;
 
-    use super::{ConfigKey::*, *};
+        use rstest::*;
 
-    #[rstest]
-    #[case(AssumeCriticalPointIsStable, "ASSUME_CRITICAL_POINT_STABLE")]
-    #[case(CriticalSplinesEnabled, "CRITICAL_SPLINES_ENABLED")]
-    #[case(CriticalWithin1Uk, "CRITICAL_WITHIN_1UK")]
-    #[case(DontCheckPropLimits, "DONT_CHECK_PROPERTY_LIMITS")]
-    #[case(EnableSuperancillaries, "ENABLE_SUPERANCILLARIES")]
-    #[case(HenrysLawToGenerateVleGuesses, "HENRYS_LAW_TO_GENERATE_VLE_GUESSES")]
-    #[case(NormalizeGasConstants, "NORMALIZE_GAS_CONSTANTS")]
-    #[case(OverwriteBinaryInteraction, "OVERWRITE_BINARY_INTERACTION")]
-    #[case(OverwriteDepartureFn, "OVERWRITE_DEPARTURE_FUNCTION")]
-    #[case(OverwriteSubstances, "OVERWRITE_FLUIDS")]
-    #[case(PhaseEnvelopeStartPressurePa, "PHASE_ENVELOPE_STARTING_PRESSURE_PA")]
-    #[case(RUCodata, "R_U_CODATA")]
-    #[case(SpinodalMinDelta, "SPINODAL_MINIMUM_DELTA")]
-    #[case(UseGuessesInPropsSi, "USE_GUESSES_IN_PROPSSI")]
-    #[case(AltRefpropPath, "ALTERNATIVE_REFPROP_PATH")]
-    #[case(AltRefpropLibPath, "ALTERNATIVE_REFPROP_LIBRARY_PATH")]
-    #[case(AltRefpropHmxBncPath, "ALTERNATIVE_REFPROP_HMX_BNC_PATH")]
-    #[case(RefpropDontEstimateInteractionParams, "REFPROP_DONT_ESTIMATE_INTERACTION_PARAMETERS")]
-    #[case(
-        RefpropIgnoreErrorEstimatedInteractionParams,
-        "REFPROP_IGNORE_ERROR_ESTIMATED_INTERACTION_PARAMETERS"
-    )]
-    #[case(RefpropUseGerg, "REFPROP_USE_GERG")]
-    #[case(RefpropUsePengRobinson, "REFPROP_USE_PENGROBINSON")]
-    #[case(AltTablesPath, "ALTERNATIVE_TABLES_DIRECTORY")]
-    #[case(FloatPunctuation, "FLOAT_PUNCTUATION")]
-    #[case(ListPunctuation, "LIST_STRING_DELIMITER")]
-    #[case(MaxTableDirSizeInGb, "MAXIMUM_TABLE_DIRECTORY_SIZE_IN_GB")]
-    #[case(SaveRawTables, "SAVE_RAW_TABLES")]
-    #[case(VtprAlwaysReloadLib, "VTPR_ALWAYS_RELOAD_LIBRARY")]
-    #[case(VtprUnifacPath, "VTPR_UNIFAC_PATH")]
-    fn as_str(#[case] sut: ConfigKey, #[case] expected: &str) {
-        // When
-        let str = sut.as_ref();
-        let static_str: &'static str = sut.into();
+        use super::{ConfigKey::*, *};
 
-        // Then
-        assert_eq!(str, expected);
-        assert_eq!(static_str, expected);
-    }
-
-    #[rstest]
-    #[case(
-        vec!["ASSUME_CRITICAL_POINT_STABLE", "AssumeCriticalPointIsStable"],
-        AssumeCriticalPointIsStable
-    )]
-    #[case(vec!["CRITICAL_SPLINES_ENABLED", "CriticalSplinesEnabled"], CriticalSplinesEnabled)]
-    #[case(vec!["CRITICAL_WITHIN_1UK", "CriticalWithin1Uk"], CriticalWithin1Uk)]
-    #[case(vec!["DONT_CHECK_PROPERTY_LIMITS", "DontCheckPropLimits"], DontCheckPropLimits)]
-    #[case(vec!["ENABLE_SUPERANCILLARIES", "EnableSuperancillaries"], EnableSuperancillaries)]
-    #[case(
-        vec!["HENRYS_LAW_TO_GENERATE_VLE_GUESSES", "HenrysLawToGenerateVleGuesses"],
-        HenrysLawToGenerateVleGuesses
-    )]
-    #[case(vec!["NORMALIZE_GAS_CONSTANTS", "NormalizeGasConstants"], NormalizeGasConstants)]
-    #[case(
-        vec!["OVERWRITE_BINARY_INTERACTION", "OverwriteBinaryInteraction"],
-        OverwriteBinaryInteraction
-    )]
-    #[case(vec!["OVERWRITE_DEPARTURE_FUNCTION", "OverwriteDepartureFn"], OverwriteDepartureFn)]
-    #[case(vec!["OVERWRITE_FLUIDS", "OverwriteSubstances"], OverwriteSubstances)]
-    #[case(
-        vec!["PHASE_ENVELOPE_STARTING_PRESSURE_PA", "PhaseEnvelopeStartPressurePa"],
-        PhaseEnvelopeStartPressurePa
-    )]
-    #[case(vec!["R_U_CODATA", "RUCodata"], RUCodata)]
-    #[case(vec!["SPINODAL_MINIMUM_DELTA", "SpinodalMinDelta"], SpinodalMinDelta)]
-    #[case(vec!["USE_GUESSES_IN_PROPSSI", "UseGuessesInPropsSi"], UseGuessesInPropsSi)]
-    #[case(vec!["ALTERNATIVE_REFPROP_PATH", "AltRefpropPath"], AltRefpropPath)]
-    #[case(vec!["ALTERNATIVE_REFPROP_LIBRARY_PATH", "AltRefpropLibPath"], AltRefpropLibPath)]
-    #[case(vec!["ALTERNATIVE_REFPROP_HMX_BNC_PATH", "AltRefpropHmxBncPath"], AltRefpropHmxBncPath)]
-    #[case(
-        vec![
-            "REFPROP_DONT_ESTIMATE_INTERACTION_PARAMETERS",
-            "RefpropDontEstimateInteractionParams"
-        ],
-        RefpropDontEstimateInteractionParams
-    )]
-    #[case(
-        vec![
-            "REFPROP_IGNORE_ERROR_ESTIMATED_INTERACTION_PARAMETERS",
-            "RefpropIgnoreErrorEstimatedInteractionParams"
-        ],
-        RefpropIgnoreErrorEstimatedInteractionParams
-    )]
-    #[case(vec!["REFPROP_USE_GERG", "RefpropUseGerg"], RefpropUseGerg)]
-    #[case(vec!["REFPROP_USE_PENGROBINSON", "RefpropUsePengRobinson"], RefpropUsePengRobinson)]
-    #[case(vec!["ALTERNATIVE_TABLES_DIRECTORY", "AltTablesPath"], AltTablesPath)]
-    #[case(vec!["FLOAT_PUNCTUATION", "FloatPunctuation"], FloatPunctuation)]
-    #[case(vec!["LIST_STRING_DELIMITER", "ListPunctuation"], ListPunctuation)]
-    #[case(vec!["MAXIMUM_TABLE_DIRECTORY_SIZE_IN_GB", "MaxTableDirSizeInGb"], MaxTableDirSizeInGb)]
-    #[case(vec!["SAVE_RAW_TABLES", "SaveRawTables"], SaveRawTables)]
-    #[case(vec!["VTPR_ALWAYS_RELOAD_LIBRARY", "VtprAlwaysReloadLib"], VtprAlwaysReloadLib)]
-    #[case(vec!["VTPR_UNIFAC_PATH", "VtprUnifacPath"], VtprUnifacPath)]
-    fn from_valid_str<'a>(#[case] valid: Vec<&'a str>, #[case] expected: ConfigKey) {
-        for s in valid {
+        #[rstest]
+        #[case(AssumeCriticalPointIsStable, "ASSUME_CRITICAL_POINT_STABLE")]
+        #[case(CriticalSplinesEnabled, "CRITICAL_SPLINES_ENABLED")]
+        #[case(CriticalWithin1Uk, "CRITICAL_WITHIN_1UK")]
+        #[case(DontCheckPropLimits, "DONT_CHECK_PROPERTY_LIMITS")]
+        #[case(EnableSuperancillaries, "ENABLE_SUPERANCILLARIES")]
+        #[case(HenrysLawToGenerateVleGuesses, "HENRYS_LAW_TO_GENERATE_VLE_GUESSES")]
+        #[case(NormalizeGasConstants, "NORMALIZE_GAS_CONSTANTS")]
+        #[case(OverwriteBinaryInteraction, "OVERWRITE_BINARY_INTERACTION")]
+        #[case(OverwriteDepartureFn, "OVERWRITE_DEPARTURE_FUNCTION")]
+        #[case(OverwriteSubstances, "OVERWRITE_FLUIDS")]
+        #[case(PhaseEnvelopeStartPressurePa, "PHASE_ENVELOPE_STARTING_PRESSURE_PA")]
+        #[case(RUCodata, "R_U_CODATA")]
+        #[case(SpinodalMinDelta, "SPINODAL_MINIMUM_DELTA")]
+        #[case(UseGuessesInPropsSi, "USE_GUESSES_IN_PROPSSI")]
+        #[case(AltRefpropPath, "ALTERNATIVE_REFPROP_PATH")]
+        #[case(AltRefpropLibPath, "ALTERNATIVE_REFPROP_LIBRARY_PATH")]
+        #[case(AltRefpropHmxBncPath, "ALTERNATIVE_REFPROP_HMX_BNC_PATH")]
+        #[case(
+            RefpropDontEstimateInteractionParams,
+            "REFPROP_DONT_ESTIMATE_INTERACTION_PARAMETERS"
+        )]
+        #[case(
+            RefpropIgnoreErrorEstimatedInteractionParams,
+            "REFPROP_IGNORE_ERROR_ESTIMATED_INTERACTION_PARAMETERS"
+        )]
+        #[case(RefpropUseGerg, "REFPROP_USE_GERG")]
+        #[case(RefpropUsePengRobinson, "REFPROP_USE_PENGROBINSON")]
+        #[case(AltTablesPath, "ALTERNATIVE_TABLES_DIRECTORY")]
+        #[case(FloatPunctuation, "FLOAT_PUNCTUATION")]
+        #[case(ListPunctuation, "LIST_STRING_DELIMITER")]
+        #[case(MaxTableDirSizeInGb, "MAXIMUM_TABLE_DIRECTORY_SIZE_IN_GB")]
+        #[case(SaveRawTables, "SAVE_RAW_TABLES")]
+        #[case(VtprAlwaysReloadLib, "VTPR_ALWAYS_RELOAD_LIBRARY")]
+        #[case(VtprUnifacPath, "VTPR_UNIFAC_PATH")]
+        fn as_str(#[case] sut: ConfigKey, #[case] expected: &str) {
             // When
-            let res1 = ConfigKey::from_str(s).unwrap();
-            let res2 = ConfigKey::try_from(s).unwrap();
+            let str = sut.as_ref();
+            let static_str: &'static str = sut.into();
 
             // Then
-            assert_eq!(res1, expected);
-            assert_eq!(res2, expected);
+            assert_eq!(str, expected);
+            assert_eq!(static_str, expected);
+        }
+
+        #[rstest]
+        #[case(
+            vec!["ASSUME_CRITICAL_POINT_STABLE", "AssumeCriticalPointIsStable"],
+            AssumeCriticalPointIsStable
+        )]
+        #[case(vec!["CRITICAL_SPLINES_ENABLED", "CriticalSplinesEnabled"], CriticalSplinesEnabled)]
+        #[case(vec!["CRITICAL_WITHIN_1UK", "CriticalWithin1Uk"], CriticalWithin1Uk)]
+        #[case(vec!["DONT_CHECK_PROPERTY_LIMITS", "DontCheckPropLimits"], DontCheckPropLimits)]
+        #[case(vec!["ENABLE_SUPERANCILLARIES", "EnableSuperancillaries"], EnableSuperancillaries)]
+        #[case(
+            vec!["HENRYS_LAW_TO_GENERATE_VLE_GUESSES", "HenrysLawToGenerateVleGuesses"],
+            HenrysLawToGenerateVleGuesses
+        )]
+        #[case(vec!["NORMALIZE_GAS_CONSTANTS", "NormalizeGasConstants"], NormalizeGasConstants)]
+        #[case(
+            vec!["OVERWRITE_BINARY_INTERACTION", "OverwriteBinaryInteraction"],
+            OverwriteBinaryInteraction
+        )]
+        #[case(vec!["OVERWRITE_DEPARTURE_FUNCTION", "OverwriteDepartureFn"], OverwriteDepartureFn)]
+        #[case(vec!["OVERWRITE_FLUIDS", "OverwriteSubstances"], OverwriteSubstances)]
+        #[case(
+            vec!["PHASE_ENVELOPE_STARTING_PRESSURE_PA", "PhaseEnvelopeStartPressurePa"],
+            PhaseEnvelopeStartPressurePa
+        )]
+        #[case(vec!["R_U_CODATA", "RUCodata"], RUCodata)]
+        #[case(vec!["SPINODAL_MINIMUM_DELTA", "SpinodalMinDelta"], SpinodalMinDelta)]
+        #[case(vec!["USE_GUESSES_IN_PROPSSI", "UseGuessesInPropsSi"], UseGuessesInPropsSi)]
+        #[case(vec!["ALTERNATIVE_REFPROP_PATH", "AltRefpropPath"], AltRefpropPath)]
+        #[case(vec!["ALTERNATIVE_REFPROP_LIBRARY_PATH", "AltRefpropLibPath"], AltRefpropLibPath)]
+        #[case(vec!["ALTERNATIVE_REFPROP_HMX_BNC_PATH", "AltRefpropHmxBncPath"], AltRefpropHmxBncPath)]
+        #[case(
+            vec![
+                "REFPROP_DONT_ESTIMATE_INTERACTION_PARAMETERS",
+                "RefpropDontEstimateInteractionParams"
+            ],
+            RefpropDontEstimateInteractionParams
+        )]
+        #[case(
+            vec![
+                "REFPROP_IGNORE_ERROR_ESTIMATED_INTERACTION_PARAMETERS",
+                "RefpropIgnoreErrorEstimatedInteractionParams"
+            ],
+            RefpropIgnoreErrorEstimatedInteractionParams
+        )]
+        #[case(vec!["REFPROP_USE_GERG", "RefpropUseGerg"], RefpropUseGerg)]
+        #[case(vec!["REFPROP_USE_PENGROBINSON", "RefpropUsePengRobinson"], RefpropUsePengRobinson)]
+        #[case(vec!["ALTERNATIVE_TABLES_DIRECTORY", "AltTablesPath"], AltTablesPath)]
+        #[case(vec!["FLOAT_PUNCTUATION", "FloatPunctuation"], FloatPunctuation)]
+        #[case(vec!["LIST_STRING_DELIMITER", "ListPunctuation"], ListPunctuation)]
+        #[case(
+            vec!["MAXIMUM_TABLE_DIRECTORY_SIZE_IN_GB", "MaxTableDirSizeInGb"],
+            MaxTableDirSizeInGb
+        )]
+        #[case(vec!["SAVE_RAW_TABLES", "SaveRawTables"], SaveRawTables)]
+        #[case(vec!["VTPR_ALWAYS_RELOAD_LIBRARY", "VtprAlwaysReloadLib"], VtprAlwaysReloadLib)]
+        #[case(vec!["VTPR_UNIFAC_PATH", "VtprUnifacPath"], VtprUnifacPath)]
+        fn from_valid_str<'a>(#[case] valid: Vec<&'a str>, #[case] expected: ConfigKey) {
+            for s in valid {
+                // When
+                let res1 = ConfigKey::from_str(s).unwrap();
+                let res2 = ConfigKey::try_from(s).unwrap();
+
+                // Then
+                assert_eq!(res1, expected);
+                assert_eq!(res2, expected);
+            }
+        }
+
+        #[rstest]
+        #[case("")]
+        #[case("Hello, World!")]
+        fn from_invalid_str(#[case] invalid: &str) {
+            // When
+            let res1 = ConfigKey::from_str(invalid);
+            let res2 = ConfigKey::try_from(invalid);
+
+            // Then
+            assert!(res1.is_err());
+            assert!(res2.is_err());
         }
     }
 
-    #[rstest]
-    #[case("")]
-    #[case("Hello, World!")]
-    fn from_invalid_str(#[case] invalid: &str) {
-        // When
-        let res1 = ConfigKey::from_str(invalid);
-        let res2 = ConfigKey::try_from(invalid);
+    mod value {
+        use super::*;
 
-        // Then
-        assert!(res1.is_err());
-        assert!(res2.is_err());
+        #[test]
+        fn from_bool() {
+            // Given
+            let value = true;
+
+            // When
+            let res = ConfigValue::from(value);
+
+            // Then
+            assert_eq!(res, ConfigValue::Bool(value));
+        }
+
+        #[test]
+        fn from_float() {
+            // Given
+            let value = 42.0;
+
+            // When
+            let res = ConfigValue::from(value);
+
+            // Then
+            assert_eq!(res, ConfigValue::Float(value));
+        }
+
+        #[test]
+        fn from_str() {
+            // Given
+            let value = " something ";
+
+            // When
+            let res = ConfigValue::from(value);
+
+            // Then
+            assert_eq!(res, ConfigValue::Str("something"));
+        }
+
+        #[test]
+        fn from_string() {
+            // Given
+            let value = " something ".to_string();
+
+            // When
+            let res = ConfigValue::from(&value);
+
+            // Then
+            assert_eq!(res, ConfigValue::Str("something"));
+        }
     }
 }
