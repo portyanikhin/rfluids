@@ -14,6 +14,7 @@
   "rust-analyzer.diagnostics.styleLints.enable": true,
   "rust-analyzer.rustfmt.extraArgs": ["+nightly"],
   "cSpell.words": [
+    "2DPNG",
     "clippy",
     "CODATA",
     "DCMAKE",
@@ -24,6 +25,8 @@
     "dylib",
     "GERG",
     "IAPWS",
+    "INCHI",
+    "INCHIKEY",
     "INCOMP",
     "Kwong",
     "msrv",
