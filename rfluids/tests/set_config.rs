@@ -1,7 +1,24 @@
-use rfluids::prelude::*;
+use rfluids::prelude::{ConfigKey::*, *};
 use rstest::*;
 
 #[rstest]
+#[case(AssumeCriticalPointIsStable)]
+#[case(CriticalSplinesEnabled)]
+#[case(CriticalWithin1Uk)]
+#[case(DontCheckPropLimits)]
+#[case(EnableSuperancillaries)]
+#[case(HenrysLawToGenerateVleGuesses)]
+#[case(NormalizeGasConstants)]
+#[case(OverwriteBinaryInteraction)]
+#[case(OverwriteDepartureFn)]
+#[case(OverwriteSubstances)]
+#[case(UseGuessesInPropsSi)]
+#[case(RefpropDontEstimateInteractionParams)]
+#[case(RefpropIgnoreErrorEstimatedInteractionParams)]
+#[case(RefpropUseGerg)]
+#[case(RefpropUsePengRobinson)]
+#[case(SaveRawTables)]
+#[case(VtprAlwaysReloadLib)]
 #[case("ASSUME_CRITICAL_POINT_STABLE")]
 #[case("CRITICAL_SPLINES_ENABLED")]
 #[case("CRITICAL_WITHIN_1UK")]
@@ -33,6 +50,10 @@ fn set_config_bool(#[case] key: impl AsRef<str> + Clone) {
 }
 
 #[rstest]
+#[case(PhaseEnvelopeStartPressurePa)]
+#[case(RUCodata)]
+#[case(SpinodalMinDelta)]
+#[case(MaxTableDirSizeInGb)]
 #[case("PHASE_ENVELOPE_STARTING_PRESSURE_PA")]
 #[case("R_U_CODATA")]
 #[case("SPINODAL_MINIMUM_DELTA")]
@@ -49,6 +70,13 @@ fn set_config_float(#[case] key: impl AsRef<str>) {
 }
 
 #[rstest]
+#[case(AltRefpropPath)]
+#[case(AltRefpropLibPath)]
+#[case(AltRefpropHmxBncPath)]
+#[case(AltTablesPath)]
+#[case(FloatPunctuation)]
+#[case(ListPunctuation)]
+#[case(VtprUnifacPath)]
 #[case("ALTERNATIVE_REFPROP_PATH")]
 #[case("ALTERNATIVE_REFPROP_LIBRARY_PATH")]
 #[case("ALTERNATIVE_REFPROP_HMX_BNC_PATH")]
