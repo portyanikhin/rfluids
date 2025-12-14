@@ -4,8 +4,8 @@ pub use crate::{
     fluid::{Fluid, backend::*},
     humid_air::HumidAir,
     io::{
-        ConfigValue, FluidInput, FluidInputPair, FluidParam, FluidTrivialParam, GlobalParam,
-        HumidAirInput, Input, Phase, SubstanceParam,
+        ConfigKey, ConfigValue, FluidInput, FluidInputPair, FluidParam, FluidTrivialParam,
+        GlobalParam, HumidAirInput, Input, Phase, SubstanceParam,
     },
     native::{AbstractState, CoolProp},
     state_variant::*,
