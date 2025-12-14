@@ -228,78 +228,78 @@ impl CoolProp {
     ///
     /// - **Calculation Behavior:**
     ///     - `"ASSUME_CRITICAL_POINT_STABLE"` -- if `true`, evaluation of the stability of critical
-    ///       point will be skipped and point will be assumed to be stable. _Default: `false`_
+    ///       point will be skipped and point will be assumed to be stable. **Default:** `false`
     ///     - `"CRITICAL_SPLINES_ENABLED"` -- if `true`, the critical splines will be used in the
-    ///       near-vicinity of the critical point. _Default: `true`_
+    ///       near-vicinity of the critical point. **Default:** `true`
     ///     - `"CRITICAL_WITHIN_1UK"` -- if `true`, any temperature within `1 uK` of the critical
-    ///       temperature will be considered to be **AT** the critical point. _Default: `true`_
+    ///       temperature will be considered to be **AT** the critical point. **Default:** `true`
     ///     - `"DONT_CHECK_PROPERTY_LIMITS"` -- if `true`, when possible, `CoolProp` will skip
-    ///       checking whether values are inside the property limits. _Default: `false`_
+    ///       checking whether values are inside the property limits. **Default:** `false`
     ///     - `"ENABLE_SUPERANCILLARIES"` -- if `true`, the superancillary functions will be used
-    ///       for VLE of pure fluids. _Default: `true`_
+    ///       for VLE of pure fluids. **Default:** `true`
     ///     - `"HENRYS_LAW_TO_GENERATE_VLE_GUESSES"` -- if `true`, when doing water-based mixture
     ///       dewpoint calculations, use Henry’s Law to generate guesses for liquid-phase
-    ///       composition. _Default: `false`_
+    ///       composition. **Default:** `false`
     ///     - `"NORMALIZE_GAS_CONSTANTS"` -- if `true`, for mixtures, the molar gas constant _(R)_
-    ///       will be set to the CODATA value. _Default: `true`_
+    ///       will be set to the CODATA value. **Default:** `true`
     ///     - `"OVERWRITE_BINARY_INTERACTION"` -- if `true`, and a pair of binary interaction pairs
     ///       to be added is already there, rather than not adding the binary interaction pair _(and
-    ///       probably throwing an exception)_, overwrite it. _Default: `false`_
+    ///       probably throwing an exception)_, overwrite it. **Default:** `false`
     ///     - `"OVERWRITE_DEPARTURE_FUNCTION"` -- if `true`, and a departure function to be added is
     ///       already there, rather than not adding the departure function _(and probably throwing
-    ///       an exception)_, overwrite it. _Default: `false`_
+    ///       an exception)_, overwrite it. **Default:** `false`
     ///     - `"OVERWRITE_FLUIDS"` -- if `true`, and a fluid is added to the fluids library that is
     ///       already there, rather than not adding the fluid _(and probably throwing an
-    ///       exception)_, overwrite it. _Default: `false`_
+    ///       exception)_, overwrite it. **Default:** `false`
     ///     - `"PHASE_ENVELOPE_STARTING_PRESSURE_PA"` -- starting pressure in `Pa` for phase
-    ///       envelope construction. _Default: `100.0`_
+    ///       envelope construction. **Default:** `100.0`
     ///     - `"R_U_CODATA"` -- the value for the ideal gas constant in `J/mol/K` according to
     ///       CODATA 2022. This value is used to harmonize all the ideal gas constants. This is
-    ///       especially important in the critical region. _Default: `8.314_462_618_153_24`_
+    ///       especially important in the critical region. **Default:** `8.314_462_618_153_24`
     ///     - `"SPINODAL_MINIMUM_DELTA"` -- the minimal delta to be used in tracing out the
     ///       spinodal; make sure that the EOS has a spinodal at this value of `delta=rho/rho_r`.
-    ///       _Default: `0.5`_
+    ///       **Default:** `0.5`
     ///     - `"USE_GUESSES_IN_PROPSSI"` -- if `true`, calls to the vectorized versions of `PropsSI`
     ///       use the previous state as guess value while looping over the input vectors, only makes
     ///       sense when working with a single fluid and with points that are not too far from each
-    ///       other. _Default: `false`_
+    ///       other. **Default:** `false`
     ///
     /// - **`REFPROP` Integration:**
     ///     - `"ALTERNATIVE_REFPROP_PATH"` -- an alternative path to be provided to the directory
     ///       that contains `REFPROP`’s fluids and mixtures directories. If provided, the `SETPATH`
     ///       function will be called with this directory prior to calling any `REFPROP` functions.
-    ///       _Default: `""`_
+    ///       **Default:** `""`
     ///     - `"ALTERNATIVE_REFPROP_LIBRARY_PATH"` -- an alternative path to the shared library
-    ///       file. If provided, it will be used to load `REFPROP`. _Default: `""`_
+    ///       file. If provided, it will be used to load `REFPROP`. **Default:** `""`
     ///     - `"ALTERNATIVE_REFPROP_HMX_BNC_PATH"` -- an alternative path to the `HMX.BNC` file. If
     ///       provided, it will be passed into `REFPROP`’s `SETUP` or `SETMIX` routines. _Default:
-    ///       `""`_
+    ///       `""`
     ///     - `"REFPROP_DONT_ESTIMATE_INTERACTION_PARAMETERS"` --  if `true`, if the binary
     ///       interaction parameters in `REFPROP` are estimated, throw an error rather than silently
-    ///       continuing. _Default: `false`_
+    ///       continuing. **Default:** `false`
     ///     - `"REFPROP_IGNORE_ERROR_ESTIMATED_INTERACTION_PARAMETERS"` -- if `true`, if the binary
     ///       interaction parameters in `REFPROP` are unable to be estimated, silently continue
-    ///       rather than failing. _Default: `false`
+    ///       rather than failing. **Default:** `false`
     ///     - `"REFPROP_USE_GERG"` -- if `true`, rather than using the highly-accurate pure fluid
-    ///       equations of state, use the pure-fluid EOS from `GERG-2008`. _Default: `false`_
+    ///       equations of state, use the pure-fluid EOS from `GERG-2008`. **Default:** `false`
     ///     - `"REFPROP_USE_PENGROBINSON"` --  if `true`, rather than using the highly-accurate pure
-    ///       fluid equations of state, use the Peng-Robinson EOS. _Default: `false`_
+    ///       fluid equations of state, use the Peng-Robinson EOS. **Default:** `false`
     ///
     /// - **Miscellaneous:**
     ///     - `"ALTERNATIVE_TABLES_DIRECTORY"` -- if provided, this path will be the root directory
-    ///       for the tabular data. Otherwise, `${HOME}/.CoolProp/Tables` is used. _Default: `""`_
+    ///       for the tabular data. Otherwise, `${HOME}/.CoolProp/Tables` is used. **Default:** `""`
     ///     - `"FLOAT_PUNCTUATION"` -- the first character of this string will be used as the
-    ///       separator between the number fraction. _Default: `"."`_
+    ///       separator between the number fraction. **Default:** `"."`
     ///     - `"LIST_STRING_DELIMITER"` -- the delimiter to be used when converting a list of
-    ///       strings to a string. _Default: `","`_
+    ///       strings to a string. **Default:** `","`
     ///     - `"MAXIMUM_TABLE_DIRECTORY_SIZE_IN_GB"` -- the maximum allowed size of the directory
-    ///       that is used to store tabular data. _Default: `1.0`_
+    ///       that is used to store tabular data. **Default:** `1.0`
     ///     - `"SAVE_RAW_TABLES"` -- if `true`, the raw, uncompressed tables will also be written to
-    ///       file. _Default: `false`_
+    ///       file. **Default:** `false`
     ///     - `"VTPR_ALWAYS_RELOAD_LIBRARY"` -- if `true`, the library will always be reloaded, no
-    ///       matter what is currently loaded. _Default: `false`_
+    ///       matter what is currently loaded. **Default:** `false`
     ///     - `"VTPR_UNIFAC_PATH"` -- the path to the directory containing the UNIFAC JSON files.
-    ///       Should be slash terminated. _Default: `""`_
+    ///       Should be slash terminated. **Default:** `""`
     ///
     /// # Errors
     ///
