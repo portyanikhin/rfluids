@@ -32,21 +32,45 @@
 )]
 #[strum(ascii_case_insensitive)]
 pub enum SubstanceParam {
+    /// Name.
+    #[strum(to_string = "name")]
+    Name,
+
     /// List of aliases _(comma-separated)_.
     #[strum(to_string = "aliases")]
     Aliases,
 
-    /// CAS number.
+    /// Name used in `REFPROP`.
+    #[strum(to_string = "REFPROP_name", serialize = "RefpropName")]
+    RefpropName,
+
+    /// Chemical Abstracts Service (CAS) registry number.
     #[strum(to_string = "CAS", serialize = "CAS_number")]
     Cas,
+
+    /// International Chemical Identifier.
+    #[strum(to_string = "InChI", serialize = "INCHI_STRING")]
+    Inchi,
+
+    /// Hashed version of the International Chemical Identifier.
+    #[strum(to_string = "InChIKey", serialize = "INCHI_Key")]
+    InchiKey,
+
+    /// [`ChemSpider`](https://www.chemspider.com/) identifier.
+    #[strum(to_string = "CHEMSPIDER_ID", serialize = "ChemSpiderId")]
+    ChemSpiderId,
+
+    /// Simplified Molecular Input Line Entry System (SMILES) string.
+    #[strum(to_string = "SMILES")]
+    Smiles,
 
     /// ASHRAE Standard 34 safety rating.
     #[strum(to_string = "ASHRAE34")]
     Ashrae34,
 
-    /// Name used in `REFPROP`.
-    #[strum(to_string = "REFPROP_name", serialize = "RefpropName")]
-    RefpropName,
+    /// URL to a `2D` molecular structure image.
+    #[strum(to_string = "2DPNG_URL", serialize = "TwoDPngUrl")]
+    TwoDPngUrl,
 
     /// Equation of state BibTeX key.
     #[strum(to_string = "BibTeX-EOS", serialize = "BibTeX_EOS", serialize = "BibtexEos")]
@@ -95,6 +119,10 @@ pub enum SubstanceParam {
     /// Chemical formula in LaTeX form _(if available)_.
     #[strum(to_string = "formula")]
     Formula,
+
+    /// JSON representation of properties and parameters.
+    #[strum(to_string = "JSON")]
+    Json,
 }
 
 #[cfg(test)]
@@ -106,10 +134,16 @@ mod tests {
     use super::{SubstanceParam::*, *};
 
     #[rstest]
+    #[case(Name, "name")]
     #[case(Aliases, "aliases")]
-    #[case(Cas, "CAS")]
-    #[case(Ashrae34, "ASHRAE34")]
     #[case(RefpropName, "REFPROP_name")]
+    #[case(Cas, "CAS")]
+    #[case(Inchi, "InChI")]
+    #[case(InchiKey, "InChIKey")]
+    #[case(ChemSpiderId, "CHEMSPIDER_ID")]
+    #[case(Smiles, "SMILES")]
+    #[case(Ashrae34, "ASHRAE34")]
+    #[case(TwoDPngUrl, "2DPNG_URL")]
     #[case(BibtexEos, "BibTeX-EOS")]
     #[case(BibtexCp0, "BibTeX-CP0")]
     #[case(BibtexConductivity, "BibTeX-CONDUCTIVITY")]
@@ -118,6 +152,7 @@ mod tests {
     #[case(BibtexViscosity, "BibTeX-VISCOSITY")]
     #[case(IsPure, "pure")]
     #[case(Formula, "formula")]
+    #[case(Json, "JSON")]
     fn as_str(#[case] sut: SubstanceParam, #[case] expected: &str) {
         // When
         let str = sut.as_ref();
@@ -129,10 +164,15 @@ mod tests {
     }
 
     #[rstest]
+    #[case(vec!["name", "Name"], Name)]
     #[case(vec!["aliases", "Aliases"], Aliases)]
-    #[case(vec!["CAS", "CAS_number", "Cas"], Cas)]
-    #[case(vec!["ASHRAE34", "Ashrae34"], Ashrae34)]
     #[case(vec!["REFPROP_name", "RefpropName"], RefpropName)]
+    #[case(vec!["CAS", "CAS_number", "Cas"], Cas)]
+    #[case(vec!["InChI", "INCHI_STRING", "Inchi"], Inchi)]
+    #[case(vec!["InChIKey", "INCHI_Key", "InchiKey"], InchiKey)]
+    #[case(vec!["CHEMSPIDER_ID", "ChemSpiderId"], ChemSpiderId)]
+    #[case(vec!["SMILES", "smiles"], Smiles)]
+    #[case(vec!["2DPNG_URL", "TwoDPngUrl"], TwoDPngUrl)]
     #[case(vec!["BibTeX-EOS", "BibTeX_EOS", "BibtexEos"], BibtexEos)]
     #[case(vec!["BibTeX-CP0", "BibTeX_CP0", "BibtexCp0"], BibtexCp0)]
     #[case(
@@ -150,6 +190,7 @@ mod tests {
     #[case(vec!["BibTeX-VISCOSITY", "BibTeX_VISCOSITY", "BibtexViscosity"], BibtexViscosity)]
     #[case(vec!["pure", "is_pure", "IsPure"], IsPure)]
     #[case(vec!["formula", "Formula"], Formula)]
+    #[case(vec!["JSON", "Json"], Json)]
     fn from_valid_str<'a>(#[case] valid: Vec<&'a str>, #[case] expected: SubstanceParam) {
         for s in valid {
             // When
