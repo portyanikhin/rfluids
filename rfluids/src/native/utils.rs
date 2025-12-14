@@ -149,10 +149,16 @@ impl CoolProp {
     ///
     /// Known parameter keys:
     ///
+    /// - `"name"` -- substance name
     /// - `"aliases"` -- list of aliases for the substance _(comma-separated)_
-    /// - `"CAS"` -- CAS number
-    /// - `"ASHRAE34"` -- ASHRAE Standard 34 safety rating
     /// - `"REFPROP_name"` -- substance name used in `REFPROP`
+    /// - `"CAS"` -- Chemical Abstracts Service (CAS) registry number
+    /// - `"InChI"` -- International Chemical Identifier
+    /// - `"InChIKey"` -- hashed version of the International Chemical Identifier
+    /// - `"CHEMSPIDER_ID"` -- [`ChemSpider`](https://www.chemspider.com/) identifier
+    /// - `"SMILES"` -- Simplified Molecular Input Line Entry System (SMILES) string
+    /// - `"ASHRAE34"` -- ASHRAE Standard 34 safety rating
+    /// - `"2DPNG_URL"` -- URL to a `2D` molecular structure image
     /// - `"BibTeX-XXX"` -- BibTeX key, where `XXX` is one of the following:
     ///     - `EOS` -- equation of state reference
     ///     - `CP0` -- ideal gas heat capacity equation reference
@@ -162,6 +168,7 @@ impl CoolProp {
     ///     - `VISCOSITY` -- viscosity equation reference
     /// - `"pure"` -- `"true"` if the substance is pure, `"false"` otherwise
     /// - `"formula"` -- chemical formula of the substance in LaTeX form _(if available)_
+    /// - `"JSON"` -- JSON representation of the substance properties and parameters
     ///
     /// # Examples
     ///
@@ -185,8 +192,11 @@ impl CoolProp {
         let substance_name = substance_name.as_ref().trim();
         let param = param.as_ref().trim();
         let capacity = match param {
-            "pure" => 5,
-            "CAS" | "ASHRAE34" | "REFPROP_name" => 100,
+            "pure" => 6,
+            "InChIKey" | "INCHI_Key" | "INCHIKEY" => 30,
+            "name" | "REFPROP_name" | "REFPROPName" | "REFPROPname" | "CAS" | "CAS_number"
+            | "ASHRAE34" => 100,
+            "JSON" => 500_000,
             _ => 500,
         };
         let res = MessageBuffer::with_capacity(capacity);
@@ -419,10 +429,16 @@ mod tests {
     }
 
     #[rstest]
+    #[case(Name, true)]
     #[case(Aliases, true)]
-    #[case(Cas, true)]
-    #[case(Ashrae34, true)]
     #[case(RefpropName, true)]
+    #[case(Cas, true)]
+    #[case(Inchi, true)]
+    #[case(InchiKey, true)]
+    #[case(ChemSpiderId, true)]
+    #[case(Smiles, true)]
+    #[case(Ashrae34, true)]
+    #[case(TwoDPngUrl, true)]
     #[case(BibtexEos, true)]
     #[case(BibtexCp0, false)]
     #[case(BibtexConductivity, true)]
@@ -431,10 +447,17 @@ mod tests {
     #[case(BibtexViscosity, true)]
     #[case(IsPure, true)]
     #[case(Formula, true)]
+    #[case(Json, true)]
+    #[case("name", true)]
     #[case("aliases", true)]
-    #[case("CAS", true)]
-    #[case("ASHRAE34", true)]
     #[case("REFPROP_name", true)]
+    #[case("CAS", true)]
+    #[case("InChI", true)]
+    #[case("InChIKey", true)]
+    #[case("CHEMSPIDER_ID", true)]
+    #[case("SMILES", true)]
+    #[case("ASHRAE34", true)]
+    #[case("2DPNG_URL", true)]
     #[case("BibTeX-EOS", true)]
     #[case("BibTeX-CP0", false)]
     #[case("BibTeX-CONDUCTIVITY", true)]
@@ -443,6 +466,7 @@ mod tests {
     #[case("BibTeX-VISCOSITY", true)]
     #[case("pure", true)]
     #[case("formula", true)]
+    #[case("JSON", true)]
     #[case("", false)]
     #[case(" ", false)]
     #[case("Hello, World!", false)]
