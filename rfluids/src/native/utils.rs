@@ -336,25 +336,25 @@ impl CoolProp {
     /// - [`CoolProp` Configuration](https://coolprop.org/coolprop/Configuration.html)
     /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
     /// - [`ConfigValue`]
-    pub fn set_config(key: impl AsRef<str>, value: impl Into<ConfigValue>) -> Result<()> {
+    pub fn set_config<'a>(key: impl AsRef<str>, value: impl Into<ConfigValue<'a>>) -> Result<()> {
         let key = key.as_ref().trim();
         let value = value.into();
-        set_config(key, value)
+        set_config(key, &value)
     }
 }
 
 // Code coverage trick
-fn set_config(key: &str, value: ConfigValue) -> Result<()> {
+fn set_config(key: &str, value: &ConfigValue) -> Result<()> {
     let lock = COOLPROP.lock().unwrap();
     match value {
         ConfigValue::Bool(val) => unsafe {
-            lock.set_config_bool(const_ptr_c_char!(key), val);
+            lock.set_config_bool(const_ptr_c_char!(key), *val);
         },
         ConfigValue::Float(val) => unsafe {
-            lock.set_config_double(const_ptr_c_char!(key), val);
+            lock.set_config_double(const_ptr_c_char!(key), *val);
         },
-        ConfigValue::String(val) => unsafe {
-            lock.set_config_string(const_ptr_c_char!(key), const_ptr_c_char!(val.trim()));
+        ConfigValue::Str(val) => unsafe {
+            lock.set_config_string(const_ptr_c_char!(key), const_ptr_c_char!(val));
         },
     }
     let error = get_error(&lock);

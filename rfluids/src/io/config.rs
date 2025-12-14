@@ -299,35 +299,35 @@ pub enum ConfigKey {
 
 /// `CoolProp` configuration value.
 #[derive(Clone, Debug, PartialEq)]
-pub enum ConfigValue {
+pub enum ConfigValue<'a> {
     /// Boolean value.
     Bool(bool),
     /// Floating-point value.
     Float(f64),
     /// String value.
-    String(String),
+    Str(&'a str),
 }
 
-impl From<bool> for ConfigValue {
+impl From<bool> for ConfigValue<'_> {
     fn from(value: bool) -> Self {
         ConfigValue::Bool(value)
     }
 }
-impl From<f64> for ConfigValue {
+impl From<f64> for ConfigValue<'_> {
     fn from(value: f64) -> Self {
         ConfigValue::Float(value)
     }
 }
 
-impl From<String> for ConfigValue {
-    fn from(value: String) -> Self {
-        ConfigValue::String(value)
+impl<'a> From<&'a str> for ConfigValue<'a> {
+    fn from(value: &'a str) -> Self {
+        ConfigValue::Str(value.trim())
     }
 }
 
-impl From<&str> for ConfigValue {
-    fn from(value: &str) -> Self {
-        Self::from(value.to_string())
+impl<'a> From<&'a String> for ConfigValue<'a> {
+    fn from(value: &'a String) -> Self {
+        Self::from(value.as_str())
     }
 }
 
