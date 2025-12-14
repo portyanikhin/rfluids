@@ -38,7 +38,7 @@ use rstest::*;
 #[case("VTPR_ALWAYS_RELOAD_LIBRARY")]
 fn set_config_invalid_when_bool_required(
     #[case] key: impl AsRef<str>,
-    #[values("yes", "no", 42.0)] invalid_value: impl Into<ConfigValue>,
+    #[values("yes", "no", 42.0)] invalid_value: impl Into<ConfigValue<'static>>,
 ) {
     // When
     let res = CoolProp::set_config(key, invalid_value);
@@ -58,7 +58,7 @@ fn set_config_invalid_when_bool_required(
 #[case("MAXIMUM_TABLE_DIRECTORY_SIZE_IN_GB")]
 fn set_config_invalid_when_float_required(
     #[case] key: impl AsRef<str>,
-    #[values(true, false, "42")] invalid_value: impl Into<ConfigValue>,
+    #[values(true, false, "42")] invalid_value: impl Into<ConfigValue<'static>>,
 ) {
     // When
     let res = CoolProp::set_config(key, invalid_value);
@@ -84,7 +84,7 @@ fn set_config_invalid_when_float_required(
 #[case("VTPR_UNIFAC_PATH")]
 fn set_config_invalid_when_string_required(
     #[case] key: impl AsRef<str>,
-    #[values(true, false, 42.0)] invalid_value: impl Into<ConfigValue>,
+    #[values(true, false, 42.0)] invalid_value: impl Into<ConfigValue<'static>>,
 ) {
     // When
     let res = CoolProp::set_config(key, invalid_value);

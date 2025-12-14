@@ -98,7 +98,7 @@ fn set_config_string(#[case] key: impl AsRef<str>) {
 #[rstest]
 fn set_config_nonexistent_key(
     #[values("THIS_KEY_DOES_NOT_EXIST", "THIS_ONE_TOO", "AND_THIS_ONE_TOO")] key: &str,
-    #[values(true, false, 42.0, "something")] value: impl Into<ConfigValue>,
+    #[values(true, false, 42.0, "something")] value: impl Into<ConfigValue<'static>>,
 ) {
     // When
     let res = CoolProp::set_config(key, value);
