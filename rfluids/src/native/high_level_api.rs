@@ -104,7 +104,7 @@ impl CoolProp {
                 const_ptr_c_char!(fluid_name.as_ref().trim()),
             )
         };
-        Self::res(value, &lock)
+        res(value, &lock)
     }
 
     /// Returns a value that depends on the thermodynamic state of humid air.
@@ -167,7 +167,7 @@ impl CoolProp {
                 input3_value,
             )
         };
-        Self::res(value, &lock)
+        res(value, &lock)
     }
 
     /// Returns a value that doesn't depend on the thermodynamic state of the fluid
@@ -221,7 +221,7 @@ impl CoolProp {
                 const_ptr_c_char!(fluid_name.as_ref().trim()),
             )
         };
-        Self::res(value, &lock)
+        res(value, &lock)
     }
 
     /// Returns a phase state as a raw [`String`] depending on the thermodynamic state of the fluid.
@@ -290,13 +290,13 @@ impl CoolProp {
             .replace("two_phase", "twophase");
         Ok(res)
     }
+}
 
-    fn res(value: f64, lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> Result<f64> {
-        if !value.is_finite() {
-            return Err(get_error(lock).unwrap_or_default());
-        }
-        Ok(value)
+fn res(value: f64, lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> Result<f64> {
+    if !value.is_finite() {
+        return Err(get_error(lock).unwrap_or_default());
     }
+    Ok(value)
 }
 
 #[cfg(test)]
@@ -494,7 +494,7 @@ mod tests {
         let valid = 42.0;
 
         // When
-        let res = CoolProp::res(valid, &COOLPROP.lock().unwrap());
+        let res = res(valid, &COOLPROP.lock().unwrap());
 
         // Then
         assert!(res.is_ok());
@@ -506,7 +506,7 @@ mod tests {
         let invalid = f64::NAN;
 
         // When
-        let res = CoolProp::res(invalid, &COOLPROP.lock().unwrap());
+        let res = res(invalid, &COOLPROP.lock().unwrap());
 
         // Then
         assert_eq!(res.unwrap_err().to_string(), "Unknown CoolProp error");
