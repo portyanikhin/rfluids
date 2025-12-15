@@ -24,6 +24,7 @@
 ///
 /// - [CoolProp High-Level API](https://coolprop.org/coolprop/HighLevelAPI.html)
 /// - [`CoolProp` Configuration](https://coolprop.org/coolprop/Configuration.html)
+/// - [`CoolProp::set_config`](crate::native::CoolProp::set_config)
 #[derive(
     Clone,
     Copy,
@@ -298,6 +299,12 @@ pub enum ConfigKey {
 }
 
 /// `CoolProp` configuration value.
+///
+/// # See Also
+///
+/// - [CoolProp High-Level API](https://coolprop.org/coolprop/HighLevelAPI.html)
+/// - [`CoolProp` Configuration](https://coolprop.org/coolprop/Configuration.html)
+/// - [`CoolProp::set_config`](crate::native::CoolProp::set_config)
 #[derive(Clone, Debug, PartialEq)]
 pub enum ConfigValue<'a> {
     /// Boolean value.
