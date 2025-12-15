@@ -224,7 +224,7 @@ impl CoolProp {
     ///
     /// # Arguments
     ///
-    /// - `key` -- configuration key name _(raw [`&str`](str))_
+    /// - `key` -- configuration key _(raw [`&str`](str) or [`ConfigKey`](crate::io::ConfigKey))_
     /// - `value` -- configuration value _(raw [`bool`], [`f64`], [`&str`](str), or
     ///   [`&String`](String), automatically converted to [`ConfigValue`])_
     ///
@@ -339,6 +339,7 @@ impl CoolProp {
     ///
     /// - [`CoolProp` Configuration](https://coolprop.org/coolprop/Configuration.html)
     /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
+    /// - [`ConfigKey`](crate::io::ConfigKey)
     /// - [`ConfigValue`]
     pub fn set_config<'a>(key: impl AsRef<str>, value: impl Into<ConfigValue<'a>>) -> Result<()> {
         let key = key.as_ref().trim();

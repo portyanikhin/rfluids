@@ -18,6 +18,7 @@
 ///
 /// - [CoolProp High-Level API](https://coolprop.org/coolprop/HighLevelAPI.html)
 /// - [Substance Information](https://coolprop.org/coolprop/HighLevelAPI.html#fluid-information)
+/// - [`CoolProp::get_substance_param`](crate::native::CoolProp::get_substance_param)
 #[derive(
     Clone,
     Copy,
