@@ -22,7 +22,7 @@ impl Default for ErrorBuffer {
     }
 }
 
-impl From<ErrorBuffer> for String {
+impl From<ErrorBuffer> for Option<CoolPropError> {
     fn from(value: ErrorBuffer) -> Self {
         value.message.into()
     }
@@ -56,6 +56,13 @@ impl From<MessageBuffer> for String {
     }
 }
 
+impl From<MessageBuffer> for Option<CoolPropError> {
+    fn from(value: MessageBuffer) -> Self {
+        let message: String = value.into();
+        if message.trim().is_empty() { None } else { Some(CoolPropError(message)) }
+    }
+}
+
 pub(crate) fn get_error(
     lock: &MutexGuard<coolprop_sys::bindings::CoolProp>,
 ) -> Option<CoolPropError> {
@@ -67,8 +74,7 @@ pub(crate) fn get_error(
             message.capacity,
         )
     };
-    let res: String = message.into();
-    if res.trim().is_empty() { None } else { Some(CoolPropError(res)) }
+    message.into()
 }
 
 macro_rules! const_ptr_c_char {

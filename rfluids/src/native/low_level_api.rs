@@ -78,7 +78,7 @@ impl AbstractState {
                 c_long::from(error.message.capacity),
             )
         };
-        Self::res(Self { ptr }, error)
+        res(Self { ptr }, error)
     }
 
     /// Set the fractions _(mole, mass or volume)_[^note].
@@ -130,7 +130,7 @@ impl AbstractState {
                 c_long::from(error.message.capacity),
             );
         }
-        Self::res((), error)
+        res((), error)
     }
 
     /// Update the state of the fluid.
@@ -178,7 +178,7 @@ impl AbstractState {
                 c_long::from(error.message.capacity),
             );
         }
-        Self::res((), error)
+        res((), error)
     }
 
     /// Returns an output parameter value **\[SI units\]**
@@ -259,7 +259,7 @@ impl AbstractState {
                 c_long::from(error.message.capacity),
             )
         };
-        Self::keyed_output_res(key, value, error)
+        keyed_output(key, value, error)
     }
 
     /// Specify the phase state for all further calculations.
@@ -302,7 +302,7 @@ impl AbstractState {
                 c_long::from(error.message.capacity),
             );
         }
-        Self::res((), error)
+        res((), error)
     }
 
     /// Unspecify the phase state and go back to calculating it based on the inputs.
@@ -336,21 +336,21 @@ impl AbstractState {
             );
         }
     }
+}
 
-    fn res<T>(value: T, error: ErrorBuffer) -> Result<T> {
-        let error_message: String = error.into();
-        if error_message.trim().is_empty() { Ok(value) } else { Err(CoolPropError(error_message)) }
-    }
+fn res<T>(value: T, error: ErrorBuffer) -> Result<T> {
+    let error: Option<CoolPropError> = error.into();
+    error.map_or(Ok(value), Err)
+}
 
-    fn keyed_output_res(key: u8, value: f64, error: ErrorBuffer) -> Result<f64> {
-        Self::res((), error)?;
-        if !value.is_finite() {
-            return Err(CoolPropError(format!(
-                "Unable to get the output with key '{key}' due to invalid or undefined state!",
-            )));
-        }
-        Ok(value)
+fn keyed_output(key: u8, value: f64, error: ErrorBuffer) -> Result<f64> {
+    res((), error)?;
+    if !value.is_finite() {
+        return Err(CoolPropError(format!(
+            "Unable to get the output with key '{key}' due to invalid or undefined state!",
+        )));
     }
+    Ok(value)
 }
 
 impl Drop for AbstractState {
