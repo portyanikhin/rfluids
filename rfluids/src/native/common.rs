@@ -125,11 +125,73 @@ pub(crate) fn get_error(
 
 #[cfg(test)]
 mod tests {
+    use rstest::*;
+
     use super::*;
 
-    mod message_buffer {
-        use rstest::*;
+    mod error_buffer {
+        use super::*;
 
+        #[test]
+        fn blank() {
+            // When
+            let sut = ErrorBuffer::blank();
+
+            // Then
+            assert_eq!(sut.code(), 0);
+            assert_eq!(sut.message.capacity(), 0);
+        }
+
+        #[test]
+        fn default() {
+            // When
+            let sut = ErrorBuffer::default();
+
+            // Then
+            assert_eq!(sut.code(), 0);
+            assert_eq!(sut.message.capacity(), 500);
+        }
+
+        #[test]
+        fn code_as_mut_ptr() {
+            // Given
+            let mut sut = ErrorBuffer::default();
+
+            // When
+            unsafe {
+                *sut.code_as_mut_ptr() = 42;
+            }
+
+            // Then
+            assert_eq!(sut.code(), 42);
+        }
+
+        #[rstest]
+        #[case("", None)]
+        #[case(" ", None)]
+        #[case("Error message", Some(CoolPropError("Error message".into())))]
+        fn into_coolprop_error(#[case] msg: &str, #[case] expected: Option<CoolPropError>) {
+            // Given
+            let mut sut = ErrorBuffer::default();
+            let c_string = CString::new(msg).unwrap();
+            let c_bytes = c_string.as_bytes_with_nul();
+
+            // When
+            unsafe {
+                std::ptr::copy_nonoverlapping(
+                    c_bytes.as_ptr().cast::<c_char>(),
+                    sut.message.as_mut_ptr(),
+                    c_bytes.len(),
+                );
+            }
+            let res: Option<CoolPropError> = sut.into();
+
+            // Then
+            assert_eq!(res, expected);
+        }
+    }
+
+    mod message_buffer {
         use super::*;
 
         #[rstest]
