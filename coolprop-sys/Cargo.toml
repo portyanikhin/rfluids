@@ -19,7 +19,7 @@ libloading.workspace = true
 bindgen = { workspace = true, optional = true }
 
 [features]
-regen-bindings = ["bindgen"]
+regen-bindings = ["dep:bindgen"]
 
 [target.'cfg(all(target_os = "windows", target_arch = "x86_64"))'.dependencies]
 coolprop-sys-windows-x86-64 = { path = "../coolprop-sys-windows-x86-64", version = "7.2.0" }
