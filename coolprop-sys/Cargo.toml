@@ -16,7 +16,7 @@ categories = ["api-bindings", "science"]
 libloading.workspace = true
 
 [build-dependencies]
-Cbindgen = { workspace = true, optional = true }
+bindgen = { workspace = true, optional = true }
 
 [features]
 regen-bindings = ["bindgen"]
