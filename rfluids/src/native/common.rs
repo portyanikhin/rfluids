@@ -9,19 +9,31 @@ type PhantomUnsync = PhantomData<Cell<()>>;
 
 #[derive(Debug)]
 pub(crate) struct ErrorBuffer {
-    pub code: *mut c_long,
+    code: c_long,
     pub message: MessageBuffer,
+    marker: PhantomUnsync,
 }
 
 impl ErrorBuffer {
     pub fn blank() -> Self {
-        Self { code: &mut 0, message: MessageBuffer::blank() }
+        Self { code: 0, message: MessageBuffer::blank(), marker: PhantomData }
+    }
+
+    #[must_use]
+    pub fn code_as_mut_ptr(&mut self) -> *mut c_long {
+        &raw mut self.code
+    }
+
+    #[must_use]
+    #[allow(dead_code)]
+    pub fn code(&self) -> c_long {
+        self.code
     }
 }
 
 impl Default for ErrorBuffer {
     fn default() -> Self {
-        Self { code: &mut 0, message: MessageBuffer::default() }
+        Self { code: 0, message: MessageBuffer::default(), marker: PhantomData }
     }
 }
 
