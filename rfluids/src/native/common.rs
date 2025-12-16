@@ -1,8 +1,11 @@
 use core::ffi::{c_char, c_int, c_long};
-use std::{ffi::CString, sync::MutexGuard};
+use std::{cell::Cell, ffi::CString, marker::PhantomData, sync::MutexGuard};
 
 use super::CoolPropError;
 use crate::io::GlobalParam;
+
+/// Marker to make structs `!Send + !Sync` for thread safety.
+type PhantomUnsync = PhantomData<Cell<()>>;
 
 #[derive(Debug)]
 pub(crate) struct ErrorBuffer {
@@ -32,17 +35,18 @@ impl From<ErrorBuffer> for Option<CoolPropError> {
 pub(crate) struct MessageBuffer {
     capacity: usize,
     buffer: *mut c_char,
+    marker: PhantomUnsync,
 }
 
 impl MessageBuffer {
     #[must_use]
     pub fn with_capacity(capacity: usize) -> Self {
         if capacity == 0 {
-            return Self { capacity, buffer: std::ptr::null_mut() };
+            return Self { capacity, buffer: std::ptr::null_mut(), marker: PhantomData };
         }
         let vec = vec![0u8; capacity];
         let buffer = unsafe { CString::from_vec_unchecked(vec) }.into_raw();
-        Self { capacity, buffer }
+        Self { capacity, buffer, marker: PhantomData }
     }
 
     #[must_use]
