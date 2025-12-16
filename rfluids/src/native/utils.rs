@@ -127,10 +127,10 @@ impl CoolProp {
             "errstring" | "warnstring" => 500,
             _ => 30_000,
         };
-        let res = MessageBuffer::with_capacity(capacity);
+        let mut res = MessageBuffer::with_capacity(capacity);
         let lock = COOLPROP.lock().unwrap();
         let status = unsafe {
-            lock.get_global_param_string(const_ptr_c_char!(param), res.buffer, res.capacity)
+            lock.get_global_param_string(const_ptr_c_char!(param), res.as_mut_ptr(), res.capacity())
         };
         let res: String = res.into();
         if status != 1 || res.trim().is_empty() { None } else { Some(res) }
@@ -199,14 +199,14 @@ impl CoolProp {
             "JSON" => 500_000,
             _ => 500,
         };
-        let res = MessageBuffer::with_capacity(capacity);
+        let mut res = MessageBuffer::with_capacity(capacity);
         let lock = COOLPROP.lock().unwrap();
         let status = unsafe {
             lock.get_fluid_param_string(
                 const_ptr_c_char!(substance_name),
                 const_ptr_c_char!(param),
-                res.buffer,
-                res.capacity,
+                res.as_mut_ptr(),
+                res.capacity(),
             )
         };
         let res: String = res.into();

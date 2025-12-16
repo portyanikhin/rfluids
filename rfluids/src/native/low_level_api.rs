@@ -68,14 +68,14 @@ impl AbstractState {
         backend_name: impl AsRef<str>,
         fluid_names: impl AsRef<str>,
     ) -> Result<AbstractState> {
-        let error = ErrorBuffer::default();
+        let mut error = ErrorBuffer::default();
         let ptr = unsafe {
             COOLPROP.lock().unwrap().AbstractState_factory(
                 const_ptr_c_char!(backend_name.as_ref().trim()),
                 const_ptr_c_char!(fluid_names.as_ref().trim()),
                 error.code,
-                error.message.buffer,
-                c_long::from(error.message.capacity),
+                error.message.as_mut_ptr(),
+                c_long::from(error.message.capacity()),
             )
         };
         res(Self { ptr }, error)
@@ -119,15 +119,15 @@ impl AbstractState {
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     pub fn set_fractions(&mut self, fractions: &[f64]) -> Result<()> {
-        let error = ErrorBuffer::default();
+        let mut error = ErrorBuffer::default();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_set_fractions(
                 self.ptr,
                 fractions.as_ptr(),
                 fractions.len() as c_long,
                 error.code,
-                error.message.buffer,
-                c_long::from(error.message.capacity),
+                error.message.as_mut_ptr(),
+                c_long::from(error.message.capacity()),
             );
         }
         res((), error)
@@ -166,7 +166,7 @@ impl AbstractState {
         input1: f64,
         input2: f64,
     ) -> Result<()> {
-        let error = ErrorBuffer::default();
+        let mut error = ErrorBuffer::default();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_update(
                 self.ptr,
@@ -174,8 +174,8 @@ impl AbstractState {
                 input1,
                 input2,
                 error.code,
-                error.message.buffer,
-                c_long::from(error.message.capacity),
+                error.message.as_mut_ptr(),
+                c_long::from(error.message.capacity()),
             );
         }
         res((), error)
@@ -248,15 +248,15 @@ impl AbstractState {
     /// - [`FluidParam`](crate::io::FluidParam)
     /// - [`FluidTrivialParam`](crate::io::FluidTrivialParam)
     pub fn keyed_output(&self, key: impl Into<u8>) -> Result<f64> {
-        let error = ErrorBuffer::default();
+        let mut error = ErrorBuffer::default();
         let key = key.into();
         let value = unsafe {
             COOLPROP.lock().unwrap().AbstractState_keyed_output(
                 self.ptr,
                 c_long::from(key),
                 error.code,
-                error.message.buffer,
-                c_long::from(error.message.capacity),
+                error.message.as_mut_ptr(),
+                c_long::from(error.message.capacity()),
             )
         };
         keyed_output(key, value, error)
@@ -292,14 +292,14 @@ impl AbstractState {
     /// - [Imposing the Phase (Optional)](https://coolprop.org/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     /// - [`Phase`](crate::io::Phase)
     pub fn specify_phase(&mut self, phase: impl AsRef<str>) -> Result<()> {
-        let error = ErrorBuffer::default();
+        let mut error = ErrorBuffer::default();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_specify_phase(
                 self.ptr,
                 const_ptr_c_char!(phase.as_ref()),
                 error.code,
-                error.message.buffer,
-                c_long::from(error.message.capacity),
+                error.message.as_mut_ptr(),
+                c_long::from(error.message.capacity()),
             );
         }
         res((), error)
@@ -326,13 +326,13 @@ impl AbstractState {
     ///
     /// - [Imposing the Phase (Optional)](https://coolprop.org/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     pub fn unspecify_phase(&mut self) {
-        let error = ErrorBuffer::blank();
+        let mut error = ErrorBuffer::blank();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_unspecify_phase(
                 self.ptr,
                 error.code,
-                error.message.buffer,
-                c_long::from(error.message.capacity),
+                error.message.as_mut_ptr(),
+                c_long::from(error.message.capacity()),
             );
         }
     }
@@ -355,13 +355,13 @@ fn keyed_output(key: u8, value: f64, error: ErrorBuffer) -> Result<f64> {
 
 impl Drop for AbstractState {
     fn drop(&mut self) {
-        let error = ErrorBuffer::blank();
+        let mut error = ErrorBuffer::blank();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_free(
                 self.ptr,
                 error.code,
-                error.message.buffer,
-                c_long::from(error.message.capacity),
+                error.message.as_mut_ptr(),
+                c_long::from(error.message.capacity()),
             );
         }
     }
