@@ -1,11 +1,9 @@
 use core::ffi::c_long;
+use std::ffi::CString;
 
 use coolprop_sys::COOLPROP;
 
-use super::{
-    CoolPropError, Result,
-    common::{ErrorBuffer, const_ptr_c_char},
-};
+use super::{CoolPropError, Result, common::ErrorBuffer};
 
 /// `CoolProp` thread safe low-level API.
 #[derive(Debug)]
@@ -68,11 +66,13 @@ impl AbstractState {
         backend_name: impl AsRef<str>,
         fluid_names: impl AsRef<str>,
     ) -> Result<AbstractState> {
+        let backend_name = CString::new(backend_name.as_ref().trim()).unwrap();
+        let fluid_names = CString::new(fluid_names.as_ref().trim()).unwrap();
         let mut error = ErrorBuffer::default();
         let ptr = unsafe {
             COOLPROP.lock().unwrap().AbstractState_factory(
-                const_ptr_c_char!(backend_name.as_ref().trim()),
-                const_ptr_c_char!(fluid_names.as_ref().trim()),
+                backend_name.as_ptr(),
+                fluid_names.as_ptr(),
                 error.code,
                 error.message.as_mut_ptr(),
                 c_long::from(error.message.capacity()),
@@ -292,11 +292,12 @@ impl AbstractState {
     /// - [Imposing the Phase (Optional)](https://coolprop.org/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     /// - [`Phase`](crate::io::Phase)
     pub fn specify_phase(&mut self, phase: impl AsRef<str>) -> Result<()> {
+        let phase = CString::new(phase.as_ref()).unwrap();
         let mut error = ErrorBuffer::default();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_specify_phase(
                 self.ptr,
-                const_ptr_c_char!(phase.as_ref()),
+                phase.as_ptr(),
                 error.code,
                 error.message.as_mut_ptr(),
                 c_long::from(error.message.capacity()),

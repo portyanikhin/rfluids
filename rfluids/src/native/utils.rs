@@ -1,8 +1,10 @@
+use std::ffi::CString;
+
 use coolprop_sys::COOLPROP;
 
 use super::{
     CoolProp, Result,
-    common::{MessageBuffer, const_ptr_c_char, get_error},
+    common::{MessageBuffer, get_error},
 };
 use crate::io::ConfigValue;
 
@@ -127,10 +129,11 @@ impl CoolProp {
             "errstring" | "warnstring" => 500,
             _ => 30_000,
         };
+        let param = CString::new(param).unwrap();
         let mut res = MessageBuffer::with_capacity(capacity);
         let lock = COOLPROP.lock().unwrap();
         let status = unsafe {
-            lock.get_global_param_string(const_ptr_c_char!(param), res.as_mut_ptr(), res.capacity())
+            lock.get_global_param_string(param.as_ptr(), res.as_mut_ptr(), res.capacity())
         };
         let res: String = res.into();
         if status != 1 || res.trim().is_empty() { None } else { Some(res) }
@@ -199,12 +202,14 @@ impl CoolProp {
             "JSON" => 500_000,
             _ => 500,
         };
+        let substance_name = CString::new(substance_name).unwrap();
+        let param = CString::new(param).unwrap();
         let mut res = MessageBuffer::with_capacity(capacity);
         let lock = COOLPROP.lock().unwrap();
         let status = unsafe {
             lock.get_fluid_param_string(
-                const_ptr_c_char!(substance_name),
-                const_ptr_c_char!(param),
+                substance_name.as_ptr(),
+                param.as_ptr(),
                 res.as_mut_ptr(),
                 res.capacity(),
             )
@@ -350,17 +355,21 @@ impl CoolProp {
 
 // Code coverage trick
 fn set_config(key: &str, value: &ConfigValue) -> Result<()> {
+    let key = CString::new(key).unwrap();
     let lock = COOLPROP.lock().unwrap();
     match value {
         ConfigValue::Bool(val) => unsafe {
-            lock.set_config_bool(const_ptr_c_char!(key), *val);
+            lock.set_config_bool(key.as_ptr(), *val);
         },
         ConfigValue::Float(val) => unsafe {
-            lock.set_config_double(const_ptr_c_char!(key), *val);
+            lock.set_config_double(key.as_ptr(), *val);
         },
-        ConfigValue::Str(val) => unsafe {
-            lock.set_config_string(const_ptr_c_char!(key), const_ptr_c_char!(val));
-        },
+        ConfigValue::Str(val) => {
+            let val = CString::new(*val).unwrap();
+            unsafe {
+                lock.set_config_string(key.as_ptr(), val.as_ptr());
+            }
+        }
     }
     let error = get_error(&lock);
     error.map_or(Ok(()), Err)

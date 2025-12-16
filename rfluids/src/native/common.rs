@@ -100,23 +100,12 @@ pub(crate) fn get_error(
     lock: &MutexGuard<coolprop_sys::bindings::CoolProp>,
 ) -> Option<CoolPropError> {
     let mut message = MessageBuffer::default();
+    let param = CString::new(GlobalParam::PendingError.as_ref()).unwrap();
     let _unused = unsafe {
-        lock.get_global_param_string(
-            const_ptr_c_char!(GlobalParam::PendingError.as_ref()),
-            message.as_mut_ptr(),
-            message.capacity(),
-        )
+        lock.get_global_param_string(param.as_ptr(), message.as_mut_ptr(), message.capacity())
     };
     message.into()
 }
-
-macro_rules! const_ptr_c_char {
-    ($value:expr) => {
-        format!("{}{}", $value, "\0").as_ptr().cast::<core::ffi::c_char>()
-    };
-}
-
-pub(crate) use const_ptr_c_char;
 
 #[cfg(test)]
 mod tests {

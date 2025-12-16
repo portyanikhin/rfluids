@@ -1,13 +1,10 @@
 // cSpell:disable
 
-use std::sync::MutexGuard;
+use std::{ffi::CString, sync::MutexGuard};
 
 use coolprop_sys::COOLPROP;
 
-use super::{
-    Result,
-    common::{const_ptr_c_char, get_error},
-};
+use super::{Result, common::get_error};
 use crate::io::Phase;
 
 /// `CoolProp` thread safe high-level API.
@@ -93,15 +90,19 @@ impl CoolProp {
         input2_value: f64,
         fluid_name: impl AsRef<str>,
     ) -> Result<f64> {
+        let output_key = CString::new(output_key.as_ref().trim()).unwrap();
+        let input1_key = CString::new(input1_key.as_ref().trim()).unwrap();
+        let input2_key = CString::new(input2_key.as_ref().trim()).unwrap();
+        let fluid_name = CString::new(fluid_name.as_ref().trim()).unwrap();
         let lock = COOLPROP.lock().unwrap();
         let value = unsafe {
             lock.PropsSI(
-                const_ptr_c_char!(output_key.as_ref().trim()),
-                const_ptr_c_char!(input1_key.as_ref().trim()),
+                output_key.as_ptr(),
+                input1_key.as_ptr(),
                 input1_value,
-                const_ptr_c_char!(input2_key.as_ref().trim()),
+                input2_key.as_ptr(),
                 input2_value,
-                const_ptr_c_char!(fluid_name.as_ref().trim()),
+                fluid_name.as_ptr(),
             )
         };
         res(value, &lock)
@@ -155,15 +156,19 @@ impl CoolProp {
         input3_key: impl AsRef<str>,
         input3_value: f64,
     ) -> Result<f64> {
+        let output_key = CString::new(output_key.as_ref().trim()).unwrap();
+        let input1_key = CString::new(input1_key.as_ref().trim()).unwrap();
+        let input2_key = CString::new(input2_key.as_ref().trim()).unwrap();
+        let input3_key = CString::new(input3_key.as_ref().trim()).unwrap();
         let lock = COOLPROP.lock().unwrap();
         let value = unsafe {
             lock.HAPropsSI(
-                const_ptr_c_char!(output_key.as_ref().trim()),
-                const_ptr_c_char!(input1_key.as_ref().trim()),
+                output_key.as_ptr(),
+                input1_key.as_ptr(),
                 input1_value,
-                const_ptr_c_char!(input2_key.as_ref().trim()),
+                input2_key.as_ptr(),
                 input2_value,
-                const_ptr_c_char!(input3_key.as_ref().trim()),
+                input3_key.as_ptr(),
                 input3_value,
             )
         };
@@ -214,13 +219,10 @@ impl CoolProp {
     /// - [`FluidTrivialParam`](crate::io::FluidTrivialParam)
     /// - [`Substance`](crate::substance::Substance)
     pub fn props1_si(output_key: impl AsRef<str>, fluid_name: impl AsRef<str>) -> Result<f64> {
+        let output_key = CString::new(output_key.as_ref().trim()).unwrap();
+        let fluid_name = CString::new(fluid_name.as_ref().trim()).unwrap();
         let lock = COOLPROP.lock().unwrap();
-        let value = unsafe {
-            lock.Props1SI(
-                const_ptr_c_char!(output_key.as_ref().trim()),
-                const_ptr_c_char!(fluid_name.as_ref().trim()),
-            )
-        };
+        let value = unsafe { lock.Props1SI(output_key.as_ptr(), fluid_name.as_ptr()) };
         res(value, &lock)
     }
 
