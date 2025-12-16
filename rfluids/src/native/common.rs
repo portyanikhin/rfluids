@@ -30,17 +30,34 @@ impl From<ErrorBuffer> for Option<CoolPropError> {
 
 #[derive(Debug)]
 pub(crate) struct MessageBuffer {
-    pub capacity: c_int,
-    pub buffer: *mut c_char,
+    capacity: usize,
+    buffer: *mut c_char,
 }
 
 impl MessageBuffer {
-    pub fn with_capacity(capacity: c_int) -> Self {
-        Self { capacity, buffer: CString::new(" ".repeat(capacity as usize)).unwrap().into_raw() }
+    #[must_use]
+    pub fn with_capacity(capacity: usize) -> Self {
+        if capacity == 0 {
+            return Self { capacity, buffer: std::ptr::null_mut() };
+        }
+        let vec = vec![0u8; capacity];
+        let buffer = unsafe { CString::from_vec_unchecked(vec) }.into_raw();
+        Self { capacity, buffer }
     }
 
+    #[must_use]
     pub fn blank() -> Self {
         Self::with_capacity(0)
+    }
+
+    #[must_use]
+    pub fn as_mut_ptr(&mut self) -> *mut c_char {
+        self.buffer
+    }
+
+    #[must_use]
+    pub fn capacity(&self) -> c_int {
+        self.capacity as c_int
     }
 }
 
@@ -50,9 +67,25 @@ impl Default for MessageBuffer {
     }
 }
 
+impl Drop for MessageBuffer {
+    fn drop(&mut self) {
+        if !self.buffer.is_null() {
+            unsafe {
+                drop(CString::from_raw(self.buffer));
+            }
+        }
+    }
+}
+
 impl From<MessageBuffer> for String {
     fn from(value: MessageBuffer) -> Self {
-        unsafe { CString::from_raw(value.buffer).into_string().unwrap() }
+        if value.buffer.is_null() {
+            return Self::new();
+        }
+        let buffer = value.buffer;
+        std::mem::forget(value);
+        let c_string = unsafe { CString::from_raw(buffer) };
+        c_string.into_string().unwrap_or_else(|e| e.into_cstring().to_string_lossy().into_owned())
     }
 }
 
@@ -66,12 +99,12 @@ impl From<MessageBuffer> for Option<CoolPropError> {
 pub(crate) fn get_error(
     lock: &MutexGuard<coolprop_sys::bindings::CoolProp>,
 ) -> Option<CoolPropError> {
-    let message = MessageBuffer::default();
+    let mut message = MessageBuffer::default();
     let _unused = unsafe {
         lock.get_global_param_string(
             const_ptr_c_char!(GlobalParam::PendingError.as_ref()),
-            message.buffer,
-            message.capacity,
+            message.as_mut_ptr(),
+            message.capacity(),
         )
     };
     message.into()
@@ -84,3 +117,138 @@ macro_rules! const_ptr_c_char {
 }
 
 pub(crate) use const_ptr_c_char;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    mod message_buffer {
+        use rstest::*;
+
+        use super::*;
+
+        #[rstest]
+        #[case(0)]
+        #[case(42)]
+        fn with_capacity(#[case] capacity: usize) {
+            // When
+            let sut = MessageBuffer::with_capacity(capacity);
+
+            // Then
+            assert_eq!(sut.capacity(), capacity as c_int);
+        }
+
+        #[test]
+        fn blank() {
+            // When
+            let sut = MessageBuffer::blank();
+
+            // Then
+            assert_eq!(sut.capacity(), 0);
+        }
+
+        #[test]
+        fn default() {
+            // When
+            let sut = MessageBuffer::default();
+
+            // Then
+            assert_eq!(sut.capacity(), 500);
+        }
+
+        #[rstest]
+        #[case("")]
+        #[case("something")]
+        #[case(" something else ")]
+        fn into_string(#[case] value: &str) {
+            // Given
+            let c_string = CString::new(value).unwrap();
+            let c_bytes = c_string.as_bytes_with_nul();
+            let mut sut = MessageBuffer::with_capacity(c_bytes.len());
+
+            // When
+            unsafe {
+                std::ptr::copy_nonoverlapping(
+                    c_bytes.as_ptr().cast::<c_char>(),
+                    sut.as_mut_ptr(),
+                    c_bytes.len(),
+                );
+            }
+            let res: String = sut.into();
+
+            // Then
+            assert_eq!(res, value);
+        }
+
+        #[test]
+        fn into_string_empty() {
+            // Given
+            let sut = MessageBuffer::with_capacity(42);
+
+            // When
+            let res: String = sut.into();
+
+            // Then
+            assert!(res.is_empty());
+        }
+
+        #[test]
+        fn into_string_blank() {
+            // Given
+            let sut = MessageBuffer::blank();
+
+            // When
+            let res: String = sut.into();
+
+            // Then
+            assert!(res.is_empty());
+        }
+
+        #[test]
+        fn into_string_lossy() {
+            // Given
+            let invalid_utf8: Vec<u8> = vec![
+                b'H', b'e', b'l', b'l', b'o', 0xFF, 0xFE, b'W', b'o', b'r', b'l', b'd', b'!', b'\0',
+            ];
+            let mut sut = MessageBuffer::with_capacity(invalid_utf8.len());
+
+            // When
+            unsafe {
+                std::ptr::copy_nonoverlapping(
+                    invalid_utf8.as_ptr().cast::<c_char>(),
+                    sut.as_mut_ptr(),
+                    invalid_utf8.len(),
+                );
+            }
+            let res: String = sut.into();
+
+            // Then
+            assert!(res.contains('\u{FFFD}')); // Unicode replacement character
+            assert_eq!(res, "Hello\u{FFFD}\u{FFFD}World!");
+        }
+
+        #[rstest]
+        #[case("", None)]
+        #[case(" ", None)]
+        #[case("Error message", Some(CoolPropError("Error message".into())))]
+        fn into_coolprop_error(#[case] value: &str, #[case] expected: Option<CoolPropError>) {
+            // Given
+            let c_string = CString::new(value).unwrap();
+            let c_bytes = c_string.as_bytes_with_nul();
+            let mut sut = MessageBuffer::with_capacity(c_bytes.len());
+
+            // When
+            unsafe {
+                std::ptr::copy_nonoverlapping(
+                    c_bytes.as_ptr().cast::<c_char>(),
+                    sut.as_mut_ptr(),
+                    c_bytes.len(),
+                );
+            }
+            let res: Option<CoolPropError> = sut.into();
+
+            // Then
+            assert_eq!(res, expected);
+        }
+    }
+}
