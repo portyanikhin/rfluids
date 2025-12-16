@@ -12,15 +12,15 @@ license.workspace = true
 keywords = ["CoolProp", "fluids", "mixtures", "humid-air", "thermodynamics"]
 categories = ["api-bindings", "science"]
 
+[features]
+regen-bindings = ["coolprop-sys/regen-bindings"]
+
 [dependencies]
 bon.workspace = true
 coolprop-sys = { path = "../coolprop-sys", version = "7.2.0" }
 strum.workspace = true
 strum_macros.workspace = true
 thiserror.workspace = true
-
-[features]
-regen-bindings = ["coolprop-sys/regen-bindings"]
 
 [dev-dependencies]
 approx.workspace = true
