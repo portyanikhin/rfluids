@@ -31,6 +31,16 @@ cargo add coolprop-sys
 The library required for your platform will be automatically copied
 to the target directory during build.
 
+It also includes pre-generated FFI bindings, so `libclang` is not required for normal builds.
+
+### Regenerating bindings
+
+If you need to regenerate the FFI bindings (requires `libclang`), enable the `regen-bindings` feature:
+
+```shell
+cargo build --features regen-bindings
+```
+
 #### License
 
 <sup>
