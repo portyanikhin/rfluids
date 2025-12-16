@@ -12,14 +12,14 @@ license.workspace = true
 keywords = ["CoolProp", "ffi", "bindings"]
 categories = ["api-bindings", "science"]
 
+[features]
+regen-bindings = ["dep:bindgen"]
+
 [dependencies]
 libloading.workspace = true
 
 [build-dependencies]
 bindgen = { workspace = true, optional = true }
-
-[features]
-regen-bindings = ["dep:bindgen"]
 
 [target.'cfg(all(target_os = "windows", target_arch = "x86_64"))'.dependencies]
 coolprop-sys-windows-x86-64 = { path = "../coolprop-sys-windows-x86-64", version = "7.2.0" }
