@@ -15,4 +15,8 @@
     clippy::pedantic
 )]
 
+#[cfg(feature = "regen-bindings")]
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+
+#[cfg(not(feature = "regen-bindings"))]
+include!("bindings_generated.rs");
