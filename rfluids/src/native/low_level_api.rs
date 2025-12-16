@@ -73,7 +73,7 @@ impl AbstractState {
             COOLPROP.lock().unwrap().AbstractState_factory(
                 backend_name.as_ptr(),
                 fluid_names.as_ptr(),
-                error.code,
+                error.code_as_mut_ptr(),
                 error.message.as_mut_ptr(),
                 c_long::from(error.message.capacity()),
             )
@@ -125,7 +125,7 @@ impl AbstractState {
                 self.ptr,
                 fractions.as_ptr(),
                 fractions.len() as c_long,
-                error.code,
+                error.code_as_mut_ptr(),
                 error.message.as_mut_ptr(),
                 c_long::from(error.message.capacity()),
             );
@@ -173,7 +173,7 @@ impl AbstractState {
                 c_long::from(input_pair_key.into()),
                 input1,
                 input2,
-                error.code,
+                error.code_as_mut_ptr(),
                 error.message.as_mut_ptr(),
                 c_long::from(error.message.capacity()),
             );
@@ -254,7 +254,7 @@ impl AbstractState {
             COOLPROP.lock().unwrap().AbstractState_keyed_output(
                 self.ptr,
                 c_long::from(key),
-                error.code,
+                error.code_as_mut_ptr(),
                 error.message.as_mut_ptr(),
                 c_long::from(error.message.capacity()),
             )
@@ -298,7 +298,7 @@ impl AbstractState {
             COOLPROP.lock().unwrap().AbstractState_specify_phase(
                 self.ptr,
                 phase.as_ptr(),
-                error.code,
+                error.code_as_mut_ptr(),
                 error.message.as_mut_ptr(),
                 c_long::from(error.message.capacity()),
             );
@@ -331,7 +331,7 @@ impl AbstractState {
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_unspecify_phase(
                 self.ptr,
-                error.code,
+                error.code_as_mut_ptr(),
                 error.message.as_mut_ptr(),
                 c_long::from(error.message.capacity()),
             );
@@ -360,7 +360,7 @@ impl Drop for AbstractState {
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_free(
                 self.ptr,
-                error.code,
+                error.code_as_mut_ptr(),
                 error.message.as_mut_ptr(),
                 c_long::from(error.message.capacity()),
             );
