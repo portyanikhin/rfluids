@@ -30,13 +30,13 @@
 //!
 //! It also includes pre-generated FFI bindings, so `libclang` is not required for normal builds.
 //!
-//! ## Regenerating bindings
+//! ### Regenerating bindings
 //!
 //! If you need to regenerate the FFI bindings (requires `libclang`), enable the `regen-bindings`
 //! feature:
 //!
 //! ```shell
-//! cargo build --features regen-bindings
+//! cargo add coolprop-sys --features regen-bindings
 //! ```
 //!
 //! #### License
