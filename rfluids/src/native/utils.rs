@@ -223,15 +223,15 @@ impl CoolProp {
     /// Configuration keys control various aspects of `CoolProp` behavior (e.g., path settings,
     /// `REFPROP` integration, calculation behavior, etc.).
     ///
-    /// The `value` argument can accept owned values [`bool`], [`f64`]) which are copied,
+    /// The `value` argument can accept owned values ([`bool`], [`f64`]) which are copied,
     /// or borrowed string references ([`&str`](str), [`&String`](String)) which must remain valid
     /// for the duration of the call.
     ///
     /// # Arguments
     ///
     /// - `key` -- configuration key _(raw [`&str`](str) or [`ConfigKey`](crate::io::ConfigKey))_
-    /// - `value` -- configuration value _(raw [`bool`], [`f64`], [`&str`](str), or
-    ///   [`&String`](String), automatically converted to [`ConfigValue`])_
+    /// - `value` -- configuration value _([`bool`], [`f64`], [`&str`](str), or [`&String`](String),
+    ///   automatically converted to [`ConfigValue`])_
     ///
     /// Known configuration keys:
     ///
@@ -312,8 +312,8 @@ impl CoolProp {
     ///
     /// # Errors
     ///
-    /// Returns [`CoolPropError`](crate::native::CoolPropError)
-    /// if the configuration key/value is invalid or the value could not be set.
+    /// Returns [`CoolPropError`](crate::native::CoolPropError) if the configuration
+    /// value is invalid.
     ///
     /// # Examples
     ///
