@@ -16,6 +16,13 @@
 //! - [`HumidAirParam`] -- humid air parameters
 //! - [`HumidAirInput`] -- humid air input parameter with specified value
 //! - [`Phase`] -- phase state of the fluid
+//! - [`ConfigKey`] -- `CoolProp` configuration keys (e.g., `ENABLE_SUPERANCILLARIES`,
+//!   `CRITICAL_SPLINES_ENABLED`, etc.)
+//! - [`ConfigValue`] -- `CoolProp` configuration value (boolean, float, or string)
+//! - [`GlobalParam`] -- global `CoolProp` parameters (e.g., version, home path, substance list,
+//!   etc.)
+//! - [`SubstanceParam`] -- substance-specific parameters (e.g., name, aliases, CAS number, chemical
+//!   formula, etc.)
 
 mod config;
 mod fluid_input;
