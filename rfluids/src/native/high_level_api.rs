@@ -62,14 +62,14 @@ impl CoolProp {
     /// ## Custom mixtures
     ///
     /// To calculate the density **\[kg/m³\]** of ethanol aqueous solution
-    /// (with ethanol _40 %_ mass fraction) at _200 kPa_ and _4 °C_:
+    /// (with ethanol _20 %_ mole fraction) at _200 kPa_ and _4 °C_:
     ///
     /// ```
     /// use approx::assert_relative_eq;
     /// use rfluids::prelude::*;
     ///
-    /// let res = CoolProp::props_si("D", "P", 200e3, "T", 277.15, "HEOS::Water[0.6]&Ethanol[0.4]")?;
-    /// assert_relative_eq!(res, 859.529_660_279_914_7, max_relative = 1e-6);
+    /// let res = CoolProp::props_si("D", "P", 200e3, "T", 277.15, "HEOS::Water[0.8]&Ethanol[0.2]")?;
+    /// assert_relative_eq!(res, 883.882_635_377_379_6, max_relative = 1e-6);
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///
