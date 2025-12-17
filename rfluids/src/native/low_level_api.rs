@@ -13,14 +13,14 @@ pub struct AbstractState {
 
 impl AbstractState {
     /// Creates and returns a new [`AbstractState`] instance
-    /// with specified backend and fluid names.
+    /// with specified backend and substance names.
     ///
     /// # Arguments
     ///
     /// - `backend_name` -- name of the backend _(raw [`&str`](str) or
     ///   [`Backend::name`](crate::fluid::backend::Backend::name))_
-    /// - `fluid_names` -- names of the fluids separated by the `&` symbol or just a single fluid
-    ///   name _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_
+    /// - `substance_names` -- names of the substances separated by the `&` symbol or just a single
+    ///   substance name _(raw [`&str`](str) or [`Substance`](crate::substance::Substance) subset)_
     ///
     /// # Errors
     ///
@@ -28,7 +28,7 @@ impl AbstractState {
     ///
     /// # Examples
     ///
-    /// For pure fluids:
+    /// For pure substances:
     ///
     /// ```
     /// use rfluids::prelude::*;
@@ -64,15 +64,15 @@ impl AbstractState {
     /// - [`Substance`](crate::substance::Substance)
     pub fn new(
         backend_name: impl AsRef<str>,
-        fluid_names: impl AsRef<str>,
+        substance_names: impl AsRef<str>,
     ) -> Result<AbstractState> {
         let backend_name = CString::new(backend_name.as_ref().trim()).unwrap();
-        let fluid_names = CString::new(fluid_names.as_ref().trim()).unwrap();
+        let substance_names = CString::new(substance_names.as_ref().trim()).unwrap();
         let mut error = ErrorBuffer::default();
         let ptr = unsafe {
             COOLPROP.lock().unwrap().AbstractState_factory(
                 backend_name.as_ptr(),
-                fluid_names.as_ptr(),
+                substance_names.as_ptr(),
                 error.code_as_mut_ptr(),
                 error.message.as_mut_ptr(),
                 c_long::from(error.message.capacity()),
@@ -89,7 +89,7 @@ impl AbstractState {
     ///
     /// # Arguments
     ///
-    /// - `fractions` -- fractions of the specified fluid **\[dimensionless, from 0 to 1 each\]**
+    /// - `fractions` -- substance fractions **\[dimensionless, from 0 to 1 each\]**
     ///
     /// # Errors
     ///
@@ -194,7 +194,7 @@ impl AbstractState {
     ///
     /// # Examples
     ///
-    /// ## Pure fluids
+    /// ## Pure substances
     ///
     /// To calculate the specific heat **\[J/kg/K\]** of saturated water vapor at _1 atm_:
     ///
@@ -406,9 +406,9 @@ mod tests {
     #[case("HEOS", "Water")]
     #[case("INCOMP", "MPG")]
     #[case("HEOS", "Water&Ethanol")]
-    fn new_valid_inputs(#[case] backend_name: &str, #[case] fluid_names: &str) {
+    fn new_valid_inputs(#[case] backend_name: &str, #[case] substance_names: &str) {
         // When
-        let res = AbstractState::new(backend_name, fluid_names);
+        let res = AbstractState::new(backend_name, substance_names);
 
         // Then
         assert!(res.is_ok());
@@ -434,11 +434,11 @@ mod tests {
     )]
     fn new_invalid_inputs(
         #[case] backend_name: &str,
-        #[case] fluid_names: &str,
+        #[case] substance_names: &str,
         #[case] expected_message: &str,
     ) {
         // When
-        let res = AbstractState::new(backend_name, fluid_names);
+        let res = AbstractState::new(backend_name, substance_names);
 
         // Then
         assert_eq!(res.unwrap_err().to_string(), expected_message);

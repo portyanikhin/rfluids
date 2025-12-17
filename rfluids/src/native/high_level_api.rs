@@ -23,16 +23,16 @@ impl CoolProp {
     /// - `input2_key` -- key of the second input property _(raw [`&str`](str) or
     ///   [`FluidParam`](crate::io::FluidParam))_
     /// - `input2_value` -- value of the second input property **\[SI units\]**
-    /// - `fluid_name` -- name of the fluid _(raw [`&str`](str) or
+    /// - `substance_name` -- name of the substance _(raw [`&str`](str) or
     ///   [`Substance`](crate::substance::Substance) subset)_
     ///
     /// # Errors
     ///
-    /// Returns a [`CoolPropError`] for invalid inputs.
+    /// Returns a [`CoolPropError`](crate::native::CoolPropError) for invalid inputs.
     ///
     /// # Examples
     ///
-    /// ## Pure fluids
+    /// ## Pure substances
     ///
     /// To calculate the specific heat **\[J/kg/K\]** of saturated water vapor at _1 atm_:
     ///
@@ -88,12 +88,12 @@ impl CoolProp {
         input1_value: f64,
         input2_key: impl AsRef<str>,
         input2_value: f64,
-        fluid_name: impl AsRef<str>,
+        substance_name: impl AsRef<str>,
     ) -> Result<f64> {
         let output_key = CString::new(output_key.as_ref().trim()).unwrap();
         let input1_key = CString::new(input1_key.as_ref().trim()).unwrap();
         let input2_key = CString::new(input2_key.as_ref().trim()).unwrap();
-        let fluid_name = CString::new(fluid_name.as_ref().trim()).unwrap();
+        let substance_name = CString::new(substance_name.as_ref().trim()).unwrap();
         let lock = COOLPROP.lock().unwrap();
         let value = unsafe {
             lock.PropsSI(
@@ -102,7 +102,7 @@ impl CoolProp {
                 input1_value,
                 input2_key.as_ptr(),
                 input2_value,
-                fluid_name.as_ptr(),
+                substance_name.as_ptr(),
             )
         };
         res(value, &lock)
@@ -126,7 +126,7 @@ impl CoolProp {
     ///
     /// # Errors
     ///
-    /// Returns a [`CoolPropError`] for invalid inputs.
+    /// Returns a [`CoolPropError`](crate::native::CoolPropError) for invalid inputs.
     ///
     /// # Examples
     ///
@@ -182,12 +182,12 @@ impl CoolProp {
     ///
     /// - `output_key` -- key of the _trivial_ output _(raw [`&str`](str) or
     ///   [`FluidTrivialParam`](crate::io::FluidTrivialParam))_
-    /// - `fluid_name` -- name of the fluid _(raw [`&str`](str) or
+    /// - `substance_name` -- name of the substance _(raw [`&str`](str) or
     ///   [`Substance`](crate::substance::Substance) subset)_
     ///
     /// # Errors
     ///
-    /// Returns a [`CoolPropError`] for invalid inputs.
+    /// Returns a [`CoolPropError`](crate::native::CoolPropError) for invalid inputs.
     ///
     /// # Examples
     ///
@@ -218,11 +218,11 @@ impl CoolProp {
     /// - [`Props1SI` Outputs](https://coolprop.org/coolprop/HighLevelAPI.html#parameter-table)
     /// - [`FluidTrivialParam`](crate::io::FluidTrivialParam)
     /// - [`Substance`](crate::substance::Substance)
-    pub fn props1_si(output_key: impl AsRef<str>, fluid_name: impl AsRef<str>) -> Result<f64> {
+    pub fn props1_si(output_key: impl AsRef<str>, substance_name: impl AsRef<str>) -> Result<f64> {
         let output_key = CString::new(output_key.as_ref().trim()).unwrap();
-        let fluid_name = CString::new(fluid_name.as_ref().trim()).unwrap();
+        let substance_name = CString::new(substance_name.as_ref().trim()).unwrap();
         let lock = COOLPROP.lock().unwrap();
-        let value = unsafe { lock.Props1SI(output_key.as_ptr(), fluid_name.as_ptr()) };
+        let value = unsafe { lock.Props1SI(output_key.as_ptr(), substance_name.as_ptr()) };
         res(value, &lock)
     }
 
@@ -236,12 +236,12 @@ impl CoolProp {
     /// - `input2_key` -- key of the second input property _(raw [`&str`](str) or
     ///   [`FluidParam`](crate::io::FluidParam))_
     /// - `input2_value` -- value of the second input property **\[SI units\]**
-    /// - `fluid_name` -- name of the fluid _(raw [`&str`](str) or
+    /// - `substance_name` -- name of the substance _(raw [`&str`](str) or
     ///   [`Substance`](crate::substance::Substance) subset)_
     ///
     /// # Errors
     ///
-    /// Returns a [`CoolPropError`] for invalid inputs.
+    /// Returns a [`CoolPropError`](crate::native::CoolPropError) for invalid inputs.
     ///
     /// # Examples
     ///
@@ -273,7 +273,7 @@ impl CoolProp {
         input1_value: f64,
         input2_key: impl AsRef<str>,
         input2_value: f64,
-        fluid_name: impl AsRef<str>,
+        substance_name: impl AsRef<str>,
     ) -> Result<String> {
         // Emulate `PhaseSI` call since its handle is broken: it always returns 1 status code
         // and writes errors to the output buffer without a way to detect them
@@ -283,7 +283,7 @@ impl CoolProp {
             input1_value,
             input2_key,
             input2_value,
-            fluid_name,
+            substance_name,
         )?;
         let res = Phase::try_from(value)
             .unwrap_or(Phase::Unknown)
