@@ -60,6 +60,17 @@
 //! 🎁 It comes with native `CoolProp` dynamic libraries for supported platforms. The library
 //! required for your platform will be automatically copied to the target directory during build.
 //!
+//! It also includes pre-generated FFI bindings, so `libclang` is not required for normal builds.
+//!
+//! ### Regenerating bindings
+//!
+//! If you need to regenerate the FFI bindings (requires `libclang`), enable the `regen-bindings`
+//! feature:
+//!
+//! ```shell
+//! cargo add rfluids --features regen-bindings
+//! ```
+//!
 //! ## Examples
 //!
 //! | ℹ️ All calculations are performed in SI units |
