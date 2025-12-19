@@ -1,6 +1,6 @@
 use std::{collections::HashMap, marker::PhantomData};
 
-use super::{Fluid, FluidBuildError, StateResult, backend::Backend, request::FluidCreateRequest};
+use super::{Fluid, FluidBuildError, StateResult, backend::Backend};
 use crate::{
     io::FluidInput, native::AbstractState, state_variant::Undefined, substance::Substance,
 };
@@ -61,13 +61,13 @@ impl Fluid<Undefined> {
         #[builder(into)]
         with_backend: Option<Backend>,
     ) -> Result<Self, FluidBuildError> {
-        let request = FluidCreateRequest::new(&substance, with_backend);
-        let mut backend = AbstractState::new(&request.backend_name, request.substance_name)?;
-        if let Some(fractions) = request.fractions {
-            backend.set_fractions(&fractions).unwrap();
-        }
+        let request = match with_backend {
+            Some(custom) => substance.into_with_backend(custom),
+            None => substance.into_with_default_backend(),
+        };
+        let backend = AbstractState::try_from(&request)?;
         Ok(Self {
-            substance,
+            substance: request.substance,
             backend,
             requested_backend: with_backend,
             update_request: None,
