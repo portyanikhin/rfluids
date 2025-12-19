@@ -286,16 +286,16 @@ pub enum ConfigKey {
     /// **Type:** `bool`
     ///
     /// **Default:** `false`
-    #[strum(to_string = "VTPR_ALWAYS_RELOAD_LIBRARY", serialize = "VtprAlwaysReloadLib")]
-    VtprAlwaysReloadLib,
+    #[strum(to_string = "VTPR_ALWAYS_RELOAD_LIBRARY", serialize = "VtPrAlwaysReloadLib")]
+    VtPrAlwaysReloadLib,
 
     /// The path to the directory containing the UNIFAC JSON files. Should be slash terminated.
     ///
     /// **Type:** `String`
     ///
     /// **Default:** `""`
-    #[strum(to_string = "VTPR_UNIFAC_PATH", serialize = "VtprUnifacPath")]
-    VtprUnifacPath,
+    #[strum(to_string = "VTPR_UNIFAC_PATH", serialize = "VtPrUnifacPath")]
+    VtPrUnifacPath,
 }
 
 /// `CoolProp` configuration value.
@@ -382,8 +382,8 @@ mod tests {
         #[case(ListPunctuation, "LIST_STRING_DELIMITER")]
         #[case(MaxTableDirSizeInGb, "MAXIMUM_TABLE_DIRECTORY_SIZE_IN_GB")]
         #[case(SaveRawTables, "SAVE_RAW_TABLES")]
-        #[case(VtprAlwaysReloadLib, "VTPR_ALWAYS_RELOAD_LIBRARY")]
-        #[case(VtprUnifacPath, "VTPR_UNIFAC_PATH")]
+        #[case(VtPrAlwaysReloadLib, "VTPR_ALWAYS_RELOAD_LIBRARY")]
+        #[case(VtPrUnifacPath, "VTPR_UNIFAC_PATH")]
         fn as_str(#[case] sut: ConfigKey, #[case] expected: &str) {
             // When
             let str = sut.as_ref();
@@ -448,8 +448,8 @@ mod tests {
             MaxTableDirSizeInGb
         )]
         #[case(vec!["SAVE_RAW_TABLES", "SaveRawTables"], SaveRawTables)]
-        #[case(vec!["VTPR_ALWAYS_RELOAD_LIBRARY", "VtprAlwaysReloadLib"], VtprAlwaysReloadLib)]
-        #[case(vec!["VTPR_UNIFAC_PATH", "VtprUnifacPath"], VtprUnifacPath)]
+        #[case(vec!["VTPR_ALWAYS_RELOAD_LIBRARY", "VtPrAlwaysReloadLib"], VtPrAlwaysReloadLib)]
+        #[case(vec!["VTPR_UNIFAC_PATH", "VtPrUnifacPath"], VtPrUnifacPath)]
         fn from_valid_str<'a>(#[case] valid: Vec<&'a str>, #[case] expected: ConfigKey) {
             for s in valid {
                 // When
