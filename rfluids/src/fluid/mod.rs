@@ -57,9 +57,9 @@ pub type OutputResult<T> = Result<T, FluidOutputError>;
 /// - [Fluid Properties](https://coolprop.org/fluid_properties/index.html)
 #[derive(Debug)]
 pub struct Fluid<S: StateVariant = Defined> {
-    substance: Substance,
     backend: AbstractState,
-    requested_backend: Option<Backend>,
+    backend_variant: Backend,
+    substance: Substance,
     update_request: Option<FluidUpdateRequest>,
     outputs: HashMap<FluidParam, OutputResult<f64>>,
     trivial_outputs: HashMap<FluidTrivialParam, OutputResult<f64>>,

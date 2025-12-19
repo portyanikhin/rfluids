@@ -67,9 +67,9 @@ impl Fluid<Undefined> {
         };
         let backend = AbstractState::try_from(&request)?;
         Ok(Self {
-            substance: request.substance,
             backend,
-            requested_backend: with_backend,
+            backend_variant: request.backend,
+            substance: request.substance,
             update_request: None,
             outputs: HashMap::new(),
             trivial_outputs: HashMap::new(),
@@ -128,7 +128,7 @@ impl Fluid<Undefined> {
         Ok(Fluid {
             substance: self.substance,
             backend: self.backend,
-            requested_backend: self.requested_backend,
+            backend_variant: self.backend_variant,
             update_request: self.update_request,
             outputs: self.outputs,
             trivial_outputs: self.trivial_outputs,
@@ -141,7 +141,7 @@ impl Clone for Fluid<Undefined> {
     fn clone(&self) -> Self {
         let mut fluid = Fluid::builder()
             .substance(self.substance.clone())
-            .maybe_with_backend(self.requested_backend)
+            .with_backend(self.backend_variant)
             .build()
             .unwrap();
         fluid.trivial_outputs.clone_from(&self.trivial_outputs);
@@ -151,7 +151,7 @@ impl Clone for Fluid<Undefined> {
 
 impl PartialEq for Fluid<Undefined> {
     fn eq(&self, other: &Self) -> bool {
-        self.substance == other.substance && self.backend() == other.backend()
+        self.backend_variant == other.backend_variant && self.substance == other.substance
     }
 }
 
