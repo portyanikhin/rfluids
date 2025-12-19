@@ -72,6 +72,8 @@ impl TryFrom<Substance> for Fluid<Undefined> {
     /// Creates and returns a new [`Fluid`] instance
     /// with [`Undefined`] state variant from any [`Substance`].
     ///
+    /// If you need advanced control over backend selection, consider using [`Fluid::builder`].
+    ///
     /// # Errors
     ///
     /// Returns a [`FluidBuildError`] for unsupported custom mixtures.
@@ -103,8 +105,10 @@ impl TryFrom<Substance> for Fluid<Undefined> {
 }
 
 impl From<Pure> for Fluid<Undefined> {
-    /// Creates and returns a new [`Fluid`] instance
-    /// with [`Undefined`] state variant from [`Pure`].
+    /// Creates and returns a new [`Fluid`] instance with [`Undefined`] state variant
+    /// from [`Pure`].
+    ///
+    /// If you need advanced control over backend selection, consider using [`Fluid::builder`].
     ///
     /// # Examples
     ///
@@ -123,8 +127,10 @@ impl From<Pure> for Fluid<Undefined> {
 }
 
 impl From<IncompPure> for Fluid<Undefined> {
-    /// Creates and returns a new [`Fluid`] instance
-    /// with [`Undefined`] state variant from [`IncompPure`].
+    /// Creates and returns a new [`Fluid`] instance with [`Undefined`] state variant
+    /// from [`IncompPure`].
+    ///
+    /// If you need advanced control over backend selection, consider using [`Fluid::builder`].
     ///
     /// # Examples
     ///
@@ -143,8 +149,10 @@ impl From<IncompPure> for Fluid<Undefined> {
 }
 
 impl From<PredefinedMix> for Fluid<Undefined> {
-    /// Creates and returns a new [`Fluid`] instance
-    /// with [`Undefined`] state variant from [`PredefinedMix`].
+    /// Creates and returns a new [`Fluid`] instance with [`Undefined`] state variant
+    /// from [`PredefinedMix`].
+    ///
+    /// If you need advanced control over backend selection, consider using [`Fluid::builder`].
     ///
     /// # Examples
     ///
@@ -163,8 +171,10 @@ impl From<PredefinedMix> for Fluid<Undefined> {
 }
 
 impl From<BinaryMix> for Fluid<Undefined> {
-    /// Creates and returns a new [`Fluid`] instance
-    /// with [`Undefined`] state variant from [`BinaryMix`].
+    /// Creates and returns a new [`Fluid`] instance with [`Undefined`] state variant
+    /// from [`BinaryMix`].
+    ///
+    /// If you need advanced control over backend selection, consider using [`Fluid::builder`].
     ///
     /// # Examples
     ///
@@ -186,8 +196,10 @@ impl From<BinaryMix> for Fluid<Undefined> {
 impl TryFrom<CustomMix> for Fluid<Undefined> {
     type Error = FluidBuildError;
 
-    /// Creates and returns a new [`Fluid`] instance
-    /// with [`Undefined`] state variant from [`CustomMix`].
+    /// Creates and returns a new [`Fluid`] instance with [`Undefined`] state variant
+    /// from [`CustomMix`].
+    ///
+    /// If you need advanced control over backend selection, consider using [`Fluid::builder`].
     ///
     /// # Errors
     ///
