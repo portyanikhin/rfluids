@@ -1,9 +1,10 @@
 use core::ffi::c_long;
-use std::ffi::CString;
+use std::{borrow::Cow, ffi::CString};
 
 use coolprop_sys::COOLPROP;
 
 use super::{CoolPropError, Result, common::ErrorBuffer};
+use crate::substance::{Substance, SubstanceWithBackend};
 
 /// `CoolProp` thread safe low-level API.
 #[derive(Debug)]
@@ -340,19 +341,36 @@ impl AbstractState {
     }
 }
 
-fn res<T>(value: T, error: ErrorBuffer) -> Result<T> {
-    let error: Option<CoolPropError> = error.into();
-    error.map_or(Ok(value), Err)
-}
+impl TryFrom<&SubstanceWithBackend> for AbstractState {
+    type Error = CoolPropError;
 
-fn keyed_output(key: u8, value: f64, error: ErrorBuffer) -> Result<f64> {
-    res((), error)?;
-    if !value.is_finite() {
-        return Err(CoolPropError(format!(
-            "Unable to get the output with key '{key}' due to invalid or undefined state!",
-        )));
+    fn try_from(value: &SubstanceWithBackend) -> Result<Self> {
+        let (component_names, fractions): (Cow<'static, str>, Option<Vec<f64>>) =
+            match &value.substance {
+                Substance::Pure(pure) => (Cow::Borrowed(pure.into()), None),
+                Substance::IncompPure(incomp_pure) => (Cow::Borrowed(incomp_pure.into()), None),
+                Substance::PredefinedMix(predefined_mix) => {
+                    (Cow::Borrowed(predefined_mix.into()), None)
+                }
+                Substance::BinaryMix(binary_mix) => {
+                    (Cow::Borrowed(binary_mix.kind.into()), Some(vec![binary_mix.fraction]))
+                }
+                Substance::CustomMix(custom_mix) => {
+                    let mix = custom_mix.clone().into_mole_based();
+                    let (components, fractions): (Vec<&str>, Vec<f64>) = mix
+                        .components()
+                        .iter()
+                        .map(|component| (component.0.as_ref(), component.1))
+                        .unzip();
+                    (Cow::Owned(components.join("&")), Some(fractions))
+                }
+            };
+        let mut backend = AbstractState::new(value.backend.name(), component_names)?;
+        if let Some(fractions) = fractions {
+            backend.set_fractions(&fractions).unwrap();
+        }
+        Ok(backend)
     }
-    Ok(value)
 }
 
 impl Drop for AbstractState {
@@ -367,6 +385,21 @@ impl Drop for AbstractState {
             );
         }
     }
+}
+
+fn res<T>(value: T, error: ErrorBuffer) -> Result<T> {
+    let error: Option<CoolPropError> = error.into();
+    error.map_or(Ok(value), Err)
+}
+
+fn keyed_output(key: u8, value: f64, error: ErrorBuffer) -> Result<f64> {
+    res((), error)?;
+    if !value.is_finite() {
+        return Err(CoolPropError(format!(
+            "Unable to get the output with key '{key}' due to invalid or undefined state!",
+        )));
+    }
+    Ok(value)
 }
 
 #[cfg(test)]
