@@ -644,7 +644,7 @@ impl Fluid {
     pub fn in_state(&self, input1: FluidInput, input2: FluidInput) -> StateResult<Self> {
         let mut fluid = Fluid::builder()
             .substance(self.substance.clone())
-            .maybe_with_backend(self.requested_backend)
+            .with_backend(self.backend_variant)
             .build()
             .unwrap()
             .in_state(input1, input2)?;
@@ -673,7 +673,7 @@ impl Clone for Fluid {
         let inputs: (FluidInput, FluidInput) = self.update_request.unwrap().into();
         let mut fluid = Fluid::builder()
             .substance(self.substance.clone())
-            .maybe_with_backend(self.requested_backend)
+            .with_backend(self.backend_variant)
             .build()
             .unwrap()
             .in_state(inputs.0, inputs.1)

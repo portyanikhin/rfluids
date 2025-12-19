@@ -1,6 +1,6 @@
 use super::{
     Fluid, FluidOutputError, OutputResult, StateResult,
-    backend::{Backend, DefaultBackend},
+    backend::Backend,
     common::{cached_output, guard},
     request::FluidUpdateRequest,
 };
@@ -21,7 +21,7 @@ impl<S: StateVariant> Fluid<S> {
     /// Specified `CoolProp` backend.
     #[must_use]
     pub fn backend(&self) -> Backend {
-        self.requested_backend.unwrap_or_else(|| self.substance.default_backend())
+        self.backend_variant
     }
 
     /// Acentric factor **\[dimensionless\]**.
