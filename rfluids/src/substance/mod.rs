@@ -30,6 +30,7 @@ mod custom_mix;
 mod incomp_pure;
 mod predefined_mix;
 mod pure;
+mod with_backend;
 
 use std::borrow::Cow;
 
@@ -38,6 +39,9 @@ pub use custom_mix::*;
 pub use incomp_pure::*;
 pub use predefined_mix::*;
 pub use pure::*;
+pub use with_backend::*;
+
+use crate::fluid::backend::{Backend, DefaultBackend};
 
 /// `CoolProp` substance.
 ///
@@ -67,6 +71,85 @@ pub enum Substance {
 }
 
 impl Substance {
+    /// Creates a new [`SubstanceWithBackend`] by cloning this substance and pairing it
+    /// with the specified backend.
+    ///
+    /// This method borrows `self`, so the original substance remains available for use.
+    /// If you don't need the original substance after this operation, consider using
+    /// [`into_with_backend`](Self::into_with_backend) to avoid the clone.
+    ///
+    /// # See Also
+    ///
+    /// - [`Backend`]
+    /// - [`SubstanceWithBackend`]
+    /// - [`into_with_backend`](Self::into_with_backend)
+    /// - [`with_default_backend`](Self::with_default_backend)
+    /// - [`into_with_default_backend`](Self::into_with_default_backend)
+    #[must_use]
+    pub fn with_backend(&self, backend: impl Into<Backend>) -> SubstanceWithBackend {
+        SubstanceWithBackend { substance: self.clone(), backend: backend.into() }
+    }
+
+    /// Creates a new [`SubstanceWithBackend`] by consuming this substance and pairing it
+    /// with the specified backend.
+    ///
+    /// This method takes ownership of `self`, avoiding the need to clone the substance.
+    /// If you need to keep the original substance, use
+    /// [`with_backend`](Self::with_backend) instead.
+    ///
+    /// # See Also
+    ///
+    /// - [`Backend`]
+    /// - [`SubstanceWithBackend`]
+    /// - [`with_backend`](Self::with_backend)
+    /// - [`with_default_backend`](Self::with_default_backend)
+    /// - [`into_with_default_backend`](Self::into_with_default_backend)
+    #[must_use]
+    pub fn into_with_backend(self, backend: impl Into<Backend>) -> SubstanceWithBackend {
+        SubstanceWithBackend { substance: self, backend: backend.into() }
+    }
+
+    /// Creates a new [`SubstanceWithBackend`] by cloning this substance and pairing it
+    /// with its default backend.
+    ///
+    /// This method borrows `self`, so the original substance remains available for use.
+    /// If you don't need the original substance after this operation, consider using
+    /// [`into_with_default_backend`](Self::into_with_default_backend) to avoid the clone.
+    ///
+    /// # See Also
+    ///
+    /// - [`Backend`]
+    /// - [`DefaultBackend`]
+    /// - [`SubstanceWithBackend`]
+    /// - [`with_backend`](Self::with_backend)
+    /// - [`into_with_backend`](Self::into_with_backend)
+    /// - [`into_with_default_backend`](Self::into_with_default_backend)
+    #[must_use]
+    pub fn with_default_backend(&self) -> SubstanceWithBackend {
+        self.with_backend(self.default_backend())
+    }
+
+    /// Creates a new [`SubstanceWithBackend`] by consuming this substance and pairing it
+    /// with its default backend.
+    ///
+    /// This method takes ownership of `self`, avoiding the need to clone the substance.
+    /// If you need to keep the original substance, use
+    /// [`with_default_backend`](Self::with_default_backend) instead.
+    ///
+    /// # See Also
+    ///
+    /// - [`Backend`]
+    /// - [`DefaultBackend`]
+    /// - [`SubstanceWithBackend`]
+    /// - [`with_backend`](Self::with_backend)
+    /// - [`into_with_backend`](Self::into_with_backend)
+    /// - [`with_default_backend`](Self::with_default_backend)
+    #[must_use]
+    pub fn into_with_default_backend(self) -> SubstanceWithBackend {
+        let default_backend = self.default_backend();
+        self.into_with_backend(default_backend)
+    }
+
     /// Name.
     ///
     /// # Notes
@@ -74,7 +157,7 @@ impl Substance {
     /// - This name is only partially compatible with the `CoolProp` high level API
     ///   ([`CoolProp`](crate::native::CoolProp)): it does not include the backend prefix, which is
     ///   required for [`IncompPure`] and [`BinaryMix`]. For API-compatible names, use
-    ///   `SubstanceWithBackend.name` instead.
+    ///   [`SubstanceWithBackend::name`](crate::substance::SubstanceWithBackend::name) instead.
     /// - The name for [`CustomMix`] is constructed based on mole fractions _(i.e., mass fractions
     ///   are converted to mole-based internally)_. Components in [`CustomMix`] are sorted first by
     ///   fraction in descending order, then by name in alphabetical order (for predictable results,
@@ -169,6 +252,67 @@ mod tests {
     use rstest::*;
 
     use super::*;
+    use crate::fluid::backend::BaseBackend;
+
+    #[test]
+    fn with_backend() {
+        // Given
+        let sut: Substance = Pure::Water.into();
+
+        // When
+        let res = sut.with_backend(BaseBackend::If97);
+
+        // Then
+        assert_eq!(res, SubstanceWithBackend { substance: sut, backend: BaseBackend::If97.into() });
+    }
+
+    #[test]
+    fn with_default_backend() {
+        // Given
+        let sut: Substance = Pure::Water.into();
+
+        // When
+        let res = sut.with_default_backend();
+
+        // Then
+        assert_eq!(res, SubstanceWithBackend { substance: sut, backend: BaseBackend::Heos.into() });
+    }
+
+    #[test]
+    fn into_with_backend() {
+        // Given
+        let sut: Substance = Pure::Water.into();
+
+        // When
+        let res = sut.into_with_backend(BaseBackend::If97);
+
+        // Then
+        assert_eq!(
+            res,
+            SubstanceWithBackend {
+                substance: Pure::Water.into(),
+                backend: BaseBackend::If97.into()
+            }
+        );
+    }
+
+    #[test]
+    fn into_with_default_backend() {
+        // Given
+        let sut: Substance = Pure::Water.into();
+
+        // When
+        let res = sut.into_with_default_backend();
+
+        // Then
+        assert_eq!(
+            res,
+            SubstanceWithBackend {
+                substance: Pure::Water.into(),
+                backend: BaseBackend::Heos.into()
+            }
+        );
+    }
 
     #[rstest]
     #[case(Pure::Water, "Water")]
