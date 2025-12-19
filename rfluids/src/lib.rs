@@ -205,6 +205,7 @@
     clippy::missing_panics_doc
 )]
 
+pub mod config;
 mod error;
 pub mod fluid;
 pub mod humid_air;
