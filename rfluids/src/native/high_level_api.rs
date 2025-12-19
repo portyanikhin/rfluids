@@ -24,7 +24,7 @@ impl CoolProp {
     ///   [`FluidParam`](crate::io::FluidParam))_
     /// - `input2_value` -- value of the second input property **\[SI units\]**
     /// - `substance_name` -- name of the substance _(raw [`&str`](str) or
-    ///   [`Substance`](crate::substance::Substance) subset)_
+    ///   [`SubstanceWithBackend::name`](crate::substance::SubstanceWithBackend::name))_
     ///
     /// # Errors
     ///
@@ -82,6 +82,8 @@ impl CoolProp {
     /// - [Predefined Mixtures](https://coolprop.org/coolprop/HighLevelAPI.html#predefined-mixtures)
     /// - [`FluidParam`](crate::io::FluidParam)
     /// - [`Substance`](crate::substance::Substance)
+    /// - [`Backend`](crate::fluid::backend::Backend)
+    /// - [`SubstanceWithBackend`](crate::substance::SubstanceWithBackend)
     pub fn props_si(
         output_key: impl AsRef<str>,
         input1_key: impl AsRef<str>,
@@ -183,7 +185,7 @@ impl CoolProp {
     /// - `output_key` -- key of the _trivial_ output _(raw [`&str`](str) or
     ///   [`FluidTrivialParam`](crate::io::FluidTrivialParam))_
     /// - `substance_name` -- name of the substance _(raw [`&str`](str) or
-    ///   [`Substance`](crate::substance::Substance) subset)_
+    ///   [`SubstanceWithBackend::name`](crate::substance::SubstanceWithBackend::name))_
     ///
     /// # Errors
     ///
@@ -218,6 +220,8 @@ impl CoolProp {
     /// - [`Props1SI` Outputs](https://coolprop.org/coolprop/HighLevelAPI.html#parameter-table)
     /// - [`FluidTrivialParam`](crate::io::FluidTrivialParam)
     /// - [`Substance`](crate::substance::Substance)
+    /// - [`Backend`](crate::fluid::backend::Backend)
+    /// - [`SubstanceWithBackend`](crate::substance::SubstanceWithBackend)
     pub fn props1_si(output_key: impl AsRef<str>, substance_name: impl AsRef<str>) -> Result<f64> {
         let output_key = CString::new(output_key.as_ref().trim()).unwrap();
         let substance_name = CString::new(substance_name.as_ref().trim()).unwrap();
@@ -237,7 +241,7 @@ impl CoolProp {
     ///   [`FluidParam`](crate::io::FluidParam))_
     /// - `input2_value` -- value of the second input property **\[SI units\]**
     /// - `substance_name` -- name of the substance _(raw [`&str`](str) or
-    ///   [`Substance`](crate::substance::Substance) subset)_
+    ///   [`SubstanceWithBackend::name`](crate::substance::SubstanceWithBackend::name))_
     ///
     /// # Errors
     ///
@@ -267,6 +271,8 @@ impl CoolProp {
     /// - [Predefined Mixtures](https://coolprop.org/coolprop/HighLevelAPI.html#predefined-mixtures)
     /// - [`FluidParam`](crate::io::FluidParam)
     /// - [`Substance`](crate::substance::Substance)
+    /// - [`Backend`](crate::fluid::backend::Backend)
+    /// - [`SubstanceWithBackend`](crate::substance::SubstanceWithBackend)
     /// - [`Phase`](crate::io::Phase)
     pub fn phase_si(
         input1_key: impl AsRef<str>,
