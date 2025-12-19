@@ -146,7 +146,7 @@ impl CoolProp {
     /// # Arguments
     ///
     /// - `substance_name` -- name of the substance _(raw [`&str`](str) or
-    ///   [`Substance`](crate::substance::Substance) subset)_
+    ///   [`Substance::name`](crate::substance::Substance::name))_
     /// - `param` -- substance parameter key _(raw [`&str`](str) or
     ///   [`SubstanceParam`](crate::io::SubstanceParam))_
     ///
@@ -187,6 +187,7 @@ impl CoolProp {
     /// - [CoolProp High-Level API](https://coolprop.org/coolprop/HighLevelAPI.html)
     /// - [Substance Information](https://coolprop.org/coolprop/HighLevelAPI.html#fluid-information)
     /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
+    /// - [`Substance`](crate::substance::Substance)
     /// - [`SubstanceParam`](crate::io::SubstanceParam)
     pub fn get_substance_param(
         substance_name: impl AsRef<str>,
