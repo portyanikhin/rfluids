@@ -1,4 +1,5 @@
 use crate::{
+    config::ConfigError,
     fluid::{FluidBuildError, FluidOutputError, FluidStateError},
     humid_air::{HumidAirOutputError, HumidAirStateError},
     io::AltitudeError,
@@ -10,6 +11,10 @@ use crate::{
 #[derive(Clone, Debug, PartialEq, thiserror::Error)]
 #[non_exhaustive]
 pub enum Error {
+    /// Error during [`config::update`](crate::config::update).
+    #[error(transparent)]
+    Config(#[from] ConfigError),
+
     /// `CoolProp` internal error.
     #[error(transparent)]
     CoolProp(#[from] CoolPropError),
