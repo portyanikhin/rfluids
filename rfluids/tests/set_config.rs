@@ -1,3 +1,5 @@
+use std::path::{Path, PathBuf};
+
 use rfluids::prelude::{ConfigKey::*, *};
 use rstest::*;
 
@@ -18,7 +20,7 @@ use rstest::*;
 #[case(RefpropUseGerg)]
 #[case(RefpropUsePengRobinson)]
 #[case(SaveRawTables)]
-#[case(VtprAlwaysReloadLib)]
+#[case(VtPrAlwaysReloadLib)]
 #[case("ASSUME_CRITICAL_POINT_STABLE")]
 #[case("CRITICAL_SPLINES_ENABLED")]
 #[case("CRITICAL_WITHIN_1UK")]
@@ -70,23 +72,101 @@ fn set_config_float(#[case] key: impl AsRef<str>) {
 }
 
 #[rstest]
+#[case(FloatPunctuation)]
+#[case(ListPunctuation)]
+#[case("FLOAT_PUNCTUATION")]
+#[case("LIST_STRING_DELIMITER")]
+fn set_config_char(#[case] key: impl AsRef<str>, #[values('.', ',', ';')] value: char) {
+    // When
+    let res = CoolProp::set_config(key, value);
+
+    // Then
+    assert!(res.is_ok());
+}
+
+#[rstest]
 #[case(AltRefpropPath)]
 #[case(AltRefpropLibPath)]
 #[case(AltRefpropHmxBncPath)]
 #[case(AltTablesPath)]
-#[case(FloatPunctuation)]
-#[case(ListPunctuation)]
-#[case(VtprUnifacPath)]
+#[case(VtPrUnifacPath)]
 #[case("ALTERNATIVE_REFPROP_PATH")]
 #[case("ALTERNATIVE_REFPROP_LIBRARY_PATH")]
 #[case("ALTERNATIVE_REFPROP_HMX_BNC_PATH")]
 #[case("ALTERNATIVE_TABLES_DIRECTORY")]
-#[case("FLOAT_PUNCTUATION")]
-#[case("LIST_STRING_DELIMITER")]
 #[case("VTPR_UNIFAC_PATH")]
-fn set_config_string(#[case] key: impl AsRef<str>) {
+fn set_config_path(#[case] key: impl AsRef<str>) {
     // Given
-    let value = "something";
+    let value = Path::new("foo/bar");
+
+    // When
+    let res = CoolProp::set_config(key, value);
+
+    // Then
+    assert!(res.is_ok());
+}
+
+#[rstest]
+#[case(AltRefpropPath)]
+#[case(AltRefpropLibPath)]
+#[case(AltRefpropHmxBncPath)]
+#[case(AltTablesPath)]
+#[case(VtPrUnifacPath)]
+#[case("ALTERNATIVE_REFPROP_PATH")]
+#[case("ALTERNATIVE_REFPROP_LIBRARY_PATH")]
+#[case("ALTERNATIVE_REFPROP_HMX_BNC_PATH")]
+#[case("ALTERNATIVE_TABLES_DIRECTORY")]
+#[case("VTPR_UNIFAC_PATH")]
+fn set_config_path_buf(#[case] key: impl AsRef<str>) {
+    // Given
+    let value = PathBuf::from("foo/bar");
+
+    // When
+    let res = CoolProp::set_config(key, &value);
+
+    // Then
+    assert!(res.is_ok());
+}
+
+#[rstest]
+#[case(AltRefpropPath)]
+#[case(AltRefpropLibPath)]
+#[case(AltRefpropHmxBncPath)]
+#[case(AltTablesPath)]
+#[case(VtPrUnifacPath)]
+#[case("ALTERNATIVE_REFPROP_PATH")]
+#[case("ALTERNATIVE_REFPROP_LIBRARY_PATH")]
+#[case("ALTERNATIVE_REFPROP_HMX_BNC_PATH")]
+#[case("ALTERNATIVE_TABLES_DIRECTORY")]
+#[case("VTPR_UNIFAC_PATH")]
+fn set_config_option_path(
+    #[case] key: impl AsRef<str>,
+    #[values(None, Some(Path::new("foo/bar")))] value: Option<&Path>,
+) {
+    // When
+    let res = CoolProp::set_config(key, value);
+
+    // Then
+    assert!(res.is_ok());
+}
+
+#[rstest]
+#[case(AltRefpropPath)]
+#[case(AltRefpropLibPath)]
+#[case(AltRefpropHmxBncPath)]
+#[case(AltTablesPath)]
+#[case(VtPrUnifacPath)]
+#[case("ALTERNATIVE_REFPROP_PATH")]
+#[case("ALTERNATIVE_REFPROP_LIBRARY_PATH")]
+#[case("ALTERNATIVE_REFPROP_HMX_BNC_PATH")]
+#[case("ALTERNATIVE_TABLES_DIRECTORY")]
+#[case("VTPR_UNIFAC_PATH")]
+fn set_config_option_path_buf(
+    #[case] key: impl AsRef<str>,
+    #[values(None, Some(PathBuf::from("foo/bar")))] value: Option<PathBuf>,
+) {
+    // Given
+    let value = value.as_ref();
 
     // When
     let res = CoolProp::set_config(key, value);
@@ -98,7 +178,7 @@ fn set_config_string(#[case] key: impl AsRef<str>) {
 #[rstest]
 fn set_config_nonexistent_key(
     #[values("THIS_KEY_DOES_NOT_EXIST", "THIS_ONE_TOO", "AND_THIS_ONE_TOO")] key: &str,
-    #[values(true, false, 42.0, "something")] value: impl Into<ConfigValue<'static>>,
+    #[values(true, false, 42.0, Path::new("foo/bar"))] value: impl Into<ConfigValue<'static>>,
 ) {
     // When
     let res = CoolProp::set_config(key, value);
