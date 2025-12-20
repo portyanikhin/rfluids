@@ -1,4 +1,4 @@
-//! Library configuration.
+//! Crate configuration.
 
 #![allow(clippy::struct_excessive_bools)]
 
@@ -179,7 +179,7 @@ declare_config! {
     vtpr_unifac_path: Option<PathBuf> => VtPrUnifacPath,
 }
 
-/// Returns a clone of the current library configuration.
+/// Returns a clone of the current crate configuration.
 ///
 /// This function acquires a read lock on the global configuration state and returns
 /// a clone of the current [`Config`].
@@ -201,7 +201,7 @@ pub fn read() -> Config {
     CONFIG.read().unwrap().clone()
 }
 
-/// Updates the library configuration with new values.
+/// Updates the crate configuration with new values.
 ///
 /// To create a new configuration, use [`Config::builder`] to build a configuration
 /// with only the fields you want to change.
@@ -238,7 +238,7 @@ pub fn update(new: Config) {
     cfg.update(new);
 }
 
-/// Resets the library configuration to its default values.
+/// Resets the crate configuration to its default values.
 ///
 /// # Panics
 ///
