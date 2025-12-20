@@ -1,6 +1,6 @@
 macro_rules! declare_config {
     ($($(#[$meta:meta])* $field:ident : $ty:ty $(= $default:expr)? => $key:ident),* $(,)?) => {
-        /// Library configuration state.
+        /// Crate configuration state.
         ///
         /// This configuration mirrors the configuration options available in `CoolProp`.
         /// Each field corresponds directly to a `CoolProp` configuration parameter and
