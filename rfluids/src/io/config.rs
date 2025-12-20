@@ -290,7 +290,7 @@ pub enum ConfigKey {
     #[strum(to_string = "VTPR_ALWAYS_RELOAD_LIBRARY", serialize = "VtPrAlwaysReloadLib")]
     VtPrAlwaysReloadLib,
 
-    /// The path to the directory containing the UNIFAC JSON files. Should be slash terminated.
+    /// The path to the directory containing the UNIFAC JSON files.
     ///
     /// **Type:** [`Option<&Path>`](std::path::Path)
     ///
