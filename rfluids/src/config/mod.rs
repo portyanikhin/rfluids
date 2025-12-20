@@ -237,3 +237,13 @@ pub fn update(new: Config) {
     let mut cfg = CONFIG.write().unwrap();
     cfg.update(new);
 }
+
+/// Resets the library configuration to its default values.
+///
+/// # Panics
+///
+/// Panics if the internal write lock is poisoned. This should only occur if another thread
+/// panicked while holding the write lock.
+pub fn reset() {
+    update(Config::default());
+}
