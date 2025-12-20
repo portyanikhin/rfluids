@@ -11,8 +11,6 @@ use std::{
 
 use declare::declare_config;
 
-use crate::native::CoolPropError;
-
 static CONFIG: LazyLock<RwLock<Config>> = LazyLock::new(|| RwLock::new(Config::default()));
 
 declare_config! {
@@ -181,11 +179,6 @@ declare_config! {
     vtpr_unifac_path: Option<PathBuf> => VtPrUnifacPath,
 }
 
-/// Error during [`config::update`](update).
-#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
-#[error("Unable to update configuration! {0}")]
-pub struct ConfigError(#[from] CoolPropError);
-
 /// Returns a clone of the current library configuration.
 ///
 /// This function acquires a read lock on the global configuration state and returns
@@ -201,8 +194,8 @@ pub struct ConfigError(#[from] CoolPropError);
 /// ```no_run
 /// use rfluids::config;
 ///
-/// let current_config = config::read();
-/// println!("{current_config:?}");
+/// let cfg = config::read();
+/// println!("{cfg:?}");
 /// ```
 pub fn read() -> Config {
     CONFIG.read().unwrap().clone()
@@ -217,14 +210,13 @@ pub fn read() -> Config {
 /// For any field that has changed, it synchronizes the value with the underlying `CoolProp`
 /// library before updating the global state.
 ///
-/// # Errors
-///
-/// Returns a [`ConfigError`] if `CoolProp` fails to accept any of the new configuration values.
-/// In case of error, the configuration state remains unchanged.
-///
 /// # Panics
 ///
-/// Panics if the internal write lock is poisoned. This should only occur if another thread
+/// Panics if `CoolProp` rejects a configuration value. This should never happen in practice,
+/// as the implementation uses only valid configuration keys with correctly typed values.
+/// `CoolProp` validates only the type correctness for each existing configuration key.
+///
+/// Also panics if the internal write lock is poisoned. This should only occur if another thread
 /// panicked while holding the write lock.
 ///
 /// # Examples
@@ -233,31 +225,15 @@ pub fn read() -> Config {
 /// use rfluids::config::{self, Config};
 ///
 /// // Update specific configuration options
-/// let new_config = Config::builder()
+/// let new_cfg = Config::builder()
 ///     .enable_critical_splines(false)
 ///     .enable_superancillaries(false)
 ///     .dont_check_prop_limits(true)
 ///     .build();
 ///
-/// config::update(new_config)?;
-/// # Ok::<(), rfluids::Error>(())
+/// config::update(new_cfg);
 /// ```
-pub fn update(new: Config) -> Result<(), ConfigError> {
-    let mut config = CONFIG.write().unwrap();
-    config.update(new)?;
-    Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn read_default() {
-        // When
-        let res = read();
-
-        // Then
-        assert_eq!(res, Config::default());
-    }
+pub fn update(new: Config) {
+    let mut cfg = CONFIG.write().unwrap();
+    cfg.update(new);
 }

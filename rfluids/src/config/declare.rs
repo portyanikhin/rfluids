@@ -13,6 +13,7 @@ macro_rules! declare_config {
         /// [`RwLock`](std::sync::RwLock). Use [`config::read`](crate::config::read) to get
         /// the current configuration and [`config::update`](crate::config::update) to modify it.
         #[derive(Clone, Debug, PartialEq, bon::Builder)]
+        #[builder(on(PathBuf, into))]
         #[non_exhaustive]
         pub struct Config {
             $(
@@ -23,13 +24,12 @@ macro_rules! declare_config {
         }
 
         impl Config {
-            fn update(&mut self, new: Self) -> Result<(), crate::native::CoolPropError> {
+            fn update(&mut self, new: Self) {
                 $(if self.$field != new.$field {
                     let key = crate::io::ConfigKey::$key;
-                    crate::native::CoolProp::set_config(key, &new.$field)?;
+                    crate::native::CoolProp::set_config(key, &new.$field).unwrap();
                     self.$field = new.$field;
                 })*
-                Ok(())
             }
         }
 
