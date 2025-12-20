@@ -323,15 +323,34 @@ impl From<bool> for ConfigValue<'_> {
         Self::Bool(value)
     }
 }
+
+impl From<&bool> for ConfigValue<'_> {
+    fn from(value: &bool) -> Self {
+        Self::Bool(*value)
+    }
+}
+
 impl From<f64> for ConfigValue<'_> {
     fn from(value: f64) -> Self {
         Self::Float(value)
     }
 }
 
+impl From<&f64> for ConfigValue<'_> {
+    fn from(value: &f64) -> Self {
+        Self::Float(*value)
+    }
+}
+
 impl From<char> for ConfigValue<'_> {
     fn from(value: char) -> Self {
         Self::Char(value)
+    }
+}
+
+impl From<&char> for ConfigValue<'_> {
+    fn from(value: &char) -> Self {
+        Self::Char(*value)
     }
 }
 
@@ -344,6 +363,12 @@ impl<'a> From<Option<&'a Path>> for ConfigValue<'a> {
 impl<'a> From<Option<&'a PathBuf>> for ConfigValue<'a> {
     fn from(value: Option<&'a PathBuf>) -> Self {
         Self::from(value.map(PathBuf::as_path))
+    }
+}
+
+impl<'a> From<&'a Option<PathBuf>> for ConfigValue<'a> {
+    fn from(value: &'a Option<PathBuf>) -> Self {
+        Self::from(value.as_ref())
     }
 }
 
@@ -513,12 +538,36 @@ mod tests {
         }
 
         #[test]
+        fn from_bool_ref() {
+            // Given
+            let value = true;
+
+            // When
+            let res = ConfigValue::from(&value);
+
+            // Then
+            assert_eq!(res, ConfigValue::Bool(value));
+        }
+
+        #[test]
         fn from_float() {
             // Given
             let value = 42.0;
 
             // When
             let res = ConfigValue::from(value);
+
+            // Then
+            assert_eq!(res, ConfigValue::Float(value));
+        }
+
+        #[test]
+        fn from_float_ref() {
+            // Given
+            let value = 42.0;
+
+            // When
+            let res = ConfigValue::from(&value);
 
             // Then
             assert_eq!(res, ConfigValue::Float(value));
@@ -537,6 +586,18 @@ mod tests {
         }
 
         #[test]
+        fn from_char_ref() {
+            // Given
+            let value = '.';
+
+            // When
+            let res = ConfigValue::from(&value);
+
+            // Then
+            assert_eq!(res, ConfigValue::Char(value));
+        }
+
+        #[test]
         fn from_path() {
             // Given
             let value = Path::new("foo/bar");
@@ -549,7 +610,7 @@ mod tests {
         }
 
         #[test]
-        fn from_path_buf() {
+        fn from_path_buf_ref() {
             // Given
             let value = PathBuf::from("foo/bar");
 
@@ -574,7 +635,7 @@ mod tests {
         #[rstest]
         #[case(None)]
         #[case(Some(PathBuf::from("foo/bar")))]
-        fn from_option_path_buf(#[case] value: Option<PathBuf>) {
+        fn from_option_path_buf_ref(#[case] value: Option<PathBuf>) {
             // Given
             let value = value.as_ref();
 
@@ -583,6 +644,17 @@ mod tests {
 
             // Then
             assert_eq!(res, ConfigValue::OptionPath(value.map(PathBuf::as_path)));
+        }
+
+        #[rstest]
+        #[case(None)]
+        #[case(Some(PathBuf::from("foo/bar")))]
+        fn from_ref_to_option_path_buf(#[case] value: Option<PathBuf>) {
+            // When
+            let res = ConfigValue::from(&value);
+
+            // Then
+            assert_eq!(res, ConfigValue::OptionPath(value.as_deref()));
         }
     }
 }
