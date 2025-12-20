@@ -50,14 +50,6 @@ pub enum ConfigKey {
     #[strum(to_string = "ASSUME_CRITICAL_POINT_STABLE", serialize = "AssumeCriticalPointIsStable")]
     AssumeCriticalPointIsStable,
 
-    /// If `true`, the critical splines will be used in the near-vicinity of the critical point.
-    ///
-    /// **Type:** [`bool`]
-    ///
-    /// **Default:** `true`
-    #[strum(to_string = "CRITICAL_SPLINES_ENABLED", serialize = "CriticalSplinesEnabled")]
-    CriticalSplinesEnabled,
-
     /// if `true`, any temperature within `1 uK` of the critical temperature will be considered to
     /// be **AT** the critical point.
     ///
@@ -75,6 +67,14 @@ pub enum ConfigKey {
     /// **Default:** `false`
     #[strum(to_string = "DONT_CHECK_PROPERTY_LIMITS", serialize = "DontCheckPropLimits")]
     DontCheckPropLimits,
+
+    /// If `true`, the critical splines will be used in the near-vicinity of the critical point.
+    ///
+    /// **Type:** [`bool`]
+    ///
+    /// **Default:** `true`
+    #[strum(to_string = "CRITICAL_SPLINES_ENABLED", serialize = "CriticalSplinesEnabled")]
+    EnableCriticalSplines,
 
     /// if `true`, the superancillary functions will be used for VLE of pure fluids.
     ///
@@ -397,9 +397,9 @@ mod tests {
 
         #[rstest]
         #[case(AssumeCriticalPointIsStable, "ASSUME_CRITICAL_POINT_STABLE")]
-        #[case(CriticalSplinesEnabled, "CRITICAL_SPLINES_ENABLED")]
         #[case(CriticalWithin1Uk, "CRITICAL_WITHIN_1UK")]
         #[case(DontCheckPropLimits, "DONT_CHECK_PROPERTY_LIMITS")]
+        #[case(EnableCriticalSplines, "CRITICAL_SPLINES_ENABLED")]
         #[case(EnableSuperancillaries, "ENABLE_SUPERANCILLARIES")]
         #[case(HenrysLawToGenerateVleGuesses, "HENRYS_LAW_TO_GENERATE_VLE_GUESSES")]
         #[case(NormalizeGasConstants, "NORMALIZE_GAS_CONSTANTS")]
@@ -445,9 +445,9 @@ mod tests {
             vec!["ASSUME_CRITICAL_POINT_STABLE", "AssumeCriticalPointIsStable"],
             AssumeCriticalPointIsStable
         )]
-        #[case(vec!["CRITICAL_SPLINES_ENABLED", "CriticalSplinesEnabled"], CriticalSplinesEnabled)]
         #[case(vec!["CRITICAL_WITHIN_1UK", "CriticalWithin1Uk"], CriticalWithin1Uk)]
         #[case(vec!["DONT_CHECK_PROPERTY_LIMITS", "DontCheckPropLimits"], DontCheckPropLimits)]
+        #[case(vec!["CRITICAL_SPLINES_ENABLED", "CriticalSplinesEnabled"], EnableCriticalSplines)]
         #[case(vec!["ENABLE_SUPERANCILLARIES", "EnableSuperancillaries"], EnableSuperancillaries)]
         #[case(
             vec!["HENRYS_LAW_TO_GENERATE_VLE_GUESSES", "HenrysLawToGenerateVleGuesses"],
