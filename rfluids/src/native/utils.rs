@@ -224,15 +224,18 @@ impl CoolProp {
     /// Configuration keys control various aspects of `CoolProp` behavior (e.g., path settings,
     /// `REFPROP` integration, calculation behavior, etc.).
     ///
-    /// The `value` argument can accept owned values ([`bool`], [`f64`]) which are copied,
-    /// or borrowed string references ([`&str`](str), [`&String`](String)) which must remain valid
-    /// for the duration of the call.
+    /// The `value` argument can accept owned values ([`bool`], [`f64`], [`char`]) which are copied,
+    /// or borrowed optional path references ([`&Path`](std::path::Path),
+    /// [`&PathBuf`](std::path::PathBuf), [`Option<&Path>`](std::path::Path),
+    /// [`Option<&PathBuf>`](std::path::PathBuf)) which must remain valid for the duration of
+    /// the call.
     ///
     /// # Arguments
     ///
     /// - `key` -- configuration key _(raw [`&str`](str) or [`ConfigKey`](crate::io::ConfigKey))_
-    /// - `value` -- configuration value _([`bool`], [`f64`], [`&str`](str), or [`&String`](String),
-    ///   automatically converted to [`ConfigValue`])_
+    /// - `value` -- configuration value _([`bool`], [`f64`], [`char`], [`&Path`](std::path::Path),
+    ///   [`&PathBuf`](std::path::PathBuf), [`Option<&Path>`](std::path::Path), or
+    ///   [`Option<&PathBuf>`](std::path::PathBuf), automatically converted to [`ConfigValue`])_
     ///
     /// Known configuration keys:
     ///
@@ -278,12 +281,12 @@ impl CoolProp {
     ///     - `"ALTERNATIVE_REFPROP_PATH"` -- an alternative path to be provided to the directory
     ///       that contains `REFPROP`’s fluids and mixtures directories. If provided, the `SETPATH`
     ///       function will be called with this directory prior to calling any `REFPROP` functions.
-    ///       **Default:** `""`
+    ///       **Default:** `None`
     ///     - `"ALTERNATIVE_REFPROP_LIBRARY_PATH"` -- an alternative path to the shared library
-    ///       file. If provided, it will be used to load `REFPROP`. **Default:** `""`
+    ///       file. If provided, it will be used to load `REFPROP`. **Default:** `None`
     ///     - `"ALTERNATIVE_REFPROP_HMX_BNC_PATH"` -- an alternative path to the `HMX.BNC` file. If
     ///       provided, it will be passed into `REFPROP`’s `SETUP` or `SETMIX` routines. _Default:
-    ///       `""`
+    ///       `None`
     ///     - `"REFPROP_DONT_ESTIMATE_INTERACTION_PARAMETERS"` --  if `true`, if the binary
     ///       interaction parameters in `REFPROP` are estimated, throw an error rather than silently
     ///       continuing. **Default:** `false`
@@ -297,11 +300,12 @@ impl CoolProp {
     ///
     /// - **Miscellaneous:**
     ///     - `"ALTERNATIVE_TABLES_DIRECTORY"` -- if provided, this path will be the root directory
-    ///       for the tabular data. Otherwise, `${HOME}/.CoolProp/Tables` is used. **Default:** `""`
-    ///     - `"FLOAT_PUNCTUATION"` -- the first character of this string will be used as the
-    ///       separator between the number fraction. **Default:** `"."`
+    ///       for the tabular data. Otherwise, `${HOME}/.CoolProp/Tables` is used. **Default:**
+    ///       `None`
+    ///     - `"FLOAT_PUNCTUATION"` -- the delimiter to be used as the separator between the number
+    ///       fraction. **Default:** `'.'`
     ///     - `"LIST_STRING_DELIMITER"` -- the delimiter to be used when converting a list of
-    ///       strings to a string. **Default:** `","`
+    ///       strings to a string. **Default:** `','`
     ///     - `"MAXIMUM_TABLE_DIRECTORY_SIZE_IN_GB"` -- the maximum allowed size of the directory
     ///       that is used to store tabular data. **Default:** `1.0`
     ///     - `"SAVE_RAW_TABLES"` -- if `true`, the raw, uncompressed tables will also be written to
@@ -309,7 +313,7 @@ impl CoolProp {
     ///     - `"VTPR_ALWAYS_RELOAD_LIBRARY"` -- if `true`, the library will always be reloaded, no
     ///       matter what is currently loaded. **Default:** `false`
     ///     - `"VTPR_UNIFAC_PATH"` -- the path to the directory containing the UNIFAC JSON files.
-    ///       Should be slash terminated. **Default:** `""`
+    ///       Should be slash terminated. **Default:** `None`
     ///
     /// # Errors
     ///
@@ -319,20 +323,27 @@ impl CoolProp {
     /// # Examples
     ///
     /// ```no_run
+    /// use std::path::Path;
+    ///
     /// use rfluids::prelude::*;
     ///
     /// // Set configuration values of different types
     /// assert!(CoolProp::set_config("DONT_CHECK_PROPERTY_LIMITS", true).is_ok());
     /// assert!(CoolProp::set_config("PHASE_ENVELOPE_STARTING_PRESSURE_PA", 1e5).is_ok());
-    /// assert!(CoolProp::set_config("ALTERNATIVE_REFPROP_PATH", "/path/to/refprop").is_ok());
+    /// assert!(CoolProp::set_config("LIST_STRING_DELIMITER", ';').is_ok());
+    /// assert!(
+    ///     CoolProp::set_config("ALTERNATIVE_REFPROP_PATH", Path::new("/path/to/refprop")).is_ok()
+    /// );
     ///
     /// // Attempt to set invalid configuration values
-    /// assert!(CoolProp::set_config("DONT_CHECK_PROPERTY_LIMITS", "yes").is_err());
-    /// assert!(CoolProp::set_config("PHASE_ENVELOPE_STARTING_PRESSURE_PA", "1e5").is_err());
+    /// assert!(CoolProp::set_config("DONT_CHECK_PROPERTY_LIMITS", 'y').is_err());
+    /// assert!(CoolProp::set_config("PHASE_ENVELOPE_STARTING_PRESSURE_PA", '0').is_err());
+    /// assert!(CoolProp::set_config("LIST_STRING_DELIMITER", 42.0).is_err());
     /// assert!(CoolProp::set_config("ALTERNATIVE_REFPROP_PATH", true).is_err());
     ///
-    /// // Attempt to set non-existing configuration key
-    /// assert!(CoolProp::set_config("NON_EXISTING_KEY", "value").is_ok()); // CoolProp ignores nonexistent keys
+    /// // Attempt to set non-existing configuration key.
+    /// // CoolProp ignores nonexistent keys
+    /// assert!(CoolProp::set_config("NON_EXISTING_KEY", false).is_ok());
     /// ```
     ///
     /// # Notes
@@ -365,10 +376,17 @@ fn set_config(key: &str, value: &ConfigValue) -> Result<()> {
         ConfigValue::Float(val) => unsafe {
             lock.set_config_double(key.as_ptr(), *val);
         },
-        ConfigValue::Str(val) => {
-            let val = CString::new(*val).unwrap();
+        ConfigValue::Char(val) => {
+            let c_string = CString::new(val.to_string()).unwrap();
             unsafe {
-                lock.set_config_string(key.as_ptr(), val.as_ptr());
+                lock.set_config_string(key.as_ptr(), c_string.as_ptr());
+            }
+        }
+        ConfigValue::OptionPath(val) => {
+            let path = val.map_or_else(String::new, |p| p.to_string_lossy().into_owned());
+            let c_string = CString::new(path).unwrap();
+            unsafe {
+                lock.set_config_string(key.as_ptr(), c_string.as_ptr());
             }
         }
     }

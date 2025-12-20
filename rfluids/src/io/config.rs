@@ -1,3 +1,5 @@
+use std::path::{Path, PathBuf};
+
 /// `CoolProp` configuration keys.
 ///
 /// # Examples
@@ -42,7 +44,7 @@ pub enum ConfigKey {
     /// If `true`, evaluation of the stability of critical point will be skipped and point will be
     /// assumed to be stable.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `false`
     #[strum(to_string = "ASSUME_CRITICAL_POINT_STABLE", serialize = "AssumeCriticalPointIsStable")]
@@ -50,7 +52,7 @@ pub enum ConfigKey {
 
     /// If `true`, the critical splines will be used in the near-vicinity of the critical point.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `true`
     #[strum(to_string = "CRITICAL_SPLINES_ENABLED", serialize = "CriticalSplinesEnabled")]
@@ -59,7 +61,7 @@ pub enum ConfigKey {
     /// if `true`, any temperature within `1 uK` of the critical temperature will be considered to
     /// be **AT** the critical point.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `true`
     #[strum(to_string = "CRITICAL_WITHIN_1UK", serialize = "CriticalWithin1Uk")]
@@ -68,7 +70,7 @@ pub enum ConfigKey {
     /// If `true`, when possible, `CoolProp` will skip checking whether values are inside the
     /// property limits.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `false`
     #[strum(to_string = "DONT_CHECK_PROPERTY_LIMITS", serialize = "DontCheckPropLimits")]
@@ -76,7 +78,7 @@ pub enum ConfigKey {
 
     /// if `true`, the superancillary functions will be used for VLE of pure fluids.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `true`
     #[strum(to_string = "ENABLE_SUPERANCILLARIES", serialize = "EnableSuperancillaries")]
@@ -85,7 +87,7 @@ pub enum ConfigKey {
     /// If `true`, when doing water-based mixture dewpoint calculations, use Henry’s Law to generate
     /// guesses for liquid-phase composition.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `false`
     #[strum(
@@ -96,7 +98,7 @@ pub enum ConfigKey {
 
     /// If `true`, for mixtures, the molar gas constant _(R)_ will be set to the CODATA value.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `true`
     #[strum(to_string = "NORMALIZE_GAS_CONSTANTS", serialize = "NormalizeGasConstants")]
@@ -105,7 +107,7 @@ pub enum ConfigKey {
     /// If `true`, and a pair of binary interaction pairs to be added is already there, rather than
     /// not adding the binary interaction pair _(and probably throwing an exception)_, overwrite it.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `false`
     #[strum(to_string = "OVERWRITE_BINARY_INTERACTION", serialize = "OverwriteBinaryInteraction")]
@@ -114,7 +116,7 @@ pub enum ConfigKey {
     /// if `true`, and a departure function to be added is already there, rather than not adding the
     /// departure function _(and probably throwing an exception)_, overwrite it.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `false`
     #[strum(to_string = "OVERWRITE_DEPARTURE_FUNCTION", serialize = "OverwriteDepartureFn")]
@@ -123,7 +125,7 @@ pub enum ConfigKey {
     /// If `true`, and a substance is added to the substances library that is already there, rather
     /// than not adding the substance _(and probably throwing an exception)_, overwrite it.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `false`
     #[strum(to_string = "OVERWRITE_FLUIDS", serialize = "OverwriteSubstances")]
@@ -131,7 +133,7 @@ pub enum ConfigKey {
 
     /// Starting pressure in `Pa` for phase envelope construction.
     ///
-    /// **Type:** `f64`
+    /// **Type:** [`f64`]
     ///
     /// **Default:** `100.0`
     #[strum(
@@ -144,7 +146,7 @@ pub enum ConfigKey {
     /// used to harmonize all the ideal gas constants. This is especially important in the critical
     /// region.
     ///
-    /// **Type:** `f64`
+    /// **Type:** [`f64`]
     ///
     /// **Default:** `8.314_462_618_153_24`
     #[strum(to_string = "R_U_CODATA", serialize = "RUCodata")]
@@ -153,7 +155,7 @@ pub enum ConfigKey {
     /// The minimal delta to be used in tracing out the spinodal; make sure that the EOS has a
     /// spinodal at this value of `delta=rho/rho_r`.
     ///
-    /// **Type:** `f64`
+    /// **Type:** [`f64`]
     ///
     /// **Default:** `0.5`
     #[strum(to_string = "SPINODAL_MINIMUM_DELTA", serialize = "SpinodalMinDelta")]
@@ -163,7 +165,7 @@ pub enum ConfigKey {
     /// value while looping over the input vectors, only makes sense when working with a single
     /// fluid and with points that are not too far from each other.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `false`
     #[strum(to_string = "USE_GUESSES_IN_PROPSSI", serialize = "UseGuessesInPropsSi")]
@@ -173,34 +175,34 @@ pub enum ConfigKey {
     /// mixtures directories. If provided, the `SETPATH` function will be called with this directory
     /// prior to calling any `REFPROP` functions.
     ///
-    /// **Type:** `String`
+    /// **Type:** [`Option<&Path>`](std::path::Path)
     ///
-    /// **Default:** `""`
+    /// **Default:** `None`
     #[strum(to_string = "ALTERNATIVE_REFPROP_PATH", serialize = "AltRefpropPath")]
     AltRefpropPath,
 
     /// An alternative path to the shared library file. If provided, it will be used to load
     /// `REFPROP`.
     ///
-    /// **Type:** `String`
+    /// **Type:** [`Option<&Path>`](std::path::Path)
     ///
-    /// **Default:** `""`
+    /// **Default:** `None`
     #[strum(to_string = "ALTERNATIVE_REFPROP_LIBRARY_PATH", serialize = "AltRefpropLibPath")]
     AltRefpropLibPath,
 
     /// An alternative path to the `HMX.BNC` file. If provided, it will be passed into `REFPROP`’s
     /// `SETUP` or `SETMIX` routines.
     ///
-    /// **Type:** `String`
+    /// **Type:** [`Option<&Path>`](std::path::Path)
     ///
-    /// **Default:** `""`
+    /// **Default:** `None`
     #[strum(to_string = "ALTERNATIVE_REFPROP_HMX_BNC_PATH", serialize = "AltRefpropHmxBncPath")]
     AltRefpropHmxBncPath,
 
     /// If `true`, if the binary interaction parameters in `REFPROP` are estimated, throw an error
     /// rather than silently continuing.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `false`
     #[strum(
@@ -212,7 +214,7 @@ pub enum ConfigKey {
     /// If `true`, if the binary interaction parameters in `REFPROP` are unable to be estimated,
     /// silently continue rather than failing.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `false`
     #[strum(
@@ -224,7 +226,7 @@ pub enum ConfigKey {
     /// If `true`, rather than using the highly-accurate pure fluid equations of state, use the
     /// pure-fluid EOS from `GERG-2008`.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `false`
     #[strum(to_string = "REFPROP_USE_GERG", serialize = "RefpropUseGerg")]
@@ -233,7 +235,7 @@ pub enum ConfigKey {
     /// If `true`, rather than using the highly-accurate pure fluid equations of state, use the
     /// Peng-Robinson EOS.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `false`
     #[strum(to_string = "REFPROP_USE_PENGROBINSON", serialize = "RefpropUsePengRobinson")]
@@ -242,32 +244,31 @@ pub enum ConfigKey {
     /// If provided, this path will be the root directory for the tabular data. Otherwise,
     /// `${HOME}/.CoolProp/Tables` is used.
     ///
-    /// **Type:** `String`
+    /// **Type:** [`Option<&Path>`](std::path::Path)
     ///
-    /// **Default:** `""`
+    /// **Default:** `None`
     #[strum(to_string = "ALTERNATIVE_TABLES_DIRECTORY", serialize = "AltTablesPath")]
     AltTablesPath,
 
-    /// The first character of this string will be used as the separator between the number
-    /// fraction.
+    /// The delimiter to be used as the separator between the number fraction.
     ///
-    /// **Type:** `String`
+    /// **Type:** [`char`]
     ///
-    /// **Default:** `"."`
+    /// **Default:** `'.'`
     #[strum(to_string = "FLOAT_PUNCTUATION", serialize = "FloatPunctuation")]
     FloatPunctuation,
 
     /// The delimiter to be used when converting a list of strings to a string.
     ///
-    /// **Type:** `String`
+    /// **Type:** [`char`]
     ///
-    /// **Default:** `","`
+    /// **Default:** `','`
     #[strum(to_string = "LIST_STRING_DELIMITER", serialize = "ListPunctuation")]
     ListPunctuation,
 
     /// The maximum allowed size of the directory that is used to store tabular data.
     ///
-    /// **Type:** `f64`
+    /// **Type:** [`f64`]
     ///
     /// **Default:** `1.0`
     #[strum(to_string = "MAXIMUM_TABLE_DIRECTORY_SIZE_IN_GB", serialize = "MaxTableDirSizeInGb")]
@@ -275,7 +276,7 @@ pub enum ConfigKey {
 
     /// If `true`, the raw, uncompressed tables will also be written to file.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `false`
     #[strum(to_string = "SAVE_RAW_TABLES", serialize = "SaveRawTables")]
@@ -283,7 +284,7 @@ pub enum ConfigKey {
 
     /// If `true`, the library will always be reloaded, no matter what is currently loaded.
     ///
-    /// **Type:** `bool`
+    /// **Type:** [`bool`]
     ///
     /// **Default:** `false`
     #[strum(to_string = "VTPR_ALWAYS_RELOAD_LIBRARY", serialize = "VtPrAlwaysReloadLib")]
@@ -291,9 +292,9 @@ pub enum ConfigKey {
 
     /// The path to the directory containing the UNIFAC JSON files. Should be slash terminated.
     ///
-    /// **Type:** `String`
+    /// **Type:** [`Option<&Path>`](std::path::Path)
     ///
-    /// **Default:** `""`
+    /// **Default:** `None`
     #[strum(to_string = "VTPR_UNIFAC_PATH", serialize = "VtPrUnifacPath")]
     VtPrUnifacPath,
 }
@@ -307,45 +308,65 @@ pub enum ConfigKey {
 /// - [`CoolProp::set_config`](crate::native::CoolProp::set_config)
 #[derive(Clone, Debug, PartialEq)]
 pub enum ConfigValue<'a> {
-    /// Boolean value.
+    /// Boolean.
     Bool(bool),
-    /// Floating-point value.
+    /// Floating-point.
     Float(f64),
-    /// String value.
-    Str(&'a str),
+    /// Character.
+    Char(char),
+    /// Optional path.
+    OptionPath(Option<&'a Path>),
 }
 
 impl From<bool> for ConfigValue<'_> {
     fn from(value: bool) -> Self {
-        ConfigValue::Bool(value)
+        Self::Bool(value)
     }
 }
 impl From<f64> for ConfigValue<'_> {
     fn from(value: f64) -> Self {
-        ConfigValue::Float(value)
+        Self::Float(value)
     }
 }
 
-impl<'a> From<&'a str> for ConfigValue<'a> {
-    fn from(value: &'a str) -> Self {
-        ConfigValue::Str(value.trim())
+impl From<char> for ConfigValue<'_> {
+    fn from(value: char) -> Self {
+        Self::Char(value)
     }
 }
 
-impl<'a> From<&'a String> for ConfigValue<'a> {
-    fn from(value: &'a String) -> Self {
-        Self::from(value.as_str())
+impl<'a> From<Option<&'a Path>> for ConfigValue<'a> {
+    fn from(value: Option<&'a Path>) -> Self {
+        Self::OptionPath(value)
+    }
+}
+
+impl<'a> From<Option<&'a PathBuf>> for ConfigValue<'a> {
+    fn from(value: Option<&'a PathBuf>) -> Self {
+        Self::from(value.map(PathBuf::as_path))
+    }
+}
+
+impl<'a> From<&'a Path> for ConfigValue<'a> {
+    fn from(value: &'a Path) -> Self {
+        Self::from(Some(value))
+    }
+}
+
+impl<'a> From<&'a PathBuf> for ConfigValue<'a> {
+    fn from(value: &'a PathBuf) -> Self {
+        Self::from(Some(value.as_path()))
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use rstest::*;
+
     use super::*;
 
     mod key {
         use std::str::FromStr;
-
-        use rstest::*;
 
         use super::{ConfigKey::*, *};
 
@@ -504,27 +525,64 @@ mod tests {
         }
 
         #[test]
-        fn from_str() {
+        fn from_char() {
             // Given
-            let value = " something ";
+            let value = '.';
 
             // When
             let res = ConfigValue::from(value);
 
             // Then
-            assert_eq!(res, ConfigValue::Str("something"));
+            assert_eq!(res, ConfigValue::Char(value));
         }
 
         #[test]
-        fn from_string() {
+        fn from_path() {
             // Given
-            let value = " something ".to_string();
+            let value = Path::new("foo/bar");
+
+            // When
+            let res = ConfigValue::from(value);
+
+            // Then
+            assert_eq!(res, ConfigValue::OptionPath(Some(value)));
+        }
+
+        #[test]
+        fn from_path_buf() {
+            // Given
+            let value = PathBuf::from("foo/bar");
 
             // When
             let res = ConfigValue::from(&value);
 
             // Then
-            assert_eq!(res, ConfigValue::Str("something"));
+            assert_eq!(res, ConfigValue::OptionPath(Some(value.as_path())));
+        }
+
+        #[rstest]
+        #[case(None)]
+        #[case(Some(Path::new("foo/bar")))]
+        fn from_option_path(#[case] value: Option<&Path>) {
+            // When
+            let res = ConfigValue::from(value);
+
+            // Then
+            assert_eq!(res, ConfigValue::OptionPath(value));
+        }
+
+        #[rstest]
+        #[case(None)]
+        #[case(Some(PathBuf::from("foo/bar")))]
+        fn from_option_path_buf(#[case] value: Option<PathBuf>) {
+            // Given
+            let value = value.as_ref();
+
+            // When
+            let res = ConfigValue::from(value);
+
+            // Then
+            assert_eq!(res, ConfigValue::OptionPath(value.map(PathBuf::as_path)));
         }
     }
 }
