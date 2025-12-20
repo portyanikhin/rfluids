@@ -313,7 +313,7 @@ impl CoolProp {
     ///     - `"VTPR_ALWAYS_RELOAD_LIBRARY"` -- if `true`, the library will always be reloaded, no
     ///       matter what is currently loaded. **Default:** `false`
     ///     - `"VTPR_UNIFAC_PATH"` -- the path to the directory containing the UNIFAC JSON files.
-    ///       Should be slash terminated. **Default:** `None`
+    ///       **Default:** `None`
     ///
     /// # Errors
     ///
