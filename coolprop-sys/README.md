@@ -21,21 +21,37 @@ Raw FFI bindings to [`CoolProp`](https://coolprop.org)
 
 ## How to install
 
-Run the following command in your project directory:
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+coolprop-sys = "7"
+```
+
+Or via command line:
 
 ```shell
 cargo add coolprop-sys
 ```
 
-🎁 It comes with native `CoolProp` dynamic libraries for supported platforms.
-The library required for your platform will be automatically copied
-to the target directory during build.
+🎁 It comes with native `CoolProp` dynamic libraries for supported platforms. The library
+required for your platform will be automatically copied to the target directory during build.
 
 It also includes pre-generated FFI bindings, so `libclang` is not required for normal builds.
 
 ### Regenerating bindings
 
-If you need to regenerate the FFI bindings (requires `libclang`), enable the `regen-bindings` feature:
+If you need to regenerate the FFI bindings (requires `libclang`), enable the
+**`regen-bindings`** feature.
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+coolprop-sys = { version = "7", features = ["regen-bindings"] }
+```
+
+Or via command line:
 
 ```shell
 cargo add coolprop-sys --features regen-bindings

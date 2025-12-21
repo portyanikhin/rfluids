@@ -19,7 +19,14 @@
 //!
 //! ## How to install
 //!
-//! Run the following command in your project directory:
+//! Add this to your `Cargo.toml`:
+//!
+//! ```toml
+//! [dependencies]
+//! coolprop-sys = "7"
+//! ```
+//!
+//! Or via command line:
 //!
 //! ```shell
 //! cargo add coolprop-sys
@@ -32,8 +39,17 @@
 //!
 //! ### Regenerating bindings
 //!
-//! If you need to regenerate the FFI bindings (requires `libclang`), enable the `regen-bindings`
-//! feature:
+//! If you need to regenerate the FFI bindings (requires `libclang`), enable the
+//! **`regen-bindings`** feature.
+//!
+//! Add this to your `Cargo.toml`:
+//!
+//! ```toml
+//! [dependencies]
+//! coolprop-sys = { version = "7", features = ["regen-bindings"] }
+//! ```
+//!
+//! Or via command line:
 //!
 //! ```shell
 //! cargo add coolprop-sys --features regen-bindings
