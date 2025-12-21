@@ -25,8 +25,9 @@
 //!   property calculations
 //! - **Type-safe API**: leverages Rust's type system with the [Typestate Pattern](https://en.wikipedia.org/wiki/Typestate_analysis)
 //!   to prevent invalid operations at compile time
-//! - **Zero configuration**: includes pre-compiled `CoolProp` dynamic libraries for all supported
-//!   platforms
+//! - **Configuration management**: flexible control over `CoolProp` configuration via type-safe
+//!   builder, with optional `serde` support for loading from configuration files
+//! - **Batteries included**: pre-compiled `CoolProp` dynamic libraries for all supported platforms
 //!
 //! ### Modules
 //!
@@ -35,7 +36,15 @@
 //! - [`substance`](crate::substance) -- types representing `CoolProp` substances
 //! - [`io`](crate::io) -- input/output parameter types for fluid and humid air calculations
 //! - [`native`](crate::native) -- low-level and high-level `CoolProp` API bindings
+//! - [`config`](crate::config) -- global configuration management for `CoolProp`
 //! - [`prelude`](crate::prelude) -- convenient re-exports of commonly used types and traits
+//!
+//! ### Feature Flags
+//!
+//! - **`regen-bindings`** -- regenerates FFI bindings to `CoolProp` (requires `libclang`)
+//! - **`serde`** -- enables serialization and deserialization support for
+//!   [`Config`](crate::config::Config), allowing integration with configuration management crates
+//!   and file-based configuration
 //!
 //! ## Supported platforms
 //!
