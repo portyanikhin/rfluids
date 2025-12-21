@@ -1,5 +1,11 @@
 //! Crate configuration.
 //!
+//! This module provides global configuration management for `CoolProp`.
+//!
+//! [`Config`] represents the configuration state that mirrors `CoolProp` configuration options.
+//! Create new instances with [`Config::builder`], read the current configuration with [`read`],
+//! apply changes with [`update`], and restore defaults with [`reset`].
+//!
 //! # `serde` Support
 //!
 //! Enable the `serde` feature to add serialization and deserialization support for [`Config`].
