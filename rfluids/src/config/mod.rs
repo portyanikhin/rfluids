@@ -1,4 +1,75 @@
 //! Crate configuration.
+//!
+//! # `serde` Support
+//!
+//! Enable the `serde` feature to add serialization and deserialization support for [`Config`].
+//!
+//! Add to your `Cargo.toml`:
+//!
+//! ```toml
+//! [dependencies]
+//! rfluids = { version = "0.3", features = ["serde"] }
+//! ```
+//!
+//! Or via command line:
+//!
+//! ```shell
+//! cargo add rfluids --features serde
+//! ```
+//!
+//! This allows direct serialization to TOML, YAML, JSON and other formats, as well as integration
+//! with configuration management crates (e.g., [`config`](https://crates.io/crates/config),
+//! [`figment`](https://crates.io/crates/figment), [`confy`](https://crates.io/crates/confy), etc.).
+//!
+//! ## Example
+//!
+//! Loading configuration with the [`config`](https://crates.io/crates/config) crate
+//! (requires `serde` feature).
+//!
+//! For example, given the following file structure:
+//!
+//! ```text
+//! my-app/
+//! ├── config/
+//! │   └── coolprop.toml
+//! ├── src/
+//! │   └── main.rs
+//! ├── Cargo.lock
+//! └── Cargo.toml
+//! ```
+//!
+//! Configuration file `config/coolprop.toml`:
+//!
+//! ```toml
+//! enable_superancillaries = false
+//! alt_tables_path = "path/to/tables"
+//! max_table_dir_size_in_gb = 42.0
+//! save_raw_tables = true
+//! list_punctuation = ';'
+//! ```
+//!
+//! Application code in `src/main.rs`:
+//!
+//! ```ignore
+//! use config::{Config, Environment, File};
+//! use rfluids::config::Config as CoolPropConfig;
+//!
+//! fn main() {
+//!     // Load from TOML file and environment variables
+//!     let cfg_src = Config::builder()
+//!         .add_source(File::with_name("config/coolprop"))
+//!         .add_source(Environment::with_prefix("COOLPROP"))
+//!         .build()
+//!         .unwrap();
+//!
+//!     // Deserialize into configuration
+//!     let cfg: CoolPropConfig = cfg_src.try_deserialize().unwrap();
+//!     println!("Loaded configuration: {cfg:#?}");
+//!
+//!     // Update crate configuration
+//!     rfluids::config::update(cfg);
+//! }
+//! ```
 
 #![allow(clippy::struct_excessive_bools)]
 
@@ -195,7 +266,7 @@ declare_config! {
 /// use rfluids::config;
 ///
 /// let cfg = config::read();
-/// println!("{cfg:?}");
+/// println!("Current configuration: {cfg:#?}");
 /// ```
 pub fn read() -> Config {
     CONFIG.read().unwrap().clone()

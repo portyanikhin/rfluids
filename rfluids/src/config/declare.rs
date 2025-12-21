@@ -7,6 +7,11 @@ macro_rules! declare_config {
         /// is synchronized with the underlying `CoolProp` library when
         /// [`config::update`](crate::config::update) is called.
         ///
+        /// # `serde` Support
+        ///
+        /// Enable the `serde` feature for serialization and deserialization support.
+        /// See the [module documentation](crate::config#serde-support) for details and examples.
+        ///
         /// # Thread Safety
         ///
         /// The configuration is stored in a global state protected by an
