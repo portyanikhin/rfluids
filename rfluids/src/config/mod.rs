@@ -10,7 +10,7 @@
 //!
 //! Enable the `serde` feature to add serialization and deserialization support for [`Config`].
 //!
-//! Add to your `Cargo.toml`:
+//! Add this to your `Cargo.toml`:
 //!
 //! ```toml
 //! [dependencies]
