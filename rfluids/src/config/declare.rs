@@ -13,6 +13,8 @@ macro_rules! declare_config {
         /// [`RwLock`](std::sync::RwLock). Use [`config::read`](crate::config::read) to get
         /// the current configuration and [`config::update`](crate::config::update) to modify it.
         #[derive(Clone, Debug, PartialEq, bon::Builder)]
+        #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+        #[cfg_attr(feature = "serde", serde(default))]
         #[builder(on(PathBuf, into))]
         #[non_exhaustive]
         pub struct Config {
