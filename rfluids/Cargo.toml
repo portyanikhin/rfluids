@@ -14,10 +14,12 @@ categories = ["api-bindings", "science"]
 
 [features]
 regen-bindings = ["coolprop-sys/regen-bindings"]
+serde = ["dep:serde"]
 
 [dependencies]
 bon.workspace = true
 coolprop-sys = { path = "../coolprop-sys", version = "7.2.0" }
+serde = { workspace = true, optional = true }
 strum.workspace = true
 strum_macros.workspace = true
 thiserror.workspace = true
