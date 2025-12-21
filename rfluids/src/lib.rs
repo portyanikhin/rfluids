@@ -60,7 +60,14 @@
 //!
 //! ## How to install
 //!
-//! Run the following command in your project directory:
+//! Add this to your `Cargo.toml`:
+//!
+//! ```toml
+//! [dependencies]
+//! rfluids = "0.3"
+//! ```
+//!
+//! Or via command line:
 //!
 //! ```shell
 //! cargo add rfluids
@@ -73,8 +80,17 @@
 //!
 //! ### Regenerating bindings
 //!
-//! If you need to regenerate the FFI bindings (requires `libclang`), enable the `regen-bindings`
-//! feature:
+//! If you need to regenerate the FFI bindings (requires `libclang`), enable the
+//! **`regen-bindings`** feature.
+//!
+//! Add this to your `Cargo.toml`:
+//!
+//! ```toml
+//! [dependencies]
+//! rfluids = { version = "0.3", features = ["regen-bindings"] }
+//! ```
+//!
+//! Or via command line:
 //!
 //! ```shell
 //! cargo add rfluids --features regen-bindings
