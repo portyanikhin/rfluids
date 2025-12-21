@@ -6,7 +6,7 @@
 //! Create new instances with [`Config::builder`], read the current configuration with [`read`],
 //! apply changes with [`update`], and restore defaults with [`reset`].
 //!
-//! # `serde` Support
+//! # [`serde`](https://crates.io/crates/serde) Support
 //!
 //! Enable the `serde` feature to add serialization and deserialization support for [`Config`].
 //!
