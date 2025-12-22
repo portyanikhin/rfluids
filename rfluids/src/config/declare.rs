@@ -1,5 +1,17 @@
 macro_rules! declare_config {
-    ($($(#[$meta:meta])* $field:ident : $ty:ty $(= $default:expr)? => $key:ident),* $(,)?) => {
+    (
+        @custom {
+            $(
+                $(#[$custom_meta:meta])*
+                $custom_vis:vis $custom_field:ident : $custom_ty:ty $(= $custom_default:expr)? =>
+                    (get: $custom_getter:expr, set: $custom_setter:expr)
+            ),* $(,)?
+        }
+        $(
+            $(#[$meta:meta])*
+            $vis:vis $field:ident : $ty:ty $(= $default:expr)? => $key:ident
+        ),* $(,)?
+    ) => {
         /// Crate configuration state.
         ///
         /// This configuration mirrors the configuration options available in `CoolProp`.
@@ -24,14 +36,25 @@ macro_rules! declare_config {
         #[cfg_attr(feature = "serde", serde(default))]
         pub struct Config {
             $(
+                $(#[$custom_meta])*
+                $(#[builder(default = $custom_default)])?
+                $custom_vis $custom_field: $custom_ty,
+            )*
+            $(
                 $(#[$meta])*
                 $(#[builder(default = $default)])?
-                pub $field: $ty,
+                $vis $field: $ty,
             )*
         }
 
         impl Config {
             fn update(&mut self, new: Self) {
+                $(
+                    if self.$custom_field != new.$custom_field {
+                        $custom_setter(new.$custom_field);
+                        self.$custom_field = $custom_getter();
+                    }
+                )*
                 $(
                     if self.$field != new.$field {
                         let key = crate::io::ConfigKey::$key;
