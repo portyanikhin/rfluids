@@ -131,7 +131,7 @@ jobs:
       - name: Setup cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
       - name: Generate coverage report
-        run: cargo llvm-cov --tests --all-features --verbose --codecov --output-path codecov.json --ignore-filename-regex "_generated\.rs$"
+        run: cargo llvm-cov --tests --all-features --verbose --codecov --output-path codecov.json --ignore-filename-regex "_generated\.rs$|declare"
       - name: Upload coverage report to Codecov
         uses: codecov/codecov-action@v5
         with:
