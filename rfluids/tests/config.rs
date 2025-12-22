@@ -1,9 +1,13 @@
-use rfluids::config::{self, Config};
+use rfluids::{
+    config::{self, Config},
+    native::CoolProp,
+};
 use rstest::*;
 
 #[fixture]
 fn new_cfg() -> Config {
     Config::builder()
+        .debug_level(10)
         .assume_critical_point_is_stable(true)
         .critical_within_1uk(false)
         .dont_check_prop_limits(true)
@@ -41,6 +45,7 @@ fn config_management(new_cfg: Config) {
     let cfg = config::read();
 
     // Then
+    assert_eq!(CoolProp::get_debug_level(), 0);
     assert_eq!(cfg, Config::default());
 
     // When
@@ -48,6 +53,7 @@ fn config_management(new_cfg: Config) {
     let cfg = config::read();
 
     // Then
+    assert_eq!(CoolProp::get_debug_level(), 10);
     assert_eq!(cfg, new_cfg);
 
     // When
@@ -55,5 +61,6 @@ fn config_management(new_cfg: Config) {
     let cfg = config::read();
 
     // Then
+    assert_eq!(CoolProp::get_debug_level(), 0);
     assert_eq!(cfg, Config::default());
 }
