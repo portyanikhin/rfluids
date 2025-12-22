@@ -88,9 +88,24 @@ use std::{
 
 use declare::declare_config;
 
+use crate::native::CoolProp;
+
 static CONFIG: LazyLock<RwLock<Config>> = LazyLock::new(|| RwLock::new(Config::default()));
 
 declare_config! {
+    @custom {
+        /// `CoolProp` debug level.
+        ///
+        /// The debug level controls the verbosity of debugging output from `CoolProp`.
+        /// Valid range is `0-10`:
+        ///
+        /// - `0` -- debugging output is disabled
+        /// - `> 0` -- debugging output is enabled, with larger values producing more verbose output
+        ///
+        /// **Default:** `0`
+        pub debug_level: u8 = 0 => (get: CoolProp::get_debug_level, set: CoolProp::set_debug_level),
+    }
+
     /// If `true`, evaluation of the stability of critical point will be skipped and point will be
     /// assumed to be stable.
     ///
