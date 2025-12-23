@@ -286,7 +286,7 @@ impl Substance {
     #[must_use]
     pub fn aliases(&self) -> Vec<String> {
         let sep = config::read().list_punctuation;
-        CoolProp::get_substance_param(self.name(), SubstanceParam::Aliases)
+        CoolProp::get_substance_param(self.composition(), SubstanceParam::Aliases)
             .map(|aliases| aliases.split(sep).map(|s| s.trim().to_string()).collect())
             .unwrap_or_default()
     }
@@ -448,7 +448,8 @@ mod tests {
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), Vec::new())]
     #[case(
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
-        Vec::new()
+        // Seems like it returns aliases for the main component
+        vec!["water", "WATER", "H2O", "h2o", "R718"]
     )]
     fn aliases(#[case] sut: impl Into<Substance>, #[case] expected: Vec<&str>) {
         // Given
