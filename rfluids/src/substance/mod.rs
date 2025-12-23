@@ -41,7 +41,12 @@ pub use predefined_mix::*;
 pub use pure::*;
 pub use with_backend::*;
 
-use crate::fluid::backend::{Backend, DefaultBackend};
+use crate::{
+    config,
+    fluid::backend::{Backend, DefaultBackend},
+    io::SubstanceParam,
+    native::CoolProp,
+};
 
 /// `CoolProp` substance.
 ///
@@ -215,6 +220,15 @@ impl Substance {
             }
         }
     }
+
+    /// Aliases.
+    #[must_use]
+    pub fn aliases(&self) -> Vec<String> {
+        let sep = config::read().list_punctuation;
+        CoolProp::get_substance_param(self.name(), SubstanceParam::Aliases)
+            .map(|aliases| aliases.split(sep).map(|s| s.trim().to_string()).collect())
+            .unwrap_or_default()
+    }
 }
 
 impl From<Pure> for Substance {
@@ -335,6 +349,26 @@ mod tests {
 
         // When
         let res = sut.name();
+
+        // Then
+        assert_eq!(res, expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, vec!["water", "WATER", "H2O", "h2o", "R718"])]
+    #[case(IncompPure::Water,  vec!["water", "WATER", "H2O", "h2o", "R718"])]
+    #[case(PredefinedMix::R444A, Vec::new())]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), Vec::new())]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        Vec::new()
+    )]
+    fn aliases(#[case] sut: impl Into<Substance>, #[case] expected: Vec<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.aliases();
 
         // Then
         assert_eq!(res, expected);
