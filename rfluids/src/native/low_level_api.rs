@@ -70,17 +70,17 @@ impl AbstractState {
     ) -> Result<AbstractState> {
         let backend_name = CString::new(backend_name.as_ref().trim()).unwrap();
         let component_names = CString::new(component_names.as_ref().trim()).unwrap();
-        let mut error = ErrorBuffer::default();
+        let mut err = ErrorBuffer::default();
         let ptr = unsafe {
             COOLPROP.lock().unwrap().AbstractState_factory(
                 backend_name.as_ptr(),
                 component_names.as_ptr(),
-                error.code_as_mut_ptr(),
-                error.message.as_mut_ptr(),
-                c_long::from(error.message.capacity()),
+                err.code_as_mut_ptr(),
+                err.message.as_mut_ptr(),
+                c_long::from(err.message.capacity()),
             )
         };
-        res(Self { ptr }, error)
+        res(Self { ptr }, err)
     }
 
     /// Set the fractions _(mole, mass or volume)_[^note].
@@ -121,18 +121,18 @@ impl AbstractState {
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     pub fn set_fractions(&mut self, fractions: &[f64]) -> Result<()> {
-        let mut error = ErrorBuffer::default();
+        let mut err = ErrorBuffer::default();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_set_fractions(
                 self.ptr,
                 fractions.as_ptr(),
                 fractions.len() as c_long,
-                error.code_as_mut_ptr(),
-                error.message.as_mut_ptr(),
-                c_long::from(error.message.capacity()),
+                err.code_as_mut_ptr(),
+                err.message.as_mut_ptr(),
+                c_long::from(err.message.capacity()),
             );
         }
-        res((), error)
+        res((), err)
     }
 
     /// Update the state of the fluid.
@@ -168,19 +168,19 @@ impl AbstractState {
         input1: f64,
         input2: f64,
     ) -> Result<()> {
-        let mut error = ErrorBuffer::default();
+        let mut err = ErrorBuffer::default();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_update(
                 self.ptr,
                 c_long::from(input_pair_key.into()),
                 input1,
                 input2,
-                error.code_as_mut_ptr(),
-                error.message.as_mut_ptr(),
-                c_long::from(error.message.capacity()),
+                err.code_as_mut_ptr(),
+                err.message.as_mut_ptr(),
+                c_long::from(err.message.capacity()),
             );
         }
-        res((), error)
+        res((), err)
     }
 
     /// Returns an output parameter value **\[SI units\]**
@@ -250,18 +250,18 @@ impl AbstractState {
     /// - [`FluidParam`](crate::io::FluidParam)
     /// - [`FluidTrivialParam`](crate::io::FluidTrivialParam)
     pub fn keyed_output(&self, key: impl Into<u8>) -> Result<f64> {
-        let mut error = ErrorBuffer::default();
+        let mut err = ErrorBuffer::default();
         let key = key.into();
         let value = unsafe {
             COOLPROP.lock().unwrap().AbstractState_keyed_output(
                 self.ptr,
                 c_long::from(key),
-                error.code_as_mut_ptr(),
-                error.message.as_mut_ptr(),
-                c_long::from(error.message.capacity()),
+                err.code_as_mut_ptr(),
+                err.message.as_mut_ptr(),
+                c_long::from(err.message.capacity()),
             )
         };
-        keyed_output(key, value, error)
+        keyed_output(key, value, err)
     }
 
     /// Specify the phase state for all further calculations.
@@ -295,17 +295,17 @@ impl AbstractState {
     /// - [`Phase`](crate::io::Phase)
     pub fn specify_phase(&mut self, phase: impl AsRef<str>) -> Result<()> {
         let phase = CString::new(phase.as_ref()).unwrap();
-        let mut error = ErrorBuffer::default();
+        let mut err = ErrorBuffer::default();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_specify_phase(
                 self.ptr,
                 phase.as_ptr(),
-                error.code_as_mut_ptr(),
-                error.message.as_mut_ptr(),
-                c_long::from(error.message.capacity()),
+                err.code_as_mut_ptr(),
+                err.message.as_mut_ptr(),
+                c_long::from(err.message.capacity()),
             );
         }
-        res((), error)
+        res((), err)
     }
 
     /// Unspecify the phase state and go back to calculating it based on the inputs.
@@ -329,13 +329,13 @@ impl AbstractState {
     ///
     /// - [Imposing the Phase (Optional)](https://coolprop.org/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     pub fn unspecify_phase(&mut self) {
-        let mut error = ErrorBuffer::blank();
+        let mut err = ErrorBuffer::blank();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_unspecify_phase(
                 self.ptr,
-                error.code_as_mut_ptr(),
-                error.message.as_mut_ptr(),
-                c_long::from(error.message.capacity()),
+                err.code_as_mut_ptr(),
+                err.message.as_mut_ptr(),
+                c_long::from(err.message.capacity()),
             );
         }
     }
@@ -375,25 +375,25 @@ impl TryFrom<&SubstanceWithBackend> for AbstractState {
 
 impl Drop for AbstractState {
     fn drop(&mut self) {
-        let mut error = ErrorBuffer::blank();
+        let mut err = ErrorBuffer::blank();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_free(
                 self.ptr,
-                error.code_as_mut_ptr(),
-                error.message.as_mut_ptr(),
-                c_long::from(error.message.capacity()),
+                err.code_as_mut_ptr(),
+                err.message.as_mut_ptr(),
+                c_long::from(err.message.capacity()),
             );
         }
     }
 }
 
-fn res<T>(value: T, error: ErrorBuffer) -> Result<T> {
-    let error: Option<CoolPropError> = error.into();
-    error.map_or(Ok(value), Err)
+fn res<T>(value: T, err: ErrorBuffer) -> Result<T> {
+    let err: Option<CoolPropError> = err.into();
+    err.map_or(Ok(value), Err)
 }
 
-fn keyed_output(key: u8, value: f64, error: ErrorBuffer) -> Result<f64> {
-    res((), error)?;
+fn keyed_output(key: u8, value: f64, err: ErrorBuffer) -> Result<f64> {
+    res((), err)?;
     if !value.is_finite() {
         return Err(CoolPropError(format!(
             "Unable to get the output with key '{key}' due to invalid or undefined state!",
