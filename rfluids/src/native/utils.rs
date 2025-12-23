@@ -122,6 +122,7 @@ impl CoolProp {
     /// - [CoolProp High-Level API](https://coolprop.org/coolprop/HighLevelAPI.html)
     /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
     /// - [`GlobalParam`](crate::io::GlobalParam)
+    #[must_use]
     pub fn get_global_param(param: impl AsRef<str>) -> Option<String> {
         let param = param.as_ref().trim();
         let capacity = match param {
@@ -189,6 +190,7 @@ impl CoolProp {
     /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
     /// - [`Substance`](crate::substance::Substance)
     /// - [`SubstanceParam`](crate::io::SubstanceParam)
+    #[must_use]
     pub fn get_substance_param(
         substance_name: impl AsRef<str>,
         param: impl AsRef<str>,
