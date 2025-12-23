@@ -4,7 +4,7 @@ use coolprop_sys::COOLPROP;
 
 use super::{
     CoolProp, Result,
-    common::{MessageBuffer, get_error},
+    common::{StringBuffer, get_error},
 };
 use crate::io::ConfigValue;
 
@@ -130,7 +130,7 @@ impl CoolProp {
             _ => 30_000,
         };
         let param = CString::new(param).unwrap();
-        let mut res = MessageBuffer::with_capacity(capacity);
+        let mut res = StringBuffer::with_capacity(capacity);
         let lock = COOLPROP.lock().unwrap();
         let status = unsafe {
             lock.get_global_param_string(param.as_ptr(), res.as_mut_ptr(), res.capacity())
@@ -205,7 +205,7 @@ impl CoolProp {
         };
         let substance_name = CString::new(substance_name).unwrap();
         let param = CString::new(param).unwrap();
-        let mut res = MessageBuffer::with_capacity(capacity);
+        let mut res = StringBuffer::with_capacity(capacity);
         let lock = COOLPROP.lock().unwrap();
         let status = unsafe {
             lock.get_fluid_param_string(

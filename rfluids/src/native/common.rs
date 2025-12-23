@@ -10,13 +10,13 @@ type PhantomUnsync = PhantomData<Cell<()>>;
 #[derive(Debug)]
 pub(crate) struct ErrorBuffer {
     code: c_long,
-    pub message: MessageBuffer,
+    pub message: StringBuffer,
     marker: PhantomUnsync,
 }
 
 impl ErrorBuffer {
     pub fn blank() -> Self {
-        Self { code: 0, message: MessageBuffer::blank(), marker: PhantomData }
+        Self { code: 0, message: StringBuffer::blank(), marker: PhantomData }
     }
 
     #[must_use]
@@ -33,7 +33,7 @@ impl ErrorBuffer {
 
 impl Default for ErrorBuffer {
     fn default() -> Self {
-        Self { code: 0, message: MessageBuffer::default(), marker: PhantomData }
+        Self { code: 0, message: StringBuffer::default(), marker: PhantomData }
     }
 }
 
@@ -44,13 +44,13 @@ impl From<ErrorBuffer> for Option<CoolPropError> {
 }
 
 #[derive(Debug)]
-pub(crate) struct MessageBuffer {
+pub(crate) struct StringBuffer {
     capacity: usize,
     buffer: *mut c_char,
     marker: PhantomUnsync,
 }
 
-impl MessageBuffer {
+impl StringBuffer {
     #[must_use]
     pub fn with_capacity(capacity: usize) -> Self {
         if capacity == 0 {
@@ -77,13 +77,13 @@ impl MessageBuffer {
     }
 }
 
-impl Default for MessageBuffer {
+impl Default for StringBuffer {
     fn default() -> Self {
         Self::with_capacity(500)
     }
 }
 
-impl Drop for MessageBuffer {
+impl Drop for StringBuffer {
     fn drop(&mut self) {
         if !self.buffer.is_null() {
             unsafe {
@@ -93,8 +93,8 @@ impl Drop for MessageBuffer {
     }
 }
 
-impl From<MessageBuffer> for String {
-    fn from(value: MessageBuffer) -> Self {
+impl From<StringBuffer> for String {
+    fn from(value: StringBuffer) -> Self {
         if value.buffer.is_null() {
             return Self::new();
         }
@@ -105,8 +105,8 @@ impl From<MessageBuffer> for String {
     }
 }
 
-impl From<MessageBuffer> for Option<CoolPropError> {
-    fn from(value: MessageBuffer) -> Self {
+impl From<StringBuffer> for Option<CoolPropError> {
+    fn from(value: StringBuffer) -> Self {
         let message: String = value.into();
         if message.trim().is_empty() { None } else { Some(CoolPropError(message)) }
     }
@@ -115,7 +115,7 @@ impl From<MessageBuffer> for Option<CoolPropError> {
 pub(crate) fn get_error(
     lock: &MutexGuard<coolprop_sys::bindings::CoolProp>,
 ) -> Option<CoolPropError> {
-    let mut message = MessageBuffer::default();
+    let mut message = StringBuffer::default();
     let param = CString::new(GlobalParam::PendingError.as_ref()).unwrap();
     let _unused = unsafe {
         lock.get_global_param_string(param.as_ptr(), message.as_mut_ptr(), message.capacity())
@@ -191,7 +191,7 @@ mod tests {
         }
     }
 
-    mod message_buffer {
+    mod string_buffer {
         use super::*;
 
         #[rstest]
@@ -199,7 +199,7 @@ mod tests {
         #[case(42)]
         fn with_capacity(#[case] capacity: usize) {
             // When
-            let sut = MessageBuffer::with_capacity(capacity);
+            let sut = StringBuffer::with_capacity(capacity);
 
             // Then
             assert_eq!(sut.capacity(), capacity as c_int);
@@ -208,7 +208,7 @@ mod tests {
         #[test]
         fn blank() {
             // When
-            let sut = MessageBuffer::blank();
+            let sut = StringBuffer::blank();
 
             // Then
             assert_eq!(sut.capacity(), 0);
@@ -217,7 +217,7 @@ mod tests {
         #[test]
         fn default() {
             // When
-            let sut = MessageBuffer::default();
+            let sut = StringBuffer::default();
 
             // Then
             assert_eq!(sut.capacity(), 500);
@@ -231,7 +231,7 @@ mod tests {
             // Given
             let c_string = CString::new(value).unwrap();
             let c_bytes = c_string.as_bytes_with_nul();
-            let mut sut = MessageBuffer::with_capacity(c_bytes.len());
+            let mut sut = StringBuffer::with_capacity(c_bytes.len());
 
             // When
             unsafe {
@@ -250,7 +250,7 @@ mod tests {
         #[test]
         fn into_string_empty() {
             // Given
-            let sut = MessageBuffer::with_capacity(42);
+            let sut = StringBuffer::with_capacity(42);
 
             // When
             let res: String = sut.into();
@@ -262,7 +262,7 @@ mod tests {
         #[test]
         fn into_string_blank() {
             // Given
-            let sut = MessageBuffer::blank();
+            let sut = StringBuffer::blank();
 
             // When
             let res: String = sut.into();
@@ -277,7 +277,7 @@ mod tests {
             let invalid_utf8: Vec<u8> = vec![
                 b'H', b'e', b'l', b'l', b'o', 0xFF, 0xFE, b'W', b'o', b'r', b'l', b'd', b'!', b'\0',
             ];
-            let mut sut = MessageBuffer::with_capacity(invalid_utf8.len());
+            let mut sut = StringBuffer::with_capacity(invalid_utf8.len());
 
             // When
             unsafe {
@@ -302,7 +302,7 @@ mod tests {
             // Given
             let c_string = CString::new(value).unwrap();
             let c_bytes = c_string.as_bytes_with_nul();
-            let mut sut = MessageBuffer::with_capacity(c_bytes.len());
+            let mut sut = StringBuffer::with_capacity(c_bytes.len());
 
             // When
             unsafe {
