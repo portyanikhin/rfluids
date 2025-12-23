@@ -43,15 +43,15 @@ calculations for engineering and scientific applications.
   for fluid and humid air calculations
 - [`native`](https://docs.rs/rfluids/latest/rfluids/native/index.html) – low-level and high-level
   `CoolProp` API bindings
-- [`config`](https://docs.rs/rfluids/latest/rfluids/config/index.html) -- global configuration
+- [`config`](https://docs.rs/rfluids/latest/rfluids/config/index.html) – global configuration
   management for `CoolProp`
 - [`prelude`](https://docs.rs/rfluids/latest/rfluids/prelude/index.html) – convenient re-exports
   of commonly used types and traits
 
 ### Feature Flags
 
-- **`regen-bindings`** -- regenerates FFI bindings to `CoolProp` (requires `libclang`)
-- **`serde`** -- enables serialization and deserialization support for
+- **`regen-bindings`** – regenerates FFI bindings to `CoolProp` (requires `libclang`)
+- **`serde`** – enables serialization and deserialization support for
   [`Config`](https://docs.rs/rfluids/latest/rfluids/config/struct.Config.html), allowing
   integration with configuration management crates and file-based configuration
 
