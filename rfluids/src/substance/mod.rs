@@ -221,6 +221,67 @@ impl Substance {
         }
     }
 
+    /// Names of the substance components separated by the `&` symbol
+    /// or just a single substance name.
+    ///
+    /// # Notes
+    ///
+    /// - This string is compatible with the `CoolProp` low-level API
+    ///   ([`AbstractState::new`](crate::native::AbstractState::new))
+    /// - For [`Pure`], [`IncompPure`], and [`PredefinedMix`], this string is identical to
+    ///   [`name`](Self::name). For [`BinaryMix`] and [`CustomMix`], it differs by omitting the
+    ///   fractions (e.g., `"Water&Ethanol"` instead of `"Water[0.8]&Ethanol[0.2]"`).
+    /// - Components in [`CustomMix`] are sorted first by mole-fraction in descending order, then by
+    ///   name in alphabetical order (for predictable results, since the
+    ///   [`HashMap`](std::collections::HashMap) used to store [`CustomMix`] components does not
+    ///   guarantee ordering).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::*;
+    ///
+    /// let water: Substance = Pure::Water.into();
+    /// assert_eq!(water.composition(), "Water");
+    ///
+    /// let incomp_water: Substance = IncompPure::Water.into();
+    /// assert_eq!(incomp_water.composition(), "Water");
+    ///
+    /// let r444a: Substance = PredefinedMix::R444A.into();
+    /// assert_eq!(r444a.composition(), "R444A.mix");
+    ///
+    /// let propylene_glycol: Substance = BinaryMixKind::MPG.with_fraction(0.4)?.into();
+    /// assert_eq!(propylene_glycol.composition(), "MPG");
+    ///
+    /// let custom_mix: Substance =
+    ///     CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)])?.into();
+    ///
+    /// // Components are sorted first by fraction in descending order,
+    /// // then by name in alphabetical order
+    /// assert_eq!(custom_mix.composition(), "Water&Ethanol");
+    /// # Ok::<(), rfluids::Error>(())
+    /// ```
+    #[must_use]
+    pub fn composition(&self) -> Cow<'static, str> {
+        match self {
+            Substance::BinaryMix(binary_mix) => Cow::Borrowed(binary_mix.kind.into()),
+            Substance::CustomMix(custom_mix) => {
+                let mix = custom_mix.clone().into_mole_based();
+                let mut components: Vec<_> = mix.components().iter().collect();
+                components.sort_by(|left, right| {
+                    right.1.total_cmp(left.1).then_with(|| left.0.as_ref().cmp(right.0.as_ref()))
+                });
+                let name = components
+                    .into_iter()
+                    .map(|component| component.0.as_ref())
+                    .collect::<Vec<_>>()
+                    .join("&");
+                Cow::Owned(name)
+            }
+            _ => self.name(),
+        }
+    }
+
     /// Aliases.
     #[must_use]
     pub fn aliases(&self) -> Vec<String> {
@@ -349,6 +410,32 @@ mod tests {
 
         // When
         let res = sut.name();
+
+        // Then
+        assert_eq!(res, expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, "Water")]
+    #[case(IncompPure::Water, "Water")]
+    #[case(PredefinedMix::R444A, "R444A.mix")]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), "MPG")]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        "Water&Ethanol"
+    )]
+    #[case(
+        CustomMix::mole_based(
+            [(Pure::Methanol, 0.1), (Pure::Ethanol, 0.1), (Pure::Water, 0.8)]
+        ).unwrap(),
+        "Water&Ethanol&Methanol"
+    )]
+    fn composition(#[case] sut: impl Into<Substance>, #[case] expected: &str) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.composition();
 
         // Then
         assert_eq!(res, expected);
