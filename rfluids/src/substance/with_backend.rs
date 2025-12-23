@@ -23,7 +23,7 @@ pub struct SubstanceWithBackend {
 impl SubstanceWithBackend {
     /// Returns name in the format `"<backend>::<substance>"`.
     ///
-    /// This name is compatible with the `CoolProp` high level API
+    /// This name is compatible with the `CoolProp` high-level API
     /// ([`CoolProp`](crate::native::CoolProp)), so it can be used directly there.
     ///
     /// # Examples
