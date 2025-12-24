@@ -493,7 +493,7 @@ impl Substance {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Formula)
     }
 
-    /// JSON representation of properties and parameters as stored in `CoolProp`.
+    /// JSON representation of metadata as stored in `CoolProp`.
     ///
     /// Returns [`None`] if not available for this substance.
     ///
@@ -502,7 +502,7 @@ impl Substance {
     /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
     /// the first component only.
     #[must_use]
-    pub fn json(&self) -> Option<String> {
+    pub fn metadata(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Metadata)
     }
 }
@@ -1057,12 +1057,12 @@ mod tests {
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
         true
     )]
-    fn json(#[case] sut: impl Into<Substance>, #[case] is_some: bool) {
+    fn metadata(#[case] sut: impl Into<Substance>, #[case] is_some: bool) {
         // Given
         let sut: Substance = sut.into();
 
         // When
-        let res = sut.json();
+        let res = sut.metadata();
 
         // Then
         assert_eq!(res.is_some(), is_some);
