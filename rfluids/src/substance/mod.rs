@@ -374,6 +374,19 @@ impl Substance {
     pub fn smiles(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Smiles)
     }
+
+    /// ASHRAE Standard 34 safety rating.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
+    /// ASHRAE Standard 34 safety rating of the first component.
+    #[must_use]
+    pub fn ashrae34(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Ashrae34)
+    }
 }
 
 impl From<Pure> for Substance {
@@ -678,6 +691,29 @@ mod tests {
 
         // When
         let res = sut.smiles();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("A1"))]
+    #[case(IncompPure::Water, Some("A1"))]
+    #[case(Pure::R32, Some("A2"))]
+    // CoolProp returns ASHRAE Standard 34 safety rating of the first component
+    #[case(PredefinedMix::R444A, Some("A2"))]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp returns ASHRAE Standard 34 safety rating of the first component
+        Some("A1")
+    )]
+    fn ashrae34(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.ashrae34();
 
         // Then
         assert_eq!(res.as_deref(), expected);
