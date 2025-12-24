@@ -413,6 +413,14 @@ impl Substance {
     pub fn bibtex_eos(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::BibtexEos)
     }
+
+    /// Ideal gas heat capacity equation BibTeX key.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    #[must_use]
+    pub fn bibtex_ideal_gas_specific_heat(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::BibtexCp0)
+    }
 }
 
 impl From<Pure> for Substance {
@@ -786,6 +794,30 @@ mod tests {
 
         // When
         let res = sut.bibtex_eos();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::R13, Some("Platzer-BOOK-1990"))] // cspell: disable-line
+    #[case(IncompPure::Water, None)]
+    #[case(Pure::R32, None)]
+    #[case(PredefinedMix::R444A, None)]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::R22, 0.2), (Pure::R13, 0.8)]).unwrap(),
+        None
+    )]
+    fn bibtex_ideal_gas_specific_heat(
+        #[case] sut: impl Into<Substance>,
+        #[case] expected: Option<&str>,
+    ) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.bibtex_ideal_gas_specific_heat();
 
         // Then
         assert_eq!(res.as_deref(), expected);
