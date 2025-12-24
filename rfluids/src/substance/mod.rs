@@ -283,12 +283,29 @@ impl Substance {
     }
 
     /// Aliases.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`CustomMix`], `CoolProp` returns aliases of the primary component.
     #[must_use]
     pub fn aliases(&self) -> Vec<String> {
         let sep = config::read().list_punctuation;
         CoolProp::get_substance_param(self.composition(), SubstanceParam::Aliases)
             .map(|aliases| aliases.split(sep).map(|s| s.trim().to_string()).collect())
             .unwrap_or_default()
+    }
+
+    /// Name used in `REFPROP`.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
+    /// `REFPROP` name of the primary component.
+    #[must_use]
+    pub fn refprop_name(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.composition(), SubstanceParam::RefpropName)
     }
 }
 
@@ -448,7 +465,7 @@ mod tests {
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), Vec::new())]
     #[case(
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
-        // Seems like it returns aliases for the main component
+        // CoolProp returns aliases for the primary component
         vec!["water", "WATER", "H2O", "h2o", "R718"]
     )]
     fn aliases(#[case] sut: impl Into<Substance>, #[case] expected: Vec<&str>) {
@@ -460,5 +477,27 @@ mod tests {
 
         // Then
         assert_eq!(res, expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("WATER"))]
+    #[case(IncompPure::Water, Some("WATER"))]
+    // CoolProp returns REFPROP name of the primary component
+    #[case(PredefinedMix::R444A, Some("R32"))]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp returns REFPROP name of the primary component
+        Some("WATER")
+    )]
+    fn refprop_name(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.refprop_name();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
     }
 }
