@@ -286,7 +286,7 @@ impl Substance {
     ///
     /// # Notes
     ///
-    /// Curiously, for [`CustomMix`], `CoolProp` returns aliases of the primary component.
+    /// Curiously, for [`CustomMix`], `CoolProp` returns aliases of the first component.
     #[must_use]
     pub fn aliases(&self) -> Vec<String> {
         let sep = config::read().list_punctuation;
@@ -302,10 +302,23 @@ impl Substance {
     /// # Notes
     ///
     /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
-    /// `REFPROP` name of the primary component.
+    /// `REFPROP` name of the first component.
     #[must_use]
     pub fn refprop_name(&self) -> Option<String> {
         CoolProp::get_substance_param(self.component_names(), SubstanceParam::RefpropName)
+    }
+
+    /// Chemical Abstracts Service (CAS) registry number.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
+    /// CAS number of the first component.
+    #[must_use]
+    pub fn cas(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.component_names(), SubstanceParam::Cas)
     }
 }
 
@@ -465,7 +478,7 @@ mod tests {
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), Vec::new())]
     #[case(
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
-        // CoolProp returns aliases for the primary component
+        // CoolProp returns aliases of the first component
         vec!["water", "WATER", "H2O", "h2o", "R718"]
     )]
     fn aliases(#[case] sut: impl Into<Substance>, #[case] expected: Vec<&str>) {
@@ -482,12 +495,12 @@ mod tests {
     #[rstest]
     #[case(Pure::Water, Some("WATER"))]
     #[case(IncompPure::Water, Some("WATER"))]
-    // CoolProp returns REFPROP name of the primary component
+    // CoolProp returns REFPROP name of the first component
     #[case(PredefinedMix::R444A, Some("R32"))]
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
     #[case(
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
-        // CoolProp returns REFPROP name of the primary component
+        // CoolProp returns REFPROP name of the first component
         Some("WATER")
     )]
     fn refprop_name(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
@@ -496,6 +509,29 @@ mod tests {
 
         // When
         let res = sut.refprop_name();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("7732-18-5"))]
+    #[case(IncompPure::Water, Some("7732-18-5"))]
+    #[case(Pure::R32, Some("75-10-5"))]
+    // CoolProp returns CAS number of the first component
+    #[case(PredefinedMix::R444A, Some("75-10-5"))]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp returns CAS number of the first component
+        Some("7732-18-5")
+    )]
+    fn cas(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.cas();
 
         // Then
         assert_eq!(res.as_deref(), expected);
