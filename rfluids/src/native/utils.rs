@@ -132,9 +132,12 @@ impl CoolProp {
         };
         let param = CString::new(param).unwrap();
         let mut res = StringBuffer::with_capacity(capacity);
-        let lock = COOLPROP.lock().unwrap();
         let status = unsafe {
-            lock.get_global_param_string(param.as_ptr(), res.as_mut_ptr(), res.capacity())
+            COOLPROP.lock().unwrap().get_global_param_string(
+                param.as_ptr(),
+                res.as_mut_ptr(),
+                res.capacity(),
+            )
         };
         let res: String = res.into();
         if status != 1 || res.trim().is_empty() { None } else { Some(res) }
@@ -209,9 +212,8 @@ impl CoolProp {
         let composition_id = CString::new(composition_id).unwrap();
         let param = CString::new(param).unwrap();
         let mut res = StringBuffer::with_capacity(capacity);
-        let lock = COOLPROP.lock().unwrap();
         let status = unsafe {
-            lock.get_fluid_param_string(
+            COOLPROP.lock().unwrap().get_fluid_param_string(
                 composition_id.as_ptr(),
                 param.as_ptr(),
                 res.as_mut_ptr(),
