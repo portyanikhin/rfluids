@@ -321,7 +321,7 @@ impl Substance {
         CoolProp::get_substance_param(self.component_names(), SubstanceParam::Cas)
     }
 
-    /// International Chemical Identifier.
+    /// International Chemical Identifier (InChI).
     ///
     /// Returns [`None`] if not available for this substance.
     ///
@@ -333,6 +333,20 @@ impl Substance {
     #[must_use]
     pub fn inchi(&self) -> Option<String> {
         CoolProp::get_substance_param(self.component_names(), SubstanceParam::Inchi)
+    }
+
+    /// Hashed version of the International Chemical Identifier (InChIKey).
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
+    /// InChIKey of the first component.
+    #[allow(clippy::doc_markdown)]
+    #[must_use]
+    pub fn inchi_key(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.component_names(), SubstanceParam::InchiKey)
     }
 }
 
@@ -569,6 +583,29 @@ mod tests {
 
         // When
         let res = sut.inchi();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("XLYOFNOQVPJJNP-UHFFFAOYSA-N"))] // cspell: disable-line
+    #[case(IncompPure::Water, Some("XLYOFNOQVPJJNP-UHFFFAOYSA-N"))] // cspell: disable-line
+    #[case(Pure::R32, Some("RWRIWBAIICGTTQ-UHFFFAOYSA-N"))] // cspell: disable-line
+    // CoolProp returns InChI of the first component
+    #[case(PredefinedMix::R444A, Some("RWRIWBAIICGTTQ-UHFFFAOYSA-N"))] // cspell: disable-line
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp returns InChI of the first component
+        Some("XLYOFNOQVPJJNP-UHFFFAOYSA-N") // cspell: disable-line
+    )]
+    fn inchi_key(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.inchi_key();
 
         // Then
         assert_eq!(res.as_deref(), expected);
