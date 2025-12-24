@@ -282,6 +282,12 @@ impl Substance {
         }
     }
 
+    /// Returns `true` if the substance is pure or pseudo-pure.
+    #[must_use]
+    pub fn is_pure(&self) -> bool {
+        matches!(self, Substance::Pure(_) | Substance::IncompPure(_))
+    }
+
     /// Aliases.
     ///
     /// # Notes
@@ -619,6 +625,32 @@ mod tests {
 
         // When
         let res = sut.composition_id();
+
+        // Then
+        assert_eq!(res, expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, true)]
+    #[case(IncompPure::Water, true)]
+    #[case(PredefinedMix::R444A, false)]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), false)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        false
+    )]
+    #[case(
+        CustomMix::mole_based(
+            [(Pure::Methanol, 0.1), (Pure::Ethanol, 0.1), (Pure::Water, 0.8)]
+        ).unwrap(),
+        false
+    )]
+    fn is_pure(#[case] sut: impl Into<Substance>, #[case] expected: bool) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.is_pure();
 
         // Then
         assert_eq!(res, expected);
