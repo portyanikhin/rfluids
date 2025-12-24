@@ -447,6 +447,19 @@ impl Substance {
     pub fn bibtex_melting_line(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::BibtexMeltingLine)
     }
+
+    /// Surface tension equation BibTeX key.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
+    #[must_use]
+    pub fn bibtex_surface_tension(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::BibtexSurfaceTension)
+    }
 }
 
 impl From<Pure> for Substance {
@@ -889,6 +902,29 @@ mod tests {
 
         // When
         let res = sut.bibtex_melting_line();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("Mulero-JPCRD-2012"))] // cspell: disable-line
+    #[case(IncompPure::Water, Some("Mulero-JPCRD-2012"))] // cspell: disable-line
+    #[case(Pure::R32, Some("Mulero-JPCRD-2012"))] // cspell: disable-line
+    // CoolProp reflects the first component only
+    #[case(PredefinedMix::R444A, Some("Mulero-JPCRD-2012"))] // cspell: disable-line
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp reflects the first component only
+        Some("Mulero-JPCRD-2012") // cspell: disable-line
+    )]
+    fn bibtex_surface_tension(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.bibtex_surface_tension();
 
         // Then
         assert_eq!(res.as_deref(), expected);
