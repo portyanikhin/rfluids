@@ -123,9 +123,9 @@ pub enum SubstanceParam {
     #[strum(to_string = "formula")]
     Formula,
 
-    /// JSON representation of properties and parameters as stored in `CoolProp`.
-    #[strum(to_string = "JSON")]
-    Json,
+    /// JSON representation of metadata as stored in `CoolProp`.
+    #[strum(to_string = "JSON", serialize = "Metadata")]
+    Metadata,
 }
 
 #[cfg(test)]
@@ -155,7 +155,7 @@ mod tests {
     #[case(BibtexSurfaceTension, "BibTeX-SURFACE_TENSION")]
     #[case(BibtexViscosity, "BibTeX-VISCOSITY")]
     #[case(Formula, "formula")]
-    #[case(Json, "JSON")]
+    #[case(Metadata, "JSON")]
     fn as_str(#[case] sut: SubstanceParam, #[case] expected: &str) {
         // When
         let str = sut.as_ref();
@@ -193,7 +193,7 @@ mod tests {
     )]
     #[case(vec!["BibTeX-VISCOSITY", "BibTeX_VISCOSITY", "BibtexViscosity"], BibtexViscosity)]
     #[case(vec!["formula", "Formula"], Formula)]
-    #[case(vec!["JSON", "Json"], Json)]
+    #[case(vec!["JSON", "Metadata"], Metadata)]
     fn from_valid_str<'a>(#[case] valid: Vec<&'a str>, #[case] expected: SubstanceParam) {
         for s in valid {
             // When
