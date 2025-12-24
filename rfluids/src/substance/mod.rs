@@ -434,6 +434,19 @@ impl Substance {
     pub fn bibtex_conductivity(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::BibtexConductivity)
     }
+
+    /// Melting line equation BibTeX key.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
+    #[must_use]
+    pub fn bibtex_melting_line(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::BibtexMeltingLine)
+    }
 }
 
 impl From<Pure> for Substance {
@@ -854,6 +867,28 @@ mod tests {
 
         // When
         let res = sut.bibtex_conductivity();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("IAPWS-Melting-2011"))]
+    #[case(IncompPure::Water, Some("IAPWS-Melting-2011"))]
+    #[case(Pure::R32, None)]
+    #[case(PredefinedMix::R444A, None)]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp reflects the first component only
+        Some("IAPWS-Melting-2011")
+    )]
+    fn bibtex_melting_line(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.bibtex_melting_line();
 
         // Then
         assert_eq!(res.as_deref(), expected);
