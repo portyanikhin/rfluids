@@ -286,7 +286,7 @@ impl Substance {
     ///
     /// # Notes
     ///
-    /// Curiously, for [`CustomMix`], `CoolProp` returns aliases of the first component.
+    /// Curiously, for [`CustomMix`], `CoolProp` reflects the first component only.
     #[must_use]
     pub fn aliases(&self) -> Vec<String> {
         let sep = config::read().list_punctuation;
@@ -301,8 +301,8 @@ impl Substance {
     ///
     /// # Notes
     ///
-    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
-    /// `REFPROP` name of the first component.
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
     #[must_use]
     pub fn refprop_name(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::RefpropName)
@@ -314,8 +314,8 @@ impl Substance {
     ///
     /// # Notes
     ///
-    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
-    /// CAS number of the first component.
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
     #[must_use]
     pub fn cas(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Cas)
@@ -327,8 +327,8 @@ impl Substance {
     ///
     /// # Notes
     ///
-    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
-    /// InChI of the first component.
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
     #[allow(clippy::doc_markdown)]
     #[must_use]
     pub fn inchi(&self) -> Option<String> {
@@ -341,8 +341,8 @@ impl Substance {
     ///
     /// # Notes
     ///
-    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
-    /// InChIKey of the first component.
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
     #[allow(clippy::doc_markdown)]
     #[must_use]
     pub fn inchi_key(&self) -> Option<String> {
@@ -355,8 +355,8 @@ impl Substance {
     ///
     /// # Notes
     ///
-    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
-    /// [`ChemSpider`](https://www.chemspider.com/) identifier of the first component.
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
     #[must_use]
     pub fn chemspider_id(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::ChemSpiderId)
@@ -368,8 +368,8 @@ impl Substance {
     ///
     /// # Notes
     ///
-    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
-    /// SMILES string of the first component.
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
     #[must_use]
     pub fn smiles(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Smiles)
@@ -381,8 +381,8 @@ impl Substance {
     ///
     /// # Notes
     ///
-    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
-    /// ASHRAE Standard 34 safety rating of the first component.
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
     #[must_use]
     pub fn ashrae34(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Ashrae34)
@@ -545,7 +545,7 @@ mod tests {
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), Vec::new())]
     #[case(
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
-        // CoolProp returns aliases of the first component
+        // CoolProp reflects the first component only
         vec!["water", "WATER", "H2O", "h2o", "R718"]
     )]
     fn aliases(#[case] sut: impl Into<Substance>, #[case] expected: Vec<&str>) {
@@ -562,12 +562,12 @@ mod tests {
     #[rstest]
     #[case(Pure::Water, Some("WATER"))]
     #[case(IncompPure::Water, Some("WATER"))]
-    // CoolProp returns REFPROP name of the first component
+    // CoolProp reflects the first component only
     #[case(PredefinedMix::R444A, Some("R32"))]
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
     #[case(
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
-        // CoolProp returns REFPROP name of the first component
+        // CoolProp reflects the first component only
         Some("WATER")
     )]
     fn refprop_name(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
@@ -585,12 +585,12 @@ mod tests {
     #[case(Pure::Water, Some("7732-18-5"))]
     #[case(IncompPure::Water, Some("7732-18-5"))]
     #[case(Pure::R32, Some("75-10-5"))]
-    // CoolProp returns CAS number of the first component
+    // CoolProp reflects the first component only
     #[case(PredefinedMix::R444A, Some("75-10-5"))]
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
     #[case(
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
-        // CoolProp returns CAS number of the first component
+        // CoolProp reflects the first component only
         Some("7732-18-5")
     )]
     fn cas(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
@@ -608,12 +608,12 @@ mod tests {
     #[case(Pure::Water, Some("InChI=1S/H2O/h1H2"))]
     #[case(IncompPure::Water, Some("InChI=1S/H2O/h1H2"))]
     #[case(Pure::R32, Some("InChI=1S/CH2F2/c2-1-3/h1H2"))]
-    // CoolProp returns InChI of the first component
+    // CoolProp reflects the first component only
     #[case(PredefinedMix::R444A, Some("InChI=1S/CH2F2/c2-1-3/h1H2"))]
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
     #[case(
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
-        // CoolProp returns InChI of the first component
+        // CoolProp reflects the first component only
         Some("InChI=1S/H2O/h1H2")
     )]
     fn inchi(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
@@ -631,12 +631,12 @@ mod tests {
     #[case(Pure::Water, Some("XLYOFNOQVPJJNP-UHFFFAOYSA-N"))] // cspell: disable-line
     #[case(IncompPure::Water, Some("XLYOFNOQVPJJNP-UHFFFAOYSA-N"))] // cspell: disable-line
     #[case(Pure::R32, Some("RWRIWBAIICGTTQ-UHFFFAOYSA-N"))] // cspell: disable-line
-    // CoolProp returns InChIKey of the first component
+    // CoolProp reflects the first component only
     #[case(PredefinedMix::R444A, Some("RWRIWBAIICGTTQ-UHFFFAOYSA-N"))] // cspell: disable-line
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
     #[case(
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
-        // CoolProp returns InChIKey of the first component
+        // CoolProp reflects the first component only
         Some("XLYOFNOQVPJJNP-UHFFFAOYSA-N") // cspell: disable-line
     )]
     fn inchi_key(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
@@ -654,12 +654,12 @@ mod tests {
     #[case(Pure::Water, Some("937"))]
     #[case(IncompPure::Water, Some("937"))]
     #[case(Pure::R32, Some("6105"))]
-    // CoolProp returns ChemSpider ID of the first component
+    // CoolProp reflects the first component only
     #[case(PredefinedMix::R444A, Some("6105"))]
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
     #[case(
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
-        // CoolProp returns ChemSpider ID of the first component
+        // CoolProp reflects the first component only
         Some("937")
     )]
     fn chemspider_id(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
@@ -677,12 +677,12 @@ mod tests {
     #[case(Pure::Water, Some("O"))]
     #[case(IncompPure::Water, Some("O"))]
     #[case(Pure::R32, Some("C(F)F"))]
-    // CoolProp returns SMILES string of the first component
+    // CoolProp reflects the first component only
     #[case(PredefinedMix::R444A, Some("C(F)F"))]
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
     #[case(
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
-        // CoolProp returns SMILES string of the first component
+        // CoolProp reflects the first component only
         Some("O")
     )]
     fn smiles(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
@@ -700,12 +700,12 @@ mod tests {
     #[case(Pure::Water, Some("A1"))]
     #[case(IncompPure::Water, Some("A1"))]
     #[case(Pure::R32, Some("A2"))]
-    // CoolProp returns ASHRAE Standard 34 safety rating of the first component
+    // CoolProp reflects the first component only
     #[case(PredefinedMix::R444A, Some("A2"))]
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
     #[case(
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
-        // CoolProp returns ASHRAE Standard 34 safety rating of the first component
+        // CoolProp reflects the first component only
         Some("A1")
     )]
     fn ashrae34(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
