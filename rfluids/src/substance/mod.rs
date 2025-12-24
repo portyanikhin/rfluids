@@ -242,23 +242,23 @@ impl Substance {
     /// use rfluids::prelude::*;
     ///
     /// let water: Substance = Pure::Water.into();
-    /// assert_eq!(water.composition(), "Water");
+    /// assert_eq!(water.composition_id(), "Water");
     ///
     /// let incomp_water: Substance = IncompPure::Water.into();
-    /// assert_eq!(incomp_water.composition(), "Water");
+    /// assert_eq!(incomp_water.composition_id(), "Water");
     ///
     /// let r444a: Substance = PredefinedMix::R444A.into();
-    /// assert_eq!(r444a.composition(), "R444A.mix");
+    /// assert_eq!(r444a.composition_id(), "R444A.mix");
     ///
     /// let propylene_glycol: Substance = BinaryMixKind::MPG.with_fraction(0.4)?.into();
-    /// assert_eq!(propylene_glycol.composition(), "MPG");
+    /// assert_eq!(propylene_glycol.composition_id(), "MPG");
     ///
     /// let custom_mix: Substance =
     ///     CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)])?.into();
     ///
-    /// // Components are sorted first by fraction in descending order,
+    /// // Components are sorted first by mole-fraction in descending order,
     /// // then by name in alphabetical order
-    /// assert_eq!(custom_mix.composition(), "Water&Ethanol");
+    /// assert_eq!(custom_mix.composition_id(), "Water&Ethanol");
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     #[must_use]
