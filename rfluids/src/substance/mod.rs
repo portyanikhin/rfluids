@@ -159,9 +159,9 @@ impl Substance {
     ///
     /// # Notes
     ///
-    /// - This name is only partially compatible with the `CoolProp` high-level API
-    ///   ([`CoolProp`](crate::native::CoolProp)): it does not include the backend prefix, which is
-    ///   required for [`IncompPure`] and [`BinaryMix`]. For API-compatible names, use
+    /// - This name is only partially compatible with the `CoolProp` high-level API ([`CoolProp`]):
+    ///   it does not include the backend prefix, which is required for [`IncompPure`] and
+    ///   [`BinaryMix`]. For API-compatible names, use
     ///   [`SubstanceWithBackend::name`](crate::substance::SubstanceWithBackend::name) instead.
     /// - The name for [`CustomMix`] is constructed based on mole fractions _(i.e., mass fractions
     ///   are converted to mole-based internally)_. Components in [`CustomMix`] are sorted first by
