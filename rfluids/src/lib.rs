@@ -227,7 +227,8 @@
     clippy::cast_sign_loss,
     clippy::float_cmp,
     clippy::too_many_lines,
-    clippy::missing_panics_doc
+    clippy::missing_panics_doc,
+    clippy::large_stack_arrays
 )]
 
 pub mod config;
