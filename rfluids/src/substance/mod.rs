@@ -320,6 +320,20 @@ impl Substance {
     pub fn cas(&self) -> Option<String> {
         CoolProp::get_substance_param(self.component_names(), SubstanceParam::Cas)
     }
+
+    /// International Chemical Identifier.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
+    /// InChI of the first component.
+    #[allow(clippy::doc_markdown)]
+    #[must_use]
+    pub fn inchi(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.component_names(), SubstanceParam::Inchi)
+    }
 }
 
 impl From<Pure> for Substance {
@@ -532,6 +546,29 @@ mod tests {
 
         // When
         let res = sut.cas();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("InChI=1S/H2O/h1H2"))]
+    #[case(IncompPure::Water, Some("InChI=1S/H2O/h1H2"))]
+    #[case(Pure::R32, Some("InChI=1S/CH2F2/c2-1-3/h1H2"))]
+    // CoolProp returns InChI of the first component
+    #[case(PredefinedMix::R444A, Some("InChI=1S/CH2F2/c2-1-3/h1H2"))]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp returns InChI of the first component
+        Some("InChI=1S/H2O/h1H2")
+    )]
+    fn inchi(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.inchi();
 
         // Then
         assert_eq!(res.as_deref(), expected);
