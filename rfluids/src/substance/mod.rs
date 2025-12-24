@@ -479,6 +479,19 @@ impl Substance {
     pub fn bibtex_viscosity(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::BibtexViscosity)
     }
+
+    /// Chemical formula in LaTeX form.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
+    #[must_use]
+    pub fn formula(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Formula)
+    }
 }
 
 impl From<Pure> for Substance {
@@ -993,6 +1006,29 @@ mod tests {
 
         // When
         let res = sut.bibtex_viscosity();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("H_{2}O_{1}"))]
+    #[case(IncompPure::Water, Some("H_{2}O_{1}"))]
+    #[case(Pure::R32, Some("C_{1}F_{2}H_{2}"))]
+    // CoolProp reflects the first component only
+    #[case(PredefinedMix::R444A, Some("C_{1}F_{2}H_{2}"))]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp reflects the first component only
+        Some("H_{2}O_{1}")
+    )]
+    fn formula(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.formula();
 
         // Then
         assert_eq!(res.as_deref(), expected);
