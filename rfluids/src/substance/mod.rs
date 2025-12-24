@@ -361,6 +361,19 @@ impl Substance {
     pub fn chemspider_id(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::ChemSpiderId)
     }
+
+    /// Simplified Molecular Input Line Entry System (SMILES) string.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
+    /// SMILES string of the first component.
+    #[must_use]
+    pub fn smiles(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Smiles)
+    }
 }
 
 impl From<Pure> for Substance {
@@ -642,6 +655,29 @@ mod tests {
 
         // When
         let res = sut.chemspider_id();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("O"))]
+    #[case(IncompPure::Water, Some("O"))]
+    #[case(Pure::R32, Some("C(F)F"))]
+    // CoolProp returns SMILES string of the first component
+    #[case(PredefinedMix::R444A, Some("C(F)F"))]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp returns SMILES string of the first component
+        Some("O")
+    )]
+    fn smiles(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.smiles();
 
         // Then
         assert_eq!(res.as_deref(), expected);
