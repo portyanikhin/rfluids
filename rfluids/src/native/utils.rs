@@ -146,9 +146,9 @@ impl CoolProp {
     ///
     /// # Arguments
     ///
-    /// - `component_names` -- names of the substance components separated by the `&` symbol
-    ///   or just a single substance name _(raw [`&str`](str) or
-    ///   [`Substance::component_names`](crate::substance::Substance::component_names))_
+    /// - `composition_id` -- names of the substance components separated by the `&` symbol or just
+    ///   a single substance name _(raw [`&str`](str) or
+    ///   [`Substance::composition_id`](crate::substance::Substance::composition_id))_
     /// - `param` -- substance parameter key _(raw [`&str`](str) or
     ///   [`SubstanceParam`](crate::io::SubstanceParam))_
     ///
@@ -193,10 +193,10 @@ impl CoolProp {
     /// - [`SubstanceParam`](crate::io::SubstanceParam)
     #[must_use]
     pub fn get_substance_param(
-        component_names: impl AsRef<str>,
+        composition_id: impl AsRef<str>,
         param: impl AsRef<str>,
     ) -> Option<String> {
-        let component_names = component_names.as_ref().trim();
+        let composition_id = composition_id.as_ref().trim();
         let param = param.as_ref().trim();
         let capacity = match param {
             "pure" => 6,
@@ -206,13 +206,13 @@ impl CoolProp {
             "JSON" => 500_000,
             _ => 500,
         };
-        let component_names = CString::new(component_names).unwrap();
+        let composition_id = CString::new(composition_id).unwrap();
         let param = CString::new(param).unwrap();
         let mut res = StringBuffer::with_capacity(capacity);
         let lock = COOLPROP.lock().unwrap();
         let status = unsafe {
             lock.get_fluid_param_string(
-                component_names.as_ptr(),
+                composition_id.as_ptr(),
                 param.as_ptr(),
                 res.as_mut_ptr(),
                 res.capacity(),

@@ -20,9 +20,9 @@ impl AbstractState {
     ///
     /// - `backend_name` -- name of the backend _(raw [`&str`](str) or
     ///   [`Backend::name`](crate::fluid::backend::Backend::name))_
-    /// - `component_names` -- names of the substance components separated by the `&` symbol or just
+    /// - `composition_id` -- names of the substance components separated by the `&` symbol or just
     ///   a single substance name _(raw [`&str`](str) or
-    ///   [`Substance::component_names`](crate::substance::Substance::component_names))_
+    ///   [`Substance::composition_id`](crate::substance::Substance::composition_id))_
     ///
     /// # Errors
     ///
@@ -66,15 +66,15 @@ impl AbstractState {
     /// - [`Substance`](crate::substance::Substance)
     pub fn new(
         backend_name: impl AsRef<str>,
-        component_names: impl AsRef<str>,
+        composition_id: impl AsRef<str>,
     ) -> Result<AbstractState> {
         let backend_name = CString::new(backend_name.as_ref().trim()).unwrap();
-        let component_names = CString::new(component_names.as_ref().trim()).unwrap();
+        let composition_id = CString::new(composition_id.as_ref().trim()).unwrap();
         let mut err = ErrorBuffer::default();
         let ptr = unsafe {
             COOLPROP.lock().unwrap().AbstractState_factory(
                 backend_name.as_ptr(),
-                component_names.as_ptr(),
+                composition_id.as_ptr(),
                 err.code_as_mut_ptr(),
                 err.message.as_mut_ptr(),
                 c_long::from(err.message.capacity()),

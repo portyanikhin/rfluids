@@ -262,7 +262,7 @@ impl Substance {
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     #[must_use]
-    pub fn component_names(&self) -> Cow<'static, str> {
+    pub fn composition_id(&self) -> Cow<'static, str> {
         match self {
             Substance::BinaryMix(binary_mix) => Cow::Borrowed(binary_mix.kind.into()),
             Substance::CustomMix(custom_mix) => {
@@ -290,7 +290,7 @@ impl Substance {
     #[must_use]
     pub fn aliases(&self) -> Vec<String> {
         let sep = config::read().list_punctuation;
-        CoolProp::get_substance_param(self.component_names(), SubstanceParam::Aliases)
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Aliases)
             .map(|aliases| aliases.split(sep).map(|s| s.trim().to_string()).collect())
             .unwrap_or_default()
     }
@@ -305,7 +305,7 @@ impl Substance {
     /// `REFPROP` name of the first component.
     #[must_use]
     pub fn refprop_name(&self) -> Option<String> {
-        CoolProp::get_substance_param(self.component_names(), SubstanceParam::RefpropName)
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::RefpropName)
     }
 
     /// Chemical Abstracts Service (CAS) registry number.
@@ -318,7 +318,7 @@ impl Substance {
     /// CAS number of the first component.
     #[must_use]
     pub fn cas(&self) -> Option<String> {
-        CoolProp::get_substance_param(self.component_names(), SubstanceParam::Cas)
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Cas)
     }
 
     /// International Chemical Identifier (InChI).
@@ -332,7 +332,7 @@ impl Substance {
     #[allow(clippy::doc_markdown)]
     #[must_use]
     pub fn inchi(&self) -> Option<String> {
-        CoolProp::get_substance_param(self.component_names(), SubstanceParam::Inchi)
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Inchi)
     }
 
     /// Hashed version of the International Chemical Identifier (InChIKey).
@@ -346,7 +346,7 @@ impl Substance {
     #[allow(clippy::doc_markdown)]
     #[must_use]
     pub fn inchi_key(&self) -> Option<String> {
-        CoolProp::get_substance_param(self.component_names(), SubstanceParam::InchiKey)
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::InchiKey)
     }
 }
 
@@ -488,12 +488,12 @@ mod tests {
         ).unwrap(),
         "Water&Ethanol&Methanol"
     )]
-    fn component_names(#[case] sut: impl Into<Substance>, #[case] expected: &str) {
+    fn composition_id(#[case] sut: impl Into<Substance>, #[case] expected: &str) {
         // Given
         let sut: Substance = sut.into();
 
         // When
-        let res = sut.component_names();
+        let res = sut.composition_id();
 
         // Then
         assert_eq!(res, expected);
