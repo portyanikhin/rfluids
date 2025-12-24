@@ -176,8 +176,7 @@ impl CoolProp {
     ///     - `VISCOSITY` -- viscosity equation reference
     /// - `"pure"` -- `"true"` if the substance is pure, `"false"` otherwise
     /// - `"formula"` -- chemical formula of the substance in LaTeX form _(if available)_
-    /// - `"JSON"` -- JSON representation of the substance properties and parameters as stored in
-    ///   `CoolProp`
+    /// - `"JSON"` -- JSON representation of the substance metadata as stored in `CoolProp`
     ///
     /// # Examples
     ///
@@ -486,7 +485,7 @@ mod tests {
     #[case(BibtexViscosity, true)]
     #[case(IsPure, true)]
     #[case(Formula, true)]
-    #[case(Json, true)]
+    #[case(Metadata, true)]
     #[case("name", true)]
     #[case("aliases", true)]
     #[case("REFPROP_name", true)]
