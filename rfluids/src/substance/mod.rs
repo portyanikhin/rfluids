@@ -421,6 +421,19 @@ impl Substance {
     pub fn bibtex_ideal_gas_specific_heat(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::BibtexCp0)
     }
+
+    /// Thermal conductivity equation BibTeX key.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
+    #[must_use]
+    pub fn bibtex_conductivity(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::BibtexConductivity)
+    }
 }
 
 impl From<Pure> for Substance {
@@ -818,6 +831,29 @@ mod tests {
 
         // When
         let res = sut.bibtex_ideal_gas_specific_heat();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("Huber-JPCRD-2012"))] // cspell: disable-line
+    #[case(IncompPure::Water, Some("Huber-JPCRD-2012"))] // cspell: disable-line
+    #[case(Pure::R32, Some("Huber-IECR-2003"))] // cspell: disable-line
+    // CoolProp reflects the first component only
+    #[case(PredefinedMix::R444A, Some("Huber-IECR-2003"))] // cspell: disable-line
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp reflects the first component only
+        Some("Huber-JPCRD-2012") // cspell: disable-line
+    )]
+    fn bibtex_conductivity(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.bibtex_conductivity();
 
         // Then
         assert_eq!(res.as_deref(), expected);
