@@ -400,6 +400,19 @@ impl Substance {
     pub fn two_d_png_url(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::TwoDPngUrl)
     }
+
+    /// Equation of state BibTeX key.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
+    #[must_use]
+    pub fn bibtex_eos(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::BibtexEos)
+    }
 }
 
 impl From<Pure> for Substance {
@@ -750,6 +763,29 @@ mod tests {
 
         // When
         let res = sut.two_d_png_url();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("Wagner-JPCRD-2002"))] // cspell: disable-line
+    #[case(IncompPure::Water, Some("Wagner-JPCRD-2002"))] // cspell: disable-line
+    #[case(Pure::R32, Some("TillnerRoth-JPCRD-1997"))] // cspell: disable-line
+    // CoolProp reflects the first component only
+    #[case(PredefinedMix::R444A, Some("TillnerRoth-JPCRD-1997"))] // cspell: disable-line
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp reflects the first component only
+        Some("Wagner-JPCRD-2002") // cspell: disable-line
+    )]
+    fn bibtex_eos(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.bibtex_eos();
 
         // Then
         assert_eq!(res.as_deref(), expected);
