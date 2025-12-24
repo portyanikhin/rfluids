@@ -460,6 +460,19 @@ impl Substance {
     pub fn bibtex_surface_tension(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::BibtexSurfaceTension)
     }
+
+    /// Viscosity equation BibTeX key.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
+    #[must_use]
+    pub fn bibtex_viscosity(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::BibtexViscosity)
+    }
 }
 
 impl From<Pure> for Substance {
@@ -925,6 +938,29 @@ mod tests {
 
         // When
         let res = sut.bibtex_surface_tension();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("Huber-JPCRD-2009"))] // cspell: disable-line
+    #[case(IncompPure::Water, Some("Huber-JPCRD-2009"))] // cspell: disable-line
+    #[case(Pure::R32, Some("Bell-PURDUE-2016-ETA"))]
+    // CoolProp reflects the first component only
+    #[case(PredefinedMix::R444A, Some("Bell-PURDUE-2016-ETA"))]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp reflects the first component only
+        Some("Huber-JPCRD-2009") // cspell: disable-line
+    )]
+    fn bibtex_viscosity(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.bibtex_viscosity();
 
         // Then
         assert_eq!(res.as_deref(), expected);
