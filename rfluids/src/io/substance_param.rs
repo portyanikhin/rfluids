@@ -123,7 +123,7 @@ pub enum SubstanceParam {
     #[strum(to_string = "formula")]
     Formula,
 
-    /// JSON representation of properties and parameters.
+    /// JSON representation of properties and parameters as stored in `CoolProp`.
     #[strum(to_string = "JSON")]
     Json,
 }
