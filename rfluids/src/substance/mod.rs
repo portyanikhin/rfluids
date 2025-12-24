@@ -262,7 +262,7 @@ impl Substance {
     /// # Ok::<(), rfluids::Error>(())
     /// ```
     #[must_use]
-    pub fn composition(&self) -> Cow<'static, str> {
+    pub fn component_names(&self) -> Cow<'static, str> {
         match self {
             Substance::BinaryMix(binary_mix) => Cow::Borrowed(binary_mix.kind.into()),
             Substance::CustomMix(custom_mix) => {
@@ -290,7 +290,7 @@ impl Substance {
     #[must_use]
     pub fn aliases(&self) -> Vec<String> {
         let sep = config::read().list_punctuation;
-        CoolProp::get_substance_param(self.composition(), SubstanceParam::Aliases)
+        CoolProp::get_substance_param(self.component_names(), SubstanceParam::Aliases)
             .map(|aliases| aliases.split(sep).map(|s| s.trim().to_string()).collect())
             .unwrap_or_default()
     }
@@ -305,7 +305,7 @@ impl Substance {
     /// `REFPROP` name of the primary component.
     #[must_use]
     pub fn refprop_name(&self) -> Option<String> {
-        CoolProp::get_substance_param(self.composition(), SubstanceParam::RefpropName)
+        CoolProp::get_substance_param(self.component_names(), SubstanceParam::RefpropName)
     }
 }
 
@@ -447,12 +447,12 @@ mod tests {
         ).unwrap(),
         "Water&Ethanol&Methanol"
     )]
-    fn composition(#[case] sut: impl Into<Substance>, #[case] expected: &str) {
+    fn component_names(#[case] sut: impl Into<Substance>, #[case] expected: &str) {
         // Given
         let sut: Substance = sut.into();
 
         // When
-        let res = sut.composition();
+        let res = sut.component_names();
 
         // Then
         assert_eq!(res, expected);
