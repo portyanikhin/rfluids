@@ -414,7 +414,7 @@ impl Substance {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::BibtexEos)
     }
 
-    /// Ideal gas heat capacity equation BibTeX key.
+    /// Ideal gas specific heat equation BibTeX key.
     ///
     /// Returns [`None`] if not available for this substance.
     #[must_use]

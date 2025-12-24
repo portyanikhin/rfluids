@@ -79,7 +79,7 @@ pub enum SubstanceParam {
     #[strum(to_string = "BibTeX-EOS", serialize = "BibTeX_EOS", serialize = "BibtexEos")]
     BibtexEos,
 
-    /// Ideal gas heat capacity equation BibTeX key.
+    /// Ideal gas specific heat equation BibTeX key.
     #[strum(to_string = "BibTeX-CP0", serialize = "BibTeX_CP0", serialize = "BibtexCp0")]
     BibtexCp0,
 

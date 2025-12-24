@@ -169,7 +169,7 @@ impl CoolProp {
     /// - `"2DPNG_URL"` -- URL to a `2D` molecular structure image
     /// - `"BibTeX-XXX"` -- BibTeX key, where `XXX` is one of the following:
     ///     - `EOS` -- equation of state reference
-    ///     - `CP0` -- ideal gas heat capacity equation reference
+    ///     - `CP0` -- ideal gas specific heat equation reference
     ///     - `CONDUCTIVITY` -- thermal conductivity equation reference
     ///     - `MELTING_LINE` -- melting line equation reference
     ///     - `SURFACE_TENSION` -- surface tension equation reference
