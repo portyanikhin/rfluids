@@ -348,6 +348,19 @@ impl Substance {
     pub fn inchi_key(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::InchiKey)
     }
+
+    /// [`ChemSpider`](https://www.chemspider.com/) identifier.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` returns
+    /// [`ChemSpider`](https://www.chemspider.com/) identifier of the first component.
+    #[must_use]
+    pub fn chemspider_id(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::ChemSpiderId)
+    }
 }
 
 impl From<Pure> for Substance {
@@ -592,12 +605,12 @@ mod tests {
     #[case(Pure::Water, Some("XLYOFNOQVPJJNP-UHFFFAOYSA-N"))] // cspell: disable-line
     #[case(IncompPure::Water, Some("XLYOFNOQVPJJNP-UHFFFAOYSA-N"))] // cspell: disable-line
     #[case(Pure::R32, Some("RWRIWBAIICGTTQ-UHFFFAOYSA-N"))] // cspell: disable-line
-    // CoolProp returns InChI of the first component
+    // CoolProp returns InChIKey of the first component
     #[case(PredefinedMix::R444A, Some("RWRIWBAIICGTTQ-UHFFFAOYSA-N"))] // cspell: disable-line
     #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
     #[case(
         CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
-        // CoolProp returns InChI of the first component
+        // CoolProp returns InChIKey of the first component
         Some("XLYOFNOQVPJJNP-UHFFFAOYSA-N") // cspell: disable-line
     )]
     fn inchi_key(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
@@ -606,6 +619,29 @@ mod tests {
 
         // When
         let res = sut.inchi_key();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("937"))]
+    #[case(IncompPure::Water, Some("937"))]
+    #[case(Pure::R32, Some("6105"))]
+    // CoolProp returns ChemSpider ID of the first component
+    #[case(PredefinedMix::R444A, Some("6105"))]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp returns ChemSpider ID of the first component
+        Some("937")
+    )]
+    fn chemspider_id(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.chemspider_id();
 
         // Then
         assert_eq!(res.as_deref(), expected);
