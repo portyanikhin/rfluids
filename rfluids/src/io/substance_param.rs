@@ -37,6 +37,10 @@ pub enum SubstanceParam {
     #[strum(to_string = "name")]
     Name,
 
+    /// `"true"` if is pure, `"false"` otherwise.
+    #[strum(to_string = "pure", serialize = "is_pure", serialize = "IsPure")]
+    IsPure,
+
     /// List of aliases _(comma-separated)_.
     #[strum(to_string = "aliases")]
     Aliases,
@@ -115,10 +119,6 @@ pub enum SubstanceParam {
     )]
     BibtexViscosity,
 
-    /// `"true"` if is pure, `"false"` otherwise.
-    #[strum(to_string = "pure", serialize = "is_pure", serialize = "IsPure")]
-    IsPure,
-
     /// Chemical formula in LaTeX form _(if available)_.
     #[strum(to_string = "formula")]
     Formula,
@@ -138,6 +138,7 @@ mod tests {
 
     #[rstest]
     #[case(Name, "name")]
+    #[case(IsPure, "pure")]
     #[case(Aliases, "aliases")]
     #[case(RefpropName, "REFPROP_name")]
     #[case(Cas, "CAS")]
@@ -153,7 +154,6 @@ mod tests {
     #[case(BibtexMeltingLine, "BibTeX-MELTING_LINE")]
     #[case(BibtexSurfaceTension, "BibTeX-SURFACE_TENSION")]
     #[case(BibtexViscosity, "BibTeX-VISCOSITY")]
-    #[case(IsPure, "pure")]
     #[case(Formula, "formula")]
     #[case(Json, "JSON")]
     fn as_str(#[case] sut: SubstanceParam, #[case] expected: &str) {
@@ -168,6 +168,7 @@ mod tests {
 
     #[rstest]
     #[case(vec!["name", "Name"], Name)]
+    #[case(vec!["pure", "is_pure", "IsPure"], IsPure)]
     #[case(vec!["aliases", "Aliases"], Aliases)]
     #[case(vec!["REFPROP_name", "RefpropName"], RefpropName)]
     #[case(vec!["CAS", "CAS_number", "Cas"], Cas)]
@@ -191,7 +192,6 @@ mod tests {
         BibtexSurfaceTension
     )]
     #[case(vec!["BibTeX-VISCOSITY", "BibTeX_VISCOSITY", "BibtexViscosity"], BibtexViscosity)]
-    #[case(vec!["pure", "is_pure", "IsPure"], IsPure)]
     #[case(vec!["formula", "Formula"], Formula)]
     #[case(vec!["JSON", "Json"], Json)]
     fn from_valid_str<'a>(#[case] valid: Vec<&'a str>, #[case] expected: SubstanceParam) {
