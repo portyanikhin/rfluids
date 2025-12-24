@@ -503,7 +503,7 @@ impl Substance {
     /// the first component only.
     #[must_use]
     pub fn json(&self) -> Option<String> {
-        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Json)
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Metadata)
     }
 }
 
