@@ -387,6 +387,19 @@ impl Substance {
     pub fn ashrae34(&self) -> Option<String> {
         CoolProp::get_substance_param(self.composition_id(), SubstanceParam::Ashrae34)
     }
+
+    /// URL to a `2D` molecular structure image.
+    ///
+    /// Returns [`None`] if not available for this substance.
+    ///
+    /// # Notes
+    ///
+    /// Curiously, for [`PredefinedMix`] and [`CustomMix`], `CoolProp` reflects
+    /// the first component only.
+    #[must_use]
+    pub fn two_d_png_url(&self) -> Option<String> {
+        CoolProp::get_substance_param(self.composition_id(), SubstanceParam::TwoDPngUrl)
+    }
 }
 
 impl From<Pure> for Substance {
@@ -714,6 +727,29 @@ mod tests {
 
         // When
         let res = sut.ashrae34();
+
+        // Then
+        assert_eq!(res.as_deref(), expected);
+    }
+
+    #[rstest]
+    #[case(Pure::Water, Some("http://www.chemspider.com/ImagesHandler.ashx?id=937"))]
+    #[case(IncompPure::Water, Some("http://www.chemspider.com/ImagesHandler.ashx?id=937"))]
+    #[case(Pure::R32, Some("http://www.chemspider.com/ImagesHandler.ashx?id=6105"))]
+    // CoolProp reflects the first component only
+    #[case(PredefinedMix::R444A, Some("http://www.chemspider.com/ImagesHandler.ashx?id=6105"))]
+    #[case(BinaryMixKind::MPG.with_fraction(0.4).unwrap(), None)]
+    #[case(
+        CustomMix::mole_based([(Pure::Ethanol, 0.2), (Pure::Water, 0.8)]).unwrap(),
+        // CoolProp reflects the first component only
+        Some("http://www.chemspider.com/ImagesHandler.ashx?id=937")
+    )]
+    fn two_d_png_url(#[case] sut: impl Into<Substance>, #[case] expected: Option<&str>) {
+        // Given
+        let sut: Substance = sut.into();
+
+        // When
+        let res = sut.two_d_png_url();
 
         // Then
         assert_eq!(res.as_deref(), expected);
