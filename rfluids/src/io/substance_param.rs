@@ -49,11 +49,13 @@ pub enum SubstanceParam {
     #[strum(to_string = "CAS", serialize = "CAS_number")]
     Cas,
 
-    /// International Chemical Identifier.
+    /// International Chemical Identifier (InChI).
+    #[allow(clippy::doc_markdown)]
     #[strum(to_string = "InChI", serialize = "INCHI_STRING")]
     Inchi,
 
-    /// Hashed version of the International Chemical Identifier.
+    /// Hashed version of the International Chemical Identifier (InChIKey).
+    #[allow(clippy::doc_markdown)]
     #[strum(to_string = "InChIKey", serialize = "INCHI_Key")]
     InchiKey,
 
