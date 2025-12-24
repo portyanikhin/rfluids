@@ -176,7 +176,8 @@ impl CoolProp {
     ///     - `VISCOSITY` -- viscosity equation reference
     /// - `"pure"` -- `"true"` if the substance is pure, `"false"` otherwise
     /// - `"formula"` -- chemical formula of the substance in LaTeX form _(if available)_
-    /// - `"JSON"` -- JSON representation of the substance properties and parameters
+    /// - `"JSON"` -- JSON representation of the substance properties and parameters as stored in
+    ///   `CoolProp`
     ///
     /// # Examples
     ///
