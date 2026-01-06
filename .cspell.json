@@ -1,0 +1,42 @@
+{
+  "allowCompoundWords": true,
+  "language": "en",
+  "import": [
+    "https://cdn.jsdelivr.net/npm/@cspell/dict-scientific-terms-us/cspell-ext.json"
+  ],
+  "dictionaries": ["rust", "rust-crates", "scientific-terms-us"],
+  "words": [
+    "2DPNG",
+    "CODATA",
+    "confy",
+    "coolprop",
+    "DCMAKE",
+    "DCOOLPROP",
+    "DONT",
+    "dtolnay",
+    "Dwarnings",
+    "dylib",
+    "FFFD",
+    "GERG",
+    "IAPWS",
+    "INCHI",
+    "INCHIKEY",
+    "INCOMP",
+    "Kwong",
+    "msrv",
+    "Portyanikhin",
+    "PROPSSI",
+    "repr",
+    "rfluids",
+    "rstest",
+    "rustc",
+    "SAFT",
+    "serde",
+    "taiki",
+    "trunc",
+    "TTSE",
+    "unspecify",
+    "Unsync",
+    "VTPR"
+  ]
+}
