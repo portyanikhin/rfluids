@@ -1,0 +1,30 @@
+{
+  "format_on_save": "on",
+  "tab_size": 4,
+  "lsp": {
+    "rust-analyzer": {
+      "initialization_options": {
+        "check": { "command": "clippy" },
+        "diagnostics": { "styleLints": { "enable": true } },
+        "rustfmt": { "extraArgs": ["+nightly"] }
+      }
+    }
+  },
+  "languages": {
+    "Rust": {
+      "formatter": "language_server"
+    },
+    "JSON": {
+      "formatter": "prettier",
+      "tab_size": 2
+    },
+    "JSONC": {
+      "formatter": "prettier",
+      "tab_size": 2
+    },
+    "YAML": {
+      "formatter": "prettier",
+      "tab_size": 2
+    }
+  }
+}
