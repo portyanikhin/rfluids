@@ -1,0 +1,112 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build",
+      "type": "process",
+      "group": "build",
+      "command": "cargo",
+      "args": ["build"],
+      "options": {
+        "shell": {
+          "executable": "sh",
+          "args": ["-c"]
+        },
+        "statusbar": {
+          "label": "$(tools) build"
+        }
+      }
+    },
+    {
+      "label": "Clean",
+      "type": "process",
+      "group": "build",
+      "command": "cargo",
+      "args": ["clean"],
+      "options": {
+        "shell": {
+          "executable": "sh",
+          "args": ["-c"]
+        },
+        "statusbar": {
+          "label": "$(trash) clean"
+        }
+      }
+    },
+    {
+      "label": "Formatting",
+      "type": "process",
+      "group": "build",
+      "command": "cargo",
+      "args": ["+nightly", "fmt"],
+      "options": {
+        "shell": {
+          "executable": "sh",
+          "args": ["-c"]
+        },
+        "statusbar": {
+          "label": "$(edit) fmt"
+        }
+      }
+    },
+    {
+      "label": "Build Docs",
+      "type": "process",
+      "group": "build",
+      "command": "cargo",
+      "args": ["doc", "--no-deps", "--open"],
+      "options": {
+        "shell": {
+          "executable": "sh",
+          "args": ["-c"]
+        },
+        "statusbar": {
+          "label": "$(book) doc"
+        }
+      }
+    },
+    {
+      "label": "Tests",
+      "type": "process",
+      "group": "test",
+      "command": "cargo",
+      "args": ["test"],
+      "options": {
+        "shell": {
+          "executable": "sh",
+          "args": ["-c"]
+        },
+        "statusbar": {
+          "label": "$(run-all) test"
+        }
+      }
+    },
+    {
+      "label": "Coverage",
+      "type": "process",
+      "group": "test",
+      "command": "cargo",
+      "args": [
+        "llvm-cov",
+        "--open",
+        "--tests",
+        "--verbose",
+        "--color",
+        "always",
+        "--show-missing-lines",
+        "--show-instantiations",
+        "--ignore-filename-regex",
+        "_generated\\.rs$|declare"
+      ],
+      "options": {
+        "shell": {
+          "executable": "sh",
+          "args": ["-c"]
+        },
+        "statusbar": {
+          "label": "$(workspace-trusted) cov"
+        }
+      }
+    }
+  ]
+}
