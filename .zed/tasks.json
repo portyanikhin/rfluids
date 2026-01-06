@@ -1,0 +1,59 @@
+[
+  {
+    "label": "Build",
+    "command": "cargo",
+    "args": ["build"],
+    "shell": {
+      "program": "sh"
+    }
+  },
+  {
+    "label": "Clean",
+    "command": "cargo",
+    "args": ["clean"],
+    "shell": {
+      "program": "sh"
+    }
+  },
+  {
+    "label": "Formatting",
+    "command": "cargo",
+    "args": ["+nightly", "fmt"],
+    "shell": {
+      "program": "sh"
+    }
+  },
+  {
+    "label": "Build Docs",
+    "command": "cargo",
+    "args": ["doc", "--no-deps", "--open"],
+    "shell": {
+      "program": "sh"
+    }
+  },
+  {
+    "label": "Tests",
+    "command": "cargo",
+    "args": ["test"],
+    "shell": {
+      "program": "sh"
+    }
+  },
+  {
+    "label": "Coverage",
+    "command": "cargo",
+    "args": [
+      "llvm-cov",
+      "--open",
+      "--tests",
+      "--verbose",
+      "--color always",
+      "--show-missing-lines",
+      "--show-instantiations",
+      "--ignore-filename-regex \"_generated\\.rs$|declare\""
+    ],
+    "shell": {
+      "program": "sh"
+    }
+  }
+]
