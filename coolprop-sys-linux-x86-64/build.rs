@@ -1,11 +1,13 @@
 use std::{
     env, fs,
+    os::unix,
     path::{Path, PathBuf},
 };
 
 const LIB_PREFIX: &str = "lib";
 const LIB_NAME: &str = "CoolProp";
 const LIB_EXTENSION: &str = ".so";
+const LIB_SONAME: &str = "libCoolProp.so.7";
 
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
@@ -39,5 +41,13 @@ fn setup_lib(src_dir: &Path, target_dir: &Path) {
     let target_path = target_dir.join(&file_name);
     fs::copy(&src_path, &target_path)
         .expect("Unable to copy CoolProp library to the target directory!");
+    // The library's ELF SONAME is "libCoolProp.so.7", so the runtime linker
+    // looks for that filename rather than "libCoolProp.so". Create a symlink
+    // so it can be found via the rpath set above.
+    let soname_path = target_dir.join(LIB_SONAME);
+    if !soname_path.exists() {
+        unix::fs::symlink(&target_path, &soname_path)
+            .expect("Unable to create SONAME symlink for CoolProp library!");
+    }
     println!("cargo:rustc-link-lib=dylib={}", LIB_NAME);
 }
