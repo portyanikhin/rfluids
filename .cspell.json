@@ -1,9 +1,7 @@
 {
   "allowCompoundWords": true,
   "language": "en",
-  "import": [
-    "https://cdn.jsdelivr.net/npm/@cspell/dict-scientific-terms-us/cspell-ext.json"
-  ],
+  "import": ["https://cdn.jsdelivr.net/npm/@cspell/dict-scientific-terms-us/cspell-ext.json"],
   "dictionaries": ["rust", "rust-crates", "scientific-terms-us"],
   "words": [
     "2DPNG",
@@ -32,6 +30,7 @@
     "rustc",
     "SAFT",
     "serde",
+    "SONAME",
     "taiki",
     "trunc",
     "TTSE",
