@@ -18,7 +18,7 @@ serde = ["dep:serde"]
 
 [dependencies]
 bon.workspace = true
-coolprop-sys = { path = "../coolprop-sys", version = "7.2.0" }
+coolprop-sys = { path = "../coolprop-sys", version = "7.2.1" }
 serde = { workspace = true, optional = true }
 strum.workspace = true
 strum_macros.workspace = true
