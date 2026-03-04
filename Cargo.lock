@@ -105,7 +105,7 @@ dependencies = [
 
 [[package]]
 name = "coolprop-sys"
-version = "7.2.0"
+version = "7.2.1"
 dependencies = [
  "bindgen",
  "coolprop-sys-linux-x86-64",
@@ -118,23 +118,23 @@ dependencies = [
 
 [[package]]
 name = "coolprop-sys-linux-x86-64"
-version = "7.2.0"
+version = "7.2.1"
 
 [[package]]
 name = "coolprop-sys-macos-aarch64"
-version = "7.2.0"
+version = "7.2.1"
 
 [[package]]
 name = "coolprop-sys-macos-x86-64"
-version = "7.2.0"
+version = "7.2.1"
 
 [[package]]
 name = "coolprop-sys-windows-aarch64"
-version = "7.2.0"
+version = "7.2.1"
 
 [[package]]
 name = "coolprop-sys-windows-x86-64"
-version = "7.2.0"
+version = "7.2.1"
 
 [[package]]
 name = "crossbeam-deque"
