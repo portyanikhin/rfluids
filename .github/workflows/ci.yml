@@ -133,7 +133,7 @@ jobs:
       - name: Generate coverage report
         run: cargo llvm-cov --tests --all-features --verbose --codecov --output-path codecov.json --ignore-filename-regex "_generated\.rs$|declare"
       - name: Upload coverage report to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: codecov.json
