@@ -1,0 +1,6 @@
+* text=auto eol=lf
+
+*.dll binary
+*.dylib binary
+*.so binary
+*.lib binary
