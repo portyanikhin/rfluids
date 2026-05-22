@@ -27,18 +27,18 @@ pub enum CoolPropError {
     Native(String),
 
     /// Non-finite result returned by `CoolProp` without an error message.
-    #[error("CoolProp returned a non-finite output without an error message!")]
+    #[error("CoolProp returned a non-finite output without an error message")]
     NonFiniteOutput,
 
     /// Non-finite keyed output returned by `CoolProp` without an error message.
-    #[error("CoolProp returned a non-finite output for key `{key}` without an error message!")]
+    #[error("CoolProp returned a non-finite output for key `{key}` without an error message")]
     NonFiniteKeyedOutput {
         /// Requested output key.
         key: u8,
     },
 
     /// Input string cannot be represented as a C string because it contains an interior NUL byte.
-    #[error("Input `{arg}` contains an interior NUL byte at byte position {pos}!")]
+    #[error("input `{arg}` contains an interior NUL byte at byte position {pos}")]
     InteriorNul {
         /// Name of the invalid input argument.
         arg: &'static str,

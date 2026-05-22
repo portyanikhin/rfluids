@@ -257,7 +257,7 @@ pub struct BinaryMix {
 #[derive(Clone, Debug, PartialEq, thiserror::Error)]
 pub enum BinaryMixError {
     /// Specified fraction is invalid.
-    #[error("Specified fraction `{specified:?}` is out of possible range [{min:.1}; {max:.1}]!")]
+    #[error("specified fraction `{specified:?}` is out of possible range [{min:.1}; {max:.1}]")]
     InvalidFraction {
         /// Specified value.
         specified: f64,
