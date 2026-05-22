@@ -1,9 +1,12 @@
 use core::ffi::c_long;
-use std::{borrow::Cow, ffi::CString};
+use std::borrow::Cow;
 
 use coolprop_sys::COOLPROP;
 
-use super::{CoolPropError, Result, common::ErrorBuffer};
+use super::{
+    CoolPropError, Result,
+    common::{ErrorBuffer, c_string_trimmed},
+};
 use crate::substance::{Substance, SubstanceWithBackend};
 
 /// `CoolProp` thread safe low-level API.
@@ -68,8 +71,8 @@ impl AbstractState {
         backend_name: impl AsRef<str>,
         composition_id: impl AsRef<str>,
     ) -> Result<AbstractState> {
-        let backend_name = CString::new(backend_name.as_ref().trim()).unwrap();
-        let composition_id = CString::new(composition_id.as_ref().trim()).unwrap();
+        let backend_name = c_string_trimmed("backend_name", backend_name)?;
+        let composition_id = c_string_trimmed("composition_id", composition_id)?;
         let mut err = ErrorBuffer::default();
         let ptr = unsafe {
             COOLPROP.lock().unwrap().AbstractState_factory(
@@ -294,7 +297,7 @@ impl AbstractState {
     /// - [Imposing the Phase (Optional)](https://coolprop.org/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     /// - [`Phase`](crate::io::Phase)
     pub fn specify_phase(&mut self, phase: impl AsRef<str>) -> Result<()> {
-        let phase = CString::new(phase.as_ref()).unwrap();
+        let phase = c_string_trimmed("phase", phase)?;
         let mut err = ErrorBuffer::default();
         unsafe {
             COOLPROP.lock().unwrap().AbstractState_specify_phase(
@@ -395,9 +398,7 @@ fn res<T>(value: T, err: ErrorBuffer) -> Result<T> {
 fn keyed_output(key: u8, value: f64, err: ErrorBuffer) -> Result<f64> {
     res((), err)?;
     if !value.is_finite() {
-        return Err(CoolPropError(format!(
-            "Unable to get the output with key '{key}' due to invalid or undefined state!",
-        )));
+        return Err(CoolPropError::NonFiniteKeyedOutput { key });
     }
     Ok(value)
 }
@@ -476,6 +477,24 @@ mod tests {
 
         // Then
         assert_eq!(res.unwrap_err().to_string(), expected_message);
+    }
+
+    #[test]
+    fn new_interior_nul_backend_name() {
+        // When
+        let res = AbstractState::new("HEOS\0", "Water");
+
+        // Then
+        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "backend_name", pos: 4 });
+    }
+
+    #[test]
+    fn new_interior_nul_composition_id() {
+        // When
+        let res = AbstractState::new("HEOS", "Water\0");
+
+        // Then
+        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "composition_id", pos: 5 });
     }
 
     #[test]
@@ -570,10 +589,7 @@ mod tests {
         let res = sut.keyed_output(FluidParam::DMass);
 
         // Then
-        assert_eq!(
-            res.unwrap_err().to_string(),
-            "Unable to get the output with key '39' due to invalid or undefined state!"
-        );
+        assert_eq!(res.unwrap_err(), CoolPropError::NonFiniteKeyedOutput { key: 39 });
     }
 
     #[test]
@@ -606,6 +622,18 @@ mod tests {
             "Error: Your input name [Hello, World!] is not valid \
             in get_phase_index (names are case sensitive)"
         );
+    }
+
+    #[test]
+    fn specify_phase_interior_nul() {
+        // Given
+        let mut sut = AbstractState::new("HEOS", "Water").unwrap();
+
+        // When
+        let res = sut.specify_phase("phase_liquid\0");
+
+        // Then
+        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "phase", pos: 12 });
     }
 
     #[test]

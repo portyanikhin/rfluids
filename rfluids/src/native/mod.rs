@@ -18,37 +18,34 @@ mod utils;
 pub use high_level_api::CoolProp;
 pub use low_level_api::AbstractState;
 
-/// `CoolProp` internal error.
+/// `CoolProp` error.
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
-#[error("{0}")]
-pub struct CoolPropError(pub(crate) String);
+#[non_exhaustive]
+pub enum CoolPropError {
+    /// Error reported by `CoolProp`.
+    #[error("{0}")]
+    Native(String),
 
-impl Default for CoolPropError {
-    fn default() -> Self {
-        Self("Unknown CoolProp error".into())
-    }
+    /// Non-finite result returned by `CoolProp` without an error message.
+    #[error("CoolProp returned a non-finite output without an error message!")]
+    NonFiniteOutput,
+
+    /// Non-finite keyed output returned by `CoolProp` without an error message.
+    #[error("CoolProp returned a non-finite output for key `{key}` without an error message!")]
+    NonFiniteKeyedOutput {
+        /// Requested output key.
+        key: u8,
+    },
+
+    /// Input string cannot be represented as a C string because it contains an interior NUL byte.
+    #[error("Input `{arg}` contains an interior NUL byte at byte position {pos}!")]
+    InteriorNul {
+        /// Name of the invalid input argument.
+        arg: &'static str,
+        /// Byte position of the interior NUL byte.
+        pos: usize,
+    },
 }
 
 /// A type alias for results returned by `CoolProp` native API.
 pub type Result<T> = std::result::Result<T, CoolPropError>;
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    mod coolprop_error {
-        use super::*;
-
-        #[test]
-        fn default() {
-            // Given
-            let sut = CoolPropError::default();
-
-            // When
-            let res = sut.to_string();
-
-            // Then
-            assert_eq!(res, "Unknown CoolProp error");
-        }
-    }
-}

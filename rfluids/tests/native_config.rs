@@ -1,6 +1,9 @@
 use std::path::{Path, PathBuf};
 
-use rfluids::prelude::{ConfigKey::*, *};
+use rfluids::{
+    native::CoolPropError,
+    prelude::{ConfigKey::*, *},
+};
 use rstest::*;
 
 #[rstest]
@@ -185,4 +188,31 @@ fn set_config_nonexistent_key(
 
     // Then
     assert!(res.is_ok()); // CoolProp ignores nonexistent keys
+}
+
+#[test]
+fn set_config_interior_nul_key() {
+    // When
+    let res = CoolProp::set_config("LIST_STRING_DELIMITER\0", ',');
+
+    // Then
+    assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "key", pos: 21 });
+}
+
+#[test]
+fn set_config_interior_nul_char() {
+    // When
+    let res = CoolProp::set_config("LIST_STRING_DELIMITER", '\0');
+
+    // Then
+    assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "value", pos: 0 });
+}
+
+#[test]
+fn set_config_interior_nul_path() {
+    // When
+    let res = CoolProp::set_config("ALTERNATIVE_TABLES_DIRECTORY", Path::new("foo\0bar"));
+
+    // Then
+    assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "value", pos: 3 });
 }

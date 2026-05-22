@@ -1,7 +1,7 @@
 use core::ffi::{c_char, c_int, c_long};
 use std::{cell::Cell, ffi::CString, marker::PhantomData, sync::MutexGuard};
 
-use super::CoolPropError;
+use super::{CoolPropError, Result};
 use crate::io::GlobalParam;
 
 /// Marker to make structs `!Send + !Sync` for thread safety.
@@ -108,8 +108,16 @@ impl From<StringBuffer> for String {
 impl From<StringBuffer> for Option<CoolPropError> {
     fn from(value: StringBuffer) -> Self {
         let message: String = value.into();
-        if message.trim().is_empty() { None } else { Some(CoolPropError(message)) }
+        if message.trim().is_empty() { None } else { Some(CoolPropError::Native(message)) }
     }
+}
+
+pub(crate) fn c_string(arg: &'static str, value: impl Into<Vec<u8>>) -> Result<CString> {
+    CString::new(value).map_err(|err| CoolPropError::InteriorNul { arg, pos: err.nul_position() })
+}
+
+pub(crate) fn c_string_trimmed(arg: &'static str, value: impl AsRef<str>) -> Result<CString> {
+    c_string(arg, value.as_ref().trim())
 }
 
 pub(crate) fn get_error(
@@ -169,7 +177,7 @@ mod tests {
         #[rstest]
         #[case("", None)]
         #[case(" ", None)]
-        #[case("Error message", Some(CoolPropError("Error message".into())))]
+        #[case("error message", Some(CoolPropError::Native("error message".into())))]
         fn into_coolprop_error(#[case] msg: &str, #[case] expected: Option<CoolPropError>) {
             // Given
             let mut sut = ErrorBuffer::default();
@@ -297,7 +305,7 @@ mod tests {
         #[rstest]
         #[case("", None)]
         #[case(" ", None)]
-        #[case("Error message", Some(CoolPropError("Error message".into())))]
+        #[case("error message", Some(CoolPropError::Native("error message".into())))]
         fn into_coolprop_error(#[case] value: &str, #[case] expected: Option<CoolPropError>) {
             // Given
             let c_string = CString::new(value).unwrap();

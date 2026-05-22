@@ -10,7 +10,7 @@ use crate::{
 #[derive(Clone, Debug, PartialEq, thiserror::Error)]
 #[non_exhaustive]
 pub enum Error {
-    /// `CoolProp` internal error.
+    /// `CoolProp` error.
     #[error(transparent)]
     CoolProp(#[from] CoolPropError),
 
