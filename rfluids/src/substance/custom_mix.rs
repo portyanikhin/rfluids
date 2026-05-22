@@ -138,15 +138,15 @@ impl CustomMix {
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 pub enum CustomMixError {
     /// The specified components are not enough.
-    #[error("At least 2 unique components must be provided!")]
+    #[error("at least 2 unique components must be provided")]
     NotEnoughComponents,
 
     /// Some of the specified fractions are invalid.
-    #[error("All of the specified fractions must be exclusive between 0 and 1!")]
+    #[error("all of the specified fractions must be exclusive between 0 and 1")]
     InvalidFraction,
 
     /// The sum of the specified fractions is invalid.
-    #[error("The sum of the specified fractions must be equal to 1!")]
+    #[error("the sum of the specified fractions must be equal to 1")]
     InvalidFractionsSum,
 }
 

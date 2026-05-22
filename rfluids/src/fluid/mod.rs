@@ -228,22 +228,22 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
 
 /// Error during building of the [`Fluid`].
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
-#[error("Unable to build fluid! {0}")]
+#[error("unable to build fluid: {0}")]
 pub struct FluidBuildError(#[from] CoolPropError);
 
 /// Error during [`Fluid::update`] or [`Fluid::in_state`].
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 pub enum FluidStateError {
     /// Specified inputs are invalid.
-    #[error("Specified inputs (`{0:?}`, `{1:?}`) are invalid!")]
+    #[error("specified inputs (`{0:?}`, `{1:?}`) are invalid")]
     InvalidInputPair(FluidParam, FluidParam),
 
     /// Some of the specified input value is infinite or NaN.
-    #[error("Input values must be finite!")]
+    #[error("input values must be finite")]
     InvalidInputValue,
 
     /// Failed to update the fluid state due to unsupported inputs or invalid state.
-    #[error("Failed to update the fluid state! {0}")]
+    #[error("failed to update the fluid state: {0}")]
     UpdateFailed(#[from] CoolPropError),
 }
 
@@ -251,15 +251,15 @@ pub enum FluidStateError {
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 pub enum FluidOutputError {
     /// Specified trivial output parameter is not available.
-    #[error("Specified trivial output parameter `{0:?}` is not available!")]
+    #[error("specified trivial output parameter `{0:?}` is not available")]
     UnavailableTrivialOutput(FluidTrivialParam),
 
     /// Specified output parameter is not available.
-    #[error("Specified output parameter `{0:?}` is not available!")]
+    #[error("specified output parameter `{0:?}` is not available")]
     UnavailableOutput(FluidParam),
 
     /// Failed to calculate the output parameter value.
-    #[error("Failed to calculate the output value of `{0:?}`! {1}")]
+    #[error("failed to calculate the output value of `{0:?}`: {1}")]
     CalculationFailed(FluidParam, CoolPropError),
 }
 

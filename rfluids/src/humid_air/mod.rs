@@ -51,11 +51,11 @@ pub struct HumidAir<S: StateVariant = Defined> {
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 pub enum HumidAirStateError {
     /// Specified inputs are invalid.
-    #[error("Specified inputs (`{0:?}`, `{1:?}`, `{2:?}`) are invalid!")]
+    #[error("specified inputs (`{0:?}`, `{1:?}`, `{2:?}`) are invalid")]
     InvalidInputs(HumidAirParam, HumidAirParam, HumidAirParam),
 
     /// Some of the specified input value is infinite or NaN.
-    #[error("Input values must be finite!")]
+    #[error("input values must be finite")]
     InvalidInputValue,
 }
 
@@ -63,10 +63,10 @@ pub enum HumidAirStateError {
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 pub enum HumidAirOutputError {
     /// Specified output parameter is not available.
-    #[error("Specified output parameter `{0:?}` is not available!")]
+    #[error("specified output parameter `{0:?}` is not available")]
     UnavailableOutput(HumidAirParam),
 
     /// Failed to calculate the output parameter value.
-    #[error("Failed to calculate the output value of `{0:?}`! {1}")]
+    #[error("failed to calculate the output value of `{0:?}`: {1}")]
     CalculationFailed(HumidAirParam, CoolPropError),
 }
