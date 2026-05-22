@@ -6,6 +6,10 @@
 //! Create new instances with [`Config::builder`], read the current configuration with [`read`],
 //! apply changes with [`update`], and restore defaults with [`reset`].
 //!
+//! `CoolProp` configuration is global. For predictable behavior, choose the desired
+//! configuration during application startup, before running calculations. In typical
+//! applications this means applying [`update`] once, or leaving the default configuration as is.
+//!
 //! # [`serde`](https://crates.io/crates/serde) Support
 //!
 //! Enable the `serde` feature to add serialization and deserialization support for [`Config`].
@@ -303,6 +307,10 @@ pub fn read() -> Config {
 /// For any field that has changed, it synchronizes the value with the underlying `CoolProp`
 /// library before updating the global state.
 ///
+/// `CoolProp` configuration is global. For predictable behavior, call this function during
+/// application startup, before running calculations, and avoid changing configuration while
+/// calculations are already in progress.
+///
 /// # Panics
 ///
 /// Panics if `CoolProp` rejects a configuration value. This should never happen in practice,
@@ -332,6 +340,9 @@ pub fn update(new: Config) {
 }
 
 /// Resets the crate configuration to its default values.
+///
+/// `CoolProp` configuration is global. For predictable behavior, reset configuration only before
+/// running calculations, or as part of test setup/teardown when no calculations are running.
 ///
 /// # Panics
 ///

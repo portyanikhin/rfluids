@@ -83,7 +83,11 @@ pub const COOLPROP_PATH: &str = coolprop_sys_macos_aarch64::COOLPROP_PATH;
 /// Provides thread-safe access to a single `CoolProp` instance across the entire application.
 /// The library is loaded lazily on first access using [`LazyLock`].
 ///
-/// Access to the library is protected by a [`Mutex`], ensuring thread safety.
+/// Access to this shared handle is protected by a [`Mutex`]. This is a conservative boundary
+/// around `CoolProp`'s process-global configuration, debug level, warning, and pending-error
+/// state. It also allows higher-level wrappers to keep calls returning sentinel values and
+/// subsequent pending-error retrieval together.
+///
 /// To use the library, acquire the lock:
 ///
 /// ```no_run
