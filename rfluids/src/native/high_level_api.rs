@@ -1,10 +1,13 @@
 // cSpell:disable
 
-use std::{ffi::CString, sync::MutexGuard};
+use std::sync::MutexGuard;
 
 use coolprop_sys::COOLPROP;
 
-use super::{Result, common::get_error};
+use super::{
+    CoolPropError, Result,
+    common::{c_string_trimmed, get_error},
+};
 use crate::io::Phase;
 
 /// `CoolProp` thread safe high-level API.
@@ -92,10 +95,10 @@ impl CoolProp {
         input2_value: f64,
         substance_name: impl AsRef<str>,
     ) -> Result<f64> {
-        let output_key = CString::new(output_key.as_ref().trim()).unwrap();
-        let input1_key = CString::new(input1_key.as_ref().trim()).unwrap();
-        let input2_key = CString::new(input2_key.as_ref().trim()).unwrap();
-        let substance_name = CString::new(substance_name.as_ref().trim()).unwrap();
+        let output_key = c_string_trimmed("output_key", output_key)?;
+        let input1_key = c_string_trimmed("input1_key", input1_key)?;
+        let input2_key = c_string_trimmed("input2_key", input2_key)?;
+        let substance_name = c_string_trimmed("substance_name", substance_name)?;
         let lock = COOLPROP.lock().unwrap();
         let value = unsafe {
             lock.PropsSI(
@@ -158,10 +161,10 @@ impl CoolProp {
         input3_key: impl AsRef<str>,
         input3_value: f64,
     ) -> Result<f64> {
-        let output_key = CString::new(output_key.as_ref().trim()).unwrap();
-        let input1_key = CString::new(input1_key.as_ref().trim()).unwrap();
-        let input2_key = CString::new(input2_key.as_ref().trim()).unwrap();
-        let input3_key = CString::new(input3_key.as_ref().trim()).unwrap();
+        let output_key = c_string_trimmed("output_key", output_key)?;
+        let input1_key = c_string_trimmed("input1_key", input1_key)?;
+        let input2_key = c_string_trimmed("input2_key", input2_key)?;
+        let input3_key = c_string_trimmed("input3_key", input3_key)?;
         let lock = COOLPROP.lock().unwrap();
         let value = unsafe {
             lock.HAPropsSI(
@@ -223,8 +226,8 @@ impl CoolProp {
     /// - [`Backend`](crate::fluid::backend::Backend)
     /// - [`SubstanceWithBackend`](crate::substance::SubstanceWithBackend)
     pub fn props1_si(output_key: impl AsRef<str>, substance_name: impl AsRef<str>) -> Result<f64> {
-        let output_key = CString::new(output_key.as_ref().trim()).unwrap();
-        let substance_name = CString::new(substance_name.as_ref().trim()).unwrap();
+        let output_key = c_string_trimmed("output_key", output_key)?;
+        let substance_name = c_string_trimmed("substance_name", substance_name)?;
         let lock = COOLPROP.lock().unwrap();
         let value = unsafe { lock.Props1SI(output_key.as_ptr(), substance_name.as_ptr()) };
         res(value, &lock)
@@ -302,7 +305,7 @@ impl CoolProp {
 
 fn res(value: f64, lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> Result<f64> {
     if !value.is_finite() {
-        return Err(get_error(lock).unwrap_or_default());
+        return Err(get_error(lock).unwrap_or(CoolPropError::NonFiniteOutput));
     }
     Ok(value)
 }
@@ -312,7 +315,7 @@ mod tests {
     use rayon::prelude::*;
 
     use super::*;
-    use crate::test::assert_relative_eq;
+    use crate::{native::CoolPropError, test::assert_relative_eq};
 
     #[test]
     fn props_si_thread_safety() {
@@ -361,6 +364,42 @@ mod tests {
             "Input vapor quality [Q] must be between 0 and 1 : \
             PropsSI(\"D\",\"P\",101325,\"Q\",-1,\"Water\")"
         );
+    }
+
+    #[test]
+    fn props_si_interior_nul_output_key() {
+        // When
+        let res = CoolProp::props_si("D\0", "P", 101_325.0, "T", 293.15, "Water");
+
+        // Then
+        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "output_key", pos: 1 });
+    }
+
+    #[test]
+    fn props_si_interior_nul_input1_key() {
+        // When
+        let res = CoolProp::props_si("D", "P\0", 101_325.0, "T", 293.15, "Water");
+
+        // Then
+        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "input1_key", pos: 1 });
+    }
+
+    #[test]
+    fn props_si_interior_nul_input2_key() {
+        // When
+        let res = CoolProp::props_si("D", "P", 101_325.0, "T\0", 293.15, "Water");
+
+        // Then
+        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "input2_key", pos: 1 });
+    }
+
+    #[test]
+    fn props_si_interior_nul_substance_name() {
+        // When
+        let res = CoolProp::props_si("D", "P", 101_325.0, "T", 293.15, "Water\0");
+
+        // Then
+        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "substance_name", pos: 5 });
     }
 
     #[test]
@@ -417,6 +456,42 @@ mod tests {
     }
 
     #[test]
+    fn ha_props_si_interior_nul_output_key() {
+        // When
+        let res = CoolProp::ha_props_si("W\0", "P", 101_325.0, "T", 293.15, "R", 0.5);
+
+        // Then
+        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "output_key", pos: 1 });
+    }
+
+    #[test]
+    fn ha_props_si_interior_nul_input1_key() {
+        // When
+        let res = CoolProp::ha_props_si("W", "P\0", 101_325.0, "T", 293.15, "R", 0.5);
+
+        // Then
+        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "input1_key", pos: 1 });
+    }
+
+    #[test]
+    fn ha_props_si_interior_nul_input2_key() {
+        // When
+        let res = CoolProp::ha_props_si("W", "P", 101_325.0, "T\0", 293.15, "R", 0.5);
+
+        // Then
+        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "input2_key", pos: 1 });
+    }
+
+    #[test]
+    fn ha_props_si_interior_nul_input3_key() {
+        // When
+        let res = CoolProp::ha_props_si("W", "P", 101_325.0, "T", 293.15, "R\0", 0.5);
+
+        // Then
+        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "input3_key", pos: 1 });
+    }
+
+    #[test]
     fn props1_si_valid_input() {
         // Given
         let substance = "Water";
@@ -445,6 +520,24 @@ mod tests {
             error was Input pair variable is invalid and output(s) are non-trivial; \
             cannot do state update : PropsSI(\"T\",\"\",0,\"\",0,\"Water\")"
         );
+    }
+
+    #[test]
+    fn props1_si_interior_nul_output_key() {
+        // When
+        let res = CoolProp::props1_si("Tcrit\0", "Water");
+
+        // Then
+        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "output_key", pos: 5 });
+    }
+
+    #[test]
+    fn props1_si_interior_nul_substance_name() {
+        // When
+        let res = CoolProp::props1_si("Tcrit", "Water\0");
+
+        // Then
+        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "substance_name", pos: 5 });
     }
 
     #[test]
@@ -517,6 +610,6 @@ mod tests {
         let res = res(invalid, &COOLPROP.lock().unwrap());
 
         // Then
-        assert_eq!(res.unwrap_err().to_string(), "Unknown CoolProp error");
+        assert_eq!(res.unwrap_err(), CoolPropError::NonFiniteOutput);
     }
 }

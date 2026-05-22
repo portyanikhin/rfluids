@@ -4,7 +4,7 @@ use coolprop_sys::COOLPROP;
 
 use super::{
     CoolProp, Result,
-    common::{StringBuffer, get_error},
+    common::{StringBuffer, c_string, get_error},
 };
 use crate::io::ConfigValue;
 
@@ -124,23 +124,7 @@ impl CoolProp {
     /// - [`GlobalParam`](crate::io::GlobalParam)
     #[must_use]
     pub fn get_global_param(param: impl AsRef<str>) -> Option<String> {
-        let param = param.as_ref().trim();
-        let capacity = match param {
-            "version" | "gitrevision" | "HOME" | "REFPROP_version" => 100,
-            "errstring" | "warnstring" => 500,
-            _ => 30_000,
-        };
-        let param = CString::new(param).unwrap();
-        let mut res = StringBuffer::with_capacity(capacity);
-        let status = unsafe {
-            COOLPROP.lock().unwrap().get_global_param_string(
-                param.as_ptr(),
-                res.as_mut_ptr(),
-                res.capacity(),
-            )
-        };
-        let res: String = res.into();
-        if status != 1 || res.trim().is_empty() { None } else { Some(res) }
+        get_global_param(param.as_ref())
     }
 
     /// Returns a string parameter for a specific substance from `CoolProp`.
@@ -199,29 +183,7 @@ impl CoolProp {
         composition_id: impl AsRef<str>,
         param: impl AsRef<str>,
     ) -> Option<String> {
-        let composition_id = composition_id.as_ref().trim();
-        let param = param.as_ref().trim();
-        let capacity = match param {
-            "pure" => 6,
-            "InChIKey" | "INCHI_Key" | "INCHIKEY" => 30,
-            "name" | "REFPROP_name" | "REFPROPName" | "REFPROPname" | "CAS" | "CAS_number"
-            | "ASHRAE34" => 100,
-            "JSON" => 500_000,
-            _ => 500,
-        };
-        let composition_id = CString::new(composition_id).unwrap();
-        let param = CString::new(param).unwrap();
-        let mut res = StringBuffer::with_capacity(capacity);
-        let status = unsafe {
-            COOLPROP.lock().unwrap().get_fluid_param_string(
-                composition_id.as_ptr(),
-                param.as_ptr(),
-                res.as_mut_ptr(),
-                res.capacity(),
-            )
-        };
-        let res: String = res.into();
-        if status != 1 || res.trim().is_empty() { None } else { Some(res) }
+        get_substance_param(composition_id.as_ref(), param.as_ref())
     }
 
     /// Sets a configuration key-value pair in `CoolProp`.
@@ -370,9 +332,54 @@ impl CoolProp {
     }
 }
 
-// Code coverage trick
+fn get_global_param(param: &str) -> Option<String> {
+    let param = param.trim();
+    let capacity = match param {
+        "version" | "gitrevision" | "HOME" | "REFPROP_version" => 100,
+        "errstring" | "warnstring" => 500,
+        _ => 30_000,
+    };
+    let param = CString::new(param).ok()?;
+    let mut res = StringBuffer::with_capacity(capacity);
+    let status = unsafe {
+        COOLPROP.lock().unwrap().get_global_param_string(
+            param.as_ptr(),
+            res.as_mut_ptr(),
+            res.capacity(),
+        )
+    };
+    let res: String = res.into();
+    if status != 1 || res.trim().is_empty() { None } else { Some(res) }
+}
+
+fn get_substance_param(composition_id: &str, param: &str) -> Option<String> {
+    let composition_id = composition_id.trim();
+    let param = param.trim();
+    let capacity = match param {
+        "pure" => 6,
+        "InChIKey" | "INCHI_Key" | "INCHIKEY" => 30,
+        "name" | "REFPROP_name" | "REFPROPName" | "REFPROPname" | "CAS" | "CAS_number"
+        | "ASHRAE34" => 100,
+        "JSON" => 500_000,
+        _ => 500,
+    };
+    let composition_id = CString::new(composition_id).ok()?;
+    let param = CString::new(param).ok()?;
+    let mut res = StringBuffer::with_capacity(capacity);
+    let status = unsafe {
+        COOLPROP.lock().unwrap().get_fluid_param_string(
+            composition_id.as_ptr(),
+            param.as_ptr(),
+            res.as_mut_ptr(),
+            res.capacity(),
+        )
+    };
+    let res: String = res.into();
+    if status != 1 || res.trim().is_empty() { None } else { Some(res) }
+}
+
 fn set_config(key: &str, value: &ConfigValue) -> Result<()> {
-    let key = CString::new(key).unwrap();
+    let key = c_string("key", key)?;
     let lock = COOLPROP.lock().unwrap();
     match value {
         ConfigValue::Bool(val) => unsafe {
@@ -382,14 +389,14 @@ fn set_config(key: &str, value: &ConfigValue) -> Result<()> {
             lock.set_config_double(key.as_ptr(), *val);
         },
         ConfigValue::Char(val) => {
-            let c_string = CString::new(val.to_string()).unwrap();
+            let c_string = c_string("value", val.to_string())?;
             unsafe {
                 lock.set_config_string(key.as_ptr(), c_string.as_ptr());
             }
         }
         ConfigValue::OptionPath(val) => {
             let path = val.map_or_else(String::new, |p| p.to_string_lossy().into_owned());
-            let c_string = CString::new(path).unwrap();
+            let c_string = c_string("value", path)?;
             unsafe {
                 lock.set_config_string(key.as_ptr(), c_string.as_ptr());
             }
@@ -466,6 +473,15 @@ mod tests {
         assert_eq!(res.is_some(), is_some);
     }
 
+    #[test]
+    fn get_global_param_interior_nul() {
+        // When
+        let res = CoolProp::get_global_param("version\0");
+
+        // Then
+        assert_eq!(res, None);
+    }
+
     #[rstest]
     #[case(Name, true)]
     #[case(Aliases, true)]
@@ -517,5 +533,23 @@ mod tests {
 
         // Then
         assert_eq!(res.is_some(), is_some);
+    }
+
+    #[test]
+    fn get_substance_param_interior_nul_composition_id() {
+        // When
+        let res = CoolProp::get_substance_param("Water\0", "name");
+
+        // Then
+        assert_eq!(res, None);
+    }
+
+    #[test]
+    fn get_substance_param_interior_nul_param() {
+        // When
+        let res = CoolProp::get_substance_param("Water", "name\0");
+
+        // Then
+        assert_eq!(res, None);
     }
 }
