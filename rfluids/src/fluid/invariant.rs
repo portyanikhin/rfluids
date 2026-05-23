@@ -1,11 +1,11 @@
 use super::{
-    Fluid, FluidOutputError, OutputResult, StateResult,
+    Fluid, FluidOutputError, FluidPhaseError, OutputResult, StateResult,
     backend::Backend,
     common::{cached_output, guard},
     request::FluidUpdateRequest,
 };
 use crate::{
-    io::{FluidInput, FluidTrivialParam},
+    io::{FluidInput, FluidTrivialParam, Phase},
     ops::mul,
     state_variant::StateVariant,
     substance::Substance,
@@ -22,6 +22,15 @@ impl<S: StateVariant> Fluid<S> {
     #[must_use]
     pub fn backend(&self) -> Backend {
         self.backend_variant
+    }
+
+    /// Currently imposed phase used as a hint for future state updates.
+    ///
+    /// This value reflects phase configuration, not the calculated phase of the current state.
+    /// Use [`Fluid::phase`](crate::fluid::Fluid::phase) to retrieve the calculated phase.
+    #[must_use]
+    pub fn specified_phase(&self) -> Phase {
+        self.specified_phase
     }
 
     /// Acentric factor **\[dimensionless\]**.
@@ -250,6 +259,21 @@ impl<S: StateVariant> Fluid<S> {
     /// Returns a [`FluidOutputError`] if the property is not available for the specified substance.
     pub fn triple_temperature(&mut self) -> OutputResult<f64> {
         self.positive_trivial_output(FluidTrivialParam::TTriple)
+    }
+
+    pub(crate) fn inner_specify_phase(&mut self, phase: Phase) -> Result<(), FluidPhaseError> {
+        if phase == Phase::NotImposed {
+            self.inner_unspecify_phase();
+            return Ok(());
+        }
+        self.backend.specify_phase(phase)?;
+        self.specified_phase = phase;
+        Ok(())
+    }
+
+    pub(crate) fn inner_unspecify_phase(&mut self) {
+        self.backend.unspecify_phase();
+        self.specified_phase = Phase::NotImposed;
     }
 
     pub(crate) fn inner_update(

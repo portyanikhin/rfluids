@@ -1,8 +1,11 @@
 use std::{collections::HashMap, marker::PhantomData};
 
-use super::{Fluid, FluidBuildError, StateResult, backend::Backend};
+use super::{Fluid, FluidBuildError, FluidPhaseError, StateResult, backend::Backend};
 use crate::{
-    io::FluidInput, native::AbstractState, state_variant::Undefined, substance::Substance,
+    io::{FluidInput, Phase},
+    native::AbstractState,
+    state_variant::Undefined,
+    substance::Substance,
 };
 
 #[bon::bon]
@@ -70,11 +73,62 @@ impl Fluid<Undefined> {
             backend,
             backend_variant: request.backend,
             substance: request.substance,
+            specified_phase: Phase::NotImposed,
             update_request: None,
             outputs: HashMap::new(),
             trivial_outputs: HashMap::new(),
             state: PhantomData,
         })
+    }
+
+    /// Specifies a phase hint for future state updates and returns the fluid.
+    ///
+    /// Passing [`Phase::NotImposed`] delegates to [`Fluid::unspecify_phase`].
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`FluidPhaseError`] if `CoolProp` rejects the specified phase.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::*;
+    ///
+    /// let water = Fluid::from(Pure::Water)
+    ///     .specify_phase(Phase::Liquid)?
+    ///     .in_state(FluidInput::pressure(101_325.0), FluidInput::temperature(293.15))?;
+    /// # Ok::<(), rfluids::Error>(())
+    /// ```
+    ///
+    /// # See Also
+    ///
+    /// - [`Fluid::unspecify_phase`](crate::fluid::Fluid::unspecify_phase)
+    pub fn specify_phase(mut self, phase: Phase) -> Result<Self, FluidPhaseError> {
+        self.inner_specify_phase(phase)?;
+        Ok(self)
+    }
+
+    /// Clears the imposed phase hint for future state updates and returns the fluid.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::*;
+    ///
+    /// let water = Fluid::from(Pure::Water)
+    ///     .specify_phase(Phase::Gas)?
+    ///     .unspecify_phase()
+    ///     .in_state(FluidInput::pressure(101_325.0), FluidInput::temperature(293.15))?;
+    /// # Ok::<(), rfluids::Error>(())
+    /// ```
+    ///
+    /// # See Also
+    ///
+    /// - [`Fluid::specify_phase`](crate::fluid::Fluid::specify_phase)
+    #[must_use]
+    pub fn unspecify_phase(mut self) -> Self {
+        self.inner_unspecify_phase();
+        self
     }
 
     /// Updates the thermodynamic state and returns itself with
@@ -126,9 +180,10 @@ impl Fluid<Undefined> {
     pub fn in_state(mut self, input1: FluidInput, input2: FluidInput) -> StateResult<Fluid> {
         self.inner_update(input1, input2)?;
         Ok(Fluid {
-            substance: self.substance,
             backend: self.backend,
             backend_variant: self.backend_variant,
+            substance: self.substance,
+            specified_phase: self.specified_phase,
             update_request: self.update_request,
             outputs: self.outputs,
             trivial_outputs: self.trivial_outputs,
@@ -144,6 +199,9 @@ impl Clone for Fluid<Undefined> {
             .with_backend(self.backend_variant)
             .build()
             .unwrap();
+        if self.specified_phase != Phase::NotImposed {
+            fluid = fluid.specify_phase(self.specified_phase).unwrap();
+        }
         fluid.trivial_outputs.clone_from(&self.trivial_outputs);
         fluid
     }
@@ -151,7 +209,9 @@ impl Clone for Fluid<Undefined> {
 
 impl PartialEq for Fluid<Undefined> {
     fn eq(&self, other: &Self) -> bool {
-        self.backend_variant == other.backend_variant && self.substance == other.substance
+        self.backend_variant == other.backend_variant
+            && self.substance == other.substance
+            && self.specified_phase == other.specified_phase
     }
 }
 
@@ -162,6 +222,7 @@ mod tests {
     use super::*;
     use crate::{
         fluid::{FluidStateError, backend::BaseBackend},
+        native::CoolPropError,
         substance::*,
         test::{SutFactory, test_output},
     };
@@ -283,6 +344,78 @@ mod tests {
     }
 
     #[rstest]
+    fn specified_phase_default(ctx: Context) {
+        // Given
+        let Context { water, .. } = ctx;
+        let sut = ctx.sut(water);
+
+        // When
+        let res = sut.specified_phase();
+
+        // Then
+        assert_eq!(res, Phase::NotImposed);
+    }
+
+    #[rstest]
+    fn specify_phase(ctx: Context) {
+        // Given
+        let Context { pressure, temperature, water, .. } = ctx;
+        let sut = ctx.sut(water);
+
+        // When
+        let mut res =
+            sut.specify_phase(Phase::Liquid).unwrap().in_state(pressure, temperature).unwrap();
+
+        // Then
+        assert_eq!(res.specified_phase(), Phase::Liquid);
+        assert_eq!(res.phase(), Phase::Liquid);
+    }
+
+    #[rstest]
+    fn specify_phase_not_imposed(ctx: Context) {
+        // Given
+        let Context { water, .. } = ctx;
+        let sut = ctx.sut(water).specify_phase(Phase::Liquid).unwrap();
+
+        // When
+        let res = sut.specify_phase(Phase::NotImposed).unwrap();
+
+        // Then
+        assert_eq!(res.specified_phase(), Phase::NotImposed);
+    }
+
+    #[rstest]
+    fn specify_phase_pg(ctx: Context) {
+        // Given
+        let Context { pg, .. } = ctx;
+        let sut = ctx.sut(pg);
+
+        // When
+        let res = sut.specify_phase(Phase::Liquid);
+
+        // Then
+        assert_eq!(
+            res,
+            Err(FluidPhaseError::SpecifyFailed(CoolPropError::Native(
+                "Error: This backend does not implement calc_specify_phase function".into()
+            )))
+        );
+    }
+
+    #[rstest]
+    fn unspecify_phase(ctx: Context) {
+        // Given
+        let Context { water, .. } = ctx;
+        let sut = ctx.sut(water).specify_phase(Phase::Liquid).unwrap();
+
+        // When
+        let res = sut.unspecify_phase();
+
+        // Then
+        assert_eq!(res.specified_phase(), Phase::NotImposed);
+    }
+
+    #[rstest]
     fn in_state_same_inputs(ctx: Context) {
         // Given
         let Context { pressure, water, .. } = ctx;
@@ -328,6 +461,20 @@ mod tests {
         // Given
         let Context { water, .. } = ctx;
         let sut = ctx.sut(water);
+
+        // When
+        let clone = sut.clone();
+
+        // Then
+        assert_eq!(clone, sut);
+        assert_eq!(clone.trivial_outputs, sut.trivial_outputs);
+    }
+
+    #[rstest]
+    fn clone_specified_phase(ctx: Context) {
+        // Given
+        let Context { water, .. } = ctx;
+        let sut = ctx.sut(water).specify_phase(Phase::Gas).unwrap();
 
         // When
         let clone = sut.clone();
