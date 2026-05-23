@@ -1,7 +1,7 @@
 // cSpell:disable
 
 use super::{
-    Fluid, FluidOutputError, OutputResult, StateResult,
+    Fluid, FluidOutputError, FluidPhaseError, OutputResult, StateResult,
     common::{cached_output, guard},
 };
 use crate::{
@@ -548,6 +548,58 @@ impl Fluid {
         self.positive_output(FluidParam::T)
     }
 
+    /// Specifies a phase hint for future state updates.
+    ///
+    /// The current state and cached outputs are not recalculated or invalidated.
+    /// Passing [`Phase::NotImposed`] delegates to [`Fluid::unspecify_phase`].
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`FluidPhaseError`] if `CoolProp` rejects the specified phase.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::*;
+    ///
+    /// let water = Fluid::from(Pure::Water)
+    ///     .specify_phase(Phase::Liquid)?
+    ///     .in_state(FluidInput::pressure(101_325.0), FluidInput::temperature(293.15))?;
+    /// # Ok::<(), rfluids::Error>(())
+    /// ```
+    ///
+    /// # See Also
+    ///
+    /// - [`Fluid::unspecify_phase`](crate::fluid::Fluid::unspecify_phase)
+    pub fn specify_phase(&mut self, phase: Phase) -> Result<&mut Self, FluidPhaseError> {
+        self.inner_specify_phase(phase)?;
+        Ok(self)
+    }
+
+    /// Clears the imposed phase hint for future state updates.
+    ///
+    /// The current state and cached outputs are not recalculated or invalidated.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::*;
+    ///
+    /// let water = Fluid::from(Pure::Water)
+    ///     .specify_phase(Phase::Gas)?
+    ///     .unspecify_phase()
+    ///     .in_state(FluidInput::pressure(101_325.0), FluidInput::temperature(293.15))?;
+    /// # Ok::<(), rfluids::Error>(())
+    /// ```
+    ///
+    /// # See Also
+    ///
+    /// - [`Fluid::specify_phase`](crate::fluid::Fluid::specify_phase)
+    pub fn unspecify_phase(&mut self) -> &mut Self {
+        self.inner_unspecify_phase();
+        self
+    }
+
     /// Updates the thermodynamic state in place and returns a mutable reference to itself.
     ///
     /// # Arguments
@@ -646,8 +698,11 @@ impl Fluid {
             .substance(self.substance.clone())
             .with_backend(self.backend_variant)
             .build()
-            .unwrap()
-            .in_state(input1, input2)?;
+            .unwrap();
+        if self.specified_phase != Phase::NotImposed {
+            fluid = fluid.specify_phase(self.specified_phase).unwrap();
+        }
+        let mut fluid = fluid.in_state(input1, input2)?;
         fluid.trivial_outputs.clone_from(&self.trivial_outputs);
         Ok(fluid)
     }
@@ -678,6 +733,9 @@ impl Clone for Fluid {
             .unwrap()
             .in_state(inputs.0, inputs.1)
             .unwrap();
+        if self.specified_phase != Phase::NotImposed {
+            fluid.specify_phase(self.specified_phase).unwrap();
+        }
         fluid.outputs.clone_from(&self.outputs);
         fluid.trivial_outputs.clone_from(&self.trivial_outputs);
         fluid
@@ -686,8 +744,9 @@ impl Clone for Fluid {
 
 impl PartialEq for Fluid {
     fn eq(&self, other: &Self) -> bool {
-        self.substance == other.substance
-            && self.backend() == other.backend()
+        self.backend_variant == other.backend_variant
+            && self.substance == other.substance
+            && self.specified_phase == other.specified_phase
             && self.update_request == other.update_request
     }
 }
@@ -700,6 +759,7 @@ mod tests {
     use crate::{
         Undefined,
         fluid::FluidStateError,
+        native::CoolPropError,
         substance::*,
         test::{SutFactory, assert_relative_eq, test_output},
     };
@@ -951,6 +1011,80 @@ mod tests {
     }
 
     #[rstest]
+    fn specified_phase_default(ctx: Context) {
+        // Given
+        let Context { water, .. } = ctx;
+        let sut = ctx.sut(water);
+
+        // When
+        let res = sut.specified_phase();
+
+        // Then
+        assert_eq!(res, Phase::NotImposed);
+    }
+
+    #[rstest]
+    fn specify_phase(ctx: Context) {
+        // Given
+        let Context { pressure, temperature, water, .. } = ctx;
+        let mut sut = ctx.sut(water);
+
+        // When
+        let mut res =
+            sut.specify_phase(Phase::Liquid).unwrap().in_state(pressure, temperature).unwrap();
+
+        // Then
+        assert_eq!(res.specified_phase(), Phase::Liquid);
+        assert_eq!(res.phase(), Phase::Liquid);
+    }
+
+    #[rstest]
+    fn specify_phase_not_imposed(ctx: Context) {
+        // Given
+        let Context { water, .. } = ctx;
+        let mut sut = ctx.sut(water);
+        sut.specify_phase(Phase::Liquid).unwrap();
+
+        // When
+        let res = sut.specify_phase(Phase::NotImposed).unwrap();
+
+        // Then
+        assert_eq!(res.specified_phase(), Phase::NotImposed);
+    }
+
+    #[rstest]
+    fn specify_phase_pg(ctx: Context) {
+        // Given
+        let Context { pg, .. } = ctx;
+        let mut sut = ctx.sut(pg);
+
+        // When
+        let res = sut.specify_phase(Phase::Liquid);
+
+        // Then
+        assert_eq!(
+            res,
+            Err(FluidPhaseError::SpecifyFailed(CoolPropError::Native(
+                "Error: This backend does not implement calc_specify_phase function".into()
+            )))
+        );
+    }
+
+    #[rstest]
+    fn unspecify_phase(ctx: Context) {
+        // Given
+        let Context { water, .. } = ctx;
+        let mut sut = ctx.sut(water);
+        sut.specify_phase(Phase::Liquid).unwrap();
+
+        // When
+        let res = sut.unspecify_phase();
+
+        // Then
+        assert_eq!(res.specified_phase(), Phase::NotImposed);
+    }
+
+    #[rstest]
     fn update_valid_inputs(ctx: Context) {
         // Given
         let Context { pressure, temperature, water, .. } = ctx;
@@ -1063,6 +1197,22 @@ mod tests {
         // Given
         let Context { water, .. } = ctx;
         let sut = ctx.sut(water);
+
+        // When
+        let clone = sut.clone();
+
+        // Then
+        assert_eq!(clone, sut);
+        assert_eq!(clone.outputs, sut.outputs);
+        assert_eq!(clone.trivial_outputs, sut.trivial_outputs);
+    }
+
+    #[rstest]
+    fn clone_specified_phase(ctx: Context) {
+        // Given
+        let Context { water, .. } = ctx;
+        let mut sut = ctx.sut(water);
+        sut.specify_phase(Phase::Gas).unwrap();
 
         // When
         let clone = sut.clone();

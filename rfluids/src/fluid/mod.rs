@@ -31,7 +31,7 @@ use backend::Backend;
 use request::FluidUpdateRequest;
 
 use crate::{
-    io::{FluidParam, FluidTrivialParam},
+    io::{FluidParam, FluidTrivialParam, Phase},
     native::{AbstractState, CoolPropError},
     state_variant::{Defined, StateVariant, Undefined},
     substance::{BinaryMix, CustomMix, IncompPure, PredefinedMix, Pure, Substance},
@@ -60,6 +60,7 @@ pub struct Fluid<S: StateVariant = Defined> {
     backend: AbstractState,
     backend_variant: Backend,
     substance: Substance,
+    specified_phase: Phase,
     update_request: Option<FluidUpdateRequest>,
     outputs: HashMap<FluidParam, OutputResult<f64>>,
     trivial_outputs: HashMap<FluidTrivialParam, OutputResult<f64>>,
@@ -230,6 +231,14 @@ impl TryFrom<CustomMix> for Fluid<Undefined> {
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
 #[error("unable to build fluid: {0}")]
 pub struct FluidBuildError(#[from] CoolPropError);
+
+/// Error during specifying the phase for a [`Fluid`].
+#[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]
+pub enum FluidPhaseError {
+    /// Failed to specify the phase.
+    #[error("failed to specify the fluid phase: {0}")]
+    SpecifyFailed(#[from] CoolPropError),
+}
 
 /// Error during [`Fluid::update`] or [`Fluid::in_state`].
 #[derive(Clone, Debug, Eq, PartialEq, thiserror::Error)]

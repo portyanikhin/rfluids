@@ -1,5 +1,5 @@
 use crate::{
-    fluid::{FluidBuildError, FluidOutputError, FluidStateError},
+    fluid::{FluidBuildError, FluidOutputError, FluidPhaseError, FluidStateError},
     humid_air::{HumidAirOutputError, HumidAirStateError},
     io::AltitudeError,
     native::CoolPropError,
@@ -25,6 +25,10 @@ pub enum Error {
     /// Error during building of the [`Fluid`](crate::fluid::Fluid).
     #[error(transparent)]
     FluidBuild(#[from] FluidBuildError),
+
+    /// Error during specifying the phase for a [`Fluid`](crate::fluid::Fluid).
+    #[error(transparent)]
+    FluidPhase(#[from] FluidPhaseError),
 
     /// Error during [`Fluid::update`](crate::fluid::Fluid::update)
     /// or [`Fluid::in_state`](crate::fluid::Fluid::in_state).
