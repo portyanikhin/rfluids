@@ -473,28 +473,28 @@ mod tests {
         #[case] expected_message: &str,
     ) {
         // When
-        let res = AbstractState::new(backend_name, substance_names);
+        let res = AbstractState::new(backend_name, substance_names).unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err().to_string(), expected_message);
+        assert_eq!(res, CoolPropError::Native(expected_message.into()));
     }
 
     #[test]
     fn new_interior_nul_backend_name() {
         // When
-        let res = AbstractState::new("HEOS\0", "Water");
+        let res = AbstractState::new("HEOS\0", "Water").unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "backend_name", pos: 4 });
+        assert_eq!(res, CoolPropError::InteriorNul { arg: "backend_name", pos: 4 });
     }
 
     #[test]
     fn new_interior_nul_composition_id() {
         // When
-        let res = AbstractState::new("HEOS", "Water\0");
+        let res = AbstractState::new("HEOS", "Water\0").unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "composition_id", pos: 5 });
+        assert_eq!(res, CoolPropError::InteriorNul { arg: "composition_id", pos: 5 });
     }
 
     #[test]
@@ -515,13 +515,16 @@ mod tests {
         let mut sut = AbstractState::new("HEOS", "Water&Ethanol").unwrap();
 
         // When
-        let res = sut.set_fractions(&[0.6, 0.4, 0.6]);
+        let res = sut.set_fractions(&[0.6, 0.4, 0.6]).unwrap_err();
 
         // Then
         assert_eq!(
-            res.unwrap_err().to_string(),
-            "Error: size of mole fraction vector [3] \
-            does not equal that of component vector [2]",
+            res,
+            CoolPropError::Native(
+                "Error: size of mole fraction vector [3] \
+                does not equal that of component vector [2]"
+                    .into()
+            )
         );
     }
 
@@ -543,12 +546,12 @@ mod tests {
         let mut sut = AbstractState::new("HEOS", "Water").unwrap();
 
         // When
-        let res = sut.update(FluidInputPair::PQ, 101_325.0, -1.0);
+        let res = sut.update(FluidInputPair::PQ, 101_325.0, -1.0).unwrap_err();
 
         // Then
         assert_eq!(
-            res.unwrap_err().to_string(),
-            "Error: Input vapor quality [Q] must be between 0 and 1"
+            res,
+            CoolPropError::Native("Error: Input vapor quality [Q] must be between 0 and 1".into())
         );
     }
 
@@ -571,12 +574,15 @@ mod tests {
         let sut = AbstractState::new("HEOS", "Water").unwrap();
 
         // When
-        let res = sut.keyed_output(255);
+        let res = sut.keyed_output(255).unwrap_err();
 
         // Then
         assert_eq!(
-            res.unwrap_err().to_string(),
-            "Error: Unable to match the key [255] in get_parameter_information for info [short]"
+            res,
+            CoolPropError::Native(
+                "Error: Unable to match the key [255] in get_parameter_information for info [short]"
+                    .into()
+            )
         );
     }
 
@@ -586,10 +592,10 @@ mod tests {
         let sut = AbstractState::new("HEOS", "Water").unwrap();
 
         // When
-        let res = sut.keyed_output(FluidParam::DMass);
+        let res = sut.keyed_output(FluidParam::DMass).unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::NonFiniteKeyedOutput { key: 39 });
+        assert_eq!(res, CoolPropError::NonFiniteKeyedOutput { key: 39 });
     }
 
     #[test]
@@ -614,13 +620,16 @@ mod tests {
         let mut sut = AbstractState::new("HEOS", "Water").unwrap();
 
         // When
-        let res = sut.specify_phase("Hello, World!");
+        let res = sut.specify_phase("Hello, World!").unwrap_err();
 
         // Then
         assert_eq!(
-            res.unwrap_err().to_string(),
-            "Error: Your input name [Hello, World!] is not valid \
-            in get_phase_index (names are case sensitive)"
+            res,
+            CoolPropError::Native(
+                "Error: Your input name [Hello, World!] is not valid \
+                in get_phase_index (names are case sensitive)"
+                    .into()
+            )
         );
     }
 
@@ -630,10 +639,10 @@ mod tests {
         let mut sut = AbstractState::new("HEOS", "Water").unwrap();
 
         // When
-        let res = sut.specify_phase("phase_liquid\0");
+        let res = sut.specify_phase("phase_liquid\0").unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "phase", pos: 12 });
+        assert_eq!(res, CoolPropError::InteriorNul { arg: "phase", pos: 12 });
     }
 
     #[test]

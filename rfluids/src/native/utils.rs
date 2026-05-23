@@ -479,7 +479,7 @@ mod tests {
         let res = CoolProp::get_global_param("version\0");
 
         // Then
-        assert_eq!(res, None);
+        assert!(res.is_none());
     }
 
     #[rstest]
@@ -541,7 +541,7 @@ mod tests {
         let res = CoolProp::get_substance_param("Water\0", "name");
 
         // Then
-        assert_eq!(res, None);
+        assert!(res.is_none());
     }
 
     #[test]
@@ -550,6 +550,6 @@ mod tests {
         let res = CoolProp::get_substance_param("Water", "name\0");
 
         // Then
-        assert_eq!(res, None);
+        assert!(res.is_none());
     }
 }

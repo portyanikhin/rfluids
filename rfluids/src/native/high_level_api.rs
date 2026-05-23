@@ -356,50 +356,54 @@ mod tests {
         let negative_quality = -1.0;
 
         // When
-        let res = CoolProp::props_si("D", "P", pressure, "Q", negative_quality, substance);
+        let res =
+            CoolProp::props_si("D", "P", pressure, "Q", negative_quality, substance).unwrap_err();
 
         // Then
         assert_eq!(
-            res.unwrap_err().to_string(),
-            "Input vapor quality [Q] must be between 0 and 1 : \
-            PropsSI(\"D\",\"P\",101325,\"Q\",-1,\"Water\")"
+            res,
+            CoolPropError::Native(
+                "Input vapor quality [Q] must be between 0 and 1 : \
+                PropsSI(\"D\",\"P\",101325,\"Q\",-1,\"Water\")"
+                    .into()
+            )
         );
     }
 
     #[test]
     fn props_si_interior_nul_output_key() {
         // When
-        let res = CoolProp::props_si("D\0", "P", 101_325.0, "T", 293.15, "Water");
+        let res = CoolProp::props_si("D\0", "P", 101_325.0, "T", 293.15, "Water").unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "output_key", pos: 1 });
+        assert_eq!(res, CoolPropError::InteriorNul { arg: "output_key", pos: 1 });
     }
 
     #[test]
     fn props_si_interior_nul_input1_key() {
         // When
-        let res = CoolProp::props_si("D", "P\0", 101_325.0, "T", 293.15, "Water");
+        let res = CoolProp::props_si("D", "P\0", 101_325.0, "T", 293.15, "Water").unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "input1_key", pos: 1 });
+        assert_eq!(res, CoolPropError::InteriorNul { arg: "input1_key", pos: 1 });
     }
 
     #[test]
     fn props_si_interior_nul_input2_key() {
         // When
-        let res = CoolProp::props_si("D", "P", 101_325.0, "T\0", 293.15, "Water");
+        let res = CoolProp::props_si("D", "P", 101_325.0, "T\0", 293.15, "Water").unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "input2_key", pos: 1 });
+        assert_eq!(res, CoolPropError::InteriorNul { arg: "input2_key", pos: 1 });
     }
 
     #[test]
     fn props_si_interior_nul_substance_name() {
         // When
-        let res = CoolProp::props_si("D", "P", 101_325.0, "T", 293.15, "Water\0");
+        let res = CoolProp::props_si("D", "P", 101_325.0, "T", 293.15, "Water\0").unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "substance_name", pos: 5 });
+        assert_eq!(res, CoolPropError::InteriorNul { arg: "substance_name", pos: 5 });
     }
 
     #[test]
@@ -445,50 +449,54 @@ mod tests {
 
         // When
         let res =
-            CoolProp::ha_props_si("W", "P", pressure, "T", temperature, "R", negative_rel_humidity);
+            CoolProp::ha_props_si("W", "P", pressure, "T", temperature, "R", negative_rel_humidity)
+                .unwrap_err();
 
         // Then
         assert_eq!(
-            res.unwrap_err().to_string(),
-            "The input for key (7) with value (-0.5) \
-            is outside the range of validity: (0) to (1)"
+            res,
+            CoolPropError::Native(
+                "The input for key (7) with value (-0.5) \
+                is outside the range of validity: (0) to (1)"
+                    .into()
+            )
         );
     }
 
     #[test]
     fn ha_props_si_interior_nul_output_key() {
         // When
-        let res = CoolProp::ha_props_si("W\0", "P", 101_325.0, "T", 293.15, "R", 0.5);
+        let res = CoolProp::ha_props_si("W\0", "P", 101_325.0, "T", 293.15, "R", 0.5).unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "output_key", pos: 1 });
+        assert_eq!(res, CoolPropError::InteriorNul { arg: "output_key", pos: 1 });
     }
 
     #[test]
     fn ha_props_si_interior_nul_input1_key() {
         // When
-        let res = CoolProp::ha_props_si("W", "P\0", 101_325.0, "T", 293.15, "R", 0.5);
+        let res = CoolProp::ha_props_si("W", "P\0", 101_325.0, "T", 293.15, "R", 0.5).unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "input1_key", pos: 1 });
+        assert_eq!(res, CoolPropError::InteriorNul { arg: "input1_key", pos: 1 });
     }
 
     #[test]
     fn ha_props_si_interior_nul_input2_key() {
         // When
-        let res = CoolProp::ha_props_si("W", "P", 101_325.0, "T\0", 293.15, "R", 0.5);
+        let res = CoolProp::ha_props_si("W", "P", 101_325.0, "T\0", 293.15, "R", 0.5).unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "input2_key", pos: 1 });
+        assert_eq!(res, CoolPropError::InteriorNul { arg: "input2_key", pos: 1 });
     }
 
     #[test]
     fn ha_props_si_interior_nul_input3_key() {
         // When
-        let res = CoolProp::ha_props_si("W", "P", 101_325.0, "T", 293.15, "R\0", 0.5);
+        let res = CoolProp::ha_props_si("W", "P", 101_325.0, "T", 293.15, "R\0", 0.5).unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "input3_key", pos: 1 });
+        assert_eq!(res, CoolPropError::InteriorNul { arg: "input3_key", pos: 1 });
     }
 
     #[test]
@@ -511,33 +519,36 @@ mod tests {
         let non_trivial_key = "T";
 
         // When
-        let res = CoolProp::props1_si(non_trivial_key, substance);
+        let res = CoolProp::props1_si(non_trivial_key, substance).unwrap_err();
 
         // Then
         assert_eq!(
-            res.unwrap_err().to_string(),
-            "Unable to use input parameter [T] in Props1SI for fluid Water; \
-            error was Input pair variable is invalid and output(s) are non-trivial; \
-            cannot do state update : PropsSI(\"T\",\"\",0,\"\",0,\"Water\")"
+            res,
+            CoolPropError::Native(
+                "Unable to use input parameter [T] in Props1SI for fluid Water; \
+                error was Input pair variable is invalid and output(s) are non-trivial; \
+                cannot do state update : PropsSI(\"T\",\"\",0,\"\",0,\"Water\")"
+                    .into()
+            )
         );
     }
 
     #[test]
     fn props1_si_interior_nul_output_key() {
         // When
-        let res = CoolProp::props1_si("Tcrit\0", "Water");
+        let res = CoolProp::props1_si("Tcrit\0", "Water").unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "output_key", pos: 5 });
+        assert_eq!(res, CoolPropError::InteriorNul { arg: "output_key", pos: 5 });
     }
 
     #[test]
     fn props1_si_interior_nul_substance_name() {
         // When
-        let res = CoolProp::props1_si("Tcrit", "Water\0");
+        let res = CoolProp::props1_si("Tcrit", "Water\0").unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "substance_name", pos: 5 });
+        assert_eq!(res, CoolPropError::InteriorNul { arg: "substance_name", pos: 5 });
     }
 
     #[test]
@@ -579,13 +590,16 @@ mod tests {
         let negative_quality = -1.0;
 
         // When
-        let res = CoolProp::phase_si("P", pressure, "Q", negative_quality, substance);
+        let res = CoolProp::phase_si("P", pressure, "Q", negative_quality, substance).unwrap_err();
 
         // Then
         assert_eq!(
-            res.unwrap_err().to_string(),
-            "Input vapor quality [Q] must be between 0 and 1 : \
-            PropsSI(\"Phase\",\"P\",101325,\"Q\",-1,\"Water\")"
+            res,
+            CoolPropError::Native(
+                "Input vapor quality [Q] must be between 0 and 1 : \
+                PropsSI(\"Phase\",\"P\",101325,\"Q\",-1,\"Water\")"
+                    .into()
+            )
         );
     }
 
@@ -607,9 +621,9 @@ mod tests {
         let invalid = f64::NAN;
 
         // When
-        let res = res(invalid, &COOLPROP.lock().unwrap());
+        let res = res(invalid, &COOLPROP.lock().unwrap()).unwrap_err();
 
         // Then
-        assert_eq!(res.unwrap_err(), CoolPropError::NonFiniteOutput);
+        assert_eq!(res, CoolPropError::NonFiniteOutput);
     }
 }

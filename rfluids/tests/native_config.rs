@@ -193,26 +193,27 @@ fn set_config_nonexistent_key(
 #[test]
 fn set_config_interior_nul_key() {
     // When
-    let res = CoolProp::set_config("LIST_STRING_DELIMITER\0", ',');
+    let res = CoolProp::set_config("LIST_STRING_DELIMITER\0", ',').unwrap_err();
 
     // Then
-    assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "key", pos: 21 });
+    assert_eq!(res, CoolPropError::InteriorNul { arg: "key", pos: 21 });
 }
 
 #[test]
 fn set_config_interior_nul_char() {
     // When
-    let res = CoolProp::set_config("LIST_STRING_DELIMITER", '\0');
+    let res = CoolProp::set_config("LIST_STRING_DELIMITER", '\0').unwrap_err();
 
     // Then
-    assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "value", pos: 0 });
+    assert_eq!(res, CoolPropError::InteriorNul { arg: "value", pos: 0 });
 }
 
 #[test]
 fn set_config_interior_nul_path() {
     // When
-    let res = CoolProp::set_config("ALTERNATIVE_TABLES_DIRECTORY", Path::new("foo\0bar"));
+    let res =
+        CoolProp::set_config("ALTERNATIVE_TABLES_DIRECTORY", Path::new("foo\0bar")).unwrap_err();
 
     // Then
-    assert_eq!(res.unwrap_err(), CoolPropError::InteriorNul { arg: "value", pos: 3 });
+    assert_eq!(res, CoolPropError::InteriorNul { arg: "value", pos: 3 });
 }
