@@ -23,7 +23,7 @@
 //! Each substance type can be converted into the [`Substance`] enum
 //! using the standard [`From`]/[`Into`] traits.
 
-#![allow(missing_docs, non_camel_case_types)]
+#![allow(non_camel_case_types, clippy::doc_markdown)]
 
 mod binary_mix;
 mod custom_mix;
