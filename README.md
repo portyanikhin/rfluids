@@ -73,7 +73,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-rfluids = "0.3"
+rfluids = "0.4"
 ```
 
 Or via command line:
@@ -96,7 +96,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-rfluids = { version = "0.3", features = ["regen-bindings"] }
+rfluids = { version = "0.4", features = ["regen-bindings"] }
 ```
 
 Or via command line:

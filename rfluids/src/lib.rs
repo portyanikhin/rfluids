@@ -64,7 +64,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! rfluids = "0.3"
+//! rfluids = "0.4"
 //! ```
 //!
 //! Or via command line:
@@ -87,7 +87,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! rfluids = { version = "0.3", features = ["regen-bindings"] }
+//! rfluids = { version = "0.4", features = ["regen-bindings"] }
 //! ```
 //!
 //! Or via command line:

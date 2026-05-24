@@ -18,7 +18,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! rfluids = { version = "0.3", features = ["serde"] }
+//! rfluids = { version = "0.4", features = ["serde"] }
 //! ```
 //!
 //! Or via command line:
