@@ -33,225 +33,299 @@
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(test, derive(strum_macros::EnumIter))]
 pub enum PredefinedMix {
+    /// Air mixture.
     #[strum(to_string = "Air.mix", serialize = "Air")]
     Air,
 
+    /// Amarillo natural gas mixture.
     #[strum(to_string = "Amarillo.mix", serialize = "Amarillo")]
     Amarillo,
 
+    /// Ekofisk natural gas mixture.
     #[strum(to_string = "Ekofisk.mix", serialize = "Ekofisk")]
     Ekofisk,
 
+    /// Gulf Coast natural gas mixture.
     #[strum(to_string = "GulfCoast.mix", serialize = "GulfCoast")]
     GulfCoast,
 
+    /// NIST Gulf Coast gas mixture.
     #[strum(to_string = "GulfCoastGas(NIST1).mix", serialize = "GulfCoastGasNIST")]
     GulfCoastGasNIST,
 
+    /// High-carbon-dioxide natural gas mixture.
     #[strum(to_string = "HighCO2.mix", serialize = "HighCO2")]
     HighCO2,
 
+    /// High-nitrogen natural gas mixture.
     #[strum(to_string = "HighN2.mix", serialize = "HighN2")]
     HighN2,
 
+    /// Natural gas sample mixture.
     #[strum(to_string = "NaturalGasSample.mix", serialize = "NaturalGasSample")]
     NaturalGasSample,
 
+    /// Refrigerant blend R404A.
     #[strum(to_string = "R404A.mix", serialize = "R404A")]
     R404A,
 
+    /// Refrigerant blend R407A.
     #[strum(to_string = "R407A.mix", serialize = "R407A")]
     R407A,
 
+    /// Refrigerant blend R407B.
     #[strum(to_string = "R407B.mix", serialize = "R407B")]
     R407B,
 
+    /// Refrigerant blend R407C.
     #[strum(to_string = "R407C.mix", serialize = "R407C")]
     R407C,
 
+    /// Refrigerant blend R407D.
     #[strum(to_string = "R407D.mix", serialize = "R407D")]
     R407D,
 
+    /// Refrigerant blend R407E.
     #[strum(to_string = "R407E.mix", serialize = "R407E")]
     R407E,
 
+    /// Refrigerant blend R407F.
     #[strum(to_string = "R407F.mix", serialize = "R407F")]
     R407F,
 
+    /// Refrigerant blend R410A.
     #[strum(to_string = "R410A.mix", serialize = "R410A")]
     R410A,
 
+    /// Refrigerant blend R410B.
     #[strum(to_string = "R410B.mix", serialize = "R410B")]
     R410B,
 
+    /// Refrigerant blend R411A.
     #[strum(to_string = "R411A.mix", serialize = "R411A")]
     R411A,
 
+    /// Refrigerant blend R411B.
     #[strum(to_string = "R411B.mix", serialize = "R411B")]
     R411B,
 
+    /// Refrigerant blend R415A.
     #[strum(to_string = "R415A.mix", serialize = "R415A")]
     R415A,
 
+    /// Refrigerant blend R415B.
     #[strum(to_string = "R415B.mix", serialize = "R415B")]
     R415B,
 
+    /// Refrigerant blend R417A.
     #[strum(to_string = "R417A.mix", serialize = "R417A")]
     R417A,
 
+    /// Refrigerant blend R417B.
     #[strum(to_string = "R417B.mix", serialize = "R417B")]
     R417B,
 
+    /// Refrigerant blend R417C.
     #[strum(to_string = "R417C.mix", serialize = "R417C")]
     R417C,
 
+    /// Refrigerant blend R419A.
     #[strum(to_string = "R419A.mix", serialize = "R419A")]
     R419A,
 
+    /// Refrigerant blend R419B.
     #[strum(to_string = "R419B.mix", serialize = "R419B")]
     R419B,
 
+    /// Refrigerant blend R420A.
     #[strum(to_string = "R420A.mix", serialize = "R420A")]
     R420A,
 
+    /// Refrigerant blend R421A.
     #[strum(to_string = "R421A.mix", serialize = "R421A")]
     R421A,
 
+    /// Refrigerant blend R421B.
     #[strum(to_string = "R421B.mix", serialize = "R421B")]
     R421B,
 
+    /// Refrigerant blend R422A.
     #[strum(to_string = "R422A.mix", serialize = "R422A")]
     R422A,
 
+    /// Refrigerant blend R422B.
     #[strum(to_string = "R422B.mix", serialize = "R422B")]
     R422B,
 
+    /// Refrigerant blend R422C.
     #[strum(to_string = "R422C.mix", serialize = "R422C")]
     R422C,
 
+    /// Refrigerant blend R422D.
     #[strum(to_string = "R422D.mix", serialize = "R422D")]
     R422D,
 
+    /// Refrigerant blend R422E.
     #[strum(to_string = "R422E.mix", serialize = "R422E")]
     R422E,
 
+    /// Refrigerant blend R423A.
     #[strum(to_string = "R423A.mix", serialize = "R423A")]
     R423A,
 
+    /// Refrigerant blend R425A.
     #[strum(to_string = "R425A.mix", serialize = "R425A")]
     R425A,
 
+    /// Refrigerant blend R427A.
     #[strum(to_string = "R427A.mix", serialize = "R427A")]
     R427A,
 
+    /// Refrigerant blend R428A.
     #[strum(to_string = "R428A.mix", serialize = "R428A")]
     R428A,
 
+    /// Refrigerant blend R430A.
     #[strum(to_string = "R430A.mix", serialize = "R430A")]
     R430A,
 
+    /// Refrigerant blend R431A.
     #[strum(to_string = "R431A.mix", serialize = "R431A")]
     R431A,
 
+    /// Refrigerant blend R432A.
     #[strum(to_string = "R432A.mix", serialize = "R432A")]
     R432A,
 
+    /// Refrigerant blend R433A.
     #[strum(to_string = "R433A.mix", serialize = "R433A")]
     R433A,
 
+    /// Refrigerant blend R433B.
     #[strum(to_string = "R433B.mix", serialize = "R433B")]
     R433B,
 
+    /// Refrigerant blend R433C.
     #[strum(to_string = "R433C.mix", serialize = "R433C")]
     R433C,
 
+    /// Refrigerant blend R434A.
     #[strum(to_string = "R434A.mix", serialize = "R434A")]
     R434A,
 
+    /// Refrigerant blend R436A.
     #[strum(to_string = "R436A.mix", serialize = "R436A")]
     R436A,
 
+    /// Refrigerant blend R436B.
     #[strum(to_string = "R436B.mix", serialize = "R436B")]
     R436B,
 
+    /// Refrigerant blend R439A.
     #[strum(to_string = "R439A.mix", serialize = "R439A")]
     R439A,
 
+    /// Refrigerant blend R440A.
     #[strum(to_string = "R440A.mix", serialize = "R440A")]
     R440A,
 
+    /// Refrigerant blend R441A.
     #[strum(to_string = "R441A.mix", serialize = "R441A")]
     R441A,
 
+    /// Refrigerant blend R442A.
     #[strum(to_string = "R442A.mix", serialize = "R442A")]
     R442A,
 
+    /// Refrigerant blend R443A.
     #[strum(to_string = "R443A.mix", serialize = "R443A")]
     R443A,
 
+    /// Refrigerant blend R444A.
     #[strum(to_string = "R444A.mix", serialize = "R444A")]
     R444A,
 
+    /// Refrigerant blend R444B.
     #[strum(to_string = "R444B.mix", serialize = "R444B")]
     R444B,
 
+    /// Refrigerant blend R449A.
     #[strum(to_string = "R449A.mix", serialize = "R449A")]
     R449A,
 
+    /// Refrigerant blend R449B.
     #[strum(to_string = "R449B.mix", serialize = "R449B")]
     R449B,
 
+    /// Refrigerant blend R451A.
     #[strum(to_string = "R451A.mix", serialize = "R451A")]
     R451A,
 
+    /// Refrigerant blend R451B.
     #[strum(to_string = "R451B.mix", serialize = "R451B")]
     R451B,
 
+    /// Refrigerant blend R452A.
     #[strum(to_string = "R452A.mix", serialize = "R452A")]
     R452A,
 
+    /// Refrigerant blend R454A.
     #[strum(to_string = "R454A.mix", serialize = "R454A")]
     R454A,
 
+    /// Refrigerant blend R454B.
     #[strum(to_string = "R454B.mix", serialize = "R454B")]
     R454B,
 
+    /// Refrigerant blend R500.
     #[strum(to_string = "R500.mix", serialize = "R500")]
     R500,
 
+    /// Refrigerant blend R501.
     #[strum(to_string = "R501.mix", serialize = "R501")]
     R501,
 
+    /// Refrigerant blend R502.
     #[strum(to_string = "R502.mix", serialize = "R502")]
     R502,
 
+    /// Refrigerant blend R503.
     #[strum(to_string = "R503.mix", serialize = "R503")]
     R503,
 
+    /// Refrigerant blend R507A.
     #[strum(to_string = "R507A.mix", serialize = "R507A")]
     R507A,
 
+    /// Refrigerant blend R508A.
     #[strum(to_string = "R508A.mix", serialize = "R508A")]
     R508A,
 
+    /// Refrigerant blend R508B.
     #[strum(to_string = "R508B.mix", serialize = "R508B")]
     R508B,
 
+    /// Refrigerant blend R509A.
     #[strum(to_string = "R509A.mix", serialize = "R509A")]
     R509A,
 
+    /// Refrigerant blend R510A.
     #[strum(to_string = "R510A.mix", serialize = "R510A")]
     R510A,
 
+    /// Refrigerant blend R511A.
     #[strum(to_string = "R511A.mix", serialize = "R511A")]
     R511A,
 
+    /// Refrigerant blend R512A.
     #[strum(to_string = "R512A.mix", serialize = "R512A")]
     R512A,
 
+    /// Refrigerant blend R513A.
     #[strum(to_string = "R513A.mix", serialize = "R513A")]
     R513A,
 
+    /// Typical natural gas mixture.
     #[strum(
         to_string = "TypicalNaturalGas.mix",
         serialize = "TypicalNaturalGas",

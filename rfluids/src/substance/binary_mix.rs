@@ -37,147 +37,387 @@ use strum::EnumProperty;
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(test, derive(strum_macros::EnumIter))]
 pub enum BinaryMixKind {
+    /// Freezium potassium formate solution.
+    ///
+    /// # See Also
+    ///
+    /// - [FRE Fitting Report](https://coolprop.org/_downloads/34957f16ba277ebf93b5b6c77ba773ef/FRE_fitreport.pdf)
     #[strum(to_string = "FRE", props(min_fraction = "0.19", max_fraction = "0.5"))]
     FRE,
 
+    /// Ice slurry with ethanol.
+    ///
+    /// # See Also
+    ///
+    /// - [IceEA Fitting Report](https://coolprop.org/_downloads/e4168abbd58ed6ddde675dd652d4ad03/IceEA_fitreport.pdf)
     #[strum(to_string = "IceEA", props(min_fraction = "0.05", max_fraction = "0.35"))]
     IceEA,
 
+    /// Ice slurry with sodium chloride.
+    ///
+    /// # See Also
+    ///
+    /// - [IceNA Fitting Report](https://coolprop.org/_downloads/59f395394a1345b1da409186610afdf6/IceNA_fitreport.pdf)
     #[strum(to_string = "IceNA", props(min_fraction = "0.05", max_fraction = "0.35"))]
     IceNA,
 
+    /// Ice slurry with propylene glycol.
+    ///
+    /// # See Also
+    ///
+    /// - [IcePG Fitting Report](https://coolprop.org/_downloads/f9efc1eeca84e7435e3d0552869a3e72/IcePG_fitreport.pdf)
     #[strum(to_string = "IcePG", props(min_fraction = "0.05", max_fraction = "0.35"))]
     IcePG,
 
+    /// Lithium bromide aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [LiBr Fitting Report](https://coolprop.org/_downloads/9841afe5a67cf511e1c05fb2c62554e9/LiBr_fitreport.pdf)
     #[strum(to_string = "LiBr", props(min_fraction = "0.0", max_fraction = "0.75"))]
     LiBr,
 
+    /// Ammonia aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MAM Fitting Report](https://coolprop.org/_downloads/55f5945b82e59783f01a223c806ba98a/MAM_fitreport.pdf)
     #[strum(to_string = "MAM", props(min_fraction = "0.0", max_fraction = "0.3"))]
     MAM,
 
+    /// Melinder ammonia aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MAM2 Fitting Report](https://coolprop.org/_downloads/80ceb7a3f0ef19024df7102ede7abf1c/MAM2_fitreport.pdf)
     #[strum(to_string = "MAM2", props(min_fraction = "0.078", max_fraction = "0.236"))]
     MAM2,
 
+    /// Calcium chloride aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MCA Fitting Report](https://coolprop.org/_downloads/99c24e500b86d54a8ee06ec42fe88650/MCA_fitreport.pdf)
     #[strum(to_string = "MCA", props(min_fraction = "0.0", max_fraction = "0.3"))]
     MCA,
 
+    /// Melinder calcium chloride aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MCA2 Fitting Report](https://coolprop.org/_downloads/7f1f22344947f75279e127d261ed1bb4/MCA2_fitreport.pdf)
     #[strum(to_string = "MCA2", props(min_fraction = "0.09", max_fraction = "0.294"))]
     MCA2,
 
+    /// Ethanol aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MEA Fitting Report](https://coolprop.org/_downloads/9766a2a46a5ad683a2421fba9a8bbb00/MEA_fitreport.pdf)
     #[strum(to_string = "MEA", props(min_fraction = "0.0", max_fraction = "0.6"))]
     MEA,
 
+    /// Melinder ethanol aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MEA2 Fitting Report](https://coolprop.org/_downloads/8702b193f54b78d69b863cd9a751554b/MEA2_fitreport.pdf)
     #[strum(to_string = "MEA2", props(min_fraction = "0.11", max_fraction = "0.6"))]
     MEA2,
 
+    /// Ethylene glycol aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MEG Fitting Report](https://coolprop.org/_downloads/4e6bd34ef1888b4daa1662944ee0ea7e/MEG_fitreport.pdf)
     #[strum(to_string = "MEG", props(min_fraction = "0.0", max_fraction = "0.6"))]
     MEG,
 
+    /// Melinder ethylene glycol aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MEG2 Fitting Report](https://coolprop.org/_downloads/eb2feab3610b6184c36a49d7555a9a8b/MEG2_fitreport.pdf)
     #[strum(to_string = "MEG2", props(min_fraction = "0.0", max_fraction = "0.56"))]
     MEG2,
 
+    /// Glycerol aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MGL Fitting Report](https://coolprop.org/_downloads/3f422f64ed4d455fc1cf4ea9d008d489/MGL_fitreport.pdf)
     #[strum(to_string = "MGL", props(min_fraction = "0.0", max_fraction = "0.6"))]
     MGL,
 
+    /// Melinder glycerol aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MGL2 Fitting Report](https://coolprop.org/_downloads/9129c94c0b61a92d578721eb3244a8d9/MGL2_fitreport.pdf)
     #[strum(to_string = "MGL2", props(min_fraction = "0.195", max_fraction = "0.63"))]
     MGL2,
 
+    /// MIT seawater model.
+    ///
+    /// # See Also
+    ///
+    /// - [MITSW Fitting Report](https://coolprop.org/_downloads/83b323e2117a318d6a908a62332755a0/MITSW_fitreport.pdf)
     #[strum(to_string = "MITSW", props(min_fraction = "0.0", max_fraction = "0.12"))]
     MITSW,
 
+    /// Potassium acetate aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MKA Fitting Report](https://coolprop.org/_downloads/25c70020117c037c1bda6b82064cb6a7/MKA_fitreport.pdf)
     #[strum(to_string = "MKA", props(min_fraction = "0.0", max_fraction = "0.45"))]
     MKA,
 
+    /// Melinder potassium acetate aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MKA2 Fitting Report](https://coolprop.org/_downloads/eb05fcec89ff48ef20aa1f42e2f3fcaf/MKA2_fitreport.pdf)
     #[strum(to_string = "MKA2", props(min_fraction = "0.11", max_fraction = "0.41"))]
     MKA2,
 
+    /// Potassium carbonate aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MKC Fitting Report](https://coolprop.org/_downloads/af83599a6bdebd138597d0544fe81250/MKC_fitreport.pdf)
     #[strum(to_string = "MKC", props(min_fraction = "0.0", max_fraction = "0.4"))]
     MKC,
 
+    /// Melinder potassium carbonate aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MKC2 Fitting Report](https://coolprop.org/_downloads/af88aff662b6e97de038fe5ab1099d56/MKC2_fitreport.pdf)
     #[strum(to_string = "MKC2", props(min_fraction = "0.0", max_fraction = "0.39"))]
     MKC2,
 
+    /// Potassium formate aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MKF Fitting Report](https://coolprop.org/_downloads/0a1ac8e2d2b9f530ff25443a274a63a1/MKF_fitreport.pdf)
     #[strum(to_string = "MKF", props(min_fraction = "0.0", max_fraction = "0.48"))]
     MKF,
 
+    /// Lithium chloride aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MLI Fitting Report](https://coolprop.org/_downloads/52820bc9842eaa443aae3ff6fbad9c6f/MLI_fitreport.pdf)
     #[strum(to_string = "MLI", props(min_fraction = "0.0", max_fraction = "0.24"))]
     MLI,
 
+    /// Methanol aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MMA Fitting Report](https://coolprop.org/_downloads/cd121df9ebf7251a0e4d20ded28c4a7f/MMA_fitreport.pdf)
     #[strum(to_string = "MMA", props(min_fraction = "0.0", max_fraction = "0.6"))]
     MMA,
 
+    /// Melinder methanol aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MMA2 Fitting Report](https://coolprop.org/_downloads/ac5e575a586e468e1df740bba389068a/MMA2_fitreport.pdf)
     #[strum(to_string = "MMA2", props(min_fraction = "0.078", max_fraction = "0.474"))]
     MMA2,
 
+    /// Magnesium chloride aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MMG Fitting Report](https://coolprop.org/_downloads/65b64f4f312d7711f888d48e78607307/MMG_fitreport.pdf)
     #[strum(to_string = "MMG", props(min_fraction = "0.0", max_fraction = "0.3"))]
     MMG,
 
+    /// Melinder magnesium chloride aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MMG2 Fitting Report](https://coolprop.org/_downloads/3f60e26eeef0be3d41f2bf5410c6456e/MMG2_fitreport.pdf)
     #[strum(to_string = "MMG2", props(min_fraction = "0.0", max_fraction = "0.205"))]
     MMG2,
 
+    /// Sodium chloride aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MNA Fitting Report](https://coolprop.org/_downloads/70b1723cc03bf11236be1da5364ad2a3/MNA_fitreport.pdf)
     #[strum(to_string = "MNA", props(min_fraction = "0.0", max_fraction = "0.23"))]
     MNA,
 
+    /// Melinder sodium chloride aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MNA2 Fitting Report](https://coolprop.org/_downloads/42a537083fe286eb02364dea3ee11688/MNA2_fitreport.pdf)
     #[strum(to_string = "MNA2", props(min_fraction = "0.0", max_fraction = "0.23"))]
     MNA2,
 
+    /// Propylene glycol aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MPG Fitting Report](https://coolprop.org/_downloads/15da2eff4264ab41969c2288a2fd7a14/MPG_fitreport.pdf)
     #[strum(to_string = "MPG", props(min_fraction = "0.0", max_fraction = "0.6"))]
     MPG,
 
+    /// Melinder propylene glycol aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [MPG2 Fitting Report](https://coolprop.org/_downloads/51fc2618b7bf9df9eece1b789ed1dd76/MPG2_fitreport.pdf)
     #[strum(to_string = "MPG2", props(min_fraction = "0.15", max_fraction = "0.57"))]
     MPG2,
 
+    /// VDI calcium chloride aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [VCA Fitting Report](https://coolprop.org/_downloads/3d545447ca28deec34e87f4e2c7372e5/VCA_fitreport.pdf)
     #[strum(to_string = "VCA", props(min_fraction = "0.147", max_fraction = "0.299"))]
     VCA,
 
+    /// VDI potassium carbonate aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [VKC Fitting Report](https://coolprop.org/_downloads/f5f494464726eef64bef309a06a231b9/VKC_fitreport.pdf)
     #[strum(to_string = "VKC", props(min_fraction = "0.128", max_fraction = "0.389"))]
     VKC,
 
+    /// VDI methanol aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [VMA Fitting Report](https://coolprop.org/_downloads/8fbd3dad595acf18e51ebc9db74bf4db/VMA_fitreport.pdf)
     #[strum(to_string = "VMA", props(min_fraction = "0.1", max_fraction = "0.9"))]
     VMA,
 
+    /// VDI magnesium chloride aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [VMG Fitting Report](https://coolprop.org/_downloads/85befc9ba3e20979e025731d8b27461a/VMG_fitreport.pdf)
     #[strum(to_string = "VMG", props(min_fraction = "0.072", max_fraction = "0.206"))]
     VMG,
 
+    /// VDI sodium chloride aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [VNA Fitting Report](https://coolprop.org/_downloads/38a80b6ad28ae9ce214391a3c87c962e/VNA_fitreport.pdf)
     #[strum(to_string = "VNA", props(min_fraction = "0.07", max_fraction = "0.231"))]
     VNA,
 
+    /// ASHRAE ethylene glycol aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [AEG Fitting Report](https://coolprop.org/_downloads/78e13c7e1ac35bce0c6f3d8da3beb923/AEG_fitreport.pdf)
     #[strum(to_string = "AEG", props(min_fraction = "0.1", max_fraction = "0.6"))]
     AEG,
 
+    /// Antifrogen KF potassium formate solution.
+    ///
+    /// # See Also
+    ///
+    /// - [AKF Fitting Report](https://coolprop.org/_downloads/84382d0deabf6c4714e8bce7d785d47c/AKF_fitreport.pdf)
     #[strum(to_string = "AKF", props(min_fraction = "0.4", max_fraction = "1.0"))]
     AKF,
 
+    /// Antifrogen L propylene glycol solution.
+    ///
+    /// # See Also
+    ///
+    /// - [AL Fitting Report](https://coolprop.org/_downloads/aa4571c7edf7b7a96d3fd0880cd6ab7e/AL_fitreport.pdf)
     #[strum(to_string = "AL", props(min_fraction = "0.1", max_fraction = "0.6"))]
     AL,
 
+    /// Antifrogen N ethylene glycol solution.
+    ///
+    /// # See Also
+    ///
+    /// - [AN Fitting Report](https://coolprop.org/_downloads/c77b6564ae1467f00cc06ee0cdfc96f0/AN_fitreport.pdf)
     #[strum(to_string = "AN", props(min_fraction = "0.1", max_fraction = "0.6"))]
     AN,
 
+    /// ASHRAE propylene glycol aqueous solution.
+    ///
+    /// # See Also
+    ///
+    /// - [APG Fitting Report](https://coolprop.org/_downloads/ff81838c5666d41cd5cf3b4cbbdbae99/APG_fitreport.pdf)
     #[strum(to_string = "APG", props(min_fraction = "0.1", max_fraction = "0.6"))]
     APG,
 
+    /// Glykosol N ethylene glycol solution.
+    ///
+    /// # See Also
+    ///
+    /// - [GKN Fitting Report](https://coolprop.org/_downloads/608e1caabc90a2a8decbe2c67e2820f5/GKN_fitreport.pdf)
     #[strum(to_string = "GKN", props(min_fraction = "0.1", max_fraction = "0.6"))]
     GKN,
 
+    /// Pekasol 2000 potassium acetate/formate solution.
+    ///
+    /// # See Also
+    ///
+    /// - [PK2 Fitting Report](https://coolprop.org/_downloads/f8ea5374d239a80eb1f8bbc028d6e843/PK2_fitreport.pdf)
     #[strum(to_string = "PK2", props(min_fraction = "0.3", max_fraction = "1.0"))]
     PK2,
 
+    /// Pekasol L propylene glycol solution.
+    ///
+    /// # See Also
+    ///
+    /// - [PKL Fitting Report](https://coolprop.org/_downloads/6886474c8959679625eb06ab486a039e/PKL_fitreport.pdf)
     #[strum(to_string = "PKL", props(min_fraction = "0.1", max_fraction = "0.6"))]
     PKL,
 
+    /// Zitrec AC corrosion inhibitor solution.
+    ///
+    /// # See Also
+    ///
+    /// - [ZAC Fitting Report](https://coolprop.org/_downloads/2eb5c385aa7a082fbf631d7c95cb200b/ZAC_fitreport.pdf)
     #[strum(to_string = "ZAC", props(min_fraction = "0.06", max_fraction = "0.5"))]
     ZAC,
 
+    /// Zitrec FC propylene glycol solution.
+    ///
+    /// # See Also
+    ///
+    /// - [ZFC Fitting Report](https://coolprop.org/_downloads/2161e01af1f1fa119bc0a8d285e889f4/ZFC_fitreport.pdf)
     #[strum(to_string = "ZFC", props(min_fraction = "0.3", max_fraction = "0.6"))]
     ZFC,
 
+    /// Zitrec LC propylene glycol solution.
+    ///
+    /// # See Also
+    ///
+    /// - [ZLC Fitting Report](https://coolprop.org/_downloads/56d3bcd6e7b9021ac6f75168e4dbfd86/ZLC_fitreport.pdf)
     #[strum(to_string = "ZLC", props(min_fraction = "0.3", max_fraction = "0.7"))]
     ZLC,
 
+    /// Zitrec M ethylene glycol solution.
+    ///
+    /// # See Also
+    ///
+    /// - [ZM Fitting Report](https://coolprop.org/_downloads/d56dacbaa99ddd7f467a8e07288d72cd/ZM_fitreport.pdf)
     #[strum(to_string = "ZM", props(min_fraction = "0.0", max_fraction = "1.0"))]
     ZM,
 
+    /// Zitrec MC ethylene glycol solution.
+    ///
+    /// # See Also
+    ///
+    /// - [ZMC Fitting Report](https://coolprop.org/_downloads/31e9c35471e97108ec2590b310cfcbfe/ZMC_fitreport.pdf)
     #[strum(to_string = "ZMC", props(min_fraction = "0.3", max_fraction = "0.7"))]
     ZMC,
 }
