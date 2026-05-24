@@ -19,7 +19,9 @@ fn main() {
             .generate_comments(false)
             .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
             .generate()
-            .expect("Unable to generate bindings!");
-        bindings.write_to_file(target_dir.join("bindings.rs")).expect("Unable to write bindings!");
+            .expect("bindgen should generate bindings from `CoolPropLib.h`");
+        bindings
+            .write_to_file(target_dir.join("bindings.rs"))
+            .expect("generated bindings should be written to `OUT_DIR`");
     }
 }

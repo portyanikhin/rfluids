@@ -21,9 +21,8 @@ fn main() {
 }
 
 fn setup_src_dir() -> PathBuf {
-    let src_dir = PathBuf::from("lib")
-        .canonicalize()
-        .expect("Unable to canonicalize CoolProp directory path!");
+    let src_dir =
+        PathBuf::from("lib").canonicalize().expect("bundled CoolProp `lib` directory should exist");
     println!("cargo:rustc-link-search=native={}", src_dir.to_str().unwrap());
     src_dir
 }
@@ -39,8 +38,7 @@ fn setup_lib(src_dir: &Path, target_dir: &Path) {
     let file_name = format!("{}{}{}", LIB_PREFIX, LIB_NAME, LIB_EXTENSION);
     let src_path = src_dir.join(&file_name);
     let target_path = target_dir.join(&file_name);
-    fs::copy(&src_path, &target_path)
-        .expect("Unable to copy CoolProp library to the target directory!");
+    fs::copy(&src_path, &target_path).expect("CoolProp library should be copied to `OUT_DIR`");
     #[cfg(unix)]
     {
         // The library's ELF SONAME is "libCoolProp.so.7", so the runtime linker
@@ -49,7 +47,7 @@ fn setup_lib(src_dir: &Path, target_dir: &Path) {
         let soname_path = target_dir.join(LIB_SONAME);
         if !soname_path.exists() {
             std::os::unix::fs::symlink(&target_path, &soname_path)
-                .expect("Unable to create SONAME symlink for CoolProp library!");
+                .expect("CoolProp `SONAME` symlink should be created in `OUT_DIR`");
         }
     }
     println!("cargo:rustc-link-lib=dylib={}", LIB_NAME);

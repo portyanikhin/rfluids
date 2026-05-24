@@ -116,6 +116,6 @@ pub const COOLPROP_PATH: &str = coolprop_sys_macos_aarch64::COOLPROP_PATH;
 pub static COOLPROP: LazyLock<Mutex<bindings::CoolProp>> = LazyLock::new(|| {
     Mutex::new(
         unsafe { bindings::CoolProp::new(COOLPROP_PATH) }
-            .expect("Unable to load CoolProp dynamic library!"),
+            .expect("CoolProp dynamic library should load from `COOLPROP_PATH`"),
     )
 });
