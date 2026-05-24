@@ -223,7 +223,7 @@ pub enum Pure {
     ///
     /// - [Ethylbenzene](https://coolprop.org/fluid_properties/fluids/EthylBenzene.html)
     #[strum(to_string = "EthylBenzene", serialize = "EBENZENE")]
-    EthylBenzene,
+    Ethylbenzene,
 
     /// Ethylene.
     ///
@@ -1295,7 +1295,7 @@ mod tests {
     #[case(DimethylEther, "DimethylEther")]
     #[case(Ethane, "Ethane")]
     #[case(Ethanol, "Ethanol")]
-    #[case(EthylBenzene, "EthylBenzene")]
+    #[case(Ethylbenzene, "EthylBenzene")]
     #[case(Ethylene, "Ethylene")]
     #[case(EthyleneOxide, "EthyleneOxide")]
     #[case(Fluorine, "Fluorine")]
@@ -1452,7 +1452,7 @@ mod tests {
     #[case(vec!["DimethylEther", "DME"], DimethylEther)]
     #[case(vec!["Ethane", "n-C2H6"], Ethane)]
     #[case(vec!["Ethanol", "C2H6O"], Ethanol)]
-    #[case(vec!["EthylBenzene", "EBENZENE"], EthylBenzene)]
+    #[case(vec!["EthylBenzene", "EBENZENE"], Ethylbenzene)]
     #[case(vec!["Ethylene"], Ethylene)]
     #[case(vec!["EthyleneOxide"], EthyleneOxide)]
     #[case(vec!["Fluorine"], Fluorine)]
