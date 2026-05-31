@@ -11,8 +11,8 @@ env:
   RUSTFLAGS: -Dwarnings
 
 jobs:
-  fmt:
-    name: Check formatting
+  rustfmt:
+    name: Check with rustfmt
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -26,8 +26,8 @@ jobs:
         run: cargo fmt --all -- --check
 
   clippy:
-    needs: fmt
-    name: Clippy check
+    needs: [rustfmt]
+    name: Check with clippy
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -40,8 +40,8 @@ jobs:
       - name: Run Clippy
         run: cargo clippy -p rfluids --all-targets --all-features -- --no-deps
 
-  check-bindings:
-    needs: fmt
+  bindings:
+    needs: [rustfmt]
     name: Check bindings are up-to-date
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -99,7 +99,7 @@ jobs:
           echo "✅ Committed bindings are semantically identical to generated version"
 
   tests:
-    needs: [fmt, clippy, check-bindings]
+    needs: [rustfmt, clippy, bindings]
     name: Tests / ${{ matrix.os }} / rust-${{ matrix.toolchain }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 45
@@ -119,7 +119,7 @@ jobs:
         run: cargo test --verbose
 
   coverage:
-    needs: [fmt, clippy, check-bindings, tests]
+    needs: [rustfmt, clippy, bindings, tests]
     name: Code coverage
     runs-on: ubuntu-latest
     timeout-minutes: 45
