@@ -224,5 +224,5 @@ assert!((water.specific_heat()? - if97_water.specific_heat()?).abs() > 1e-6);
 
 <sup>
 This project is licensed under
-<a href="https://github.com/portyanikhin/rfluids/blob/main/LICENSE">MIT License</a>.
+<a href="https://github.com/portyanikhin/rfluids/blob/main/LICENSE">MIT License</a>
 </sup>

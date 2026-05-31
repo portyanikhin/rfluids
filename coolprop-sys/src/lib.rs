@@ -59,7 +59,7 @@
 //!
 //! <sup>
 //! This project is licensed under
-//! <a href="https://github.com/portyanikhin/rfluids/blob/main/LICENSE">MIT License</a>.
+//! <a href="https://github.com/portyanikhin/rfluids/blob/main/LICENSE">MIT License</a>
 //! </sup>
 
 use std::sync::{LazyLock, Mutex};
