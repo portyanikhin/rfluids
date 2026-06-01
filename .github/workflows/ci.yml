@@ -113,6 +113,8 @@ jobs:
             label: macos-aarch64
           - os: macos-15-intel
             label: macos-x86-64
+          - os: windows-11-arm
+            label: windows-aarch64
           - os: windows-latest
             label: windows-x86-64
         toolchain: [stable, beta, nightly, 1.85.0]
