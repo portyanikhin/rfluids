@@ -16,6 +16,8 @@ jobs:
       fail-fast: false
       matrix:
         platform:
+          - os: ubuntu-24.04-arm
+            label: linux-aarch64
           - os: ubuntu-latest
             label: linux-x86-64
           - os: macos-latest
