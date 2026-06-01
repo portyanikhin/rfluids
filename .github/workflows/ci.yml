@@ -100,13 +100,21 @@ jobs:
 
   tests:
     needs: [rustfmt, clippy, bindings]
-    name: Tests / ${{ matrix.os }} / rust-${{ matrix.toolchain }}
-    runs-on: ${{ matrix.os }}
+    name: Tests / ${{ matrix.platform.label }} / rust-${{ matrix.toolchain }}
+    runs-on: ${{ matrix.platform.os }}
     timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-15-intel, macos-latest]
+        platform:
+          - os: ubuntu-latest
+            label: linux-x86-64
+          - os: macos-latest
+            label: macos-aarch64
+          - os: macos-15-intel
+            label: macos-x86-64
+          - os: windows-latest
+            label: windows-x86-64
         toolchain: [stable, beta, nightly, 1.85.0]
 
     steps:

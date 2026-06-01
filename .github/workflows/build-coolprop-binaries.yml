@@ -10,12 +10,20 @@ on:
 
 jobs:
   build-coolprop-binaries:
-    name: ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.platform.label }}
+    runs-on: ${{ matrix.platform.os }}
     strategy:
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-15-intel, macos-latest]
       fail-fast: false
+      matrix:
+        platform:
+          - os: ubuntu-latest
+            label: linux-x86-64
+          - os: macos-latest
+            label: macos-aarch64
+          - os: macos-15-intel
+            label: macos-x86-64
+          - os: windows-latest
+            label: windows-x86-64
 
     steps:
       - name: Checkout CoolProp repository
@@ -39,7 +47,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: CoolProp ${{ github.event.inputs.coolprop_version }} (${{ matrix.os }})
+          name: CoolProp ${{ github.event.inputs.coolprop_version }} (${{ matrix.platform.label }})
           path: |
             Release/*.dll
             Release/*.lib
