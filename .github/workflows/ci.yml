@@ -117,7 +117,7 @@ jobs:
             label: windows-aarch64
           - os: windows-latest
             label: windows-x86-64
-        toolchain: [stable, beta, nightly, 1.85.0]
+        toolchain: [stable, nightly, 1.85.0]
 
     steps:
       - uses: actions/checkout@v6
