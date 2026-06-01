@@ -108,6 +108,7 @@ name = "coolprop-sys"
 version = "7.2.2"
 dependencies = [
  "bindgen",
+ "coolprop-sys-linux-aarch64",
  "coolprop-sys-linux-x86-64",
  "coolprop-sys-macos-aarch64",
  "coolprop-sys-macos-x86-64",
@@ -115,6 +116,10 @@ dependencies = [
  "coolprop-sys-windows-x86-64",
  "libloading",
 ]
+
+[[package]]
+name = "coolprop-sys-linux-aarch64"
+version = "7.2.2"
 
 [[package]]
 name = "coolprop-sys-linux-x86-64"

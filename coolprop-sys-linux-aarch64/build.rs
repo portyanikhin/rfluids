@@ -1,0 +1,54 @@
+use std::{
+    env, fs,
+    path::{Path, PathBuf},
+};
+
+const LIB_PREFIX: &str = "lib";
+const LIB_NAME: &str = "CoolProp";
+const LIB_EXTENSION: &str = ".so";
+#[allow(unused)]
+const LIB_SONAME: &str = "libCoolProp.so.7";
+
+fn main() {
+    println!("cargo:rerun-if-changed=build.rs");
+    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap().to_lowercase();
+    let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap().to_lowercase();
+    if target_os == "linux" && target_arch == "aarch64" {
+        let src_dir = setup_src_dir();
+        let target_dir = setup_target_dir();
+        setup_lib(&src_dir, &target_dir);
+    }
+}
+
+fn setup_src_dir() -> PathBuf {
+    let src_dir =
+        PathBuf::from("lib").canonicalize().expect("bundled CoolProp `lib` directory should exist");
+    println!("cargo:rustc-link-search=native={}", src_dir.to_str().unwrap());
+    src_dir
+}
+
+fn setup_target_dir() -> PathBuf {
+    let target_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+    println!("cargo:rustc-link-search=native={}", target_dir.to_str().unwrap());
+    println!("cargo:rustc-link-arg=-Wl,-rpath,{}", target_dir.to_str().unwrap());
+    target_dir
+}
+
+fn setup_lib(src_dir: &Path, target_dir: &Path) {
+    let file_name = format!("{}{}{}", LIB_PREFIX, LIB_NAME, LIB_EXTENSION);
+    let src_path = src_dir.join(&file_name);
+    let target_path = target_dir.join(&file_name);
+    fs::copy(&src_path, &target_path).expect("CoolProp library should be copied to `OUT_DIR`");
+    #[cfg(unix)]
+    {
+        // The library's ELF SONAME is "libCoolProp.so.7", so the runtime linker
+        // looks for that filename rather than "libCoolProp.so". Create a symlink
+        // so it can be found via the rpath set above.
+        let soname_path = target_dir.join(LIB_SONAME);
+        if !soname_path.exists() {
+            std::os::unix::fs::symlink(&target_path, &soname_path)
+                .expect("CoolProp `SONAME` symlink should be created in `OUT_DIR`");
+        }
+    }
+    println!("cargo:rustc-link-lib=dylib={}", LIB_NAME);
+}
