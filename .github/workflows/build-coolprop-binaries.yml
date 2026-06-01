@@ -45,7 +45,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install six
       - name: Build a Makefile
-        run: cmake . -DCOOLPROP_SHARED_LIBRARY=ON -DCMAKE_BUILD_TYPE=Release
+        run: cmake . -DCOOLPROP_SHARED_LIBRARY=ON -DCMAKE_BUILD_TYPE=Release -DFORCE_BITNESS_NATIVE=ON
       - name: Build CoolProp binaries
         run: cmake --build . --config Release
       - name: Upload artifacts
