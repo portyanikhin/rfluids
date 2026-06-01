@@ -57,6 +57,7 @@ calculations for engineering and scientific applications.
 
 ## Supported platforms
 
+- `Linux AArch64`
 - `Linux x86-64`
 - `macOS AArch64`
 - `macOS x86-64`
