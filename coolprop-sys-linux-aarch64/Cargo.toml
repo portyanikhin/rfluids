@@ -1,0 +1,15 @@
+[package]
+name = "coolprop-sys-linux-aarch64"
+version = "7.2.2"
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "CoolProp native binaries for Linux AArch64"
+readme = "README.md"
+homepage.workspace = true
+repository.workspace = true
+license.workspace = true
+keywords = ["CoolProp", "native", "binaries", "Linux", "AArch64"]
+categories = ["api-bindings", "science"]
+
+[dependencies]
