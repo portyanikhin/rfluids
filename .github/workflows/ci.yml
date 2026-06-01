@@ -26,7 +26,6 @@ jobs:
         run: cargo fmt --all -- --check
 
   clippy:
-    needs: [rustfmt]
     name: Check with clippy
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -41,7 +40,6 @@ jobs:
         run: cargo clippy -p rfluids --all-targets --all-features -- --no-deps
 
   bindings:
-    needs: [rustfmt]
     name: Check bindings are up-to-date
     runs-on: ubuntu-latest
     timeout-minutes: 45
