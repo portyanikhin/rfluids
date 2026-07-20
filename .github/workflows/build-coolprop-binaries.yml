@@ -37,7 +37,7 @@ jobs:
           ref: ${{ github.event.inputs.coolprop_version }}
           submodules: recursive
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: 3.14
       - name: Restore Python dependencies
