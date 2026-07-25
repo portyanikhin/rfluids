@@ -1,3 +1,5 @@
+// cSpell:disable
+
 #ifndef COOLPROPDLL_H
 #define COOLPROPDLL_H
 
