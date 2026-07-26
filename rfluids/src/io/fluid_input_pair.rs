@@ -9,7 +9,7 @@ use super::FluidParam;
 /// ```
 /// use rfluids::prelude::*;
 ///
-/// assert_eq!(u8::from(FluidInputPair::PT), 9);
+/// assert_eq!(u8::from(FluidInputPair::PT), 17);
 /// ```
 ///
 /// Conversion between two [`FluidParam`]s:
@@ -25,110 +25,142 @@ use super::FluidParam;
 /// ```
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum FluidInputPair {
-    /// Vapor quality **\[dimensionless, from 0 to 1\]**, temperature **\[K\]**.
+    /// Mole-based vapor quality **\[dimensionless, from 0 to 1\]**, temperature **\[K\]**.
     QT = 1,
 
-    /// Pressure **\[Pa\]**, vapor quality **\[dimensionless, from 0 to 1\]**.
-    PQ = 2,
+    /// Mass-based vapor quality **\[dimensionless, from 0 to 1\]**, temperature **\[K\]**.
+    QMassT = 2,
 
-    /// Vapor quality **\[dimensionless, from 0 to 1\]**, molar specific entropy **\[J/mol/K\]**.
-    QSMolar = 3,
+    /// Pressure **\[Pa\]**, mole-based vapor quality **\[dimensionless, from 0 to 1\]**.
+    PQ = 3,
 
-    /// Vapor quality **\[dimensionless, from 0 to 1\]**, mass specific entropy **\[J/kg/K\]**.
-    QSMass = 4,
+    /// Pressure **\[Pa\]**, mass-based vapor quality **\[dimensionless, from 0 to 1\]**.
+    PQMass = 4,
 
-    /// Molar specific enthalpy **\[J/mol\]**, vapor quality **\[dimensionless, from 0 to 1\]**.
-    HMolarQ = 5,
+    /// Mole-based vapor quality **\[dimensionless, from 0 to 1\]**,
+    /// molar specific entropy **\[J/mol/K\]**.
+    QSMolar = 5,
 
-    /// Mass specific enthalpy **\[J/kg\]**, vapor quality **\[dimensionless, from 0 to 1\]**.
-    HMassQ = 6,
+    /// Mass-based vapor quality **\[dimensionless, from 0 to 1\]**,
+    /// molar specific entropy **\[J/mol/K\]**.
+    QMassSMolar = 6,
 
-    /// Molar density **\[mol/m³\]**, vapor quality **\[dimensionless, from 0 to 1\]**.
-    DMolarQ = 7,
+    /// Mole-based vapor quality **\[dimensionless, from 0 to 1\]**,
+    /// mass specific entropy **\[J/kg/K\]**.
+    QSMass = 7,
 
-    /// Mass density **\[kg/m³\]**, vapor quality **\[dimensionless, from 0 to 1\]**.
-    DMassQ = 8,
+    /// Mass-based vapor quality **\[dimensionless, from 0 to 1\]**,
+    /// mass specific entropy **\[J/kg/K\]**.
+    QMassSMass = 8,
+
+    /// Molar specific enthalpy **\[J/mol\]**,
+    /// mole-based vapor quality **\[dimensionless, from 0 to 1\]**.
+    HMolarQ = 9,
+
+    /// Molar specific enthalpy **\[J/mol\]**,
+    /// mass-based vapor quality **\[dimensionless, from 0 to 1\]**.
+    HMolarQMass = 10,
+
+    /// Mass specific enthalpy **\[J/kg\]**,
+    /// mole-based vapor quality **\[dimensionless, from 0 to 1\]**.
+    HMassQ = 11,
+
+    /// Mass specific enthalpy **\[J/kg\]**,
+    /// mass-based vapor quality **\[dimensionless, from 0 to 1\]**.
+    HMassQMass = 12,
+
+    /// Molar density **\[mol/m³\]**, mole-based vapor quality **\[dimensionless, from 0 to 1\]**.
+    DMolarQ = 13,
+
+    /// Molar density **\[mol/m³\]**, mass-based vapor quality **\[dimensionless, from 0 to 1\]**.
+    DMolarQMass = 14,
+
+    /// Mass density **\[kg/m³\]**, mole-based vapor quality **\[dimensionless, from 0 to 1\]**.
+    DMassQ = 15,
+
+    /// Mass density **\[kg/m³\]**, mass-based vapor quality **\[dimensionless, from 0 to 1\]**.
+    DMassQMass = 16,
 
     /// Pressure **\[Pa\]**, temperature **\[K\]**.
-    PT = 9,
+    PT = 17,
 
     /// Mass density **\[kg/m³\]**, temperature **\[K\]**.
-    DMassT = 10,
+    DMassT = 18,
 
     /// Molar density **\[mol/m³\]**, temperature **\[K\]**.
-    DMolarT = 11,
+    DMolarT = 19,
 
     /// Molar specific enthalpy **\[J/mol\]**, temperature **\[K\]**.
-    HMolarT = 12,
+    HMolarT = 20,
 
     /// Mass specific enthalpy **\[J/kg\]**, temperature **\[K\]**.
-    HMassT = 13,
+    HMassT = 21,
 
     /// Molar specific entropy **\[J/mol/K\]**, temperature **\[K\]**.
-    SMolarT = 14,
+    SMolarT = 22,
 
     /// Mass specific entropy **\[J/kg/K\]**, temperature **\[K\]**.
-    SMassT = 15,
+    SMassT = 23,
 
     /// Temperature **\[K\]**, molar specific internal energy **\[J/mol\]**.
-    TUMolar = 16,
+    TUMolar = 24,
 
     /// Temperature **\[K\]**, mass specific internal energy **\[J/kg\]**.
-    TUMass = 17,
+    TUMass = 25,
 
     /// Mass density **\[kg/m³\]**, pressure **\[Pa\]**.
-    DMassP = 18,
+    DMassP = 26,
 
     /// Molar density **\[mol/m³\]**, pressure **\[Pa\]**.
-    DMolarP = 19,
+    DMolarP = 27,
 
     /// Mass specific enthalpy **\[J/kg\]**, pressure **\[Pa\]**.
-    HMassP = 20,
+    HMassP = 28,
 
     /// Molar specific enthalpy **\[J/mol\]**, pressure **\[Pa\]**.
-    HMolarP = 21,
+    HMolarP = 29,
 
     /// Pressure **\[Pa\]**, mass specific entropy **\[J/kg/K\]**.
-    PSMass = 22,
+    PSMass = 30,
 
     /// Pressure **\[Pa\]**, molar specific entropy **\[J/mol/K\]**.
-    PSMolar = 23,
+    PSMolar = 31,
 
     /// Pressure **\[Pa\]**, mass specific internal energy **\[J/kg\]**.
-    PUMass = 24,
+    PUMass = 32,
 
     /// Pressure **\[Pa\]**, molar specific internal energy **\[J/mol\]**.
-    PUMolar = 25,
+    PUMolar = 33,
 
     /// Mass specific enthalpy **\[J/kg\]**, mass specific entropy **\[J/kg/K\]**.
-    HMassSMass = 26,
+    HMassSMass = 34,
 
     /// Molar specific enthalpy **\[J/mol\]**, molar specific entropy **\[J/mol/K\]**.
-    HMolarSMolar = 27,
+    HMolarSMolar = 35,
 
     /// Mass specific entropy **\[J/kg/K\]**, mass specific internal energy **\[J/kg\]**.
-    SMassUMass = 28,
+    SMassUMass = 36,
 
     /// Molar specific entropy **\[J/mol/K\]**, molar specific internal energy **\[J/mol\]**.
-    SMolarUMolar = 29,
+    SMolarUMolar = 37,
 
     /// Mass density **\[kg/m³\]**, mass specific enthalpy **\[J/kg\]**.
-    DMassHMass = 30,
+    DMassHMass = 38,
 
     /// Molar density **\[mol/m³\]**, molar specific enthalpy **\[J/mol\]**.
-    DMolarHMolar = 31,
+    DMolarHMolar = 39,
 
     /// Mass density **\[kg/m³\]**, mass specific entropy **\[J/kg/K\]**.
-    DMassSMass = 32,
+    DMassSMass = 40,
 
     /// Molar density **\[mol/m³\]**, molar specific entropy **\[J/mol/K\]**.
-    DMolarSMolar = 33,
+    DMolarSMolar = 41,
 
     /// Mass density **\[kg/m³\]**, mass specific internal energy **\[J/kg\]**.
-    DMassUMass = 34,
+    DMassUMass = 42,
 
     /// Molar density **\[mol/m³\]**, molar specific internal energy **\[J/mol\]**.
-    DMolarUMolar = 35,
+    DMolarUMolar = 43,
 }
 
 impl From<FluidInputPair> for u8 {
@@ -141,13 +173,21 @@ impl From<FluidInputPair> for (FluidParam, FluidParam) {
     fn from(value: FluidInputPair) -> Self {
         match value {
             FluidInputPair::QT => (FluidParam::Q, FluidParam::T),
+            FluidInputPair::QMassT => (FluidParam::QMass, FluidParam::T),
             FluidInputPair::PQ => (FluidParam::P, FluidParam::Q),
+            FluidInputPair::PQMass => (FluidParam::P, FluidParam::QMass),
             FluidInputPair::QSMolar => (FluidParam::Q, FluidParam::SMolar),
+            FluidInputPair::QMassSMolar => (FluidParam::QMass, FluidParam::SMolar),
             FluidInputPair::QSMass => (FluidParam::Q, FluidParam::SMass),
+            FluidInputPair::QMassSMass => (FluidParam::QMass, FluidParam::SMass),
             FluidInputPair::HMolarQ => (FluidParam::HMolar, FluidParam::Q),
+            FluidInputPair::HMolarQMass => (FluidParam::HMolar, FluidParam::QMass),
             FluidInputPair::HMassQ => (FluidParam::HMass, FluidParam::Q),
+            FluidInputPair::HMassQMass => (FluidParam::HMass, FluidParam::QMass),
             FluidInputPair::DMolarQ => (FluidParam::DMolar, FluidParam::Q),
+            FluidInputPair::DMolarQMass => (FluidParam::DMolar, FluidParam::QMass),
             FluidInputPair::DMassQ => (FluidParam::DMass, FluidParam::Q),
+            FluidInputPair::DMassQMass => (FluidParam::DMass, FluidParam::QMass),
             FluidInputPair::PT => (FluidParam::P, FluidParam::T),
             FluidInputPair::DMassT => (FluidParam::DMass, FluidParam::T),
             FluidInputPair::DMolarT => (FluidParam::DMolar, FluidParam::T),
@@ -187,26 +227,50 @@ impl TryFrom<(FluidParam, FluidParam)> for FluidInputPair {
             (FluidParam::Q, FluidParam::T) | (FluidParam::T, FluidParam::Q) => {
                 Ok(FluidInputPair::QT)
             }
+            (FluidParam::QMass, FluidParam::T) | (FluidParam::T, FluidParam::QMass) => {
+                Ok(FluidInputPair::QMassT)
+            }
             (FluidParam::P, FluidParam::Q) | (FluidParam::Q, FluidParam::P) => {
                 Ok(FluidInputPair::PQ)
+            }
+            (FluidParam::P, FluidParam::QMass) | (FluidParam::QMass, FluidParam::P) => {
+                Ok(FluidInputPair::PQMass)
             }
             (FluidParam::Q, FluidParam::SMolar) | (FluidParam::SMolar, FluidParam::Q) => {
                 Ok(FluidInputPair::QSMolar)
             }
+            (FluidParam::QMass, FluidParam::SMolar) | (FluidParam::SMolar, FluidParam::QMass) => {
+                Ok(FluidInputPair::QMassSMolar)
+            }
             (FluidParam::Q, FluidParam::SMass) | (FluidParam::SMass, FluidParam::Q) => {
                 Ok(FluidInputPair::QSMass)
+            }
+            (FluidParam::QMass, FluidParam::SMass) | (FluidParam::SMass, FluidParam::QMass) => {
+                Ok(FluidInputPair::QMassSMass)
             }
             (FluidParam::HMolar, FluidParam::Q) | (FluidParam::Q, FluidParam::HMolar) => {
                 Ok(FluidInputPair::HMolarQ)
             }
+            (FluidParam::HMolar, FluidParam::QMass) | (FluidParam::QMass, FluidParam::HMolar) => {
+                Ok(FluidInputPair::HMolarQMass)
+            }
             (FluidParam::HMass, FluidParam::Q) | (FluidParam::Q, FluidParam::HMass) => {
                 Ok(FluidInputPair::HMassQ)
+            }
+            (FluidParam::HMass, FluidParam::QMass) | (FluidParam::QMass, FluidParam::HMass) => {
+                Ok(FluidInputPair::HMassQMass)
             }
             (FluidParam::DMolar, FluidParam::Q) | (FluidParam::Q, FluidParam::DMolar) => {
                 Ok(FluidInputPair::DMolarQ)
             }
+            (FluidParam::DMolar, FluidParam::QMass) | (FluidParam::QMass, FluidParam::DMolar) => {
+                Ok(FluidInputPair::DMolarQMass)
+            }
             (FluidParam::DMass, FluidParam::Q) | (FluidParam::Q, FluidParam::DMass) => {
                 Ok(FluidInputPair::DMassQ)
+            }
+            (FluidParam::DMass, FluidParam::QMass) | (FluidParam::QMass, FluidParam::DMass) => {
+                Ok(FluidInputPair::DMassQMass)
             }
             (FluidParam::P, FluidParam::T) | (FluidParam::T, FluidParam::P) => {
                 Ok(FluidInputPair::PT)
@@ -302,40 +366,48 @@ mod tests {
 
     #[rstest]
     #[case(QT, 1)]
-    #[case(PQ, 2)]
-    #[case(QSMolar, 3)]
-    #[case(QSMass, 4)]
-    #[case(HMolarQ, 5)]
-    #[case(HMassQ, 6)]
-    #[case(DMolarQ, 7)]
-    #[case(DMassQ, 8)]
-    #[case(PT, 9)]
-    #[case(DMassT, 10)]
-    #[case(DMolarT, 11)]
-    #[case(HMolarT, 12)]
-    #[case(HMassT, 13)]
-    #[case(SMolarT, 14)]
-    #[case(SMassT, 15)]
-    #[case(TUMolar, 16)]
-    #[case(TUMass, 17)]
-    #[case(DMassP, 18)]
-    #[case(DMolarP, 19)]
-    #[case(HMassP, 20)]
-    #[case(HMolarP, 21)]
-    #[case(PSMass, 22)]
-    #[case(PSMolar, 23)]
-    #[case(PUMass, 24)]
-    #[case(PUMolar, 25)]
-    #[case(HMassSMass, 26)]
-    #[case(HMolarSMolar, 27)]
-    #[case(SMassUMass, 28)]
-    #[case(SMolarUMolar, 29)]
-    #[case(DMassHMass, 30)]
-    #[case(DMolarHMolar, 31)]
-    #[case(DMassSMass, 32)]
-    #[case(DMolarSMolar, 33)]
-    #[case(DMassUMass, 34)]
-    #[case(DMolarUMolar, 35)]
+    #[case(QMassT, 2)]
+    #[case(PQ, 3)]
+    #[case(PQMass, 4)]
+    #[case(QSMolar, 5)]
+    #[case(QMassSMolar, 6)]
+    #[case(QSMass, 7)]
+    #[case(QMassSMass, 8)]
+    #[case(HMolarQ, 9)]
+    #[case(HMolarQMass, 10)]
+    #[case(HMassQ, 11)]
+    #[case(HMassQMass, 12)]
+    #[case(DMolarQ, 13)]
+    #[case(DMolarQMass, 14)]
+    #[case(DMassQ, 15)]
+    #[case(DMassQMass, 16)]
+    #[case(PT, 17)]
+    #[case(DMassT, 18)]
+    #[case(DMolarT, 19)]
+    #[case(HMolarT, 20)]
+    #[case(HMassT, 21)]
+    #[case(SMolarT, 22)]
+    #[case(SMassT, 23)]
+    #[case(TUMolar, 24)]
+    #[case(TUMass, 25)]
+    #[case(DMassP, 26)]
+    #[case(DMolarP, 27)]
+    #[case(HMassP, 28)]
+    #[case(HMolarP, 29)]
+    #[case(PSMass, 30)]
+    #[case(PSMolar, 31)]
+    #[case(PUMass, 32)]
+    #[case(PUMolar, 33)]
+    #[case(HMassSMass, 34)]
+    #[case(HMolarSMolar, 35)]
+    #[case(SMassUMass, 36)]
+    #[case(SMolarUMolar, 37)]
+    #[case(DMassHMass, 38)]
+    #[case(DMolarHMolar, 39)]
+    #[case(DMassSMass, 40)]
+    #[case(DMolarSMolar, 41)]
+    #[case(DMassUMass, 42)]
+    #[case(DMolarUMolar, 43)]
     fn into_u8(#[case] sut: FluidInputPair, #[case] expected: u8) {
         // When
         let res: u8 = sut.into();
@@ -346,13 +418,21 @@ mod tests {
 
     #[rstest]
     #[case(QT, (Q, T))]
+    #[case(QMassT, (QMass, T))]
     #[case(PQ, (P, Q))]
+    #[case(PQMass, (P, QMass))]
     #[case(QSMolar, (Q, SMolar))]
+    #[case(QMassSMolar, (QMass, SMolar))]
     #[case(QSMass, (Q, SMass))]
+    #[case(QMassSMass, (QMass, SMass))]
     #[case(HMolarQ, (HMolar, Q))]
+    #[case(HMolarQMass, (HMolar, QMass))]
     #[case(HMassQ, (HMass, Q))]
+    #[case(HMassQMass, (HMass, QMass))]
     #[case(DMolarQ, (DMolar, Q))]
+    #[case(DMolarQMass, (DMolar, QMass))]
     #[case(DMassQ, (DMass, Q))]
+    #[case(DMassQMass, (DMass, QMass))]
     #[case(PT, (P, T))]
     #[case(DMassT, (DMass, T))]
     #[case(DMolarT, (DMolar, T))]
@@ -391,23 +471,39 @@ mod tests {
     #[rstest]
     #[case((Q, T), QT)]
     #[case((T, Q), QT)]
+    #[case((QMass, T), QMassT)]
+    #[case((T, QMass), QMassT)]
     #[case((P, Q), PQ)]
     #[case((Q, P), PQ)]
+    #[case((P, QMass), PQMass)]
+    #[case((QMass, P), PQMass)]
     #[case((Q, SMolar), QSMolar)]
     #[case((SMolar, Q), QSMolar)]
+    #[case((QMass, SMolar), QMassSMolar)]
+    #[case((SMolar, QMass), QMassSMolar)]
     #[case((Q, SMass), QSMass)]
     #[case((SMass, Q), QSMass)]
+    #[case((QMass, SMass), QMassSMass)]
+    #[case((SMass, QMass), QMassSMass)]
     #[case((HMolar, Q), HMolarQ)]
     #[case((Q, HMolar), HMolarQ)]
+    #[case((HMolar, QMass), HMolarQMass)]
+    #[case((QMass, HMolar), HMolarQMass)]
     #[case((HMass, Q), HMassQ)]
     #[case((Q, HMass), HMassQ)]
+    #[case((HMass, QMass), HMassQMass)]
+    #[case((QMass, HMass), HMassQMass)]
     #[case((DMolar, Q), DMolarQ)]
     #[case((Q, DMolar), DMolarQ)]
+    #[case((DMolar, QMass), DMolarQMass)]
+    #[case((QMass, DMolar), DMolarQMass)]
     #[case((DMass, Q), DMassQ)]
     #[case((Q, DMass), DMassQ)]
+    #[case((DMass, QMass), DMassQMass)]
+    #[case((QMass, DMass), DMassQMass)]
     #[case((P, T), PT)]
     #[case((T, P), PT)]
-    #[case((DMass, T),DMassT)]
+    #[case((DMass, T), DMassT)]
     #[case((T, DMass), DMassT)]
     #[case((DMolar, T), DMolarT)]
     #[case((T, DMolar), DMolarT)]
