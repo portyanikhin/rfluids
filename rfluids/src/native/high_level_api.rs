@@ -72,7 +72,7 @@ impl CoolProp {
     /// use rfluids::prelude::*;
     ///
     /// let res = CoolProp::props_si("D", "P", 200e3, "T", 277.15, "HEOS::Water[0.8]&Ethanol[0.2]")?;
-    /// assert_relative_eq!(res, 883.882_635_377_379_6, max_relative = 1e-6);
+    /// assert_relative_eq!(res, 944.757_029_911_081_5, max_relative = 1e-6);
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///

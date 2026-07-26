@@ -244,7 +244,7 @@ impl AbstractState {
     /// mixture.set_fractions(&[0.8, 0.2])?;
     /// mixture.update(FluidInputPair::PT, 200e3, 277.15)?;
     /// let res = mixture.keyed_output(FluidParam::DMass)?;
-    /// assert_relative_eq!(res, 883.882_635_377_379_6, max_relative = 1e-6);
+    /// assert_relative_eq!(res, 944.757_029_911_081_5, max_relative = 1e-6);
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     ///

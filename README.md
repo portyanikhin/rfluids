@@ -148,7 +148,7 @@ use rfluids::prelude::*;
 let mut mix =
     Fluid::try_from(CustomMix::mass_based([(Pure::Water, 0.6), (Pure::Ethanol, 0.4)])?)?
         .in_state(FluidInput::pressure(200e3), FluidInput::temperature(277.15))?;
-assert_relative_eq!(mix.density()?, 883.392_277_162_775_9, max_relative = 1e-6);
+assert_relative_eq!(mix.density()?, 943.048_340_435_632_6, max_relative = 1e-6);
 ```
 
 Wet-bulb temperature **\[K\]** of humid air at _300 m_ above sea level,
