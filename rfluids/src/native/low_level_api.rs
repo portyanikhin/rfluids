@@ -595,7 +595,7 @@ mod tests {
         let res = sut.keyed_output(FluidParam::DMass).unwrap_err();
 
         // Then
-        assert_eq!(res, CoolPropError::NonFiniteKeyedOutput { key: 39 });
+        assert_eq!(res, CoolPropError::NonFiniteKeyedOutput { key: 40 });
     }
 
     #[test]
