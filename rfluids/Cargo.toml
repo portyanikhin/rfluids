@@ -29,3 +29,4 @@ approx.workspace = true
 paste.workspace = true
 rayon.workspace = true
 rstest.workspace = true
+static_assertions.workspace = true

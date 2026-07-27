@@ -21,6 +21,9 @@ libloading.workspace = true
 [build-dependencies]
 bindgen = { workspace = true, optional = true }
 
+[dev-dependencies]
+static_assertions.workspace = true
+
 [target.'cfg(all(target_os = "linux", target_arch = "aarch64"))'.dependencies]
 coolprop-sys-linux-aarch64 = { path = "../coolprop-sys-linux-aarch64", version = "7.2.3" }
 
