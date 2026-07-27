@@ -33,6 +33,7 @@
     "serde",
     "soname",
     "taiki",
+    "tcrit",
     "trunc",
     "ttse",
     "unspecify",
