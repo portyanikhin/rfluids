@@ -1,6 +1,6 @@
 use std::ffi::CString;
 
-use coolprop_sys::COOLPROP;
+use coolprop_sys::{COOLPROP, ExclusiveAccess, bindings};
 
 use super::{
     CoolProp, Result,
@@ -35,7 +35,8 @@ impl CoolProp {
     /// - [`CoolProp::set_debug_level`](Self::set_debug_level)
     #[must_use]
     pub fn get_debug_level() -> u8 {
-        let level = unsafe { COOLPROP.lock().unwrap().get_debug_level() };
+        let coolprop = COOLPROP.shared_access();
+        let level = unsafe { coolprop.get_debug_level() };
         level.clamp(MIN_DEBUG_LEVEL.into(), MAX_DEBUG_LEVEL.into()) as u8
     }
 
@@ -69,11 +70,9 @@ impl CoolProp {
     ///
     /// - [`CoolProp::get_debug_level`](Self::get_debug_level)
     pub fn set_debug_level(level: u8) {
+        let coolprop = COOLPROP.exclusive_access();
         unsafe {
-            COOLPROP
-                .lock()
-                .unwrap()
-                .set_debug_level(level.clamp(MIN_DEBUG_LEVEL, MAX_DEBUG_LEVEL).into());
+            coolprop.set_debug_level(level.clamp(MIN_DEBUG_LEVEL, MAX_DEBUG_LEVEL).into());
         }
     }
 
@@ -334,6 +333,7 @@ impl CoolProp {
 
 fn get_global_param(param: &str) -> Option<String> {
     let param = param.trim();
+    let is_pending_error = param == "errstring";
     let capacity = match param {
         "version" | "gitrevision" | "HOME" | "REFPROP_version" => 100,
         "errstring" | "warnstring" => 500,
@@ -341,13 +341,13 @@ fn get_global_param(param: &str) -> Option<String> {
     };
     let param = CString::new(param).ok()?;
     let mut res = StringBuffer::with_capacity(capacity);
+    let coolprop = COOLPROP.exclusive_access();
     let status = unsafe {
-        COOLPROP.lock().unwrap().get_global_param_string(
-            param.as_ptr(),
-            res.as_mut_ptr(),
-            res.capacity(),
-        )
+        coolprop.get_global_param_string(param.as_ptr(), res.as_mut_ptr(), res.capacity())
     };
+    if status != 1 && !is_pending_error {
+        let _error = get_error(&coolprop);
+    }
     let res: String = res.into();
     if status != 1 || res.trim().is_empty() { None } else { Some(res) }
 }
@@ -365,44 +365,71 @@ fn get_substance_param(composition_id: &str, param: &str) -> Option<String> {
     };
     let composition_id = CString::new(composition_id).ok()?;
     let param = CString::new(param).ok()?;
-    let mut res = StringBuffer::with_capacity(capacity);
-    let status = unsafe {
-        COOLPROP.lock().unwrap().get_fluid_param_string(
-            composition_id.as_ptr(),
-            param.as_ptr(),
-            res.as_mut_ptr(),
-            res.capacity(),
-        )
+    let get_param = |coolprop: &bindings::CoolProp| {
+        let mut res = StringBuffer::with_capacity(capacity);
+        let status = unsafe {
+            coolprop.get_fluid_param_string(
+                composition_id.as_ptr(),
+                param.as_ptr(),
+                res.as_mut_ptr(),
+                res.capacity(),
+            )
+        };
+        (status, res)
     };
+    let (status, res) = {
+        let coolprop = COOLPROP.shared_access();
+        get_param(&coolprop)
+    };
+    if status == 1 {
+        let res: String = res.into();
+        return if res.trim().is_empty() { None } else { Some(res) };
+    }
+
+    let coolprop = COOLPROP.exclusive_access();
+    let _stale_error = get_error(&coolprop);
+    let (status, res) = get_param(&coolprop);
+    if status != 1 {
+        let _error = get_error(&coolprop);
+    }
     let res: String = res.into();
     if status != 1 || res.trim().is_empty() { None } else { Some(res) }
 }
 
 fn set_config(key: &str, value: &ConfigValue) -> Result<()> {
     let key = c_string("key", key)?;
-    let lock = COOLPROP.lock().unwrap();
+    let coolprop = COOLPROP.exclusive_access();
+    set_config_with(&coolprop, &key, value)
+}
+
+fn set_config_with(
+    coolprop: &ExclusiveAccess<'_>,
+    key: &CString,
+    value: &ConfigValue,
+) -> Result<()> {
+    let _stale_error = get_error(coolprop);
     match value {
         ConfigValue::Bool(val) => unsafe {
-            lock.set_config_bool(key.as_ptr(), *val);
+            coolprop.set_config_bool(key.as_ptr(), *val);
         },
         ConfigValue::Float(val) => unsafe {
-            lock.set_config_double(key.as_ptr(), *val);
+            coolprop.set_config_double(key.as_ptr(), *val);
         },
         ConfigValue::Char(val) => {
             let c_string = c_string("value", val.to_string())?;
             unsafe {
-                lock.set_config_string(key.as_ptr(), c_string.as_ptr());
+                coolprop.set_config_string(key.as_ptr(), c_string.as_ptr());
             }
         }
         ConfigValue::OptionPath(val) => {
             let path = val.map_or_else(String::new, |p| p.to_string_lossy().into_owned());
             let c_string = c_string("value", path)?;
             unsafe {
-                lock.set_config_string(key.as_ptr(), c_string.as_ptr());
+                coolprop.set_config_string(key.as_ptr(), c_string.as_ptr());
             }
         }
     }
-    let error = get_error(&lock);
+    let error = get_error(coolprop);
     error.map_or(Ok(()), Err)
 }
 
@@ -433,6 +460,32 @@ mod tests {
 
         // Then
         assert_eq!(res, MIN_DEBUG_LEVEL);
+    }
+
+    #[test]
+    fn set_config_ignores_stale_error() {
+        // Given
+        let coolprop = COOLPROP.exclusive_access();
+        let _previous_error = get_error(&coolprop);
+        let failed = unsafe {
+            coolprop.PropsSI(
+                c"D".as_ptr(),
+                c"P".as_ptr(),
+                101_325.0,
+                c"T".as_ptr(),
+                293.15,
+                c"DefinitelyMissingFluid".as_ptr(),
+            )
+        };
+        let key = c_string("key", "DONT_CHECK_PROPERTY_LIMITS").unwrap();
+        let value = ConfigValue::Bool(false);
+
+        // When
+        let res = set_config_with(&coolprop, &key, &value);
+
+        // Then
+        assert!(!failed.is_finite());
+        assert!(res.is_ok());
     }
 
     #[rstest]

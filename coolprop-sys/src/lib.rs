@@ -63,7 +63,10 @@
 //! <a href="https://github.com/portyanikhin/rfluids/blob/main/LICENSE">MIT License</a>
 //! </sup>
 
-use std::sync::{LazyLock, Mutex};
+use std::{
+    ops::Deref,
+    sync::{LazyLock, RwLock, RwLockReadGuard, RwLockWriteGuard},
+};
 
 pub mod bindings;
 
@@ -81,44 +84,247 @@ pub const COOLPROP_PATH: &str = coolprop_sys_windows_aarch64::COOLPROP_PATH;
 #[cfg(all(target_os = "windows", target_arch = "x86_64"))]
 pub const COOLPROP_PATH: &str = coolprop_sys_windows_x86_64::COOLPROP_PATH;
 
+/// Process-wide synchronization boundary for the loaded `CoolProp` dynamic library.
+///
+/// Use [`CoolPropLib::shared_access`] only for native operations known to support concurrent
+/// execution. Use [`CoolPropLib::exclusive_access`] for configuration and debug changes, global
+/// error or warning handling, `REFPROP` operations, `VTPR` construction or reload, tabular
+/// backends, and operations whose concurrency guarantees are unknown. When in doubt, use
+/// exclusive access.
+///
+/// Do not acquire a second access guard while another guard is held by the same thread. Drop the
+/// current guard before changing access modes.
+///
+/// For this synchronization boundary to be effective, all access to the bundled native library in
+/// a process must go through [`COOLPROP`]. Constructing [`bindings::CoolProp`] directly bypasses
+/// this boundary and requires equivalent process-wide synchronization from the caller.
+pub struct CoolPropLib(RwLock<bindings::CoolProp>);
+
+impl CoolPropLib {
+    /// Acquires shared access to the native library.
+    ///
+    /// A shared guard does not make an arbitrary native function or backend reentrant. Use it only
+    /// for operations explicitly known to support concurrent execution, such as calculations on
+    /// independent states backed by `HEOS`, `INCOMP`, `IF97`, `SRK`, `PR`, `PCSAFT`, or an
+    /// already-constructed `VTPR` state.
+    ///
+    /// Some native functions report failure through a sentinel value and store details in the
+    /// process-global `errstring`. Do not release shared access and then read that string: another
+    /// failure may replace it first. Instead:
+    ///
+    /// 1. Release the shared guard.
+    /// 2. Acquire exclusive access.
+    /// 3. Read and discard any stale `errstring` with `get_global_param_string`, which clears the
+    ///    stored message.
+    /// 4. Repeat the complete native call.
+    /// 5. Read `errstring` with `get_global_param_string` before releasing the same exclusive
+    ///    guard.
+    ///
+    /// Lock poisoning is recovered transparently; access does not panic solely because a previous
+    /// guard holder panicked.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use coolprop_sys::COOLPROP;
+    ///
+    /// let coolprop = COOLPROP.shared_access();
+    /// let critical_temperature = unsafe { coolprop.Props1SI(c"Water".as_ptr(), c"Tcrit".as_ptr()) };
+    /// assert!(critical_temperature.is_finite());
+    /// ```
+    pub fn shared_access(&self) -> SharedAccess<'_> {
+        SharedAccess(self.0.read().unwrap_or_else(|err| err.into_inner()))
+    }
+
+    /// Acquires exclusive access to the native library.
+    ///
+    /// Use this for configuration changes, pending-error retrieval, `REFPROP` calls, `VTPR` state
+    /// construction, tabular backends, and other calls that touch mutable process-global state.
+    /// When a native call may set a process-global error or warning, keep the same exclusive guard
+    /// from that call through retrieval of its `errstring` or `warnstring`.
+    ///
+    /// Lock poisoning is recovered transparently; access does not panic solely because a previous
+    /// guard holder panicked.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use coolprop_sys::COOLPROP;
+    ///
+    /// let coolprop = COOLPROP.exclusive_access();
+    /// unsafe {
+    ///     coolprop.set_debug_level(0);
+    /// }
+    /// ```
+    pub fn exclusive_access(&self) -> ExclusiveAccess<'_> {
+        ExclusiveAccess(self.0.write().unwrap_or_else(|err| err.into_inner()))
+    }
+}
+
+/// Shared access to native operations known to support concurrent execution.
+#[must_use]
+pub struct SharedAccess<'a>(RwLockReadGuard<'a, bindings::CoolProp>);
+
+impl Deref for SharedAccess<'_> {
+    type Target = bindings::CoolProp;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+/// Exclusive access to native `CoolProp` calls that must not overlap other calls.
+///
+/// This type intentionally does not implement [`DerefMut`](std::ops::DerefMut): exclusive access
+/// is an execution mode, not permission to replace or mutate the loaded function table.
+#[must_use]
+pub struct ExclusiveAccess<'a>(RwLockWriteGuard<'a, bindings::CoolProp>);
+
+impl Deref for ExclusiveAccess<'_> {
+    type Target = bindings::CoolProp;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
 /// Global instance of the `CoolProp` dynamic library.
 ///
-/// Provides thread-safe access to a single `CoolProp` instance across the entire application.
-/// The library is loaded lazily on first access using [`LazyLock`].
-///
-/// Access to this shared handle is protected by a [`Mutex`]. This is a conservative boundary
-/// around `CoolProp`'s process-global configuration, debug level, warning, and pending-error
-/// state. It also allows higher-level wrappers to keep calls returning sentinel values and
-/// subsequent pending-error retrieval together.
-///
-/// To use the library, acquire the lock:
-///
-/// ```no_run
-/// use coolprop_sys::COOLPROP;
-///
-/// let coolprop = COOLPROP.lock().unwrap();
-/// // Use CoolProp methods here
-/// ```
+/// The library is loaded lazily. Before the handle is published, an internal probe initializes
+/// native process-global configuration. This is automatic; callers do not need to perform a
+/// special first native call.
 ///
 /// # Panics
 ///
-/// Panics on initialization if the `CoolProp` dynamic library cannot be loaded
-/// (e.g., if the library file is missing or corrupted).
+/// Panics on initialization if the `CoolProp` dynamic library cannot be loaded or its
+/// initialization probe does not produce a finite value.
 ///
 /// # Safety
 ///
-/// Internally uses `unsafe` to load the dynamic library via FFI.
-/// Safety is ensured because:
-/// - The library is loaded from the verified [`COOLPROP_PATH`]
-/// - Loading occurs once during initialization
-/// - All subsequent accesses work with the already loaded library
+/// Methods exposed by [`bindings::CoolProp`] remain unsafe. Callers must uphold each function's
+/// pointer and lifetime requirements and select the access mode required by the native operation.
+/// Loading and the initialization probe occur once, but synchronization is effective only for
+/// calls made through this handle.
 ///
 /// # See Also
 ///
-/// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
-pub static COOLPROP: LazyLock<Mutex<bindings::CoolProp>> = LazyLock::new(|| {
-    Mutex::new(
-        unsafe { bindings::CoolProp::new(COOLPROP_PATH) }
-            .expect("CoolProp dynamic library should load from `COOLPROP_PATH`"),
-    )
-});
+/// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_2_cool_prop_lib_8h.html)
+pub static COOLPROP: LazyLock<CoolPropLib> = LazyLock::new(load_coolprop);
+
+fn load_coolprop() -> CoolPropLib {
+    let coolprop = unsafe { bindings::CoolProp::new(COOLPROP_PATH) }
+        .expect("CoolProp dynamic library should load from `COOLPROP_PATH`");
+    let probe = unsafe { coolprop.Props1SI(c"Water".as_ptr(), c"Tcrit".as_ptr()) };
+    assert!(
+        probe.is_finite(),
+        "CoolProp initialization probe `Props1SI(\"Water\", \"Tcrit\")` should return a finite value"
+    );
+    CoolPropLib(RwLock::new(coolprop))
+}
+
+#[cfg(test)]
+mod tests {
+    use std::{
+        sync::{Mutex, MutexGuard, TryLockError},
+        thread,
+    };
+
+    use static_assertions::assert_not_impl_any;
+
+    use super::*;
+
+    assert_not_impl_any!(ExclusiveAccess<'static>: std::ops::DerefMut);
+
+    static ACCESS_TESTS: Mutex<()> = Mutex::new(());
+
+    fn serial_access_test() -> MutexGuard<'static, ()> {
+        ACCESS_TESTS.lock().unwrap_or_else(|err| err.into_inner())
+    }
+
+    fn shared_access_is_available(lib: &CoolPropLib) -> bool {
+        match lib.0.try_read() {
+            Ok(_) | Err(TryLockError::Poisoned(_)) => true,
+            Err(TryLockError::WouldBlock) => false,
+        }
+    }
+
+    fn exclusive_access_is_available(lib: &CoolPropLib) -> bool {
+        match lib.0.try_write() {
+            Ok(_) | Err(TryLockError::Poisoned(_)) => true,
+            Err(TryLockError::WouldBlock) => false,
+        }
+    }
+
+    #[test]
+    fn access_types_deref_to_coolprop() {
+        // Given
+        let _test_guard = serial_access_test();
+        let lib = &*COOLPROP;
+
+        // When
+        let shared = lib.shared_access();
+        let shared_target = std::ptr::from_ref::<bindings::CoolProp>(&shared);
+        drop(shared);
+        let exclusive = lib.exclusive_access();
+        let exclusive_target = std::ptr::from_ref::<bindings::CoolProp>(&exclusive);
+
+        // Then
+        assert_eq!(shared_target, exclusive_target);
+    }
+
+    #[test]
+    fn poisoned_lock_is_recovered() {
+        // Given
+        let _test_guard = serial_access_test();
+        let library = &*COOLPROP;
+
+        // When
+        let panic_result = thread::spawn(|| {
+            let _access = COOLPROP.exclusive_access();
+            panic!("poison the test lock");
+        })
+        .join();
+        let shared = library.shared_access();
+        let shared_level = unsafe { shared.get_debug_level() };
+        drop(shared);
+        let exclusive = library.exclusive_access();
+        let exclusive_level = unsafe { exclusive.get_debug_level() };
+
+        // Then
+        assert!(panic_result.is_err());
+        assert!((0..=10).contains(&shared_level));
+        assert!((0..=10).contains(&exclusive_level));
+    }
+
+    #[test]
+    fn shared_access_allows_another_reader_and_blocks_a_writer() {
+        // Given
+        let _test_guard = serial_access_test();
+        let library = &*COOLPROP;
+        let _shared = library.shared_access();
+
+        // When
+        let another_reader_is_available = shared_access_is_available(library);
+        let writer_is_available = exclusive_access_is_available(library);
+
+        // Then
+        assert!(another_reader_is_available);
+        assert!(!writer_is_available);
+    }
+
+    #[test]
+    fn exclusive_access_blocks_other_access() {
+        // Given
+        let _test_guard = serial_access_test();
+        let library = &*COOLPROP;
+        let _exclusive = library.exclusive_access();
+
+        // When
+        let reader_is_available = shared_access_is_available(library);
+        let writer_is_available = exclusive_access_is_available(library);
+
+        // Then
+        assert!(!reader_is_available);
+        assert!(!writer_is_available);
+    }
+}

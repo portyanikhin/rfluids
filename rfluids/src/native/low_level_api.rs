@@ -1,11 +1,11 @@
 use core::ffi::c_long;
-use std::borrow::Cow;
+use std::{borrow::Cow, cell::Cell, marker::PhantomData};
 
-use coolprop_sys::COOLPROP;
+use coolprop_sys::{COOLPROP, bindings};
 
 use super::{
     CoolPropError, Result,
-    common::{ErrorBuffer, c_string_trimmed},
+    common::{ErrorBuffer, c_string_trimmed, factory_requires_exclusive, state_requires_exclusive},
 };
 use crate::substance::{Substance, SubstanceWithBackend};
 
@@ -13,6 +13,8 @@ use crate::substance::{Substance, SubstanceWithBackend};
 #[derive(Debug)]
 pub struct AbstractState {
     ptr: c_long,
+    exclusive: bool,
+    _not_sync: PhantomData<Cell<()>>,
 }
 
 impl AbstractState {
@@ -71,11 +73,14 @@ impl AbstractState {
         backend_name: impl AsRef<str>,
         composition_id: impl AsRef<str>,
     ) -> Result<AbstractState> {
+        let backend_name = backend_name.as_ref().trim();
+        let factory_exclusive = factory_requires_exclusive(backend_name);
+        let state_exclusive = state_requires_exclusive(backend_name);
         let backend_name = c_string_trimmed("backend_name", backend_name)?;
         let composition_id = c_string_trimmed("composition_id", composition_id)?;
         let mut err = ErrorBuffer::default();
-        let ptr = unsafe {
-            COOLPROP.lock().unwrap().AbstractState_factory(
+        let mut factory = |coolprop: &bindings::CoolProp| unsafe {
+            coolprop.AbstractState_factory(
                 backend_name.as_ptr(),
                 composition_id.as_ptr(),
                 err.code_as_mut_ptr(),
@@ -83,7 +88,14 @@ impl AbstractState {
                 c_long::from(err.message.capacity()),
             )
         };
-        res(Self { ptr }, err)
+        let ptr = if factory_exclusive {
+            let coolprop = COOLPROP.exclusive_access();
+            factory(&coolprop)
+        } else {
+            let coolprop = COOLPROP.shared_access();
+            factory(&coolprop)
+        };
+        res(Self { ptr, exclusive: state_exclusive, _not_sync: PhantomData }, err)
     }
 
     /// Set the fractions _(mole, mass or volume)_[^note].
@@ -125,8 +137,8 @@ impl AbstractState {
     /// ```
     pub fn set_fractions(&mut self, fractions: &[f64]) -> Result<()> {
         let mut err = ErrorBuffer::default();
-        unsafe {
-            COOLPROP.lock().unwrap().AbstractState_set_fractions(
+        self.with_coolprop(|coolprop| unsafe {
+            coolprop.AbstractState_set_fractions(
                 self.ptr,
                 fractions.as_ptr(),
                 fractions.len() as c_long,
@@ -134,7 +146,7 @@ impl AbstractState {
                 err.message.as_mut_ptr(),
                 c_long::from(err.message.capacity()),
             );
-        }
+        });
         res((), err)
     }
 
@@ -172,8 +184,8 @@ impl AbstractState {
         input2: f64,
     ) -> Result<()> {
         let mut err = ErrorBuffer::default();
-        unsafe {
-            COOLPROP.lock().unwrap().AbstractState_update(
+        self.with_coolprop(|coolprop| unsafe {
+            coolprop.AbstractState_update(
                 self.ptr,
                 c_long::from(input_pair_key.into()),
                 input1,
@@ -182,7 +194,7 @@ impl AbstractState {
                 err.message.as_mut_ptr(),
                 c_long::from(err.message.capacity()),
             );
-        }
+        });
         res((), err)
     }
 
@@ -255,15 +267,15 @@ impl AbstractState {
     pub fn keyed_output(&self, key: impl Into<u8>) -> Result<f64> {
         let mut err = ErrorBuffer::default();
         let key = key.into();
-        let value = unsafe {
-            COOLPROP.lock().unwrap().AbstractState_keyed_output(
+        let value = self.with_coolprop(|coolprop| unsafe {
+            coolprop.AbstractState_keyed_output(
                 self.ptr,
                 c_long::from(key),
                 err.code_as_mut_ptr(),
                 err.message.as_mut_ptr(),
                 c_long::from(err.message.capacity()),
             )
-        };
+        });
         keyed_output(key, value, err)
     }
 
@@ -299,15 +311,15 @@ impl AbstractState {
     pub fn specify_phase(&mut self, phase: impl AsRef<str>) -> Result<()> {
         let phase = c_string_trimmed("phase", phase)?;
         let mut err = ErrorBuffer::default();
-        unsafe {
-            COOLPROP.lock().unwrap().AbstractState_specify_phase(
+        self.with_coolprop(|coolprop| unsafe {
+            coolprop.AbstractState_specify_phase(
                 self.ptr,
                 phase.as_ptr(),
                 err.code_as_mut_ptr(),
                 err.message.as_mut_ptr(),
                 c_long::from(err.message.capacity()),
             );
-        }
+        });
         res((), err)
     }
 
@@ -333,13 +345,23 @@ impl AbstractState {
     /// - [Imposing the Phase (Optional)](https://coolprop.org/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     pub fn unspecify_phase(&mut self) {
         let mut err = ErrorBuffer::blank();
-        unsafe {
-            COOLPROP.lock().unwrap().AbstractState_unspecify_phase(
+        self.with_coolprop(|coolprop| unsafe {
+            coolprop.AbstractState_unspecify_phase(
                 self.ptr,
                 err.code_as_mut_ptr(),
                 err.message.as_mut_ptr(),
                 c_long::from(err.message.capacity()),
             );
+        });
+    }
+
+    fn with_coolprop<T>(&self, call: impl FnOnce(&bindings::CoolProp) -> T) -> T {
+        if self.exclusive {
+            let coolprop = COOLPROP.exclusive_access();
+            call(&coolprop)
+        } else {
+            let coolprop = COOLPROP.shared_access();
+            call(&coolprop)
         }
     }
 }
@@ -379,14 +401,14 @@ impl TryFrom<&SubstanceWithBackend> for AbstractState {
 impl Drop for AbstractState {
     fn drop(&mut self) {
         let mut err = ErrorBuffer::blank();
-        unsafe {
-            COOLPROP.lock().unwrap().AbstractState_free(
+        self.with_coolprop(|coolprop| unsafe {
+            coolprop.AbstractState_free(
                 self.ptr,
                 err.code_as_mut_ptr(),
                 err.message.as_mut_ptr(),
                 c_long::from(err.message.capacity()),
             );
-        }
+        });
     }
 }
 
@@ -405,14 +427,30 @@ fn keyed_output(key: u8, value: f64, err: ErrorBuffer) -> Result<f64> {
 
 #[cfg(test)]
 mod tests {
+    use std::{sync::Barrier, thread};
+
     use rayon::prelude::*;
     use rstest::*;
+    use static_assertions::{assert_impl_all, assert_not_impl_any};
 
     use super::*;
     use crate::{
         io::{FluidInputPair, FluidParam, Phase},
         test::assert_relative_eq,
     };
+
+    assert_impl_all!(AbstractState: Send);
+    assert_not_impl_any!(AbstractState: Sync, Clone);
+
+    #[derive(Clone, Copy)]
+    struct SharedBackendCase {
+        backend: &'static str,
+        substance: &'static str,
+        fraction: Option<f64>,
+        input_pair: FluidInputPair,
+        input1: f64,
+        input2: f64,
+    }
 
     #[test]
     fn thread_safety() {
@@ -435,6 +473,146 @@ mod tests {
 
         // Then
         assert!(res.iter().all(Result::is_ok));
+    }
+
+    #[test]
+    fn shared_backends_run_independent_states_in_parallel() {
+        // Given
+        const CASES: [SharedBackendCase; 6] = [
+            SharedBackendCase {
+                backend: "HEOS",
+                substance: "Water",
+                fraction: None,
+                input_pair: FluidInputPair::PT,
+                input1: 101_325.0,
+                input2: 300.0,
+            },
+            SharedBackendCase {
+                backend: "INCOMP",
+                substance: "MPG",
+                fraction: Some(0.4),
+                input_pair: FluidInputPair::PT,
+                input1: 101_325.0,
+                input2: 300.0,
+            },
+            SharedBackendCase {
+                backend: "IF97",
+                substance: "Water",
+                fraction: None,
+                input_pair: FluidInputPair::PT,
+                input1: 101_325.0,
+                input2: 300.0,
+            },
+            SharedBackendCase {
+                backend: "SRK",
+                substance: "Propane",
+                fraction: None,
+                input_pair: FluidInputPair::PT,
+                input1: 101_325.0,
+                input2: 300.0,
+            },
+            SharedBackendCase {
+                backend: "PR",
+                substance: "Propane",
+                fraction: None,
+                input_pair: FluidInputPair::PT,
+                input1: 101_325.0,
+                input2: 300.0,
+            },
+            SharedBackendCase {
+                backend: "PCSAFT",
+                substance: "METHANE",
+                fraction: None,
+                input_pair: FluidInputPair::DMolarT,
+                input1: 40.0,
+                input2: 300.0,
+            },
+        ];
+
+        fn density(case: SharedBackendCase) -> Result<f64> {
+            let mut state = AbstractState::new(case.backend, case.substance)?;
+            if let Some(fraction) = case.fraction {
+                state.set_fractions(&[fraction])?;
+            }
+            state.update(case.input_pair, case.input1, case.input2)?;
+            state.keyed_output(FluidParam::DMass)
+        }
+
+        let expected = CASES
+            .iter()
+            .copied()
+            .map(|case| {
+                density(case).unwrap_or_else(|error| {
+                    panic!("sequential {} calculation should work: {error}", case.backend)
+                })
+            })
+            .collect::<Vec<_>>();
+        let barrier = Barrier::new(CASES.len());
+
+        // When
+        let actual = thread::scope(|scope| {
+            let threads = CASES
+                .into_iter()
+                .enumerate()
+                .map(|(case_index, case)| {
+                    let barrier = &barrier;
+                    scope.spawn(move || {
+                        barrier.wait();
+                        let values = (0..16)
+                            .map(|_| {
+                                density(case).unwrap_or_else(|error| {
+                                    panic!(
+                                        "parallel {} calculation should work: {error}",
+                                        case.backend
+                                    )
+                                })
+                            })
+                            .collect::<Vec<_>>();
+                        (case_index, values)
+                    })
+                })
+                .collect::<Vec<_>>();
+            threads
+                .into_iter()
+                .map(|thread| thread.join().expect("calculation thread should not panic"))
+                .collect::<Vec<_>>()
+        });
+
+        // Then
+        for (case_index, values) in actual {
+            for actual in values {
+                assert_relative_eq!(actual, expected[case_index]);
+            }
+        }
+    }
+
+    #[rstest]
+    #[case("HEOS", false, false)]
+    #[case(" heos ", false, false)]
+    #[case("INCOMP", false, false)]
+    #[case("IF97", false, false)]
+    #[case("SRK", false, false)]
+    #[case("PR", false, false)]
+    #[case("PCSAFT", false, false)]
+    #[case("VTPR", true, false)]
+    #[case(" vtpr ", true, false)]
+    #[case("REFPROP", true, true)]
+    #[case("TTSE&HEOS", true, true)]
+    #[case("BICUBIC&HEOS", true, true)]
+    #[case("UNKNOWN", true, true)]
+    fn backend_access_classification(
+        #[case] backend: &str,
+        #[case] expected_factory_exclusive: bool,
+        #[case] expected_state_exclusive: bool,
+    ) {
+        // Given
+        let expected = (expected_factory_exclusive, expected_state_exclusive);
+
+        // When
+        let actual = (factory_requires_exclusive(backend), state_requires_exclusive(backend));
+
+        // Then
+        assert_eq!(actual, expected);
     }
 
     #[rstest]

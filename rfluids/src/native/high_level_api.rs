@@ -1,12 +1,10 @@
 // cSpell:disable
 
-use std::sync::MutexGuard;
-
-use coolprop_sys::COOLPROP;
+use coolprop_sys::{COOLPROP, ExclusiveAccess, bindings};
 
 use super::{
     CoolPropError, Result,
-    common::{c_string_trimmed, get_error},
+    common::{c_string_trimmed, factory_requires_exclusive, get_error},
 };
 use crate::io::Phase;
 
@@ -95,13 +93,14 @@ impl CoolProp {
         input2_value: f64,
         substance_name: impl AsRef<str>,
     ) -> Result<f64> {
+        let substance_name = substance_name.as_ref().trim();
+        let exclusive = high_level_requires_exclusive(substance_name);
         let output_key = c_string_trimmed("output_key", output_key)?;
         let input1_key = c_string_trimmed("input1_key", input1_key)?;
         let input2_key = c_string_trimmed("input2_key", input2_key)?;
         let substance_name = c_string_trimmed("substance_name", substance_name)?;
-        let lock = COOLPROP.lock().unwrap();
-        let value = unsafe {
-            lock.PropsSI(
+        call_high_level(exclusive, |coolprop| unsafe {
+            coolprop.PropsSI(
                 output_key.as_ptr(),
                 input1_key.as_ptr(),
                 input1_value,
@@ -109,8 +108,7 @@ impl CoolProp {
                 input2_value,
                 substance_name.as_ptr(),
             )
-        };
-        res(value, &lock)
+        })
     }
 
     /// Returns a value that depends on the thermodynamic state of humid air.
@@ -165,9 +163,8 @@ impl CoolProp {
         let input1_key = c_string_trimmed("input1_key", input1_key)?;
         let input2_key = c_string_trimmed("input2_key", input2_key)?;
         let input3_key = c_string_trimmed("input3_key", input3_key)?;
-        let lock = COOLPROP.lock().unwrap();
-        let value = unsafe {
-            lock.HAPropsSI(
+        call_high_level(false, |coolprop| unsafe {
+            coolprop.HAPropsSI(
                 output_key.as_ptr(),
                 input1_key.as_ptr(),
                 input1_value,
@@ -176,8 +173,7 @@ impl CoolProp {
                 input3_key.as_ptr(),
                 input3_value,
             )
-        };
-        res(value, &lock)
+        })
     }
 
     /// Returns a value that doesn't depend on the thermodynamic state of the fluid
@@ -226,11 +222,13 @@ impl CoolProp {
     /// - [`Backend`](crate::fluid::backend::Backend)
     /// - [`SubstanceWithBackend`](crate::substance::SubstanceWithBackend)
     pub fn props1_si(output_key: impl AsRef<str>, substance_name: impl AsRef<str>) -> Result<f64> {
+        let substance_name = substance_name.as_ref().trim();
+        let exclusive = high_level_requires_exclusive(substance_name);
         let output_key = c_string_trimmed("output_key", output_key)?;
         let substance_name = c_string_trimmed("substance_name", substance_name)?;
-        let lock = COOLPROP.lock().unwrap();
-        let value = unsafe { lock.Props1SI(output_key.as_ptr(), substance_name.as_ptr()) };
-        res(value, &lock)
+        call_high_level(exclusive, |coolprop| unsafe {
+            coolprop.Props1SI(substance_name.as_ptr(), output_key.as_ptr())
+        })
     }
 
     /// Returns a phase state as a raw [`String`] depending on the thermodynamic state of the fluid.
@@ -303,16 +301,56 @@ impl CoolProp {
     }
 }
 
-fn res(value: f64, lock: &MutexGuard<coolprop_sys::bindings::CoolProp>) -> Result<f64> {
+fn call_high_level(exclusive: bool, call: impl Fn(&bindings::CoolProp) -> f64) -> Result<f64> {
+    if exclusive {
+        let coolprop = COOLPROP.exclusive_access();
+        let _stale_error = get_error(&coolprop);
+        return res(call(&coolprop), &coolprop);
+    }
+
+    let value = {
+        let coolprop = COOLPROP.shared_access();
+        call(&coolprop)
+    };
+    if value.is_finite() {
+        return Ok(value);
+    }
+
+    let coolprop = COOLPROP.exclusive_access();
+    let _stale_error = get_error(&coolprop);
+    res(call(&coolprop), &coolprop)
+}
+
+fn high_level_requires_exclusive(substance_name: &str) -> bool {
+    let substance_name = substance_name.trim();
+    if starts_with_ignore_ascii_case(substance_name, "REFPROP-")
+        || starts_with_ignore_ascii_case(substance_name, "REFPROP-MIX:")
+    {
+        return true;
+    }
+    let Some((backend, _composition)) = substance_name.split_once("::") else {
+        return false;
+    };
+    factory_requires_exclusive(backend)
+}
+
+fn starts_with_ignore_ascii_case(value: &str, prefix: &str) -> bool {
+    value.get(..prefix.len()).is_some_and(|start| start.eq_ignore_ascii_case(prefix))
+}
+
+fn res(value: f64, coolprop: &ExclusiveAccess<'_>) -> Result<f64> {
     if !value.is_finite() {
-        return Err(get_error(lock).unwrap_or(CoolPropError::NonFiniteOutput));
+        return Err(get_error(coolprop).unwrap_or(CoolPropError::NonFiniteOutput));
     }
     Ok(value)
 }
 
 #[cfg(test)]
 mod tests {
+    use std::{sync::Barrier, thread};
+
     use rayon::prelude::*;
+    use rstest::*;
 
     use super::*;
     use crate::{native::CoolPropError, test::assert_relative_eq};
@@ -513,6 +551,37 @@ mod tests {
     }
 
     #[test]
+    fn props1_si_thread_safety() {
+        // Given
+        const THREADS: usize = 8;
+        const CALLS_PER_THREAD: usize = 64;
+        let barrier = Barrier::new(THREADS);
+
+        // When
+        let res = thread::scope(|scope| {
+            let threads = (0..THREADS)
+                .map(|_| {
+                    let barrier = &barrier;
+                    scope.spawn(move || {
+                        barrier.wait();
+                        (0..CALLS_PER_THREAD)
+                            .map(|_| CoolProp::props1_si("Tcrit", "Water"))
+                            .collect::<Vec<_>>()
+                    })
+                })
+                .collect::<Vec<_>>();
+            threads
+                .into_iter()
+                .flat_map(|thread| thread.join().expect("calculation thread should not panic"))
+                .collect::<Vec<_>>()
+        });
+
+        // Then
+        assert_eq!(res.len(), THREADS * CALLS_PER_THREAD);
+        assert!(res.iter().all(Result::is_ok));
+    }
+
+    #[test]
     fn props1_si_invalid_input() {
         // Given
         let substance = "Water";
@@ -604,12 +673,76 @@ mod tests {
     }
 
     #[test]
+    fn parallel_errors_keep_their_fluid_name() {
+        // Given
+        const THREADS: usize = 16;
+        let fluids =
+            (0..THREADS).map(|index| format!("DefinitelyMissingFluid{index}")).collect::<Vec<_>>();
+        let barrier = Barrier::new(THREADS);
+
+        // When
+        let errors = thread::scope(|scope| {
+            let threads = fluids
+                .into_iter()
+                .map(|fluid| {
+                    let barrier = &barrier;
+                    scope.spawn(move || {
+                        barrier.wait();
+                        let error = CoolProp::props_si("D", "P", 101_325.0, "T", 293.15, &fluid)
+                            .expect_err("unknown fluid should fail");
+                        (fluid, error)
+                    })
+                })
+                .collect::<Vec<_>>();
+            threads
+                .into_iter()
+                .map(|thread| thread.join().expect("calculation thread should not panic"))
+                .collect::<Vec<_>>()
+        });
+
+        // Then
+        for (fluid, error) in errors {
+            let CoolPropError::Native(message) = error else {
+                panic!("expected a native error for {fluid}");
+            };
+            assert!(message.contains(&fluid), "error for {fluid} was overwritten: {message}");
+        }
+    }
+
+    #[rstest]
+    #[case("Water", false)]
+    #[case(" HEOS::Water ", false)]
+    #[case("incomp::MPG-40%", false)]
+    #[case("IF97::Water", false)]
+    #[case("SRK::Propane", false)]
+    #[case("PR::Propane", false)]
+    #[case("PCSAFT::METHANE", false)]
+    #[case("VTPR::Propane", true)]
+    #[case("REFPROP::Water", true)]
+    #[case("refprop-Water", true)]
+    #[case("REFPROP-MIX:R410A.MIX", true)]
+    #[case("TTSE&HEOS::Water", true)]
+    #[case("BICUBIC&HEOS::Water", true)]
+    #[case("UNKNOWN::Water", true)]
+    fn high_level_access_classification(#[case] substance_name: &str, #[case] expected: bool) {
+        // Given
+        // The substance name and expected mode are supplied by the test case.
+
+        // When
+        let res = high_level_requires_exclusive(substance_name);
+
+        // Then
+        assert_eq!(res, expected);
+    }
+
+    #[test]
     fn res_valid() {
         // Given
         let valid = 42.0;
+        let coolprop = COOLPROP.exclusive_access();
 
         // When
-        let res = res(valid, &COOLPROP.lock().unwrap());
+        let res = res(valid, &coolprop);
 
         // Then
         assert!(res.is_ok());
@@ -619,9 +752,11 @@ mod tests {
     fn res_invalid() {
         // Given
         let invalid = f64::NAN;
+        let coolprop = COOLPROP.exclusive_access();
+        let _stale_error = get_error(&coolprop);
 
         // When
-        let res = res(invalid, &COOLPROP.lock().unwrap()).unwrap_err();
+        let res = res(invalid, &coolprop).unwrap_err();
 
         // Then
         assert_eq!(res, CoolPropError::NonFiniteOutput);

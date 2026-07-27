@@ -1,5 +1,7 @@
 use core::ffi::{c_char, c_int, c_long};
-use std::{cell::Cell, ffi::CString, marker::PhantomData, sync::MutexGuard};
+use std::{cell::Cell, ffi::CString, marker::PhantomData};
+
+use coolprop_sys::ExclusiveAccess;
 
 use super::{CoolPropError, Result};
 use crate::io::GlobalParam;
@@ -120,13 +122,21 @@ pub(crate) fn c_string_trimmed(arg: &'static str, value: impl AsRef<str>) -> Res
     c_string(arg, value.as_ref().trim())
 }
 
-pub(crate) fn get_error(
-    lock: &MutexGuard<coolprop_sys::bindings::CoolProp>,
-) -> Option<CoolPropError> {
+pub(crate) fn factory_requires_exclusive(backend: &str) -> bool {
+    !["HEOS", "INCOMP", "IF97", "SRK", "PR", "PCSAFT"]
+        .into_iter()
+        .any(|known| backend.trim().eq_ignore_ascii_case(known))
+}
+
+pub(crate) fn state_requires_exclusive(backend: &str) -> bool {
+    factory_requires_exclusive(backend) && !backend.trim().eq_ignore_ascii_case("VTPR")
+}
+
+pub(crate) fn get_error(coolprop: &ExclusiveAccess<'_>) -> Option<CoolPropError> {
     let mut message = StringBuffer::default();
     let param = CString::new(GlobalParam::PendingError.as_ref()).unwrap();
     let _unused = unsafe {
-        lock.get_global_param_string(param.as_ptr(), message.as_mut_ptr(), message.capacity())
+        coolprop.get_global_param_string(param.as_ptr(), message.as_mut_ptr(), message.capacity())
     };
     message.into()
 }
