@@ -358,17 +358,29 @@ mod tests {
     fn props_si_thread_safety() {
         // Given
         let substance = "Water";
-        let pressure_range = 101_000..101_500;
+        let pressures = (101_000..101_500).collect::<Vec<_>>();
         let quality = 0.0;
+        let expected = pressures
+            .iter()
+            .map(|&pressure| {
+                CoolProp::props_si("T", "P", pressure.into(), "Q", quality, substance)
+                    .expect("sequential `PropsSI` call should succeed")
+            })
+            .collect::<Vec<_>>();
 
         // When
-        let res: Vec<Result<f64>> = pressure_range
+        let actual = pressures
             .into_par_iter()
-            .map(move |p| CoolProp::props_si("T", "P", p.into(), "Q", quality, substance))
-            .collect();
+            .map(move |pressure| {
+                CoolProp::props_si("T", "P", pressure.into(), "Q", quality, substance)
+                    .expect("parallel `PropsSI` call should succeed")
+            })
+            .collect::<Vec<_>>();
 
         // Then
-        assert!(res.iter().all(Result::is_ok));
+        for (actual, expected) in actual.into_iter().zip(expected) {
+            assert_relative_eq!(actual, expected);
+        }
     }
 
     #[test]
@@ -459,20 +471,46 @@ mod tests {
     #[test]
     fn ha_props_si_thread_safety() {
         // Given
-        let pressure_range = 101_000..101_500;
+        let pressures = (101_000..101_500).collect::<Vec<_>>();
         let temperature = 293.15;
         let rel_humidity = 0.5;
+        let expected = pressures
+            .iter()
+            .map(|&pressure| {
+                CoolProp::ha_props_si(
+                    "W",
+                    "P",
+                    pressure.into(),
+                    "T",
+                    temperature,
+                    "R",
+                    rel_humidity,
+                )
+                .expect("sequential `HAPropsSI` call should succeed")
+            })
+            .collect::<Vec<_>>();
 
         // When
-        let res: Vec<Result<f64>> = pressure_range
+        let actual = pressures
             .into_par_iter()
-            .map(move |p| {
-                CoolProp::ha_props_si("W", "P", p.into(), "T", temperature, "R", rel_humidity)
+            .map(move |pressure| {
+                CoolProp::ha_props_si(
+                    "W",
+                    "P",
+                    pressure.into(),
+                    "T",
+                    temperature,
+                    "R",
+                    rel_humidity,
+                )
+                .expect("parallel `HAPropsSI` call should succeed")
             })
-            .collect();
+            .collect::<Vec<_>>();
 
         // Then
-        assert!(res.iter().all(Result::is_ok));
+        for (actual, expected) in actual.into_iter().zip(expected) {
+            assert_relative_eq!(actual, expected);
+        }
     }
 
     #[test]
@@ -568,16 +606,21 @@ mod tests {
         const THREADS: usize = 8;
         const CALLS_PER_THREAD: usize = 64;
         let barrier = Barrier::new(THREADS);
+        let expected = CoolProp::props1_si("Tcrit", "Water")
+            .expect("sequential `Props1SI` call should succeed");
 
         // When
-        let res = thread::scope(|scope| {
+        let actual = thread::scope(|scope| {
             let threads = (0..THREADS)
                 .map(|_| {
                     let barrier = &barrier;
                     scope.spawn(move || {
                         barrier.wait();
                         (0..CALLS_PER_THREAD)
-                            .map(|_| CoolProp::props1_si("Tcrit", "Water"))
+                            .map(|_| {
+                                CoolProp::props1_si("Tcrit", "Water")
+                                    .expect("parallel `Props1SI` call should succeed")
+                            })
                             .collect::<Vec<_>>()
                     })
                 })
@@ -589,8 +632,10 @@ mod tests {
         });
 
         // Then
-        assert_eq!(res.len(), THREADS * CALLS_PER_THREAD);
-        assert!(res.iter().all(Result::is_ok));
+        assert_eq!(actual.len(), THREADS * CALLS_PER_THREAD);
+        for actual in actual {
+            assert_relative_eq!(actual, expected);
+        }
     }
 
     #[test]
@@ -649,17 +694,27 @@ mod tests {
     fn phase_si_thread_safety() {
         // Given
         let substance = "Water";
-        let pressure_range = 101_000..101_500;
+        let pressures = (101_000..101_500).collect::<Vec<_>>();
         let quality = 0.0;
+        let expected = pressures
+            .iter()
+            .map(|&pressure| {
+                CoolProp::phase_si("P", pressure.into(), "Q", quality, substance)
+                    .expect("sequential `PhaseSI` call should succeed")
+            })
+            .collect::<Vec<_>>();
 
         // When
-        let res: Vec<Result<String>> = pressure_range
+        let actual = pressures
             .into_par_iter()
-            .map(move |p| CoolProp::phase_si("P", p.into(), "Q", quality, substance))
-            .collect();
+            .map(move |pressure| {
+                CoolProp::phase_si("P", pressure.into(), "Q", quality, substance)
+                    .expect("parallel `PhaseSI` call should succeed")
+            })
+            .collect::<Vec<_>>();
 
         // Then
-        assert!(res.iter().all(Result::is_ok));
+        assert_eq!(actual, expected);
     }
 
     #[test]
@@ -726,11 +781,9 @@ mod tests {
         });
 
         // Then
-        for (fluid, error) in errors {
-            let CoolPropError::Native(message) = error else {
-                panic!("expected a native error for {fluid}");
-            };
-            assert!(message.contains(&fluid), "error for {fluid} was overwritten: {message}");
+        for (fluid, err) in errors {
+            let msg = err.to_string();
+            assert!(msg.contains(&fluid), "error for {fluid} was overwritten: {msg}");
         }
     }
 

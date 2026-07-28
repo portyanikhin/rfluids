@@ -529,24 +529,19 @@ mod tests {
             },
         ];
 
-        fn density(case: SharedBackendCase) -> Result<f64> {
-            let mut state = AbstractState::new(case.backend, case.substance)?;
+        fn density(case: SharedBackendCase) -> f64 {
+            let mut state = AbstractState::new(case.backend, case.substance)
+                .expect("shared backend state should be created");
             if let Some(fraction) = case.fraction {
-                state.set_fractions(&[fraction])?;
+                state.set_fractions(&[fraction]).expect("fractions should be set");
             }
-            state.update(case.input_pair, case.input1, case.input2)?;
-            state.keyed_output(FluidParam::DMass)
+            state
+                .update(case.input_pair, case.input1, case.input2)
+                .expect("shared backend state should be updated");
+            state.keyed_output(FluidParam::DMass).expect("density should be calculated")
         }
 
-        let expected = CASES
-            .iter()
-            .copied()
-            .map(|case| {
-                density(case).unwrap_or_else(|error| {
-                    panic!("sequential {} calculation should work: {error}", case.backend)
-                })
-            })
-            .collect::<Vec<_>>();
+        let expected = CASES.iter().copied().map(density).collect::<Vec<_>>();
         let barrier = Barrier::new(CASES.len());
 
         // When
@@ -558,16 +553,7 @@ mod tests {
                     let barrier = &barrier;
                     scope.spawn(move || {
                         barrier.wait();
-                        let values = (0..16)
-                            .map(|_| {
-                                density(case).unwrap_or_else(|error| {
-                                    panic!(
-                                        "parallel {} calculation should work: {error}",
-                                        case.backend
-                                    )
-                                })
-                            })
-                            .collect::<Vec<_>>();
+                        let values = (0..16).map(|_| density(case)).collect::<Vec<_>>();
                         (case_index, values)
                     })
                 })
