@@ -6,7 +6,7 @@ use coolprop_sys::ExclusiveAccess;
 use super::{CoolPropError, Result};
 use crate::io::GlobalParam;
 
-/// Marker to make structs `!Send + !Sync` for thread safety.
+/// Marker to make structs `!Sync` while preserving `Send`.
 type PhantomUnsync = PhantomData<Cell<()>>;
 
 #[derive(Debug)]
