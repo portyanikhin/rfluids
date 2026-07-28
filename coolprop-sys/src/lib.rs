@@ -265,10 +265,7 @@ fn load_coolprop() -> CoolPropLib {
 
 #[cfg(test)]
 mod tests {
-    use std::{
-        sync::{Mutex, MutexGuard, TryLockError},
-        thread,
-    };
+    use std::{sync::TryLockError, thread};
 
     use static_assertions::assert_not_impl_any;
 
@@ -276,10 +273,11 @@ mod tests {
 
     assert_not_impl_any!(ExclusiveAccess<'static>: std::ops::DerefMut);
 
-    static ACCESS_TESTS: Mutex<()> = Mutex::new(());
-
-    fn serial_access_test() -> MutexGuard<'static, ()> {
-        ACCESS_TESTS.lock().unwrap_or_else(|err| err.into_inner())
+    fn test_lib() -> CoolPropLib {
+        LazyLock::force(&COOLPROP);
+        let coolprop = unsafe { bindings::CoolProp::new(COOLPROP_PATH) }
+            .expect("CoolProp dynamic library should load from `COOLPROP_PATH`");
+        CoolPropLib(RwLock::new(coolprop))
     }
 
     fn shared_access_is_available(lib: &CoolPropLib) -> bool {
@@ -299,8 +297,7 @@ mod tests {
     #[test]
     fn access_types_deref_to_coolprop() {
         // Given
-        let _test_guard = serial_access_test();
-        let lib = &*COOLPROP;
+        let lib = test_lib();
 
         // When
         let shared = lib.shared_access();
@@ -316,19 +313,21 @@ mod tests {
     #[test]
     fn poisoned_lock_is_recovered() {
         // Given
-        let _test_guard = serial_access_test();
-        let library = &*COOLPROP;
+        let lib = test_lib();
 
         // When
-        let panic_result = thread::spawn(|| {
-            let _access = COOLPROP.exclusive_access();
-            panic!("poison the test lock");
-        })
-        .join();
-        let shared = library.shared_access();
+        let panic_result = thread::scope(|scope| {
+            scope
+                .spawn(|| {
+                    let _access = lib.exclusive_access();
+                    panic!("poison the test lock");
+                })
+                .join()
+        });
+        let shared = lib.shared_access();
         let shared_level = unsafe { shared.get_debug_level() };
         drop(shared);
-        let exclusive = library.exclusive_access();
+        let exclusive = lib.exclusive_access();
         let exclusive_level = unsafe { exclusive.get_debug_level() };
 
         // Then
@@ -340,13 +339,12 @@ mod tests {
     #[test]
     fn shared_access_allows_another_reader_and_blocks_a_writer() {
         // Given
-        let _test_guard = serial_access_test();
-        let library = &*COOLPROP;
-        let _shared = library.shared_access();
+        let lib = test_lib();
+        let _shared = lib.shared_access();
 
         // When
-        let another_reader_is_available = shared_access_is_available(library);
-        let writer_is_available = exclusive_access_is_available(library);
+        let another_reader_is_available = shared_access_is_available(&lib);
+        let writer_is_available = exclusive_access_is_available(&lib);
 
         // Then
         assert!(another_reader_is_available);
@@ -356,16 +354,27 @@ mod tests {
     #[test]
     fn exclusive_access_blocks_other_access() {
         // Given
-        let _test_guard = serial_access_test();
-        let library = &*COOLPROP;
-        let _exclusive = library.exclusive_access();
+        let lib = test_lib();
+        let _exclusive = lib.exclusive_access();
 
         // When
-        let reader_is_available = shared_access_is_available(library);
-        let writer_is_available = exclusive_access_is_available(library);
+        let reader_is_available = shared_access_is_available(&lib);
+        let writer_is_available = exclusive_access_is_available(&lib);
 
         // Then
         assert!(!reader_is_available);
         assert!(!writer_is_available);
+    }
+
+    #[test]
+    fn unlocked_lib_allows_exclusive_access() {
+        // Given
+        let lib = test_lib();
+
+        // When
+        let writer_is_available = exclusive_access_is_available(&lib);
+
+        // Then
+        assert!(writer_is_available);
     }
 }
