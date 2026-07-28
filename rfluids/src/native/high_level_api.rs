@@ -94,7 +94,7 @@ impl CoolProp {
         substance_name: impl AsRef<str>,
     ) -> Result<f64> {
         let substance_name = substance_name.as_ref().trim();
-        let exclusive = high_level_requires_exclusive(substance_name);
+        let exclusive = requires_exclusive(substance_name);
         let output_key = c_string_trimmed("output_key", output_key)?;
         let input1_key = c_string_trimmed("input1_key", input1_key)?;
         let input2_key = c_string_trimmed("input2_key", input2_key)?;
@@ -223,7 +223,7 @@ impl CoolProp {
     /// - [`SubstanceWithBackend`](crate::substance::SubstanceWithBackend)
     pub fn props1_si(output_key: impl AsRef<str>, substance_name: impl AsRef<str>) -> Result<f64> {
         let substance_name = substance_name.as_ref().trim();
-        let exclusive = high_level_requires_exclusive(substance_name);
+        let exclusive = requires_exclusive(substance_name);
         let output_key = c_string_trimmed("output_key", output_key)?;
         let substance_name = c_string_trimmed("substance_name", substance_name)?;
         call_high_level(exclusive, |coolprop| unsafe {
@@ -307,7 +307,6 @@ fn call_high_level(exclusive: bool, call: impl Fn(&bindings::CoolProp) -> f64) -
         let _stale_error = get_error(&coolprop);
         return res(call(&coolprop), &coolprop);
     }
-
     let value = {
         let coolprop = COOLPROP.shared_access();
         call(&coolprop)
@@ -315,17 +314,14 @@ fn call_high_level(exclusive: bool, call: impl Fn(&bindings::CoolProp) -> f64) -
     if value.is_finite() {
         return Ok(value);
     }
-
     let coolprop = COOLPROP.exclusive_access();
     let _stale_error = get_error(&coolprop);
     res(call(&coolprop), &coolprop)
 }
 
-fn high_level_requires_exclusive(substance_name: &str) -> bool {
+fn requires_exclusive(substance_name: &str) -> bool {
     let substance_name = substance_name.trim();
-    if starts_with_ignore_ascii_case(substance_name, "REFPROP-")
-        || starts_with_ignore_ascii_case(substance_name, "REFPROP-MIX:")
-    {
+    if starts_with_ignore_ascii_case(substance_name, "REFPROP") {
         return true;
     }
     let Some((backend, _composition)) = substance_name.split_once("::") else {
@@ -725,11 +721,8 @@ mod tests {
     #[case("BICUBIC&HEOS::Water", true)]
     #[case("UNKNOWN::Water", true)]
     fn high_level_access_classification(#[case] substance_name: &str, #[case] expected: bool) {
-        // Given
-        // The substance name and expected mode are supplied by the test case.
-
         // When
-        let res = high_level_requires_exclusive(substance_name);
+        let res = requires_exclusive(substance_name);
 
         // Then
         assert_eq!(res, expected);
