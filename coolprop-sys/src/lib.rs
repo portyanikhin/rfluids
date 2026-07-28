@@ -77,11 +77,12 @@
 //!
 //! Some native functions report failure through a sentinel value and store details in the
 //! process-global `errstring`. After such a failure with shared access, release the shared guard,
-//! acquire exclusive access, read and discard the stale `errstring` with
+//! then acquire exclusive access. If the caller needs error details for that operation, read and
+//! discard the stale `errstring` with
 //! [`get_global_param_string`](bindings::CoolProp::get_global_param_string) (which clears it),
-//! repeat the complete native call, and read the new `errstring` with
-//! [`get_global_param_string`](bindings::CoolProp::get_global_param_string) before releasing the
-//! exclusive guard.
+//! repeat the complete native call, and read the new `errstring` before releasing the exclusive
+//! guard. If the caller does not need error details, clear the stale `errstring` before releasing
+//! the exclusive guard; no retry is required.
 //!
 //! When an exclusive native call may set a process-global error or warning, keep the same
 //! exclusive guard from that call through retrieval of its `errstring` or `warnstring`.
@@ -144,16 +145,21 @@ impl CoolPropLib {
     /// already-constructed `VTPR` state.
     ///
     /// Some native functions report failure through a sentinel value and store details in the
-    /// process-global `errstring`. Do not release shared access and then read that string: another
-    /// failure may replace it first. Instead:
+    /// process-global `errstring`. Do not release shared access and then treat that string as the
+    /// error from the failed call: another failure may replace it first. To retrieve attributable
+    /// error details:
     ///
     /// 1. Release the shared guard.
     /// 2. Acquire exclusive access.
-    /// 3. Read and discard any stale `errstring` with `get_global_param_string`, which clears the
-    ///    stored message.
+    /// 3. Read and discard any stale `errstring` with
+    ///    [`get_global_param_string`](bindings::CoolProp::get_global_param_string), which clears
+    ///    the stored message.
     /// 4. Repeat the complete native call.
-    /// 5. Read `errstring` with `get_global_param_string` before releasing the same exclusive
-    ///    guard.
+    /// 5. Read `errstring` with
+    ///    [`get_global_param_string`](bindings::CoolProp::get_global_param_string) before releasing
+    ///    the same exclusive guard.
+    ///
+    /// If error details are not needed, perform only steps 1–3; no retry is required.
     ///
     /// Lock poisoning is recovered transparently; access does not panic solely because a previous
     /// guard holder panicked.

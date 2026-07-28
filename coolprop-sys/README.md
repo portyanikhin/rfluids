@@ -70,28 +70,30 @@ let critical_temperature = unsafe { coolprop.Props1SI(c"Water".as_ptr(), c"Tcrit
 assert!(critical_temperature.is_finite());
 ```
 
-- Use [`shared_access()`](https://docs.rs/coolprop-sys/latest/coolprop_sys/struct.CoolPropLib.html#method.shared_access) only for native operations known to
-  support concurrent execution.
-- Use [`exclusive_access()`](https://docs.rs/coolprop-sys/latest/coolprop_sys/struct.CoolPropLib.html#method.exclusive_access) for configuration and debug changes,
-  global error or warning handling, `REFPROP` operations, `VTPR` construction or reload, tabular
-  backends, and operations whose concurrency guarantees are unknown. When in doubt, use
-  exclusive access.
+- Use [`shared_access()`](https://docs.rs/coolprop-sys/latest/coolprop_sys/struct.CoolPropLib.html#method.shared_access)
+  only for native operations known to support concurrent execution.
+- Use [`exclusive_access()`](https://docs.rs/coolprop-sys/latest/coolprop_sys/struct.CoolPropLib.html#method.exclusive_access)
+  for configuration and debug changes, global error or warning handling, `REFPROP` operations,
+  `VTPR` construction or reload, tabular backends, and operations whose concurrency guarantees
+  are unknown. When in doubt, use exclusive access.
 
 Some native functions report failure through a sentinel value and store details in the
 process-global `errstring`. After such a failure with shared access, release the shared guard,
-acquire exclusive access, read and discard the stale `errstring` with
+then acquire exclusive access. If the caller needs error details for that operation, read and
+discard the stale `errstring` with
 [`get_global_param_string`](https://docs.rs/coolprop-sys/latest/coolprop_sys/bindings/struct.CoolProp.html#method.get_global_param_string) (which clears it),
-repeat the complete native call, and read the new `errstring` with
-[`get_global_param_string`](https://docs.rs/coolprop-sys/latest/coolprop_sys/bindings/struct.CoolProp.html#method.get_global_param_string) before releasing the
-exclusive guard.
+repeat the complete native call, and read the new `errstring` before releasing the exclusive
+guard. If the caller does not need error details, clear the stale `errstring` before releasing
+the exclusive guard; no retry is required.
 
 When an exclusive native call may set a process-global error or warning, keep the same
 exclusive guard from that call through retrieval of its `errstring` or `warnstring`.
 
 Do not acquire another access guard while one is already held by the same thread. For this
 synchronization boundary to be effective, all access to the bundled native library in a
-process must go through [`COOLPROP`](https://docs.rs/coolprop-sys/latest/coolprop_sys/static.COOLPROP.html). Constructing [`bindings::CoolProp`](https://docs.rs/coolprop-sys/latest/coolprop_sys/bindings/struct.CoolProp.html) directly bypasses it
-and requires equivalent process-wide synchronization from the caller.
+process must go through [`COOLPROP`](https://docs.rs/coolprop-sys/latest/coolprop_sys/static.COOLPROP.html).
+Constructing [`bindings::CoolProp`](https://docs.rs/coolprop-sys/latest/coolprop_sys/bindings/struct.CoolProp.html)
+directly bypasses it and requires equivalent process-wide synchronization from the caller.
 
 #### License
 
