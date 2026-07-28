@@ -408,6 +408,19 @@ mod tests {
     }
 
     #[test]
+    fn props_si_unknown_backend() {
+        // Given
+        let backend = "DefinitelyMissingBackend";
+        let substance_name = "DefinitelyMissingBackend::Water";
+
+        // When
+        let res = CoolProp::props_si("D", "P", 101_325.0, "T", 293.15, substance_name).unwrap_err();
+
+        // Then
+        assert!(res.to_string().contains(backend));
+    }
+
+    #[test]
     fn props_si_interior_nul_output_key() {
         // When
         let res = CoolProp::props_si("D\0", "P", 101_325.0, "T", 293.15, "Water").unwrap_err();
@@ -599,6 +612,19 @@ mod tests {
                     .into()
             )
         );
+    }
+
+    #[test]
+    fn props1_si_unknown_backend() {
+        // Given
+        let backend = "DefinitelyMissingBackend";
+        let substance_name = "DefinitelyMissingBackend::Water";
+
+        // When
+        let res = CoolProp::props1_si("Tcrit", substance_name).unwrap_err();
+
+        // Then
+        assert!(res.to_string().contains(backend));
     }
 
     #[test]
