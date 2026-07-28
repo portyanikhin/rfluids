@@ -99,7 +99,7 @@ impl CoolProp {
         let input1_key = c_string_trimmed("input1_key", input1_key)?;
         let input2_key = c_string_trimmed("input2_key", input2_key)?;
         let substance_name = c_string_trimmed("substance_name", substance_name)?;
-        call_high_level(exclusive, |coolprop| unsafe {
+        let call = |coolprop: &bindings::CoolProp| unsafe {
             coolprop.PropsSI(
                 output_key.as_ptr(),
                 input1_key.as_ptr(),
@@ -108,7 +108,8 @@ impl CoolProp {
                 input2_value,
                 substance_name.as_ptr(),
             )
-        })
+        };
+        if exclusive { call_exclusive(call) } else { call_shared_with_retry(call) }
     }
 
     /// Returns a value that depends on the thermodynamic state of humid air.
@@ -163,7 +164,7 @@ impl CoolProp {
         let input1_key = c_string_trimmed("input1_key", input1_key)?;
         let input2_key = c_string_trimmed("input2_key", input2_key)?;
         let input3_key = c_string_trimmed("input3_key", input3_key)?;
-        call_high_level(false, |coolprop| unsafe {
+        call_shared_with_retry(|coolprop| unsafe {
             coolprop.HAPropsSI(
                 output_key.as_ptr(),
                 input1_key.as_ptr(),
@@ -226,9 +227,10 @@ impl CoolProp {
         let exclusive = requires_exclusive(substance_name);
         let output_key = c_string_trimmed("output_key", output_key)?;
         let substance_name = c_string_trimmed("substance_name", substance_name)?;
-        call_high_level(exclusive, |coolprop| unsafe {
+        let call = |coolprop: &bindings::CoolProp| unsafe {
             coolprop.Props1SI(substance_name.as_ptr(), output_key.as_ptr())
-        })
+        };
+        if exclusive { call_exclusive(call) } else { call_shared_with_retry(call) }
     }
 
     /// Returns a phase state as a raw [`String`] depending on the thermodynamic state of the fluid.
@@ -301,12 +303,13 @@ impl CoolProp {
     }
 }
 
-fn call_high_level(exclusive: bool, call: impl Fn(&bindings::CoolProp) -> f64) -> Result<f64> {
-    if exclusive {
-        let coolprop = COOLPROP.exclusive_access();
-        let _stale_error = get_error(&coolprop);
-        return res(call(&coolprop), &coolprop);
-    }
+fn call_exclusive(call: impl FnOnce(&bindings::CoolProp) -> f64) -> Result<f64> {
+    let coolprop = COOLPROP.exclusive_access();
+    let _stale_error = get_error(&coolprop);
+    res(call(&coolprop), &coolprop)
+}
+
+fn call_shared_with_retry(call: impl Fn(&bindings::CoolProp) -> f64) -> Result<f64> {
     let value = {
         let coolprop = COOLPROP.shared_access();
         call(&coolprop)
