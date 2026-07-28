@@ -119,7 +119,7 @@ impl CoolProp {
     /// # See Also
     ///
     /// - [CoolProp High-Level API](https://coolprop.org/coolprop/HighLevelAPI.html)
-    /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
+    /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_2_cool_prop_lib_8h.html)
     /// - [`GlobalParam`](crate::io::GlobalParam)
     #[must_use]
     pub fn get_global_param(param: impl AsRef<str>) -> Option<String> {
@@ -174,7 +174,7 @@ impl CoolProp {
     ///
     /// - [CoolProp High-Level API](https://coolprop.org/coolprop/HighLevelAPI.html)
     /// - [Substance Information](https://coolprop.org/coolprop/HighLevelAPI.html#fluid-information)
-    /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
+    /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_2_cool_prop_lib_8h.html)
     /// - [`Substance`](crate::substance::Substance)
     /// - [`SubstanceParam`](crate::io::SubstanceParam)
     #[must_use]
@@ -321,7 +321,7 @@ impl CoolProp {
     /// # See Also
     ///
     /// - [`CoolProp` Configuration](https://coolprop.org/coolprop/Configuration.html)
-    /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_lib_8h.html)
+    /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_2_cool_prop_lib_8h.html)
     /// - [`ConfigKey`](crate::io::ConfigKey)
     /// - [`ConfigValue`]
     pub fn set_config<'a>(key: impl AsRef<str>, value: impl Into<ConfigValue<'a>>) -> Result<()> {
