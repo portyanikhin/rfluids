@@ -1,11 +1,14 @@
 use core::ffi::c_long;
-use std::{borrow::Cow, cell::Cell, marker::PhantomData};
+use std::{borrow::Cow, marker::PhantomData};
 
 use coolprop_sys::{COOLPROP, bindings};
 
 use super::{
     CoolPropError, Result,
-    common::{ErrorBuffer, c_string_trimmed, factory_requires_exclusive, state_requires_exclusive},
+    common::{
+        ErrorBuffer, PhantomUnsync, c_string_trimmed, factory_requires_exclusive,
+        state_requires_exclusive,
+    },
 };
 use crate::substance::{Substance, SubstanceWithBackend};
 
@@ -14,7 +17,7 @@ use crate::substance::{Substance, SubstanceWithBackend};
 pub struct AbstractState {
     ptr: c_long,
     exclusive: bool,
-    _not_sync: PhantomData<Cell<()>>,
+    marker: PhantomUnsync,
 }
 
 impl AbstractState {
@@ -95,7 +98,7 @@ impl AbstractState {
             let coolprop = COOLPROP.shared_access();
             factory(&coolprop)
         };
-        res(Self { ptr, exclusive: state_exclusive, _not_sync: PhantomData }, err)
+        res(Self { ptr, exclusive: state_exclusive, marker: PhantomData }, err)
     }
 
     /// Set the fractions _(mole, mass or volume)_[^note].

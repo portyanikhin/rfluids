@@ -7,7 +7,7 @@ use super::{CoolPropError, Result};
 use crate::io::GlobalParam;
 
 /// Marker to make structs `!Sync` while preserving `Send`.
-type PhantomUnsync = PhantomData<Cell<()>>;
+pub(crate) type PhantomUnsync = PhantomData<Cell<()>>;
 
 #[derive(Debug)]
 pub(crate) struct ErrorBuffer {
