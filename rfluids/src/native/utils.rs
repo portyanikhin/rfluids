@@ -367,33 +367,27 @@ fn get_substance_param(composition_id: &str, param: &str) -> Option<String> {
     let param = CString::new(param).ok()?;
     let get_param = |coolprop: &bindings::CoolProp| {
         let mut res = StringBuffer::with_capacity(capacity);
-        let status = unsafe {
+        let success = unsafe {
             coolprop.get_fluid_param_string(
                 composition_id.as_ptr(),
                 param.as_ptr(),
                 res.as_mut_ptr(),
                 res.capacity(),
             )
-        };
-        (status, res)
+        } == 1;
+        (success, res)
     };
-    let (status, res) = {
+    let (success, res) = {
         let coolprop = COOLPROP.shared_access();
         get_param(&coolprop)
     };
-    if status == 1 {
-        let res: String = res.into();
-        return if res.trim().is_empty() { None } else { Some(res) };
-    }
-
-    let coolprop = COOLPROP.exclusive_access();
-    let _stale_error = get_error(&coolprop);
-    let (status, res) = get_param(&coolprop);
-    if status != 1 {
+    if !success {
+        let coolprop = COOLPROP.exclusive_access();
         let _error = get_error(&coolprop);
+        return None;
     }
     let res: String = res.into();
-    if status != 1 || res.trim().is_empty() { None } else { Some(res) }
+    (!res.trim().is_empty()).then_some(res)
 }
 
 fn set_config(key: &str, value: &ConfigValue) -> Result<()> {
