@@ -342,14 +342,14 @@ fn get_global_param(param: &str) -> Option<String> {
     let param = CString::new(param).ok()?;
     let mut res = StringBuffer::with_capacity(capacity);
     let coolprop = COOLPROP.exclusive_access();
-    let status = unsafe {
+    let success = unsafe {
         coolprop.get_global_param_string(param.as_ptr(), res.as_mut_ptr(), res.capacity())
-    };
-    if status != 1 && !is_pending_error {
+    } == 1;
+    if !success && !is_pending_error {
         let _error = get_error(&coolprop);
     }
     let res: String = res.into();
-    if status != 1 || res.trim().is_empty() { None } else { Some(res) }
+    if !success || res.trim().is_empty() { None } else { Some(res) }
 }
 
 fn get_substance_param(composition_id: &str, param: &str) -> Option<String> {
