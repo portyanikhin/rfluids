@@ -528,6 +528,7 @@ mod tests {
                 input2: 300.0,
             },
         ];
+        const CALLS_PER_THREAD: usize = 16;
 
         fn density(case: SharedBackendCase) -> f64 {
             let mut state = AbstractState::new(case.backend, case.substance)
@@ -553,7 +554,8 @@ mod tests {
                     let barrier = &barrier;
                     scope.spawn(move || {
                         barrier.wait();
-                        let values = (0..16).map(|_| density(case)).collect::<Vec<_>>();
+                        let values =
+                            (0..CALLS_PER_THREAD).map(|_| density(case)).collect::<Vec<_>>();
                         (case_index, values)
                     })
                 })
