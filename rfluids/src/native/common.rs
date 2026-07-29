@@ -9,102 +9,93 @@ use crate::io::GlobalParam;
 /// Marker to make structs `!Sync` while preserving `Send`.
 pub(crate) type PhantomUnsync = PhantomData<Cell<()>>;
 
+const ERROR_BUFFER_CAPACITY: usize = 500;
+
 #[derive(Debug)]
 pub(crate) struct ErrorBuffer {
-    code: c_long,
-    pub message: StringBuffer,
-    marker: PhantomUnsync,
+    err_code: c_long,
+    err_message: [u8; ERROR_BUFFER_CAPACITY],
 }
 
 impl ErrorBuffer {
-    pub fn blank() -> Self {
-        Self { code: 0, message: StringBuffer::blank(), marker: PhantomData }
+    #[must_use]
+    pub fn as_mut_parts(&mut self) -> (*mut c_long, *mut c_char, c_long) {
+        let capacity = c_long::try_from(self.err_message.len())
+            .expect("error buffer capacity must fit into `c_long`");
+        (&raw mut self.err_code, self.err_message.as_mut_ptr().cast(), capacity)
     }
 
-    #[must_use]
-    pub fn code_as_mut_ptr(&mut self) -> *mut c_long {
-        &raw mut self.code
+    pub fn into_result(self) -> Result<()> {
+        if self.err_code == 0 {
+            return Ok(());
+        }
+        let err_code = self.err_code;
+        let err_message = string_from_bytes(&self.err_message);
+        if err_message.trim().is_empty() {
+            Err(CoolPropError::Native(format!(
+                "CoolProp native call failed with error code {err_code} and no error message"
+            )))
+        } else {
+            Err(CoolPropError::Native(err_message))
+        }
     }
 
+    #[cfg(test)]
     #[must_use]
-    #[allow(dead_code)]
     pub fn code(&self) -> c_long {
-        self.code
+        self.err_code
     }
 }
 
 impl Default for ErrorBuffer {
     fn default() -> Self {
-        Self { code: 0, message: StringBuffer::default(), marker: PhantomData }
-    }
-}
-
-impl From<ErrorBuffer> for Option<CoolPropError> {
-    fn from(value: ErrorBuffer) -> Self {
-        value.message.into()
+        Self { err_code: 0, err_message: [0; ERROR_BUFFER_CAPACITY] }
     }
 }
 
 #[derive(Debug)]
 pub(crate) struct StringBuffer {
-    capacity: usize,
-    buffer: *mut c_char,
-    marker: PhantomUnsync,
+    capacity: c_int,
+    buffer: Box<[u8]>,
 }
 
 impl StringBuffer {
     #[must_use]
     pub fn with_capacity(capacity: usize) -> Self {
-        if capacity == 0 {
-            return Self { capacity, buffer: std::ptr::null_mut(), marker: PhantomData };
-        }
-        let vec = vec![0u8; capacity];
-        let buffer = unsafe { CString::from_vec_unchecked(vec) }.into_raw();
-        Self { capacity, buffer, marker: PhantomData }
-    }
-
-    #[must_use]
-    pub fn blank() -> Self {
-        Self::with_capacity(0)
+        let abi_capacity =
+            c_int::try_from(capacity).expect("string buffer capacity exceeds `c_int::MAX`");
+        let storage_len = capacity.max(1);
+        Self { capacity: abi_capacity, buffer: vec![0; storage_len].into_boxed_slice() }
     }
 
     #[must_use]
     pub fn as_mut_ptr(&mut self) -> *mut c_char {
-        self.buffer
+        self.buffer.as_mut_ptr().cast()
     }
 
     #[must_use]
     pub fn capacity(&self) -> c_int {
-        self.capacity as c_int
+        self.capacity
     }
 }
 
 impl Default for StringBuffer {
     fn default() -> Self {
-        Self::with_capacity(500)
-    }
-}
-
-impl Drop for StringBuffer {
-    fn drop(&mut self) {
-        if !self.buffer.is_null() {
-            unsafe {
-                drop(CString::from_raw(self.buffer));
-            }
-        }
+        Self::with_capacity(ERROR_BUFFER_CAPACITY)
     }
 }
 
 impl From<StringBuffer> for String {
     fn from(value: StringBuffer) -> Self {
-        if value.buffer.is_null() {
-            return Self::new();
-        }
-        let buffer = value.buffer;
-        std::mem::forget(value);
-        let c_string = unsafe { CString::from_raw(buffer) };
-        c_string.into_string().unwrap_or_else(|e| e.into_cstring().to_string_lossy().into_owned())
+        let capacity = usize::try_from(value.capacity)
+            .expect("string buffer capacity is checked at construction");
+        string_from_bytes(&value.buffer[..capacity])
     }
+}
+
+fn string_from_bytes(bytes: &[u8]) -> String {
+    let end = bytes.iter().position(|byte| *byte == 0).unwrap_or(bytes.len());
+    String::from_utf8_lossy(&bytes[..end]).into_owned()
 }
 
 impl From<StringBuffer> for Option<CoolPropError> {
@@ -150,62 +141,102 @@ mod tests {
     mod error_buffer {
         use super::*;
 
-        #[test]
-        fn blank() {
-            // When
-            let sut = ErrorBuffer::blank();
+        fn write_err_message(err_buffer: &mut ErrorBuffer, value: &str) {
+            let value = CString::new(value).unwrap();
+            let bytes = value.as_bytes_with_nul();
+            let (_, err_message, _) = err_buffer.as_mut_parts();
+            unsafe {
+                std::ptr::copy_nonoverlapping(
+                    bytes.as_ptr().cast::<c_char>(),
+                    err_message,
+                    bytes.len(),
+                );
+            }
+        }
 
-            // Then
-            assert_eq!(sut.code(), 0);
-            assert_eq!(sut.message.capacity(), 0);
+        fn set_code(err_buffer: &mut ErrorBuffer, value: c_long) {
+            let (err_code, ..) = err_buffer.as_mut_parts();
+            unsafe {
+                *err_code = value;
+            }
         }
 
         #[test]
         fn default() {
             // When
-            let sut = ErrorBuffer::default();
+            let mut sut = ErrorBuffer::default();
+            let (_, _, capacity) = sut.as_mut_parts();
 
             // Then
             assert_eq!(sut.code(), 0);
-            assert_eq!(sut.message.capacity(), 500);
+            assert_eq!(capacity, c_long::try_from(ERROR_BUFFER_CAPACITY).unwrap());
         }
 
         #[test]
-        fn code_as_mut_ptr() {
+        fn as_mut_parts() {
             // Given
             let mut sut = ErrorBuffer::default();
 
             // When
+            let (err_code, err_message, capacity) = sut.as_mut_parts();
             unsafe {
-                *sut.code_as_mut_ptr() = 42;
+                *err_code = 42;
+                *err_message = b'E' as c_char;
             }
+            let res = sut.into_result().unwrap_err();
 
             // Then
-            assert_eq!(sut.code(), 42);
+            assert_eq!(capacity, c_long::try_from(ERROR_BUFFER_CAPACITY).unwrap());
+            assert_eq!(res, CoolPropError::Native("E".into()));
+        }
+
+        #[test]
+        fn into_result_success_ignores_message() {
+            // Given
+            let mut sut = ErrorBuffer::default();
+            write_err_message(&mut sut, "stale error");
+
+            // When
+            let res = sut.into_result();
+
+            // Then
+            assert!(res.is_ok());
+        }
+
+        #[test]
+        fn into_result_error_with_message() {
+            // Given
+            let mut sut = ErrorBuffer::default();
+            set_code(&mut sut, 1);
+            write_err_message(&mut sut, "native error");
+
+            // When
+            let res = sut.into_result().unwrap_err();
+
+            // Then
+            assert_eq!(res, CoolPropError::Native("native error".into()));
         }
 
         #[rstest]
-        #[case("", None)]
-        #[case(" ", None)]
-        #[case("error message", Some(CoolPropError::Native("error message".into())))]
-        fn into_coolprop_error(#[case] msg: &str, #[case] expected: Option<CoolPropError>) {
+        #[case(1)]
+        #[case(2)]
+        #[case(3)]
+        #[case(42)]
+        fn into_result_error_without_message(#[case] code: c_long) {
             // Given
             let mut sut = ErrorBuffer::default();
-            let c_string = CString::new(msg).unwrap();
-            let c_bytes = c_string.as_bytes_with_nul();
+            set_code(&mut sut, code);
 
             // When
-            unsafe {
-                std::ptr::copy_nonoverlapping(
-                    c_bytes.as_ptr().cast::<c_char>(),
-                    sut.message.as_mut_ptr(),
-                    c_bytes.len(),
-                );
-            }
-            let res: Option<CoolPropError> = sut.into();
+            let res = sut.into_result().unwrap_err();
 
             // Then
-            assert_eq!(res, expected);
+            assert_eq!(
+                res,
+                CoolPropError::Native(format!(
+                    "CoolProp native call failed with error code {code} and no error message"
+                ))
+            );
         }
     }
 
@@ -220,16 +251,20 @@ mod tests {
             let sut = StringBuffer::with_capacity(capacity);
 
             // Then
-            assert_eq!(sut.capacity(), capacity as c_int);
+            assert_eq!(sut.capacity(), c_int::try_from(capacity).unwrap());
         }
 
         #[test]
-        fn blank() {
+        fn zero_capacity_has_non_null_storage() {
+            // Given
+            let mut sut = StringBuffer::with_capacity(0);
+
             // When
-            let sut = StringBuffer::blank();
+            let pointer = sut.as_mut_ptr();
 
             // Then
             assert_eq!(sut.capacity(), 0);
+            assert!(!pointer.is_null());
         }
 
         #[test]
@@ -238,7 +273,7 @@ mod tests {
             let sut = StringBuffer::default();
 
             // Then
-            assert_eq!(sut.capacity(), 500);
+            assert_eq!(sut.capacity(), c_int::try_from(ERROR_BUFFER_CAPACITY).unwrap());
         }
 
         #[rstest]
@@ -278,9 +313,9 @@ mod tests {
         }
 
         #[test]
-        fn into_string_blank() {
+        fn into_string_zero_capacity() {
             // Given
-            let sut = StringBuffer::blank();
+            let sut = StringBuffer::with_capacity(0);
 
             // When
             let res: String = sut.into();
@@ -310,6 +345,59 @@ mod tests {
             // Then
             assert!(res.contains('\u{FFFD}')); // Unicode replacement character
             assert_eq!(res, "Hello\u{FFFD}\u{FFFD}World!");
+        }
+
+        #[test]
+        fn into_string_stops_at_first_nul() {
+            // Given
+            let bytes = b"first\0second";
+            let mut sut = StringBuffer::with_capacity(bytes.len());
+            unsafe {
+                std::ptr::copy_nonoverlapping(
+                    bytes.as_ptr().cast::<c_char>(),
+                    sut.as_mut_ptr(),
+                    bytes.len(),
+                );
+            }
+
+            // When
+            let res: String = sut.into();
+
+            // Then
+            assert_eq!(res, "first");
+        }
+
+        #[test]
+        fn into_string_without_nul_is_bounded_by_capacity() {
+            // Given
+            let bytes = b"complete buffer";
+            let mut sut = StringBuffer::with_capacity(bytes.len());
+            unsafe {
+                std::ptr::copy_nonoverlapping(
+                    bytes.as_ptr().cast::<c_char>(),
+                    sut.as_mut_ptr(),
+                    bytes.len(),
+                );
+            }
+
+            // When
+            let res: String = sut.into();
+
+            // Then
+            assert_eq!(res, "complete buffer");
+        }
+
+        #[test]
+        #[should_panic(expected = "string buffer capacity exceeds `c_int::MAX`")]
+        fn with_capacity_exceeding_c_int_max_panics() {
+            // Given
+            let capacity = usize::try_from(c_int::MAX).unwrap() + 1;
+
+            // When
+            let _sut = StringBuffer::with_capacity(capacity);
+
+            // Then
+            // Constructor panics before attempting an allocation.
         }
 
         #[rstest]

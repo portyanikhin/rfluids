@@ -15,7 +15,7 @@ use crate::substance::{Substance, SubstanceWithBackend};
 /// `CoolProp` thread safe low-level API.
 #[derive(Debug)]
 pub struct AbstractState {
-    ptr: c_long,
+    handle: c_long,
     exclusive: bool,
     marker: PhantomUnsync,
 }
@@ -81,24 +81,26 @@ impl AbstractState {
         let state_exclusive = state_requires_exclusive(backend_name);
         let backend_name = c_string_trimmed("backend_name", backend_name)?;
         let composition_id = c_string_trimmed("composition_id", composition_id)?;
-        let mut err = ErrorBuffer::default();
-        let mut factory = |coolprop: &bindings::CoolProp| unsafe {
+        let mut err_buffer = ErrorBuffer::default();
+        let (err_code, err_message, err_buffer_capacity) = err_buffer.as_mut_parts();
+        let factory = |coolprop: &bindings::CoolProp| unsafe {
             coolprop.AbstractState_factory(
                 backend_name.as_ptr(),
                 composition_id.as_ptr(),
-                err.code_as_mut_ptr(),
-                err.message.as_mut_ptr(),
-                c_long::from(err.message.capacity()),
+                err_code,
+                err_message,
+                err_buffer_capacity,
             )
         };
-        let ptr = if factory_exclusive {
+        let handle = if factory_exclusive {
             let coolprop = COOLPROP.exclusive_access();
             factory(&coolprop)
         } else {
             let coolprop = COOLPROP.shared_access();
             factory(&coolprop)
         };
-        res(Self { ptr, exclusive: state_exclusive, marker: PhantomData }, err)
+        err_buffer.into_result()?;
+        Ok(Self { handle, exclusive: state_exclusive, marker: PhantomData })
     }
 
     /// Set the fractions _(mole, mass or volume)_[^note].
@@ -139,18 +141,19 @@ impl AbstractState {
     /// # Ok::<(), rfluids::native::CoolPropError>(())
     /// ```
     pub fn set_fractions(&mut self, fractions: &[f64]) -> Result<()> {
-        let mut err = ErrorBuffer::default();
+        let mut err_buffer = ErrorBuffer::default();
+        let (err_code, err_message, err_buffer_capacity) = err_buffer.as_mut_parts();
         self.with_coolprop(|coolprop| unsafe {
             coolprop.AbstractState_set_fractions(
-                self.ptr,
+                self.handle,
                 fractions.as_ptr(),
                 fractions.len() as c_long,
-                err.code_as_mut_ptr(),
-                err.message.as_mut_ptr(),
-                c_long::from(err.message.capacity()),
+                err_code,
+                err_message,
+                err_buffer_capacity,
             );
         });
-        res((), err)
+        err_buffer.into_result()
     }
 
     /// Update the state of the fluid.
@@ -186,19 +189,20 @@ impl AbstractState {
         input1: f64,
         input2: f64,
     ) -> Result<()> {
-        let mut err = ErrorBuffer::default();
+        let mut err_buffer = ErrorBuffer::default();
+        let (err_code, err_message, err_buffer_capacity) = err_buffer.as_mut_parts();
         self.with_coolprop(|coolprop| unsafe {
             coolprop.AbstractState_update(
-                self.ptr,
+                self.handle,
                 c_long::from(input_pair_key.into()),
                 input1,
                 input2,
-                err.code_as_mut_ptr(),
-                err.message.as_mut_ptr(),
-                c_long::from(err.message.capacity()),
+                err_code,
+                err_message,
+                err_buffer_capacity,
             );
         });
-        res((), err)
+        err_buffer.into_result()
     }
 
     /// Returns an output parameter value **\[SI units\]**
@@ -268,18 +272,23 @@ impl AbstractState {
     /// - [`FluidParam`](crate::io::FluidParam)
     /// - [`FluidTrivialParam`](crate::io::FluidTrivialParam)
     pub fn keyed_output(&self, key: impl Into<u8>) -> Result<f64> {
-        let mut err = ErrorBuffer::default();
+        let mut err_buffer = ErrorBuffer::default();
+        let (err_code, err_message, err_buffer_capacity) = err_buffer.as_mut_parts();
         let key = key.into();
         let value = self.with_coolprop(|coolprop| unsafe {
             coolprop.AbstractState_keyed_output(
-                self.ptr,
+                self.handle,
                 c_long::from(key),
-                err.code_as_mut_ptr(),
-                err.message.as_mut_ptr(),
-                c_long::from(err.message.capacity()),
+                err_code,
+                err_message,
+                err_buffer_capacity,
             )
         });
-        keyed_output(key, value, err)
+        err_buffer.into_result()?;
+        if !value.is_finite() {
+            return Err(CoolPropError::NonFiniteKeyedOutput { key });
+        }
+        Ok(value)
     }
 
     /// Specify the phase state for all further calculations.
@@ -313,17 +322,18 @@ impl AbstractState {
     /// - [`Phase`](crate::io::Phase)
     pub fn specify_phase(&mut self, phase: impl AsRef<str>) -> Result<()> {
         let phase = c_string_trimmed("phase", phase)?;
-        let mut err = ErrorBuffer::default();
+        let mut err_buffer = ErrorBuffer::default();
+        let (err_code, err_message, err_buffer_capacity) = err_buffer.as_mut_parts();
         self.with_coolprop(|coolprop| unsafe {
             coolprop.AbstractState_specify_phase(
-                self.ptr,
+                self.handle,
                 phase.as_ptr(),
-                err.code_as_mut_ptr(),
-                err.message.as_mut_ptr(),
-                c_long::from(err.message.capacity()),
+                err_code,
+                err_message,
+                err_buffer_capacity,
             );
         });
-        res((), err)
+        err_buffer.into_result()
     }
 
     /// Unspecify the phase state and go back to calculating it based on the inputs.
@@ -347,13 +357,14 @@ impl AbstractState {
     ///
     /// - [Imposing the Phase (Optional)](https://coolprop.org/coolprop/HighLevelAPI.html#imposing-the-phase-optional)
     pub fn unspecify_phase(&mut self) {
-        let mut err = ErrorBuffer::blank();
+        let mut err_buffer = ErrorBuffer::default();
+        let (err_code, err_message, err_buffer_capacity) = err_buffer.as_mut_parts();
         self.with_coolprop(|coolprop| unsafe {
             coolprop.AbstractState_unspecify_phase(
-                self.ptr,
-                err.code_as_mut_ptr(),
-                err.message.as_mut_ptr(),
-                c_long::from(err.message.capacity()),
+                self.handle,
+                err_code,
+                err_message,
+                err_buffer_capacity,
             );
         });
     }
@@ -394,38 +405,24 @@ impl TryFrom<&SubstanceWithBackend> for AbstractState {
                 }
             };
         let mut backend = AbstractState::new(value.backend.name(), component_names)?;
-        if let Some(fractions) = fractions {
-            backend.set_fractions(&fractions).unwrap();
+        match fractions {
+            Some(fractions) => backend.set_fractions(&fractions).map(|()| backend),
+            None => Ok(backend),
         }
-        Ok(backend)
     }
 }
 
 impl Drop for AbstractState {
     fn drop(&mut self) {
-        let mut err = ErrorBuffer::blank();
+        let mut err_buffer = ErrorBuffer::default();
+        let (err_code, err_message, err_buffer_capacity) = err_buffer.as_mut_parts();
         self.with_coolprop(|coolprop| unsafe {
-            coolprop.AbstractState_free(
-                self.ptr,
-                err.code_as_mut_ptr(),
-                err.message.as_mut_ptr(),
-                c_long::from(err.message.capacity()),
-            );
+            coolprop.AbstractState_free(self.handle, err_code, err_message, err_buffer_capacity);
         });
+        // `Drop` cannot report a cleanup error. A valid, uniquely owned handle is freed exactly
+        // once; any error here indicates an invariant violation or external raw-API interference.
+        let _cleanup_result = err_buffer.into_result();
     }
-}
-
-fn res<T>(value: T, err: ErrorBuffer) -> Result<T> {
-    let err: Option<CoolPropError> = err.into();
-    err.map_or(Ok(value), Err)
-}
-
-fn keyed_output(key: u8, value: f64, err: ErrorBuffer) -> Result<f64> {
-    res((), err)?;
-    if !value.is_finite() {
-        return Err(CoolPropError::NonFiniteKeyedOutput { key });
-    }
-    Ok(value)
 }
 
 #[cfg(test)]
@@ -649,6 +646,24 @@ mod tests {
     }
 
     #[test]
+    fn new_error_without_native_message() {
+        // Given
+        const OVERSIZED_ERROR_MARKER_LENGTH: usize = 1_000;
+        let backend_name = "X".repeat(OVERSIZED_ERROR_MARKER_LENGTH);
+
+        // When
+        let res = AbstractState::new(backend_name.as_str(), "Water").unwrap_err();
+
+        // Then
+        assert_eq!(
+            res,
+            CoolPropError::Native(
+                "CoolProp native call failed with error code 2 and no error message".into()
+            )
+        );
+    }
+
+    #[test]
     fn new_interior_nul_backend_name() {
         // When
         let res = AbstractState::new("HEOS\0", "Water").unwrap_err();
@@ -828,5 +843,41 @@ mod tests {
         // Then
         assert!(res1.is_err());
         assert!(res2.is_ok());
+    }
+
+    #[test]
+    fn unspecify_phase_for_exclusive_state() {
+        // Given
+        let mut sut = AbstractState::new("TTSE&HEOS", "Water").unwrap();
+        sut.specify_phase(Phase::Gas).unwrap();
+
+        // When
+        sut.unspecify_phase();
+        let res = sut.update(FluidInputPair::PT, 101_325.0, 293.15);
+
+        // Then
+        assert!(res.is_ok());
+    }
+
+    #[test]
+    fn drop_releases_native_handle() {
+        // Given
+        let sut = AbstractState::new("HEOS", "Water").unwrap();
+        let handle = sut.handle;
+
+        // When
+        drop(sut);
+        let mut err_buffer = ErrorBuffer::default();
+        let (err_code, err_message, err_buffer_capacity) = err_buffer.as_mut_parts();
+        {
+            let coolprop = COOLPROP.shared_access();
+            unsafe {
+                coolprop.AbstractState_free(handle, err_code, err_message, err_buffer_capacity);
+            }
+        }
+        let res = err_buffer.into_result().unwrap_err();
+
+        // Then
+        assert_eq!(res, CoolPropError::Native("HandleError: could not free handle".into()));
     }
 }
