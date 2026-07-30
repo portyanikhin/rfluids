@@ -60,16 +60,22 @@ impl FluidInput {
         Self { key: FluidParam::UMolar, value }
     }
 
+    /// Mole-based vapor quality **\[dimensionless, from 0 to 1\]**.
+    #[must_use]
+    pub fn molar_quality(value: f64) -> Self {
+        Self { key: FluidParam::Q, value }
+    }
+
     /// Pressure **\[Pa\]**.
     #[must_use]
     pub fn pressure(value: f64) -> Self {
         Self { key: FluidParam::P, value }
     }
 
-    /// Vapor quality **\[dimensionless, from 0 to 1\]**.
+    /// Mass-based vapor quality **\[dimensionless, from 0 to 1\]**.
     #[must_use]
     pub fn quality(value: f64) -> Self {
-        Self { key: FluidParam::Q, value }
+        Self { key: FluidParam::QMass, value }
     }
 
     /// Specific volume **\[m³/kg\]**.
@@ -101,8 +107,9 @@ mod tests {
     test_input!(molar_enthalpy, key: FluidParam::HMolar);
     test_input!(molar_entropy, key: FluidParam::SMolar);
     test_input!(molar_internal_energy, key: FluidParam::UMolar);
+    test_input!(molar_quality, key: FluidParam::Q);
     test_input!(pressure, key: FluidParam::P);
-    test_input!(quality, key: FluidParam::Q);
+    test_input!(quality, key: FluidParam::QMass);
     test_input!(specific_volume, key: FluidParam::DMass, reciprocal);
     test_input!(temperature, key: FluidParam::T);
 }

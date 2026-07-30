@@ -390,6 +390,16 @@ impl Fluid {
         self.output(FluidParam::UMolar)
     }
 
+    /// Mole-based vapor quality **\[dimensionless, from 0 to 1\]**.
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`FluidOutputError`] if the property is not available or calculation fails.
+    pub fn molar_quality(&mut self) -> OutputResult<f64> {
+        let key = FluidParam::Q;
+        self.output(key).and_then(|value| guard(key.into(), value, |x| (0.0..=1.0).contains(&x)))
+    }
+
     /// Molar specific heat at constant pressure **\[J/mol/K\]**.
     ///
     /// # Errors
@@ -444,13 +454,13 @@ impl Fluid {
         self.positive_output(FluidParam::P)
     }
 
-    /// Vapor quality **\[dimensionless, from 0 to 1\]**.
+    /// Mass-based vapor quality **\[dimensionless, from 0 to 1\]**.
     ///
     /// # Errors
     ///
     /// Returns a [`FluidOutputError`] if the property is not available or calculation fails.
     pub fn quality(&mut self) -> OutputResult<f64> {
-        let key = FluidParam::Q;
+        let key = FluidParam::QMass;
         self.output(key).and_then(|value| guard(key.into(), value, |x| (0.0..=1.0).contains(&x)))
     }
 
@@ -889,6 +899,61 @@ mod tests {
 
         // Then
         assert_eq!(*res, substance);
+    }
+
+    #[rstest]
+    fn molar_quality_water(ctx: Context) {
+        // Given
+        let Context { water, .. } = ctx;
+        let mut sut = ctx.sut(water);
+
+        // When
+        let res = sut.molar_quality();
+
+        // Then
+        assert!(res.is_err());
+    }
+
+    #[rstest]
+    fn molar_quality_pg(ctx: Context) {
+        // Given
+        let Context { pg, .. } = ctx;
+        let mut sut = ctx.sut(pg);
+
+        // When
+        let res = sut.molar_quality();
+
+        // Then
+        assert!(res.is_err());
+    }
+
+    #[rstest]
+    fn molar_quality_saturated_water_vapor(ctx: Context) {
+        // Given
+        let Context { pressure, water, .. } = ctx;
+        let mut sut = ctx.sut(water).in_state(pressure, FluidInput::quality(1.0)).unwrap();
+
+        // When
+        let res = sut.molar_quality();
+
+        // Then
+        assert!(res.is_ok());
+        assert_relative_eq!(res.unwrap(), 1.0);
+    }
+
+    #[rstest]
+    fn molar_quality_two_phase_r407c(ctx: Context) {
+        // Given
+        let Context { pressure, .. } = ctx;
+        let mut sut =
+            Fluid::from(PredefinedMix::R407C).in_state(pressure, FluidInput::quality(0.5)).unwrap();
+
+        // When
+        let res = sut.molar_quality();
+
+        // Then
+        assert!(res.is_ok());
+        assert_relative_eq!(res.unwrap(), 0.526_497_841_376_168_1);
     }
 
     #[rstest]
