@@ -105,6 +105,14 @@ pub enum Pure {
     #[strum(to_string = "CarbonylSulfide", serialize = "COS")]
     CarbonylSulfide,
 
+    /// Chlorine.
+    ///
+    /// # See Also
+    ///
+    /// - [Chlorine](https://coolprop.org/fluid_properties/fluids/Chlorine.html)
+    #[strum(to_string = "Chlorine", serialize = "Cl2")]
+    Chlorine,
+
     /// cis-2-Butene.
     ///
     /// # See Also
@@ -593,6 +601,30 @@ pub enum Pure {
     )]
     nPentane,
 
+    /// n-Perfluorobutane.
+    ///
+    /// # See Also
+    ///
+    /// - [n-Perfluorobutane](https://coolprop.org/fluid_properties/fluids/n-Perfluorobutane.html)
+    #[strum(to_string = "n-Perfluorobutane", serialize = "C4F10")]
+    nPerfluorobutane,
+
+    /// n-Perfluorohexane.
+    ///
+    /// # See Also
+    ///
+    /// - [n-Perfluorohexane](https://coolprop.org/fluid_properties/fluids/n-Perfluorohexane.html)
+    #[strum(to_string = "n-Perfluorohexane", serialize = "C6F14")]
+    nPerfluorohexane,
+
+    /// n-Perfluoropentane.
+    ///
+    /// # See Also
+    ///
+    /// - [n-Perfluoropentane](https://coolprop.org/fluid_properties/fluids/n-Perfluoropentane.html)
+    #[strum(to_string = "n-Perfluoropentane", serialize = "C5F12")]
+    nPerfluoropentane,
+
     /// n-Propane.
     ///
     /// # See Also
@@ -677,6 +709,19 @@ pub enum Pure {
     /// - [Propylene](https://coolprop.org/fluid_properties/fluids/Propylene.html)
     #[strum(to_string = "Propylene")]
     Propylene,
+
+    /// Propylene glycol.
+    ///
+    /// # See Also
+    ///
+    /// - [Propylene glycol](https://coolprop.org/fluid_properties/fluids/PropyleneGlycol.html)
+    #[strum(
+        to_string = "PropyleneGlycol",
+        serialize = "1,2-Propanediol",
+        serialize = "PGLYCOL",
+        serialize = "PG"
+    )]
+    PropyleneGlycol,
 
     /// Propyne.
     ///
@@ -1150,6 +1195,30 @@ pub enum Pure {
     #[strum(to_string = "SulfurHexafluoride", serialize = "R846")]
     R846,
 
+    /// Refrigerant R1123 -- trifluoroethylene.
+    ///
+    /// # See Also
+    ///
+    /// - [R1123](https://coolprop.org/fluid_properties/fluids/R1123.html)
+    #[strum(to_string = "R1123", serialize = "Trifluoroethylene", serialize = "HFO1123")]
+    R1123,
+
+    /// Refrigerant R1130(E) -- trans-1,2-dichloroethene.
+    ///
+    /// # See Also
+    ///
+    /// - [R1130(E)](https://coolprop.org/fluid_properties/fluids/R1130%28E%29.html)
+    #[strum(to_string = "R1130(E)", serialize = "trans-1,2-dichloroethene", serialize = "R1130E")]
+    R1130E,
+
+    /// Refrigerant R1132(E) -- trans-1,2-difluoroethene.
+    ///
+    /// # See Also
+    ///
+    /// - [R1132(E)](https://coolprop.org/fluid_properties/fluids/R1132%28E%29.html)
+    #[strum(to_string = "R1132(E)", serialize = "trans-1,2-difluoroethene", serialize = "R1132E")]
+    R1132E,
+
     /// Refrigerant R1150 -- ethylene.
     ///
     /// # See Also
@@ -1157,6 +1226,14 @@ pub enum Pure {
     /// - [Ethylene](https://coolprop.org/fluid_properties/fluids/Ethylene.html)
     #[strum(to_string = "R1150")]
     R1150,
+
+    /// Refrigerant R1224yd(Z) -- cis-1-chloro-2,3,3,3-tetrafluoro-1-propene.
+    ///
+    /// # See Also
+    ///
+    /// - [R1224yd(Z)](https://coolprop.org/fluid_properties/fluids/R1224YDZ.html)
+    #[strum(to_string = "R1224YDZ", serialize = "R1224yd(Z)")]
+    R1224ydZ,
 
     /// Refrigerant R1233zd(E) -- trans-1-chloro-3,3,3-trifluoropropene.
     ///
@@ -1214,6 +1291,14 @@ pub enum Pure {
     #[strum(to_string = "R1336mzz(E)", serialize = "R1336mzzE")]
     R1336mzzE,
 
+    /// Refrigerant R1336mzz(Z) -- cis-1,1,1,4,4,4-Hexafluorobutene.
+    ///
+    /// # See Also
+    ///
+    /// - [R1336mzz(Z)](https://coolprop.org/fluid_properties/fluids/R1336mzz%28Z%29.html)
+    #[strum(to_string = "R1336mzz(Z)", serialize = "R1336mzzZ")]
+    R1336mzzZ,
+
     /// Sulfur dioxide.
     ///
     /// # See Also
@@ -1230,6 +1315,14 @@ pub enum Pure {
     #[strum(to_string = "SulfurHexafluoride", serialize = "SF6")]
     SulfurHexafluoride,
 
+    /// Tetrahydrofuran.
+    ///
+    /// # See Also
+    ///
+    /// - [Tetrahydrofuran](https://coolprop.org/fluid_properties/fluids/Tetrahydrofuran.html)
+    #[strum(to_string = "Tetrahydrofuran", serialize = "THF")]
+    Tetrahydrofuran,
+
     /// Toluene.
     ///
     /// # See Also
@@ -1245,6 +1338,14 @@ pub enum Pure {
     /// - [trans-2-Butene](https://coolprop.org/fluid_properties/fluids/trans-2-Butene.html)
     #[strum(to_string = "trans-2-Butene", serialize = "T2BUTENE")]
     trans2Butene,
+
+    /// Vinyl chloride.
+    ///
+    /// # See Also
+    ///
+    /// - [Vinyl chloride](https://coolprop.org/fluid_properties/fluids/VinylChloride.html)
+    #[strum(to_string = "VinylChloride", serialize = "Chloroethene")]
+    VinylChloride,
 
     /// Water.
     ///
@@ -1281,6 +1382,7 @@ mod tests {
     #[case(CarbonDioxide, "CarbonDioxide")]
     #[case(CarbonMonoxide, "CarbonMonoxide")]
     #[case(CarbonylSulfide, "CarbonylSulfide")]
+    #[case(Chlorine, "Chlorine")]
     #[case(cis2Butene, "cis-2-Butene")]
     #[case(Cyclohexane, "Cyclohexane")]
     #[case(Cyclopentane, "Cyclopentane")]
@@ -1336,6 +1438,9 @@ mod tests {
     #[case(nOctane, "n-Octane")]
     #[case(Novec649, "Novec649")]
     #[case(nPentane, "n-Pentane")]
+    #[case(nPerfluorobutane, "n-Perfluorobutane")]
+    #[case(nPerfluorohexane, "n-Perfluorohexane")]
+    #[case(nPerfluoropentane, "n-Perfluoropentane")]
     #[case(nPropane, "n-Propane")]
     #[case(nUndecane, "n-Undecane")]
     #[case(Orthodeuterium, "OrthoDeuterium")]
@@ -1345,6 +1450,7 @@ mod tests {
     #[case(Paradeuterium, "ParaDeuterium")]
     #[case(Parahydrogen, "ParaHydrogen")]
     #[case(Propylene, "Propylene")]
+    #[case(PropyleneGlycol, "PropyleneGlycol")]
     #[case(Propyne, "Propyne")]
     #[case(pXylene, "p-Xylene")]
     #[case(R11, "R11")]
@@ -1403,7 +1509,11 @@ mod tests {
     #[case(R744, "R744")]
     #[case(R764, "SulfurDioxide")]
     #[case(R846, "SulfurHexafluoride")]
+    #[case(R1123, "R1123")]
+    #[case(R1130E, "R1130(E)")]
+    #[case(R1132E, "R1132(E)")]
     #[case(R1150, "R1150")]
+    #[case(R1224ydZ, "R1224YDZ")]
     #[case(R1233zdE, "R1233zd(E)")]
     #[case(R1234yf, "R1234yf")]
     #[case(R1234zeE, "R1234ze(E)")]
@@ -1411,11 +1521,14 @@ mod tests {
     #[case(R1243zf, "R1243zf")]
     #[case(R1270, "R1270")]
     #[case(R1336mzzE, "R1336mzz(E)")]
+    #[case(R1336mzzZ, "R1336mzz(Z)")]
     #[case(SES36, "SES36")]
     #[case(SulfurDioxide, "SulfurDioxide")]
     #[case(SulfurHexafluoride, "SulfurHexafluoride")]
+    #[case(Tetrahydrofuran, "Tetrahydrofuran")]
     #[case(Toluene, "Toluene")]
     #[case(trans2Butene, "trans-2-Butene")]
+    #[case(VinylChloride, "VinylChloride")]
     #[case(Water, "Water")]
     #[case(Xenon, "Xenon")]
     fn as_str(#[case] sut: Pure, #[case] expected: &str) {
@@ -1438,6 +1551,7 @@ mod tests {
     #[case(vec!["CarbonDioxide", "CO2"], CarbonDioxide)]
     #[case(vec!["CarbonMonoxide", "CO"], CarbonMonoxide)]
     #[case(vec!["CarbonylSulfide", "COS"], CarbonylSulfide)]
+    #[case(vec!["Chlorine", "Cl2"], Chlorine)]
     #[case(vec!["cis-2-Butene", "C2BUTENE"], cis2Butene)]
     #[case(vec!["Cyclohexane", "CYCLOHEX"], Cyclohexane)]
     #[case(vec!["Cyclopentane", "CYCLOPEN"], Cyclopentane)]
@@ -1493,6 +1607,9 @@ mod tests {
     #[case(vec!["n-Octane", "nOctane",  "Octane",  "NC8H18",  "n-C8H18"], nOctane)]
     #[case(vec!["Novec649", "Novec1230"], Novec649)]
     #[case(vec!["n-Pentane", "nPentane",  "Pentane",  "NC5H12",  "n-C5H12"], nPentane)]
+    #[case(vec!["n-Perfluorobutane", "C4F10"], nPerfluorobutane)]
+    #[case(vec!["n-Perfluorohexane", "C6F14"], nPerfluorohexane)]
+    #[case(vec!["n-Perfluoropentane", "C5F12"], nPerfluoropentane)]
     #[case(vec!["n-Propane", "nPropane",  "Propane",  "C3H8",  "NC3H8",  "n-C3H8"], nPropane)]
     #[case(vec!["n-Undecane", "nUndecane",  "Undecane",  "NC11H24",  "n-C11H24"], nUndecane)]
     #[case(vec!["OrthoDeuterium"], Orthodeuterium)]
@@ -1502,6 +1619,7 @@ mod tests {
     #[case(vec!["ParaDeuterium"], Paradeuterium)]
     #[case(vec!["ParaHydrogen"], Parahydrogen)]
     #[case(vec!["Propylene"], Propylene)]
+    #[case(vec!["PropyleneGlycol", "1,2-Propanediol", "PGLYCOL", "PG"], PropyleneGlycol)]
     #[case(vec!["Propyne"], Propyne)]
     #[case(vec!["p-Xylene", "pXylene",  "PC8H10"], pXylene)]
     #[case(vec!["R11"], R11)]
@@ -1560,7 +1678,11 @@ mod tests {
     #[case(vec!["R744"], R744)]
     #[case(vec!["R764", "SulfurDioxide"], R764)]
     #[case(vec!["R846", "SulfurHexafluoride"], R846)]
+    #[case(vec!["R1123", "Trifluoroethylene", "HFO1123"], R1123)]
+    #[case(vec!["R1130(E)", "trans-1,2-dichloroethene", "R1130E"], R1130E)]
+    #[case(vec!["R1132(E)", "trans-1,2-difluoroethene", "R1132E"], R1132E)]
     #[case(vec!["R1150"], R1150)]
+    #[case(vec!["R1224YDZ", "R1224yd(Z)"], R1224ydZ)]
     #[case(vec!["R1233zd(E)", "R1233zdE"], R1233zdE)]
     #[case(vec!["R1234yf"], R1234yf)]
     #[case(vec!["R1234ze(E)", "R1234zeE"], R1234zeE)]
@@ -1568,11 +1690,14 @@ mod tests {
     #[case(vec!["R1243zf"], R1243zf)]
     #[case(vec!["R1270"], R1270)]
     #[case(vec!["R1336mzz(E)", "R1336mzzE"], R1336mzzE)]
+    #[case(vec!["R1336mzz(Z)", "R1336mzzZ"], R1336mzzZ)]
     #[case(vec!["SES36"], SES36)]
     #[case(vec!["SO2"], SulfurDioxide)]
     #[case(vec!["SF6"], SulfurHexafluoride)]
+    #[case(vec!["Tetrahydrofuran", "THF"], Tetrahydrofuran)]
     #[case(vec!["Toluene"], Toluene)]
     #[case(vec!["trans-2-Butene", "T2BUTENE"], trans2Butene)]
+    #[case(vec!["VinylChloride", "Chloroethene"], VinylChloride)]
     #[case(vec!["Water", "H2O"], Water)]
     #[case(vec!["Xenon", "Xe"], Xenon)]
     fn from_valid_str(#[case] valid: Vec<&str>, #[case] expected: Pure) {
