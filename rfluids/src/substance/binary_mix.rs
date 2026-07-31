@@ -42,7 +42,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [FRE Fitting Report](https://coolprop.org/_downloads/34957f16ba277ebf93b5b6c77ba773ef/FRE_fitreport.pdf)
-    #[strum(to_string = "FRE", props(min_fraction = "0.19", max_fraction = "0.5"))]
+    #[strum(to_string = "FRE", props(min_fraction = "0.19", max_fraction = "0.50"))]
     FRE,
 
     /// Ice slurry with ethanol.
@@ -74,7 +74,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [LiBr Fitting Report](https://coolprop.org/_downloads/9841afe5a67cf511e1c05fb2c62554e9/LiBr_fitreport.pdf)
-    #[strum(to_string = "LiBr", props(min_fraction = "0.0", max_fraction = "0.75"))]
+    #[strum(to_string = "LiBr", props(min_fraction = "0.00", max_fraction = "0.75"))]
     LiBr,
 
     /// Ammonia aqueous solution.
@@ -82,7 +82,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MAM Fitting Report](https://coolprop.org/_downloads/55f5945b82e59783f01a223c806ba98a/MAM_fitreport.pdf)
-    #[strum(to_string = "MAM", props(min_fraction = "0.0", max_fraction = "0.3"))]
+    #[strum(to_string = "MAM", props(min_fraction = "0.00", max_fraction = "0.30"))]
     MAM,
 
     /// Melinder ammonia aqueous solution.
@@ -90,7 +90,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MAM2 Fitting Report](https://coolprop.org/_downloads/80ceb7a3f0ef19024df7102ede7abf1c/MAM2_fitreport.pdf)
-    #[strum(to_string = "MAM2", props(min_fraction = "0.078", max_fraction = "0.236"))]
+    #[strum(to_string = "MAM2", props(min_fraction = "0.08", max_fraction = "0.24"))]
     MAM2,
 
     /// Calcium chloride aqueous solution.
@@ -98,7 +98,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MCA Fitting Report](https://coolprop.org/_downloads/99c24e500b86d54a8ee06ec42fe88650/MCA_fitreport.pdf)
-    #[strum(to_string = "MCA", props(min_fraction = "0.0", max_fraction = "0.3"))]
+    #[strum(to_string = "MCA", props(min_fraction = "0.00", max_fraction = "0.30"))]
     MCA,
 
     /// Melinder calcium chloride aqueous solution.
@@ -106,7 +106,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MCA2 Fitting Report](https://coolprop.org/_downloads/7f1f22344947f75279e127d261ed1bb4/MCA2_fitreport.pdf)
-    #[strum(to_string = "MCA2", props(min_fraction = "0.09", max_fraction = "0.294"))]
+    #[strum(to_string = "MCA2", props(min_fraction = "0.09", max_fraction = "0.29"))]
     MCA2,
 
     /// Ethanol aqueous solution.
@@ -114,7 +114,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MEA Fitting Report](https://coolprop.org/_downloads/9766a2a46a5ad683a2421fba9a8bbb00/MEA_fitreport.pdf)
-    #[strum(to_string = "MEA", props(min_fraction = "0.0", max_fraction = "0.6"))]
+    #[strum(to_string = "MEA", props(min_fraction = "0.00", max_fraction = "0.60"))]
     MEA,
 
     /// Melinder ethanol aqueous solution.
@@ -122,7 +122,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MEA2 Fitting Report](https://coolprop.org/_downloads/8702b193f54b78d69b863cd9a751554b/MEA2_fitreport.pdf)
-    #[strum(to_string = "MEA2", props(min_fraction = "0.11", max_fraction = "0.6"))]
+    #[strum(to_string = "MEA2", props(min_fraction = "0.11", max_fraction = "0.60"))]
     MEA2,
 
     /// Ethylene glycol aqueous solution.
@@ -130,7 +130,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MEG Fitting Report](https://coolprop.org/_downloads/4e6bd34ef1888b4daa1662944ee0ea7e/MEG_fitreport.pdf)
-    #[strum(to_string = "MEG", props(min_fraction = "0.0", max_fraction = "0.6"))]
+    #[strum(to_string = "MEG", props(min_fraction = "0.00", max_fraction = "0.60"))]
     MEG,
 
     /// Melinder ethylene glycol aqueous solution.
@@ -138,7 +138,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MEG2 Fitting Report](https://coolprop.org/_downloads/eb2feab3610b6184c36a49d7555a9a8b/MEG2_fitreport.pdf)
-    #[strum(to_string = "MEG2", props(min_fraction = "0.0", max_fraction = "0.56"))]
+    #[strum(to_string = "MEG2", props(min_fraction = "0.00", max_fraction = "0.56"))]
     MEG2,
 
     /// Glycerol aqueous solution.
@@ -146,7 +146,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MGL Fitting Report](https://coolprop.org/_downloads/3f422f64ed4d455fc1cf4ea9d008d489/MGL_fitreport.pdf)
-    #[strum(to_string = "MGL", props(min_fraction = "0.0", max_fraction = "0.6"))]
+    #[strum(to_string = "MGL", props(min_fraction = "0.00", max_fraction = "0.60"))]
     MGL,
 
     /// Melinder glycerol aqueous solution.
@@ -154,7 +154,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MGL2 Fitting Report](https://coolprop.org/_downloads/9129c94c0b61a92d578721eb3244a8d9/MGL2_fitreport.pdf)
-    #[strum(to_string = "MGL2", props(min_fraction = "0.195", max_fraction = "0.63"))]
+    #[strum(to_string = "MGL2", props(min_fraction = "0.20", max_fraction = "0.63"))]
     MGL2,
 
     /// MIT seawater model.
@@ -162,7 +162,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MITSW Fitting Report](https://coolprop.org/_downloads/83b323e2117a318d6a908a62332755a0/MITSW_fitreport.pdf)
-    #[strum(to_string = "MITSW", props(min_fraction = "0.0", max_fraction = "0.12"))]
+    #[strum(to_string = "MITSW", props(min_fraction = "0.00", max_fraction = "0.12"))]
     MITSW,
 
     /// Potassium acetate aqueous solution.
@@ -170,7 +170,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MKA Fitting Report](https://coolprop.org/_downloads/25c70020117c037c1bda6b82064cb6a7/MKA_fitreport.pdf)
-    #[strum(to_string = "MKA", props(min_fraction = "0.0", max_fraction = "0.45"))]
+    #[strum(to_string = "MKA", props(min_fraction = "0.00", max_fraction = "0.45"))]
     MKA,
 
     /// Melinder potassium acetate aqueous solution.
@@ -186,7 +186,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MKC Fitting Report](https://coolprop.org/_downloads/af83599a6bdebd138597d0544fe81250/MKC_fitreport.pdf)
-    #[strum(to_string = "MKC", props(min_fraction = "0.0", max_fraction = "0.4"))]
+    #[strum(to_string = "MKC", props(min_fraction = "0.00", max_fraction = "0.40"))]
     MKC,
 
     /// Melinder potassium carbonate aqueous solution.
@@ -194,7 +194,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MKC2 Fitting Report](https://coolprop.org/_downloads/af88aff662b6e97de038fe5ab1099d56/MKC2_fitreport.pdf)
-    #[strum(to_string = "MKC2", props(min_fraction = "0.0", max_fraction = "0.39"))]
+    #[strum(to_string = "MKC2", props(min_fraction = "0.00", max_fraction = "0.39"))]
     MKC2,
 
     /// Potassium formate aqueous solution.
@@ -202,7 +202,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MKF Fitting Report](https://coolprop.org/_downloads/0a1ac8e2d2b9f530ff25443a274a63a1/MKF_fitreport.pdf)
-    #[strum(to_string = "MKF", props(min_fraction = "0.0", max_fraction = "0.48"))]
+    #[strum(to_string = "MKF", props(min_fraction = "0.00", max_fraction = "0.48"))]
     MKF,
 
     /// Lithium chloride aqueous solution.
@@ -210,7 +210,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MLI Fitting Report](https://coolprop.org/_downloads/52820bc9842eaa443aae3ff6fbad9c6f/MLI_fitreport.pdf)
-    #[strum(to_string = "MLI", props(min_fraction = "0.0", max_fraction = "0.24"))]
+    #[strum(to_string = "MLI", props(min_fraction = "0.00", max_fraction = "0.24"))]
     MLI,
 
     /// Methanol aqueous solution.
@@ -218,7 +218,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MMA Fitting Report](https://coolprop.org/_downloads/cd121df9ebf7251a0e4d20ded28c4a7f/MMA_fitreport.pdf)
-    #[strum(to_string = "MMA", props(min_fraction = "0.0", max_fraction = "0.6"))]
+    #[strum(to_string = "MMA", props(min_fraction = "0.00", max_fraction = "0.60"))]
     MMA,
 
     /// Melinder methanol aqueous solution.
@@ -226,7 +226,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MMA2 Fitting Report](https://coolprop.org/_downloads/ac5e575a586e468e1df740bba389068a/MMA2_fitreport.pdf)
-    #[strum(to_string = "MMA2", props(min_fraction = "0.078", max_fraction = "0.474"))]
+    #[strum(to_string = "MMA2", props(min_fraction = "0.08", max_fraction = "0.47"))]
     MMA2,
 
     /// Magnesium chloride aqueous solution.
@@ -234,7 +234,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MMG Fitting Report](https://coolprop.org/_downloads/65b64f4f312d7711f888d48e78607307/MMG_fitreport.pdf)
-    #[strum(to_string = "MMG", props(min_fraction = "0.0", max_fraction = "0.3"))]
+    #[strum(to_string = "MMG", props(min_fraction = "0.00", max_fraction = "0.30"))]
     MMG,
 
     /// Melinder magnesium chloride aqueous solution.
@@ -242,7 +242,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MMG2 Fitting Report](https://coolprop.org/_downloads/3f60e26eeef0be3d41f2bf5410c6456e/MMG2_fitreport.pdf)
-    #[strum(to_string = "MMG2", props(min_fraction = "0.0", max_fraction = "0.205"))]
+    #[strum(to_string = "MMG2", props(min_fraction = "0.00", max_fraction = "0.21"))]
     MMG2,
 
     /// Sodium chloride aqueous solution.
@@ -250,7 +250,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MNA Fitting Report](https://coolprop.org/_downloads/70b1723cc03bf11236be1da5364ad2a3/MNA_fitreport.pdf)
-    #[strum(to_string = "MNA", props(min_fraction = "0.0", max_fraction = "0.23"))]
+    #[strum(to_string = "MNA", props(min_fraction = "0.00", max_fraction = "0.23"))]
     MNA,
 
     /// Melinder sodium chloride aqueous solution.
@@ -258,7 +258,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MNA2 Fitting Report](https://coolprop.org/_downloads/42a537083fe286eb02364dea3ee11688/MNA2_fitreport.pdf)
-    #[strum(to_string = "MNA2", props(min_fraction = "0.0", max_fraction = "0.23"))]
+    #[strum(to_string = "MNA2", props(min_fraction = "0.00", max_fraction = "0.23"))]
     MNA2,
 
     /// Propylene glycol aqueous solution.
@@ -266,7 +266,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [MPG Fitting Report](https://coolprop.org/_downloads/15da2eff4264ab41969c2288a2fd7a14/MPG_fitreport.pdf)
-    #[strum(to_string = "MPG", props(min_fraction = "0.0", max_fraction = "0.6"))]
+    #[strum(to_string = "MPG", props(min_fraction = "0.00", max_fraction = "0.60"))]
     MPG,
 
     /// Melinder propylene glycol aqueous solution.
@@ -282,7 +282,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [VCA Fitting Report](https://coolprop.org/_downloads/3d545447ca28deec34e87f4e2c7372e5/VCA_fitreport.pdf)
-    #[strum(to_string = "VCA", props(min_fraction = "0.147", max_fraction = "0.299"))]
+    #[strum(to_string = "VCA", props(min_fraction = "0.15", max_fraction = "0.30"))]
     VCA,
 
     /// VDI potassium carbonate aqueous solution.
@@ -290,7 +290,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [VKC Fitting Report](https://coolprop.org/_downloads/f5f494464726eef64bef309a06a231b9/VKC_fitreport.pdf)
-    #[strum(to_string = "VKC", props(min_fraction = "0.128", max_fraction = "0.389"))]
+    #[strum(to_string = "VKC", props(min_fraction = "0.13", max_fraction = "0.39"))]
     VKC,
 
     /// VDI methanol aqueous solution.
@@ -298,7 +298,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [VMA Fitting Report](https://coolprop.org/_downloads/8fbd3dad595acf18e51ebc9db74bf4db/VMA_fitreport.pdf)
-    #[strum(to_string = "VMA", props(min_fraction = "0.1", max_fraction = "0.9"))]
+    #[strum(to_string = "VMA", props(min_fraction = "0.10", max_fraction = "0.90"))]
     VMA,
 
     /// VDI magnesium chloride aqueous solution.
@@ -306,7 +306,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [VMG Fitting Report](https://coolprop.org/_downloads/85befc9ba3e20979e025731d8b27461a/VMG_fitreport.pdf)
-    #[strum(to_string = "VMG", props(min_fraction = "0.072", max_fraction = "0.206"))]
+    #[strum(to_string = "VMG", props(min_fraction = "0.07", max_fraction = "0.21"))]
     VMG,
 
     /// VDI sodium chloride aqueous solution.
@@ -314,7 +314,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [VNA Fitting Report](https://coolprop.org/_downloads/38a80b6ad28ae9ce214391a3c87c962e/VNA_fitreport.pdf)
-    #[strum(to_string = "VNA", props(min_fraction = "0.07", max_fraction = "0.231"))]
+    #[strum(to_string = "VNA", props(min_fraction = "0.07", max_fraction = "0.23"))]
     VNA,
 
     /// ASHRAE ethylene glycol aqueous solution.
@@ -322,7 +322,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [AEG Fitting Report](https://coolprop.org/_downloads/78e13c7e1ac35bce0c6f3d8da3beb923/AEG_fitreport.pdf)
-    #[strum(to_string = "AEG", props(min_fraction = "0.1", max_fraction = "0.6"))]
+    #[strum(to_string = "AEG", props(min_fraction = "0.10", max_fraction = "0.60"))]
     AEG,
 
     /// Antifrogen KF potassium formate solution.
@@ -330,7 +330,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [AKF Fitting Report](https://coolprop.org/_downloads/84382d0deabf6c4714e8bce7d785d47c/AKF_fitreport.pdf)
-    #[strum(to_string = "AKF", props(min_fraction = "0.4", max_fraction = "1.0"))]
+    #[strum(to_string = "AKF", props(min_fraction = "0.40", max_fraction = "1.00"))]
     AKF,
 
     /// Antifrogen L propylene glycol solution.
@@ -338,7 +338,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [AL Fitting Report](https://coolprop.org/_downloads/aa4571c7edf7b7a96d3fd0880cd6ab7e/AL_fitreport.pdf)
-    #[strum(to_string = "AL", props(min_fraction = "0.1", max_fraction = "0.6"))]
+    #[strum(to_string = "AL", props(min_fraction = "0.10", max_fraction = "0.60"))]
     AL,
 
     /// Antifrogen N ethylene glycol solution.
@@ -346,7 +346,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [AN Fitting Report](https://coolprop.org/_downloads/c77b6564ae1467f00cc06ee0cdfc96f0/AN_fitreport.pdf)
-    #[strum(to_string = "AN", props(min_fraction = "0.1", max_fraction = "0.6"))]
+    #[strum(to_string = "AN", props(min_fraction = "0.10", max_fraction = "0.60"))]
     AN,
 
     /// ASHRAE propylene glycol aqueous solution.
@@ -354,7 +354,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [APG Fitting Report](https://coolprop.org/_downloads/ff81838c5666d41cd5cf3b4cbbdbae99/APG_fitreport.pdf)
-    #[strum(to_string = "APG", props(min_fraction = "0.1", max_fraction = "0.6"))]
+    #[strum(to_string = "APG", props(min_fraction = "0.10", max_fraction = "0.60"))]
     APG,
 
     /// Glykosol N ethylene glycol solution.
@@ -362,7 +362,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [GKN Fitting Report](https://coolprop.org/_downloads/608e1caabc90a2a8decbe2c67e2820f5/GKN_fitreport.pdf)
-    #[strum(to_string = "GKN", props(min_fraction = "0.1", max_fraction = "0.6"))]
+    #[strum(to_string = "GKN", props(min_fraction = "0.10", max_fraction = "0.60"))]
     GKN,
 
     /// Pekasol 2000 potassium acetate/formate solution.
@@ -370,7 +370,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [PK2 Fitting Report](https://coolprop.org/_downloads/f8ea5374d239a80eb1f8bbc028d6e843/PK2_fitreport.pdf)
-    #[strum(to_string = "PK2", props(min_fraction = "0.3", max_fraction = "1.0"))]
+    #[strum(to_string = "PK2", props(min_fraction = "0.30", max_fraction = "1.00"))]
     PK2,
 
     /// Pekasol L propylene glycol solution.
@@ -378,7 +378,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [PKL Fitting Report](https://coolprop.org/_downloads/6886474c8959679625eb06ab486a039e/PKL_fitreport.pdf)
-    #[strum(to_string = "PKL", props(min_fraction = "0.1", max_fraction = "0.6"))]
+    #[strum(to_string = "PKL", props(min_fraction = "0.10", max_fraction = "0.60"))]
     PKL,
 
     /// Zitrec AC corrosion inhibitor solution.
@@ -386,7 +386,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [ZAC Fitting Report](https://coolprop.org/_downloads/2eb5c385aa7a082fbf631d7c95cb200b/ZAC_fitreport.pdf)
-    #[strum(to_string = "ZAC", props(min_fraction = "0.06", max_fraction = "0.5"))]
+    #[strum(to_string = "ZAC", props(min_fraction = "0.06", max_fraction = "0.50"))]
     ZAC,
 
     /// Zitrec FC propylene glycol solution.
@@ -394,7 +394,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [ZFC Fitting Report](https://coolprop.org/_downloads/2161e01af1f1fa119bc0a8d285e889f4/ZFC_fitreport.pdf)
-    #[strum(to_string = "ZFC", props(min_fraction = "0.3", max_fraction = "0.6"))]
+    #[strum(to_string = "ZFC", props(min_fraction = "0.30", max_fraction = "0.60"))]
     ZFC,
 
     /// Zitrec LC propylene glycol solution.
@@ -402,7 +402,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [ZLC Fitting Report](https://coolprop.org/_downloads/56d3bcd6e7b9021ac6f75168e4dbfd86/ZLC_fitreport.pdf)
-    #[strum(to_string = "ZLC", props(min_fraction = "0.3", max_fraction = "0.7"))]
+    #[strum(to_string = "ZLC", props(min_fraction = "0.30", max_fraction = "0.70"))]
     ZLC,
 
     /// Zitrec M ethylene glycol solution.
@@ -410,7 +410,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [ZM Fitting Report](https://coolprop.org/_downloads/d56dacbaa99ddd7f467a8e07288d72cd/ZM_fitreport.pdf)
-    #[strum(to_string = "ZM", props(min_fraction = "0.0", max_fraction = "1.0"))]
+    #[strum(to_string = "ZM", props(min_fraction = "0.00", max_fraction = "1.00"))]
     ZM,
 
     /// Zitrec MC ethylene glycol solution.
@@ -418,7 +418,7 @@ pub enum BinaryMixKind {
     /// # See Also
     ///
     /// - [ZMC Fitting Report](https://coolprop.org/_downloads/31e9c35471e97108ec2590b310cfcbfe/ZMC_fitreport.pdf)
-    #[strum(to_string = "ZMC", props(min_fraction = "0.3", max_fraction = "0.7"))]
+    #[strum(to_string = "ZMC", props(min_fraction = "0.30", max_fraction = "0.70"))]
     ZMC,
 }
 
@@ -516,54 +516,54 @@ mod tests {
     use super::{BinaryMixKind::*, *};
 
     #[rstest]
-    #[case(FRE, 0.19, 0.5)]
+    #[case(FRE, 0.19, 0.50)]
     #[case(IceEA, 0.05, 0.35)]
     #[case(IceNA, 0.05, 0.35)]
     #[case(IcePG, 0.05, 0.35)]
-    #[case(LiBr, 0.0, 0.75)]
-    #[case(MAM, 0.0, 0.3)]
-    #[case(MAM2, 0.078, 0.236)]
-    #[case(MCA, 0.0, 0.3)]
-    #[case(MCA2, 0.09, 0.294)]
-    #[case(MEA, 0.0, 0.6)]
-    #[case(MEA2, 0.11, 0.6)]
-    #[case(MEG, 0.0, 0.6)]
-    #[case(MEG2, 0.0, 0.56)]
-    #[case(MGL, 0.0, 0.6)]
-    #[case(MGL2, 0.195, 0.63)]
-    #[case(MITSW, 0.0, 0.12)]
-    #[case(MKA, 0.0, 0.45)]
+    #[case(LiBr, 0.00, 0.75)]
+    #[case(MAM, 0.00, 0.30)]
+    #[case(MAM2, 0.08, 0.24)]
+    #[case(MCA, 0.00, 0.30)]
+    #[case(MCA2, 0.09, 0.29)]
+    #[case(MEA, 0.00, 0.60)]
+    #[case(MEA2, 0.11, 0.60)]
+    #[case(MEG, 0.00, 0.60)]
+    #[case(MEG2, 0.00, 0.56)]
+    #[case(MGL, 0.00, 0.60)]
+    #[case(MGL2, 0.20, 0.63)]
+    #[case(MITSW, 0.00, 0.12)]
+    #[case(MKA, 0.00, 0.45)]
     #[case(MKA2, 0.11, 0.41)]
-    #[case(MKC, 0.0, 0.4)]
-    #[case(MKC2, 0.0, 0.39)]
-    #[case(MKF, 0.0, 0.48)]
-    #[case(MLI, 0.0, 0.24)]
-    #[case(MMA, 0.0, 0.6)]
-    #[case(MMA2, 0.078, 0.474)]
-    #[case(MMG, 0.0, 0.3)]
-    #[case(MMG2, 0.0, 0.205)]
-    #[case(MNA, 0.0, 0.23)]
-    #[case(MNA2, 0.0, 0.23)]
-    #[case(MPG, 0.0, 0.6)]
+    #[case(MKC, 0.00, 0.40)]
+    #[case(MKC2, 0.00, 0.39)]
+    #[case(MKF, 0.00, 0.48)]
+    #[case(MLI, 0.00, 0.24)]
+    #[case(MMA, 0.00, 0.60)]
+    #[case(MMA2, 0.08, 0.47)]
+    #[case(MMG, 0.00, 0.30)]
+    #[case(MMG2, 0.00, 0.21)]
+    #[case(MNA, 0.00, 0.23)]
+    #[case(MNA2, 0.00, 0.23)]
+    #[case(MPG, 0.00, 0.60)]
     #[case(MPG2, 0.15, 0.57)]
-    #[case(VCA, 0.147, 0.299)]
-    #[case(VKC, 0.128, 0.389)]
-    #[case(VMA, 0.1, 0.9)]
-    #[case(VMG, 0.072, 0.206)]
-    #[case(VNA, 0.07, 0.231)]
-    #[case(AEG, 0.1, 0.6)]
-    #[case(AKF, 0.4, 1.0)]
-    #[case(AL, 0.1, 0.6)]
-    #[case(AN, 0.1, 0.6)]
-    #[case(APG, 0.1, 0.6)]
-    #[case(GKN, 0.1, 0.6)]
-    #[case(PK2, 0.3, 1.0)]
-    #[case(PKL, 0.1, 0.6)]
-    #[case(ZAC, 0.06, 0.5)]
-    #[case(ZFC, 0.3, 0.6)]
-    #[case(ZLC, 0.3, 0.7)]
-    #[case(ZM, 0.0, 1.0)]
-    #[case(ZMC, 0.3, 0.7)]
+    #[case(VCA, 0.15, 0.30)]
+    #[case(VKC, 0.13, 0.39)]
+    #[case(VMA, 0.10, 0.90)]
+    #[case(VMG, 0.07, 0.21)]
+    #[case(VNA, 0.07, 0.23)]
+    #[case(AEG, 0.10, 0.60)]
+    #[case(AKF, 0.40, 1.00)]
+    #[case(AL, 0.10, 0.60)]
+    #[case(AN, 0.10, 0.60)]
+    #[case(APG, 0.10, 0.60)]
+    #[case(GKN, 0.10, 0.60)]
+    #[case(PK2, 0.30, 1.00)]
+    #[case(PKL, 0.10, 0.60)]
+    #[case(ZAC, 0.06, 0.50)]
+    #[case(ZFC, 0.30, 0.60)]
+    #[case(ZLC, 0.30, 0.70)]
+    #[case(ZM, 0.00, 1.00)]
+    #[case(ZMC, 0.30, 0.70)]
     fn min_max_fractions(
         #[case] sut: BinaryMixKind,
         #[case] expected_min: f64,
