@@ -32,6 +32,22 @@
 #[strum(ascii_case_insensitive)]
 #[cfg_attr(test, derive(strum_macros::EnumIter))]
 pub enum IncompPure {
+    /// Acetone, _liquid phase at 10 bar_.
+    ///
+    /// # See Also
+    ///
+    /// - [Acetone Fitting Report](https://coolprop.org/_downloads/581d0e26eff7216ce487408c39dda43e/Acetone_fitreport.pdf)
+    #[strum(to_string = "Acetone")]
+    Acetone,
+
+    /// Dry air, _gaseous phase at 1 atm (101325 Pa)_.
+    ///
+    /// # See Also
+    ///
+    /// - [Dry Air Fitting Report](https://coolprop.org/_downloads/f228aec765ba15af758424c99735c994/Air_fitreport.pdf)
+    #[strum(to_string = "Air")]
+    Air,
+
     /// Aspen Temper -10 potassium acetate/formate heat transfer fluid.
     ///
     /// # See Also
@@ -120,6 +136,77 @@ pub enum IncompPure {
     #[strum(to_string = "DSF")]
     DSF,
 
+    /// Ethanol, _liquid phase at 10 bar_.
+    ///
+    /// # See Also
+    ///
+    /// - [Ethanol Fitting Report](https://coolprop.org/_downloads/9a7ee1c1124ae34aab2b9a991327273d/Ethanol_fitreport.pdf)
+    #[strum(to_string = "Ethanol", serialize = "C2H6O")]
+    Ethanol,
+
+    /// Food ash model from the _2006 ASHRAE Handbook_
+    /// based on data from _Choi and Okos (1986)_.
+    ///
+    /// # See Also
+    ///
+    /// - [Food Ash Fitting Report](https://coolprop.org/_downloads/b64c4f281c8e8c0db08ce028e49be4e0/FoodAsh_fitreport.pdf)
+    #[strum(to_string = "FoodAsh")]
+    FoodAsh,
+
+    /// Food carbohydrate model from the _2006 ASHRAE Handbook_
+    /// based on data from _Choi and Okos (1986)_.
+    ///
+    /// # See Also
+    ///
+    /// - [Food Carbohydrate Fitting Report](https://coolprop.org/_downloads/360243d791fb1ba9990a9fbc3160e5d4/FoodCarbohydrate_fitreport.pdf)
+    #[strum(to_string = "FoodCarbohydrate")]
+    FoodCarbohydrate,
+
+    /// Food fat model from the _2006 ASHRAE Handbook_
+    /// based on data from _Choi and Okos (1986)_.
+    ///
+    /// # See Also
+    ///
+    /// - [Food Fat Fitting Report](https://coolprop.org/_downloads/7ffe9dbf16b201dd17d618539e8e3d36/FoodFat_fitreport.pdf)
+    #[strum(to_string = "FoodFat")]
+    FoodFat,
+
+    /// Food fiber model from the _2006 ASHRAE Handbook_
+    /// based on data from _Choi and Okos (1986)_.
+    ///
+    /// # See Also
+    ///
+    /// - [Food Fiber Fitting Report](https://coolprop.org/_downloads/f9fe5e65689bb12cb082262d95bbd102/FoodFiber_fitreport.pdf)
+    #[strum(to_string = "FoodFiber")]
+    FoodFiber,
+
+    /// Food ice model from the _2006 ASHRAE Handbook_
+    /// based on data from _Choi and Okos (1986)_.
+    ///
+    /// # See Also
+    ///
+    /// - [Food Ice Fitting Report](https://coolprop.org/_downloads/4f4aae7af55b18cbe4e7ad9bef2c9259/FoodIce_fitreport.pdf)
+    #[strum(to_string = "FoodIce")]
+    FoodIce,
+
+    /// Food protein model from the _2006 ASHRAE Handbook_
+    /// based on data from _Choi and Okos (1986)_.
+    ///
+    /// # See Also
+    ///
+    /// - [Food Protein Fitting Report](https://coolprop.org/_downloads/4855a4038d6b9e215d78c7bede4e9313/FoodProtein_fitreport.pdf)
+    #[strum(to_string = "FoodProtein")]
+    FoodProtein,
+
+    /// Food water model from the _2006 ASHRAE Handbook_
+    /// based on data from _Choi and Okos (1986)_.
+    ///
+    /// # See Also
+    ///
+    /// - [Food Water Fitting Report](https://coolprop.org/_downloads/2124218076f2e007aab4e0e638fab022/FoodWater_fitreport.pdf)
+    #[strum(to_string = "FoodWater")]
+    FoodWater,
+
     /// Dynalene HC10 heat transfer fluid.
     ///
     /// # See Also
@@ -176,6 +263,14 @@ pub enum IncompPure {
     #[strum(to_string = "HCM")]
     HCM,
 
+    /// Hexane, _liquid phase at 10 bar_.
+    ///
+    /// # See Also
+    ///
+    /// - [Hexane Fitting Report](https://coolprop.org/_downloads/8843289377f0d1d3a04cf744552cfba1/Hexane_fitreport.pdf)
+    #[strum(to_string = "Hexane")]
+    Hexane,
+
     /// HFE-7100 hydrofluoroether heat transfer fluid.
     ///
     /// # See Also
@@ -231,6 +326,14 @@ pub enum IncompPure {
     /// - [HY50 Fitting Report](https://coolprop.org/_downloads/5194ef7b0a987529ab6d8e0c7454e987/HY50_fitreport.pdf)
     #[strum(to_string = "HY50")]
     HY50,
+
+    /// Liquid natrium.
+    ///
+    /// # See Also
+    ///
+    /// - [LiqNa Fitting Report](https://coolprop.org/_downloads/f0d56e25b4317b0371ec994ed1ddc733/LiqNa_fitreport.pdf)
+    #[strum(to_string = "LiqNa")]
+    LiqNa,
 
     /// Nitrate salt mixture with 0.6 NaNO3 and 0.4 KNO3.
     ///
@@ -522,6 +625,8 @@ mod tests {
     use super::{IncompPure::*, *};
 
     #[rstest]
+    #[case(Acetone, "Acetone")]
+    #[case(Air, "Air")]
     #[case(AS10, "AS10")]
     #[case(AS20, "AS20")]
     #[case(AS30, "AS30")]
@@ -533,6 +638,14 @@ mod tests {
     #[case(DowQ, "DowQ")]
     #[case(DowQ2, "DowQ2")]
     #[case(DSF, "DSF")]
+    #[case(Ethanol, "Ethanol")]
+    #[case(FoodAsh, "FoodAsh")]
+    #[case(FoodCarbohydrate, "FoodCarbohydrate")]
+    #[case(FoodFat, "FoodFat")]
+    #[case(FoodFiber, "FoodFiber")]
+    #[case(FoodIce, "FoodIce")]
+    #[case(FoodProtein, "FoodProtein")]
+    #[case(FoodWater, "FoodWater")]
     #[case(HC10, "HC10")]
     #[case(HC20, "HC20")]
     #[case(HC30, "HC30")]
@@ -540,6 +653,7 @@ mod tests {
     #[case(HC50, "HC50")]
     #[case(HCB, "HCB")]
     #[case(HCM, "HCM")]
+    #[case(Hexane, "Hexane")]
     #[case(HFE, "HFE")]
     #[case(HFE2, "HFE2")]
     #[case(HY20, "HY20")]
@@ -547,6 +661,7 @@ mod tests {
     #[case(HY40, "HY40")]
     #[case(HY45, "HY45")]
     #[case(HY50, "HY50")]
+    #[case(LiqNa, "LiqNa")]
     #[case(NaK, "NaK")]
     #[case(NBS, "NBS")]
     #[case(PBB, "PBB")]
@@ -593,6 +708,8 @@ mod tests {
     }
 
     #[rstest]
+    #[case(vec!["Acetone"], Acetone)]
+    #[case(vec!["Air"], Air)]
     #[case(vec!["AS10"], AS10)]
     #[case(vec!["AS20"], AS20)]
     #[case(vec!["AS30"], AS30)]
@@ -604,6 +721,14 @@ mod tests {
     #[case(vec!["DowQ"], DowQ)]
     #[case(vec!["DowQ2"], DowQ2)]
     #[case(vec!["DSF"], DSF)]
+    #[case(vec!["Ethanol", "C2H6O"], Ethanol)]
+    #[case(vec!["FoodAsh"], FoodAsh)]
+    #[case(vec!["FoodCarbohydrate"], FoodCarbohydrate)]
+    #[case(vec!["FoodFat"], FoodFat)]
+    #[case(vec!["FoodFiber"], FoodFiber)]
+    #[case(vec!["FoodIce"], FoodIce)]
+    #[case(vec!["FoodProtein"], FoodProtein)]
+    #[case(vec!["FoodWater"], FoodWater)]
     #[case(vec!["HC10"], HC10)]
     #[case(vec!["HC20"], HC20)]
     #[case(vec!["HC30"], HC30)]
@@ -611,6 +736,7 @@ mod tests {
     #[case(vec!["HC50"], HC50)]
     #[case(vec!["HCB"], HCB)]
     #[case(vec!["HCM"], HCM)]
+    #[case(vec!["Hexane"], Hexane)]
     #[case(vec!["HFE"], HFE)]
     #[case(vec!["HFE2"], HFE2)]
     #[case(vec!["HY20"], HY20)]
@@ -618,6 +744,7 @@ mod tests {
     #[case(vec!["HY40"], HY40)]
     #[case(vec!["HY45"], HY45)]
     #[case(vec!["HY50"], HY50)]
+    #[case(vec!["LiqNa"], LiqNa)]
     #[case(vec!["NaK"], NaK)]
     #[case(vec!["NBS"], NBS)]
     #[case(vec!["PBB"], PBB)]
