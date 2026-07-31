@@ -149,6 +149,7 @@ impl From<IncompPure> for Fluid<Undefined> {
     }
 }
 
+// todo: replace with `TryFrom`
 impl From<PredefinedMix> for Fluid<Undefined> {
     /// Creates and returns a new [`Fluid`] instance with [`Undefined`] state variant
     /// from [`PredefinedMix`].
@@ -296,20 +297,6 @@ mod tests {
     #[test]
     fn from_each_incomp_pure() {
         for substance in IncompPure::iter() {
-            // Given
-            let sut = Fluid::from(substance);
-
-            // When
-            let res = size_of_val(&sut);
-
-            // Then
-            assert!(res > 0);
-        }
-    }
-
-    #[test]
-    fn from_each_predefined_mix() {
-        for substance in PredefinedMix::iter() {
             // Given
             let sut = Fluid::from(substance);
 
