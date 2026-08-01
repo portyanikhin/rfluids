@@ -49,11 +49,11 @@ impl Fluid<Undefined> {
     /// If you don't need to override the backend name, consider
     /// using:
     /// - [`Fluid::from`] -- simpler way to create [`Fluid`] from [`Pure`](crate::substance::Pure),
-    ///   [`IncompPure`](crate::substance::IncompPure),
-    ///   [`PredefinedMix`](crate::substance::PredefinedMix), or
+    ///   [`IncompPure`](crate::substance::IncompPure), or
     ///   [`BinaryMix`](crate::substance::BinaryMix)
-    /// - [`Fluid::try_from`] -- for creating [`Fluid`] from any [`Substance`] (including
-    ///   [`CustomMix`](crate::substance::CustomMix))
+    /// - [`Fluid::try_from`] -- for creating [`Fluid`] from any
+    ///   [`PredefinedMix`](crate::substance::PredefinedMix),
+    ///   [`CustomMix`](crate::substance::CustomMix), or [`Substance`]
     #[builder]
     pub fn new(
         /// Substance for which to calculate properties.
@@ -238,11 +238,15 @@ mod tests {
         pg: BinaryMix,
     }
 
-    impl<P: Into<Fluid<Undefined>>> SutFactory<P> for Context {
+    impl<P> SutFactory<P> for Context
+    where
+        P: TryInto<Fluid<Undefined>>,
+        P::Error: std::fmt::Debug,
+    {
         type Sut = Fluid<Undefined>;
 
         fn sut(&self, payload: P) -> Self::Sut {
-            payload.into()
+            payload.try_into().unwrap()
         }
     }
 

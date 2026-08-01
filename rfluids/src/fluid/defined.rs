@@ -785,11 +785,15 @@ mod tests {
         pg: BinaryMix,
     }
 
-    impl<P: Into<Fluid<Undefined>>> SutFactory<P> for Context {
+    impl<P> SutFactory<P> for Context
+    where
+        P: TryInto<Fluid<Undefined>>,
+        P::Error: std::fmt::Debug,
+    {
         type Sut = Fluid;
 
         fn sut(&self, payload: P) -> Self::Sut {
-            payload.into().in_state(self.temperature, self.pressure).unwrap()
+            payload.try_into().unwrap().in_state(self.temperature, self.pressure).unwrap()
         }
     }
 
@@ -945,8 +949,10 @@ mod tests {
     fn molar_quality_two_phase_r407c(ctx: Context) {
         // Given
         let Context { pressure, .. } = ctx;
-        let mut sut =
-            Fluid::from(PredefinedMix::R407C).in_state(pressure, FluidInput::quality(0.5)).unwrap();
+        let mut sut = Fluid::try_from(PredefinedMix::R407C)
+            .unwrap()
+            .in_state(pressure, FluidInput::quality(0.5))
+            .unwrap();
 
         // When
         let res = sut.molar_quality();

@@ -12,10 +12,10 @@
 //! Depending on the state variant, the [`Fluid`] instance has different functionality
 //! (e.g., with [`Undefined`] state variant it has only trivial properties available,
 //! but with [`Defined`] state variant it supports a full set of property calculations).
-//! The [`Fluid`] struct can be created from any [`Pure`], [`IncompPure`], [`PredefinedMix`]
-//! or [`BinaryMix`] using the [`From`]/[`Into`] traits; and from any [`Substance`]
-//! or [`CustomMix`] using the [`TryFrom`]/[`TryInto`] traits. This is due to the fact
-//! that [`CustomMix`] can potentially be unsupported by `CoolProp`.
+//! The [`Fluid`] struct can be created from any [`Pure`], [`IncompPure`], or [`BinaryMix`] using
+//! the [`From`]/[`Into`] traits; and from any [`PredefinedMix`], [`CustomMix`], or [`Substance`]
+//! using the [`TryFrom`]/[`TryInto`] traits. This is due to the fact that predefined and custom
+//! mixtures can potentially be unsupported by `CoolProp`.
 //! For advanced control over backend selection, use [`Fluid::builder`].
 
 pub mod backend;
@@ -149,29 +149,6 @@ impl From<IncompPure> for Fluid<Undefined> {
     }
 }
 
-// todo: replace with `TryFrom`
-impl From<PredefinedMix> for Fluid<Undefined> {
-    /// Creates and returns a new [`Fluid`] instance with [`Undefined`] state variant
-    /// from [`PredefinedMix`].
-    ///
-    /// If you need advanced control over backend selection, consider using [`Fluid::builder`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rfluids::prelude::*;
-    ///
-    /// let r444a = Fluid::from(PredefinedMix::R444A);
-    /// ```
-    ///
-    /// # See Also
-    ///
-    /// - [`Fluid::builder`]
-    fn from(value: PredefinedMix) -> Self {
-        Substance::from(value).try_into().unwrap()
-    }
-}
-
 impl From<BinaryMix> for Fluid<Undefined> {
     /// Creates and returns a new [`Fluid`] instance with [`Undefined`] state variant
     /// from [`BinaryMix`].
@@ -195,10 +172,39 @@ impl From<BinaryMix> for Fluid<Undefined> {
     }
 }
 
+impl TryFrom<PredefinedMix> for Fluid<Undefined> {
+    type Error = FluidBuildError;
+
+    /// Tries to create and return a new [`Fluid`] instance with [`Undefined`] state variant
+    /// from [`PredefinedMix`].
+    ///
+    /// If you need advanced control over backend selection, consider using [`Fluid::builder`].
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`FluidBuildError`] for unsupported predefined mixtures.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use rfluids::prelude::*;
+    ///
+    /// assert!(Fluid::try_from(PredefinedMix::R444A).is_ok());
+    /// assert!(Fluid::try_from(PredefinedMix::R401A).is_err());
+    /// ```
+    ///
+    /// # See Also
+    ///
+    /// - [`Fluid::builder`]
+    fn try_from(value: PredefinedMix) -> Result<Self, Self::Error> {
+        Substance::from(value).try_into()
+    }
+}
+
 impl TryFrom<CustomMix> for Fluid<Undefined> {
     type Error = FluidBuildError;
 
-    /// Creates and returns a new [`Fluid`] instance with [`Undefined`] state variant
+    /// Tries to create and return a new [`Fluid`] instance with [`Undefined`] state variant
     /// from [`CustomMix`].
     ///
     /// If you need advanced control over backend selection, consider using [`Fluid::builder`].
@@ -322,6 +328,30 @@ mod tests {
             // Then
             assert!(res > 0);
         }
+    }
+
+    #[test]
+    fn try_from_supported_predefined_mix() {
+        // Given
+        let supported_mix = PredefinedMix::R444A;
+
+        // When
+        let res = Fluid::try_from(supported_mix);
+
+        // Then
+        assert!(res.is_ok());
+    }
+
+    #[test]
+    fn try_from_unsupported_predefined_mix() {
+        // Given
+        let unsupported_mix = PredefinedMix::R401A;
+
+        // When
+        let res = Fluid::try_from(unsupported_mix);
+
+        // Then
+        assert!(res.is_err());
     }
 
     #[test]
