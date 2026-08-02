@@ -29,6 +29,8 @@ fn new_cfg() -> Config {
         .refprop_ignore_error_estimated_interaction_params(true)
         .refprop_use_gerg(true)
         .refprop_use_peng_robinson(true)
+        .allow_svd_sbtl_in_props_si(true)
+        .alt_svd_tables_path("path/to/svd/tables")
         .alt_tables_path("path/to/tables")
         .float_punctuation(',')
         .list_punctuation(';')

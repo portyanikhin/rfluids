@@ -241,6 +241,27 @@ pub enum ConfigKey {
     #[strum(to_string = "REFPROP_USE_PENGROBINSON", serialize = "RefpropUsePengRobinson")]
     RefpropUsePengRobinson,
 
+    /// If `true`, enables the `SVDSBTL` backend in the high-level `PropsSI` interface.
+    ///
+    /// Retaining an `AbstractState` is preferred because
+    /// `PropsSI` reloads the SVD surfaces on every call.
+    ///
+    /// **Type:** [`bool`]
+    ///
+    /// **Default:** `false`
+    #[strum(to_string = "ALLOW_SVDSBTL_IN_PROPSSI", serialize = "AllowSvdSbtlInPropsSi")]
+    AllowSvdSbtlInPropsSi,
+
+    /// Alternative root directory for the `SVDSBTL` on-disk cache.
+    ///
+    /// When unset, `${HOME}/.CoolProp/SVDTables` is used.
+    ///
+    /// **Type:** [`Option<&Path>`](std::path::Path)
+    ///
+    /// **Default:** `None`
+    #[strum(to_string = "ALTERNATIVE_SVDTABLES_DIRECTORY", serialize = "AltSvdTablesPath")]
+    AltSvdTablesPath,
+
     /// If provided, this path will be the root directory for the tabular data. Otherwise,
     /// `${HOME}/.CoolProp/Tables` is used.
     ///
@@ -423,6 +444,8 @@ mod tests {
         )]
         #[case(RefpropUseGerg, "REFPROP_USE_GERG")]
         #[case(RefpropUsePengRobinson, "REFPROP_USE_PENGROBINSON")]
+        #[case(AllowSvdSbtlInPropsSi, "ALLOW_SVDSBTL_IN_PROPSSI")]
+        #[case(AltSvdTablesPath, "ALTERNATIVE_SVDTABLES_DIRECTORY")]
         #[case(AltTablesPath, "ALTERNATIVE_TABLES_DIRECTORY")]
         #[case(FloatPunctuation, "FLOAT_PUNCTUATION")]
         #[case(ListPunctuation, "LIST_STRING_DELIMITER")]
@@ -486,6 +509,14 @@ mod tests {
         )]
         #[case(vec!["REFPROP_USE_GERG", "RefpropUseGerg"], RefpropUseGerg)]
         #[case(vec!["REFPROP_USE_PENGROBINSON", "RefpropUsePengRobinson"], RefpropUsePengRobinson)]
+        #[case(
+            vec!["ALLOW_SVDSBTL_IN_PROPSSI", "AllowSvdSbtlInPropsSi"],
+            AllowSvdSbtlInPropsSi
+        )]
+        #[case(
+            vec!["ALTERNATIVE_SVDTABLES_DIRECTORY", "AltSvdTablesPath"],
+            AltSvdTablesPath
+        )]
         #[case(vec!["ALTERNATIVE_TABLES_DIRECTORY", "AltTablesPath"], AltTablesPath)]
         #[case(vec!["FLOAT_PUNCTUATION", "FloatPunctuation"], FloatPunctuation)]
         #[case(vec!["LIST_STRING_DELIMITER", "ListPunctuation"], ListPunctuation)]

@@ -265,6 +265,11 @@ impl CoolProp {
     ///       fluid equations of state, use the Peng-Robinson EOS. **Default:** `false`
     ///
     /// - **Miscellaneous:**
+    ///     - `"ALLOW_SVDSBTL_IN_PROPSSI"` -- if `true`, enables the `SVDSBTL` backend in the
+    ///       high-level `PropsSI` interface. Retaining an `AbstractState` is preferred because
+    ///       `PropsSI` reloads the SVD surfaces on every call. **Default:** `false`
+    ///     - `"ALTERNATIVE_SVDTABLES_DIRECTORY"` -- alternative root directory for the `SVDSBTL`
+    ///       on-disk cache. When unset, `${HOME}/.CoolProp/SVDTables` is used. **Default:** `None`
     ///     - `"ALTERNATIVE_TABLES_DIRECTORY"` -- if provided, this path will be the root directory
     ///       for the tabular data. Otherwise, `${HOME}/.CoolProp/Tables` is used. **Default:**
     ///       `None`
@@ -317,6 +322,8 @@ impl CoolProp {
     /// - Configuration variables can also be set via environment variables by prefixing the key
     ///   name with `COOLPROP_` _(e.g., `COOLPROP_DONT_CHECK_PROPERTY_LIMITS`)_
     /// - Configuration changes affect all subsequent `CoolProp` operations
+    /// - The integer `SVDSBTL_SAMPLING_THREADS` has no setter in the official C ABI. Set
+    ///   `COOLPROP_SVDSBTL_SAMPLING_THREADS` before the native library is first loaded instead
     ///
     /// # See Also
     ///

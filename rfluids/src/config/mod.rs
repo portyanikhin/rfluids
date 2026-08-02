@@ -73,6 +73,13 @@
 //!     rfluids::config::update(cfg);
 //! }
 //! ```
+//!
+//! # `SVDSBTL` Sampling Threads
+//!
+//! The official `CoolProp` C ABI does not expose a setter for integer configuration values, so
+//! `SVDSBTL_SAMPLING_THREADS` is not represented by [`Config`]. To change it, set the
+//! `COOLPROP_SVDSBTL_SAMPLING_THREADS` environment variable before the native library is first
+//! loaded.
 
 #![allow(clippy::struct_excessive_bools)]
 
@@ -230,6 +237,21 @@ declare_config! {
     ///
     /// **Default:** `false`
     pub refprop_use_peng_robinson: bool = false => RefpropUsePengRobinson,
+
+    /// If `true`, enables the `SVDSBTL` backend in the high-level `PropsSI` interface.
+    ///
+    /// Retaining an `AbstractState` is preferred because
+    /// `PropsSI` reloads the SVD surfaces on every call.
+    ///
+    /// **Default:** `false`
+    pub allow_svd_sbtl_in_props_si: bool = false => AllowSvdSbtlInPropsSi,
+
+    /// Alternative root directory for the `SVDSBTL` on-disk cache.
+    ///
+    /// When unset, `${HOME}/.CoolProp/SVDTables` is used.
+    ///
+    /// **Default:** `None`
+    pub alt_svd_tables_path: Option<PathBuf> => AltSvdTablesPath,
 
     /// If provided, this path will be the root directory for the tabular data. Otherwise,
     /// `${HOME}/.CoolProp/Tables` is used.
