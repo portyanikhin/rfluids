@@ -587,6 +587,9 @@ mod tests {
     #[case("REFPROP", true, true)]
     #[case("TTSE&HEOS", true, true)]
     #[case("BICUBIC&HEOS", true, true)]
+    #[case("SVDSBTL&HEOS", true, false)]
+    #[case(" svdsbtl&if97 ", true, false)]
+    #[case("SVDSBTL&REFPROP", true, true)]
     #[case("UNKNOWN", true, true)]
     fn backend_access_classification(
         #[case] backend: &str,

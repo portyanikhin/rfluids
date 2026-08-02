@@ -801,6 +801,9 @@ mod tests {
     #[case("REFPROP-MIX:R410A.MIX", true)]
     #[case("TTSE&HEOS::Water", true)]
     #[case("BICUBIC&HEOS::Water", true)]
+    #[case("SVDSBTL&HEOS::Water", true)]
+    #[case("svdsbtl&if97::Water", true)]
+    #[case("SVDSBTL&REFPROP::Water", true)]
     #[case("UNKNOWN::Water", true)]
     fn high_level_access_classification(#[case] substance_name: &str, #[case] expected: bool) {
         // When

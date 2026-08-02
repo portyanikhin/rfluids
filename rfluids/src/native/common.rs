@@ -120,7 +120,19 @@ pub(crate) fn factory_requires_exclusive(backend: &str) -> bool {
 }
 
 pub(crate) fn state_requires_exclusive(backend: &str) -> bool {
-    factory_requires_exclusive(backend) && !backend.trim().eq_ignore_ascii_case("VTPR")
+    let backend = backend.trim();
+    if backend.eq_ignore_ascii_case("VTPR") {
+        return false;
+    }
+    if let Some(source) = svd_sbtl_source(backend) {
+        return !["HEOS", "IF97"].into_iter().any(|known| source.eq_ignore_ascii_case(known));
+    }
+    factory_requires_exclusive(backend)
+}
+
+fn svd_sbtl_source(backend: &str) -> Option<&str> {
+    let (method, source) = backend.split_once('&')?;
+    method.trim().eq_ignore_ascii_case("SVDSBTL").then_some(source.trim())
 }
 
 pub(crate) fn get_error(coolprop: &ExclusiveAccess<'_>) -> Option<CoolPropError> {
