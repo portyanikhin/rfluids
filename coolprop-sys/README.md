@@ -26,7 +26,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-coolprop-sys = "7"
+coolprop-sys = "8"
 ```
 
 Or via command line:
@@ -49,7 +49,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-coolprop-sys = { version = "7", features = ["regen-bindings"] }
+coolprop-sys = { version = "8", features = ["regen-bindings"] }
 ```
 
 Or via command line:
