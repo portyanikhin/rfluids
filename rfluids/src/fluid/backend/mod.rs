@@ -10,7 +10,7 @@
 //!
 //! - [`Backend`] -- represents a `CoolProp` backend, either base or tabular
 //! - [`BaseBackend`] -- base backends (e.g., `HEOS`, `REFPROP`, `IF97`, etc.)
-//! - [`TabularMethod`] -- tabular interpolation methods (e.g., `TTSE`, `BICUBIC`)
+//! - [`TabularMethod`] -- tabular methods (e.g., `TTSE`, `BICUBIC`, `SVDSBTL`)
 //!
 //! # Backend Selection
 //!
@@ -42,7 +42,7 @@ pub use tabular::*;
 /// `CoolProp` backend.
 ///
 /// This enum represents a `CoolProp` backend, which can be either a base backend
-/// or a tabular backend that combines a tabular interpolation method with a base backend.
+/// or a tabular backend that combines a tabular method with a base backend.
 ///
 /// # Examples
 ///
@@ -66,6 +66,9 @@ pub use tabular::*;
 /// // or
 /// let tabular = BaseBackend::Heos.with(TabularMethod::Ttse);
 /// assert_eq!(tabular.name(), "TTSE&HEOS");
+///
+/// let svd = BaseBackend::Heos.with(TabularMethod::SvdSbtl);
+/// assert_eq!(svd.name(), "SVDSBTL&HEOS");
 /// ```
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum Backend {
@@ -146,6 +149,9 @@ mod tests {
     #[case(Pr.with(Bicubic), "BICUBIC&PR", true)]
     #[case(VtPr.with(Bicubic), "BICUBIC&VTPR", true)]
     #[case(PcSaft.with(Bicubic), "BICUBIC&PCSAFT", true)]
+    #[case(Heos.with(SvdSbtl), "SVDSBTL&HEOS", true)]
+    #[case(If97.with(SvdSbtl), "SVDSBTL&IF97", true)]
+    #[case(Refprop.with(SvdSbtl), "SVDSBTL&REFPROP", true)]
     fn name(#[case] sut: impl Into<Backend>, #[case] expected: &str, #[case] is_owned: bool) {
         // Given
         let sut = sut.into();

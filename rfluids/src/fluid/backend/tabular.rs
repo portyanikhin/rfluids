@@ -1,8 +1,9 @@
 /// Tabular interpolation method.
 ///
 /// Represents the tabular interpolation methods available in `CoolProp`.
-/// Tabular methods dramatically accelerate property calculations by using
-/// pre-computed gridded data instead of full equation-of-state evaluations.
+/// Tabular methods dramatically accelerate property calculations by using pre-computed data
+/// instead of full equation-of-state evaluations. `TTSE` and `BICUBIC` interpolate gridded tables,
+/// while `SVDSBTL` uses an SVD-compressed tabular lookup.
 ///
 /// Tabular methods are combined with a [`BaseBackend`](crate::fluid::backend::BaseBackend)
 /// to create a tabular backend. The tabular data is generated once and cached for subsequent use.
@@ -75,6 +76,22 @@ pub enum TabularMethod {
     /// - [Bicubic Interpolation](https://coolprop.org/coolprop/Tabular.html#bicubic-interpolation)
     #[strum(to_string = "BICUBIC")]
     Bicubic,
+
+    /// SVD-compressed tabular lookup.
+    ///
+    /// Combines a region atlas with per-region singular value decomposition
+    /// compression and a critical-region fallback to the source backend.
+    ///
+    /// The generated data is cached under `${HOME}/.CoolProp/SVDTables` by
+    /// default. Construct and retain an [`AbstractState`](crate::native::AbstractState)
+    /// (or [`Fluid`](crate::fluid::Fluid)) instead of repeatedly using `PropsSI`,
+    /// because loading the cached surfaces dominates one-off calls.
+    ///
+    /// # See Also
+    ///
+    /// - [`SVDSBTL` — SVD-Compressed Tabular Lookup Backend](https://coolprop.org/coolprop/SVDSBTL.html)
+    #[strum(to_string = "SVDSBTL")]
+    SvdSbtl,
 }
 
 #[cfg(test)]
@@ -88,6 +105,7 @@ mod tests {
     #[rstest]
     #[case(Ttse, "TTSE")]
     #[case(Bicubic, "BICUBIC")]
+    #[case(SvdSbtl, "SVDSBTL")]
     fn as_str(#[case] sut: TabularMethod, #[case] expected: &str) {
         // When
         let str = sut.as_ref();
@@ -101,6 +119,7 @@ mod tests {
     #[rstest]
     #[case(vec!["TTSE", "ttse"], Ttse)]
     #[case(vec!["BICUBIC", "bicubic"], Bicubic)]
+    #[case(vec!["SVDSBTL", "svdsbtl"], SvdSbtl)]
     fn from_valid_str(#[case] valid: Vec<&str>, #[case] expected: TabularMethod) {
         for s in valid {
             // When
