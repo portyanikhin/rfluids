@@ -56,6 +56,26 @@
 //! cargo add coolprop-sys --features regen-bindings
 //! ```
 //!
+//! ### Static linking
+//!
+//! By default, `coolprop-sys` links `CoolProp` dynamically: the native library is copied next to
+//! your binary and loaded at runtime. Enable the **`static-link`** feature to statically link
+//! `CoolProp` into your binary instead, so no native library needs to be shipped or found at
+//! runtime.
+//!
+//! Add this to your `Cargo.toml`:
+//!
+//! ```toml
+//! [dependencies]
+//! coolprop-sys = { version = "8", features = ["static-link"] }
+//! ```
+//!
+//! Or via command line:
+//!
+//! ```shell
+//! cargo add coolprop-sys --features static-link
+//! ```
+//!
 //! ## Accessing the native library
 //!
 //! Use the process-wide [`COOLPROP`] handle:
@@ -107,18 +127,31 @@ use std::{
 pub mod bindings;
 
 /// `CoolProp` dynamic library absolute path.
-#[cfg(all(target_os = "linux", target_arch = "aarch64"))]
+#[cfg(all(target_os = "linux", target_arch = "aarch64", not(feature = "static-link")))]
 pub const COOLPROP_PATH: &str = coolprop_sys_linux_aarch64::COOLPROP_PATH;
-#[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+#[cfg(all(target_os = "linux", target_arch = "x86_64", not(feature = "static-link")))]
 pub const COOLPROP_PATH: &str = coolprop_sys_linux_x86_64::COOLPROP_PATH;
-#[cfg(all(target_os = "macos", target_arch = "aarch64"))]
+#[cfg(all(target_os = "macos", target_arch = "aarch64", not(feature = "static-link")))]
 pub const COOLPROP_PATH: &str = coolprop_sys_macos_aarch64::COOLPROP_PATH;
-#[cfg(all(target_os = "macos", target_arch = "x86_64"))]
+#[cfg(all(target_os = "macos", target_arch = "x86_64", not(feature = "static-link")))]
 pub const COOLPROP_PATH: &str = coolprop_sys_macos_x86_64::COOLPROP_PATH;
-#[cfg(all(target_os = "windows", target_arch = "aarch64"))]
+#[cfg(all(target_os = "windows", target_arch = "aarch64", not(feature = "static-link")))]
 pub const COOLPROP_PATH: &str = coolprop_sys_windows_aarch64::COOLPROP_PATH;
-#[cfg(all(target_os = "windows", target_arch = "x86_64"))]
+#[cfg(all(target_os = "windows", target_arch = "x86_64", not(feature = "static-link")))]
 pub const COOLPROP_PATH: &str = coolprop_sys_windows_x86_64::COOLPROP_PATH;
+
+#[cfg(all(target_os = "linux", target_arch = "aarch64", feature = "static-link"))]
+extern crate coolprop_sys_linux_aarch64;
+#[cfg(all(target_os = "linux", target_arch = "x86_64", feature = "static-link"))]
+extern crate coolprop_sys_linux_x86_64;
+#[cfg(all(target_os = "macos", target_arch = "aarch64", feature = "static-link"))]
+extern crate coolprop_sys_macos_aarch64;
+#[cfg(all(target_os = "macos", target_arch = "x86_64", feature = "static-link"))]
+extern crate coolprop_sys_macos_x86_64;
+#[cfg(all(target_os = "windows", target_arch = "aarch64", feature = "static-link"))]
+extern crate coolprop_sys_windows_aarch64;
+#[cfg(all(target_os = "windows", target_arch = "x86_64", feature = "static-link"))]
+extern crate coolprop_sys_windows_x86_64;
 
 /// Process-wide synchronization boundary for the loaded `CoolProp` dynamic library.
 ///
@@ -229,16 +262,17 @@ impl Deref for ExclusiveAccess<'_> {
     }
 }
 
-/// Global instance of the `CoolProp` dynamic library.
+/// Global instance of the `CoolProp` library, statically or dynamically linked depending on
+/// whether the **`static-link`** feature is enabled.
 ///
-/// The library is loaded lazily. Before the handle is published, an internal probe initializes
-/// native process-global configuration. This is automatic; callers do not need to perform a
-/// special first native call.
+/// The library is initialized lazily. Before the handle is published, an internal probe
+/// initializes native process-global configuration. This is automatic; callers do not need to
+/// perform a special first native call.
 ///
 /// # Panics
 ///
-/// Panics on initialization if the `CoolProp` dynamic library cannot be loaded or its
-/// initialization probe does not produce a finite value.
+/// Panics on initialization if the `CoolProp` dynamic library cannot be loaded (not applicable
+/// when statically linked) or if its initialization probe does not produce a finite value.
 ///
 /// # Safety
 ///
@@ -250,17 +284,32 @@ impl Deref for ExclusiveAccess<'_> {
 /// # See Also
 ///
 /// - [`CoolPropLib.h` Reference](https://coolprop.org/_static/doxygen/html/_cool_prop_2_cool_prop_lib_8h.html)
-pub static COOLPROP: LazyLock<CoolPropLib> = LazyLock::new(load_coolprop);
+pub static COOLPROP: LazyLock<CoolPropLib> =
+    LazyLock::new(|| CoolPropLib(RwLock::new(load_coolprop())));
 
-fn load_coolprop() -> CoolPropLib {
+#[cfg(feature = "static-link")]
+fn load_coolprop() -> bindings::CoolProp {
+    let coolprop = bindings::CoolProp::new().expect("Failed to initialize CoolProp bindings");
+    probe(&coolprop);
+    coolprop
+}
+
+#[cfg(not(feature = "static-link"))]
+fn load_coolprop() -> bindings::CoolProp {
     let coolprop = unsafe { bindings::CoolProp::new(COOLPROP_PATH) }
         .expect("CoolProp dynamic library should load from `COOLPROP_PATH`");
-    let probe = unsafe { coolprop.Props1SI(c"Water".as_ptr(), c"Tcrit".as_ptr()) };
+    probe(&coolprop);
+    coolprop
+}
+
+/// Runs the one-time initialization probe shared by both link modes, catching a broken link
+/// (bad ABI, missing symbol, ...) at startup instead of at some arbitrary later call site.
+fn probe(coolprop: &bindings::CoolProp) {
+    let value = unsafe { coolprop.Props1SI(c"Water".as_ptr(), c"Tcrit".as_ptr()) };
     assert!(
-        probe.is_finite(),
+        value.is_finite(),
         "CoolProp initialization probe `Props1SI(\"Water\", \"Tcrit\")` should return a finite value"
     );
-    CoolPropLib(RwLock::new(coolprop))
 }
 
 #[cfg(test)]
@@ -275,9 +324,7 @@ mod tests {
 
     fn test_lib() -> CoolPropLib {
         LazyLock::force(&COOLPROP);
-        let coolprop = unsafe { bindings::CoolProp::new(COOLPROP_PATH) }
-            .expect("CoolProp dynamic library should load from `COOLPROP_PATH`");
-        CoolPropLib(RwLock::new(coolprop))
+        CoolPropLib(RwLock::new(load_coolprop()))
     }
 
     fn shared_access_is_available(lib: &CoolPropLib) -> bool {

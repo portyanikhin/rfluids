@@ -14,6 +14,14 @@ categories = ["api-bindings", "science"]
 
 [features]
 regen-bindings = ["dep:bindgen"]
+static-link = [
+    "coolprop-sys-linux-x86-64/static-link",
+    "coolprop-sys-linux-aarch64/static-link",
+    "coolprop-sys-macos-x86-64/static-link",
+    "coolprop-sys-macos-aarch64/static-link",
+    "coolprop-sys-windows-x86-64/static-link",
+    "coolprop-sys-windows-aarch64/static-link",
+]
 
 [dependencies]
 libloading.workspace = true

@@ -58,6 +58,26 @@ Or via command line:
 cargo add coolprop-sys --features regen-bindings
 ```
 
+### Static linking
+
+By default, `coolprop-sys` links `CoolProp` dynamically: the native library is copied next to
+your binary and loaded at runtime. Enable the **`static-link`** feature to statically link
+`CoolProp` into your binary instead, so no native library needs to be shipped or found at
+runtime.
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+coolprop-sys = { version = "8", features = ["static-link"] }
+```
+
+Or via command line:
+
+```shell
+cargo add coolprop-sys --features static-link
+```
+
 ## Accessing the native library
 
 Use the process-wide [`COOLPROP`](https://docs.rs/coolprop-sys/latest/coolprop_sys/static.COOLPROP.html) handle:

@@ -12,4 +12,7 @@ license.workspace = true
 keywords = ["CoolProp", "native", "binaries", "Windows", "AArch64"]
 categories = ["api-bindings", "science"]
 
+[features]
+static-link = []
+
 [dependencies]

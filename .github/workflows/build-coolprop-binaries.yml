@@ -28,6 +28,7 @@ jobs:
             label: windows-aarch64
           - os: windows-latest
             label: windows-x86-64
+        lib-type: [shared, static]
 
     steps:
       - name: Checkout CoolProp repository
@@ -45,7 +46,13 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install six
       - name: Build a Makefile
-        run: cmake . -DCOOLPROP_SHARED_LIBRARY=ON -DCMAKE_BUILD_TYPE=Release -DFORCE_BITNESS_NATIVE=ON
+        run: |
+          if [ "${{ matrix.lib-type }}" = "shared" ]; then
+            cmake . -DCOOLPROP_SHARED_LIBRARY=ON -DCMAKE_BUILD_TYPE=Release -DFORCE_BITNESS_NATIVE=ON
+          else
+            cmake . -DCOOLPROP_STATIC_LIBRARY=ON -DCMAKE_BUILD_TYPE=Release -DFORCE_BITNESS_NATIVE=ON -DCMAKE_CXX_FLAGS="-DCOOLPROP_LIB" -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
+          fi
+        shell: bash
       - name: Build CoolProp binaries
         run: cmake --build . --config Release
       - name: Upload artifacts
@@ -55,6 +62,8 @@ jobs:
           path: |
             Release/*.dll
             Release/*.lib
+            Release/*.a
             *.dylib
             *.so
+            *.a
           if-no-files-found: error

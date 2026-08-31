@@ -13,4 +13,5 @@
 //! </sup>
 
 /// `CoolProp` dynamic library absolute path.
+#[cfg(not(feature = "static-link"))]
 pub const COOLPROP_PATH: &str = concat!(env!("OUT_DIR"), "/libCoolProp.so");

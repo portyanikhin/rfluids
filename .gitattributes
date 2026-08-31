@@ -1,6 +1,6 @@
 * text=auto eol=lf
-
 *.dll binary
 *.dylib binary
 *.so binary
-*.lib binary
+*.lib filter=lfs diff=lfs merge=lfs -text
+*.a binary

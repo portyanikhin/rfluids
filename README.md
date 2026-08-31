@@ -54,6 +54,8 @@ calculations for engineering and scientific applications.
 - **`serde`** – enables serialization and deserialization support for
   [`Config`](https://docs.rs/rfluids/latest/rfluids/config/struct.Config.html), allowing
   integration with configuration management crates and file-based configuration
+- **`static-link`** – statically links `CoolProp` into your binary instead of loading it
+  dynamically at runtime, so no native library needs to be shipped or found alongside it
 
 ## Supported platforms
 
@@ -104,6 +106,25 @@ Or via command line:
 
 ```shell
 cargo add rfluids --features regen-bindings
+```
+
+### Static linking
+
+By default, `rfluids` links `CoolProp` dynamically: the native library is copied next to your
+binary and loaded at runtime. Enable the **`static-link`** feature to statically link `CoolProp`
+into your binary instead, so no native library needs to be shipped or found at runtime.
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+rfluids = { version = "0.6", features = ["static-link"] }
+```
+
+Or via command line:
+
+```shell
+cargo add rfluids --features static-link
 ```
 
 ## Examples

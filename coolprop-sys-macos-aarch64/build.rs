@@ -6,6 +6,7 @@ use std::{
 const LIB_PREFIX: &str = "lib";
 const LIB_NAME: &str = "CoolProp";
 const LIB_EXTENSION: &str = ".dylib";
+const STATIC_LIB_EXTENSION: &str = ".a";
 
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
@@ -13,16 +14,17 @@ fn main() {
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap().to_lowercase();
     if target_os == "macos" && target_arch == "aarch64" {
         let src_dir = setup_src_dir();
-        let target_dir = setup_target_dir();
-        setup_lib(&src_dir, &target_dir);
+        if cfg!(feature = "static-link") {
+            setup_static_lib(&src_dir);
+        } else {
+            let target_dir = setup_target_dir();
+            setup_dylib(&src_dir, &target_dir);
+        }
     }
 }
 
 fn setup_src_dir() -> PathBuf {
-    let src_dir =
-        PathBuf::from("lib").canonicalize().expect("bundled CoolProp `lib` directory should exist");
-    println!("cargo:rustc-link-search=native={}", src_dir.to_str().unwrap());
-    src_dir
+    PathBuf::from("lib").canonicalize().expect("bundled CoolProp `lib` directory should exist")
 }
 
 fn setup_target_dir() -> PathBuf {
@@ -32,10 +34,28 @@ fn setup_target_dir() -> PathBuf {
     target_dir
 }
 
-fn setup_lib(src_dir: &Path, target_dir: &Path) {
+fn setup_dylib(src_dir: &Path, target_dir: &Path) {
     let file_name = format!("{}{}{}", LIB_PREFIX, LIB_NAME, LIB_EXTENSION);
     let src_path = src_dir.join(&file_name);
     let target_path = target_dir.join(&file_name);
     fs::copy(&src_path, &target_path).expect("CoolProp library should be copied to `OUT_DIR`");
+    println!("cargo:rustc-link-search=native={}", target_dir.to_str().unwrap());
+    println!("cargo:rustc-link-arg=-Wl,-rpath,{}", target_dir.to_str().unwrap());
     println!("cargo:rustc-link-lib=dylib={}", LIB_NAME);
+}
+
+fn setup_static_lib(src_dir: &Path) {
+    let file_name = format!("{}{}{}", LIB_PREFIX, LIB_NAME, STATIC_LIB_EXTENSION);
+    let static_dir = src_dir.join("static");
+    let lib_path = static_dir.join(&file_name);
+    
+    assert!(
+        lib_path.exists(),
+        "expected static CoolProp library at {}",
+        lib_path.display()
+    );
+
+    println!("cargo:rustc-link-search=native={}", static_dir.to_str().unwrap());
+    println!("cargo:rustc-link-lib=static:-bundle={}", LIB_NAME);
+    println!("cargo:rustc-link-lib=c++");
 }

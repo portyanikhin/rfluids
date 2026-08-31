@@ -15,6 +15,7 @@ categories = ["api-bindings", "science"]
 [features]
 regen-bindings = ["coolprop-sys/regen-bindings"]
 serde = ["dep:serde"]
+static-link = ["coolprop-sys/static-link"]
 
 [dependencies]
 bon.workspace = true
